@@ -14,13 +14,6 @@ from unipath import Path
 
 PROJECT_DIR = Path(__file__).ancestor(3) # Points to <repository root>
 
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.sqlite3',
-#         'NAME': os.path.join(PROJECT_DIR, 'db.sqlite3'),
-#     }
-# }
-
 
 MEDIA_ROOT = PROJECT_DIR.child('media')
 

@@ -1,0 +1,14 @@
+# requirements.txt (designed for heroku deployment)
+# -r requirements/prod.txt
+django-toolbelt==0.0.1
+South==0.8.4
+Unipath==1.0
+django-braces==1.3.1
+django-crispy-forms==1.4.0
+django-guardian==1.1.1
+psycopg2==2.5.2
+pystache==0.5.3
+#six==1.5.2
+sqlparse==0.1.11
+static==1.0.2
+wsgiref==0.1.2

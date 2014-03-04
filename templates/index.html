@@ -1,0 +1,11 @@
+<h1>{{ course }}</h1>
+
+{% for act in acts %}
+	{% ifchanged %}<h3>{{ act.lesson }}</h3>{% endifchanged %}
+	<p><a href="{{ act.get_absolute_url }}">{{ act.title }}</a> </p>
+{% endfor %}
+
+<h3>Unnassigned Lessons</h3>
+{% for act in orphans %}
+	<p><a href="{{ act.get_absolute_url }}">{{ act.title }}</a> </p>
+{% endfor %}

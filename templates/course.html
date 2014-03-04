@@ -1,0 +1,24 @@
+<!-- course.html -->
+{% extends "base.html" %}
+{% block page_header %} {{ course }} {% endblock page_header %}
+
+{% block content %} 
+<h1>Current  Lessons </h1>
+<ul>
+{% for i in lessons %}
+    <li><a href="{{ i.get_absolute_url }} "> {{ i.title }} - {{ i.subject }}</a></li>
+{% empty %}
+    <li>No lessons here.</li>
+{% endfor %}
+</ul>
+
+<h1>Current  Members </h1>
+<p>Hi {{ user }}, </p>
+<ul>
+{% for i in members %}
+    <li>{{ i.username }}</li>
+{% empty %}
+    <li>No members here.</li>
+{% endfor %}
+</ul>
+{% endblock content %}

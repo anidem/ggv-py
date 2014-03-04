@@ -1,0 +1,13 @@
+<!-- multiple_choice_create.html -->
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+	<form action="" method="post" role="form">{% csrf_token %}
+		{{ form|crispy }}
+		<input type="submit" value="Create" />
+	</form> 
+{% endblock content %}     

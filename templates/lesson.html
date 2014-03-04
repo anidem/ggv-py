@@ -1,0 +1,16 @@
+<!-- lesson.html -->
+{% extends "base.html" %}
+{% block page_header %} GGV Lessons  {{ course.title }} {% endblock page_header %}
+
+{% block content %}
+
+<h1> {{ object.title }} Activities </h1>
+<ul>
+{% for i in acts %}
+    <li><a href="{{ i.get_absolute_url }}"> {{ i.title }} </a></li>
+{% empty %}
+    <li>No activities yet.</li>
+{% endfor %}
+</ul>
+
+{% endblock content %}

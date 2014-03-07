@@ -14,7 +14,6 @@ from unipath import Path
 
 PROJECT_DIR = Path(__file__).ancestor(3) # Points to <repository root>
 
-
 MEDIA_ROOT = PROJECT_DIR.child('media')
 
 # Static files (CSS, JavaScript, Images)
@@ -32,7 +31,6 @@ TEMPLATE_DIRS = PROJECT_DIR.child('templates')
 
 
 # Application definition
-
 INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.auth',
@@ -95,7 +93,7 @@ AUTHENTICATION_BACKENDS = (
 
 ANONYMOUS_USER_ID = -1
 
-# Stored in environment variable not here.
+# Stored in environment variable -- not here.
 SECRET_KEY = os.environ['SECRET_KEY']
 
 

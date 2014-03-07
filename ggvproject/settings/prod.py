@@ -1,21 +1,20 @@
-# settings/dev.py
+# settings/prod.py
 
 from .base import *
 import dj_database_url
 
-DEBUG = True
+DEBUG = False
 
-TEMPLATE_DEBUG = True
+TEMPLATE_DEBUG = False
 
-# Parse database configuration from $DATABASE_URL
 DATABASES = {
     'default': {
-        'ENGINE':'django.db.backends.postgresql_psycopg2',
-        'NAME': 'localdb',
-        'USER': 'djangodbuser',
-        'PASSWORD': '1',
-        'HOST': 'localhost',
-        'PORT': '5432',
+        # 'ENGINE':'django.db.backends.postgresql_psycopg2',
+        # 'NAME': 'localdb',
+        # 'USER': 'djangodbuser',
+        # 'PASSWORD': '1',
+        # 'HOST': 'localhost',
+        # 'PORT': '5432',
     }
 }
 
@@ -26,11 +25,11 @@ DATABASES = {
 #     }
 # }
 
-DATABASES['default'] =  dj_database_url.config(default='postgres://djangodbuser:1@localhost/localdb')
+DATABASES['default'] =  dj_database_url.config() #default='postgres://djangodbuser:1@localhost/localdb'
 
 # Honor the 'X-Forwarded-Proto' header for request.is_secure()
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 
 # Allow all host headers
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['.herokuapp.com']
 

@@ -1,27 +1,24 @@
 <!-- ggv.html -->
 {% extends "base.html" %}
-{% block page_header %} GGV Lessons {% endblock page_header %}
 
 {% block content %}
+
 {% if messages %}
 	<ul class="messages">
 	    {% for message in messages %}
 	    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
 	    {% endfor %}
 	</ul>
-
-{% else %}
-
-	<h1>Current  Courses</h1>
-	<ul>
-	{% for i in courses %}
-	    <li><a href="{{ i.get_absolute_url }} "> {{ i.title }} - {{ i.short_name }}</a></li>
-	{% empty %}
-	    <li>No courses yet.</li>
-	{% endfor %}
-	</ul>
-	
 {% endif %}
 
+<h3>Hi {{ user }}</h3>
+<h1>Current  Courses</h1>
+<ul>
+{% for i in courses %}
+    <li><a href="{{ i.get_absolute_url }} "> {{ i.title }} - {{ i.short_name }}</a></li>
+{% empty %}
+    <li>No courses yet.</li>
+{% endfor %}
+</ul>
 
 {% endblock content %}

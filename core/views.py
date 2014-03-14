@@ -30,6 +30,8 @@ def init_session(sender, **kwargs):
 
 	print request.session['user_courses']
 
+class IndexView(TemplateView):
+	template_name = 'index.html'	
 
 class HomeView(LoginRequiredMixin, TemplateView):
 	template_name = 'ggv.html'

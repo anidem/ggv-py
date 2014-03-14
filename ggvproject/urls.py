@@ -3,7 +3,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-from core.views import HomeView, CourseView, StudentCourseView
+from core.views import IndexView, HomeView, CourseView, StudentCourseView
 from questions.views import MultipleChoiceQuestionDetailView, MultipleChoiceQuestionCreateView
 from lessons.views  import ( 
     LessonView,
@@ -32,4 +32,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')), 
     url(r'^admin/', include(admin.site.urls)),
+
+    url(r'^$', IndexView.as_view(), name='root')
 )
+

@@ -8,16 +8,14 @@ MEDIA_ROOT = PROJECT_DIR.child('media')
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.6/howto/static-files/
 
-STATIC_ROOT = PROJECT_DIR.child('static')
+# STATIC_ROOT = PROJECT_DIR.child('static') #THIS DOESN'T work if static is in repo root (not in app)
 
-# STATICFILES_DIRS = (
-#     PROJECT_DIR.child('assets'),
-# )
+STATICFILES_DIRS = (PROJECT_DIR.child('static'), )
 
 STATIC_URL = '/static/'
 
-TEMPLATE_DIRS = PROJECT_DIR.child('templates')
 
+TEMPLATE_DIRS = PROJECT_DIR.child('templates')
 
 # Application definition
 INSTALLED_APPS = (
@@ -40,6 +38,7 @@ INSTALLED_APPS = (
     
     'south',
 )
+
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

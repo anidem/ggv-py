@@ -1,4 +1,4 @@
-# settings/prod.py
+# settings/prod.py - configured for Heroku deployment
 
 from .base import *
 import dj_database_url
@@ -7,8 +7,11 @@ DEBUG = False
 
 TEMPLATE_DEBUG = False
 
-STATIC_ROOT = 'static'
 STATIC_URL = '/static/'
+
+STATICFILES_DIRS = (PROJECT_DIR.child('static'), )
+
+STATIC_ROOT = '/staticfiles/'
 
 DATABASES = {
     'default': { }

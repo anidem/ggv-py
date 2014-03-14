@@ -3,7 +3,9 @@ from unipath import Path
 
 PROJECT_DIR = Path(__file__).ancestor(3) # Points to <repository root>
 
-MEDIA_ROOT = PROJECT_DIR.child('media')
+MEDIA_URL = '/media/'
+
+MEDIA_ROOT = 'media'
 
 STATIC_URL = '/static/'
 

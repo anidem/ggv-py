@@ -5,17 +5,9 @@ PROJECT_DIR = Path(__file__).ancestor(3) # Points to <repository root>
 
 MEDIA_ROOT = PROJECT_DIR.child('media')
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/1.6/howto/static-files/
-
 STATIC_URL = '/static/'
 
-# (development) Where to look for static files in the project 
 STATICFILES_DIRS = (PROJECT_DIR.child('static'), )
-
-# (deployment) Where <collectstatic> will put files for production.
-# static_root is the absolute path to the directory where static files will be served in production.
-STATIC_ROOT = '/staticfiles/'
 
 TEMPLATE_DIRS = PROJECT_DIR.child('templates')
 

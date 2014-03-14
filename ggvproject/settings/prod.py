@@ -7,7 +7,7 @@ DEBUG = False
 
 TEMPLATE_DEBUG = False
 
-STATIC_ROOT = 'staticfiles'
+STATIC_ROOT = 'assets'
 
 
 DATABASES = {

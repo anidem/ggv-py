@@ -7,7 +7,14 @@ MEDIA_ROOT = PROJECT_DIR.child('media')
 
 STATIC_URL = '/static/'
 
-STATICFILES_DIRS = (PROJECT_DIR.child('static'), )
+STATICFILES_DIRS = (
+    PROJECT_DIR.child('static'),
+)
+
+# heroku uses dj_static to serve static files.
+# It does not require absolute path -- this is relative to development dir?
+STATIC_ROOT = 'staticfiles' 
+
 
 TEMPLATE_DIRS = PROJECT_DIR.child('templates')
 

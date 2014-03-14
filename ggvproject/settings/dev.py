@@ -8,7 +8,7 @@ TEMPLATE_DEBUG = True
 
 # (deployment) Where <collectstatic> will put files for production.
 # static_root is the absolute path to the directory where static files will be served in production.
-STATIC_ROOT = '/staticfiles/'
+###STATIC_ROOT = '/staticfiles/'
 
 DATABASES = {
     'default': {

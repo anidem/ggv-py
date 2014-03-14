@@ -1,10 +1,8 @@
 """
 WSGI config for ggvproject project.
 
-It exposes the WSGI callable as a module-level variable named ``application``.
-
-For more information on this file, see
-https://docs.djangoproject.com/en/1.6/howto/deployment/wsgi/
+Note: Using dj_static to serve static files from django. See STATIC_ROOT setting
+https://github.com/kennethreitz/dj-static
 """
 
 import os

@@ -7,12 +7,6 @@ DEBUG = False
 
 TEMPLATE_DEBUG = False
 
-STATIC_URL = '/static/'
-
-STATICFILES_DIRS = (PROJECT_DIR.child('static'), )
-
-STATIC_ROOT = 'staticfiles' #heroku may require non prepended slash -- non root
-
 DATABASES = {
     'default': { }
 }

@@ -7,6 +7,9 @@ DEBUG = False
 
 TEMPLATE_DEBUG = False
 
+STATIC_ROOT = 'staticfiles'
+
+
 DATABASES = {
     'default': { }
 }

@@ -7,8 +7,8 @@ DEBUG = False
 
 TEMPLATE_DEBUG = False
 
-STATIC_ROOT = 'assets'
-STATIC_URL = '/assets/'
+STATIC_ROOT = 'static'
+STATIC_URL = '/static/'
 
 DATABASES = {
     'default': { }

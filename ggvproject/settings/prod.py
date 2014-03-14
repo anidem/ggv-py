@@ -11,7 +11,7 @@ STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (PROJECT_DIR.child('static'), )
 
-STATIC_ROOT = '/staticfiles/'
+STATIC_ROOT = 'static'
 
 DATABASES = {
     'default': { }

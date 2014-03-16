@@ -5,6 +5,7 @@
 html,
 body {
   height: 100%;
+  background: #fff !important;
   /* The html and body elements cannot have any padding or margin. */
 }
 
@@ -69,4 +70,9 @@ body {
   margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
+}
+
+.logo {
+  height: 40px;
+  margin-top: -10px
 }

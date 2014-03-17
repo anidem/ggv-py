@@ -75,7 +75,7 @@ CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
 LOGIN_URL = '/accounts/login/'
 
-LOGIN_REDIRECT_URL = '/ggv'
+LOGIN_REDIRECT_URL = '/'
 
 AUTHENTICATION_BACKENDS = (
     'django.contrib.auth.backends.ModelBackend',

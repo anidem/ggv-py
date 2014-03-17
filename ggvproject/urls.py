@@ -17,7 +17,7 @@ urlpatterns = patterns('',
     url(r'^mc/(?P<pk>\d+)$', MultipleChoiceQuestionDetailView.as_view(), name='multiplechoice'),
     url(r'^mc/new$', MultipleChoiceQuestionCreateView.as_view(), name='newmc'),
 
-    url(r'^ggv/$', HomeView.as_view(), name='ggvhome'),
+    # url(r'^ggv/$', HomeView.as_view(), name='ggvhome'),
     url(r'^ggv/(?P<pk>\d+)$', CourseView.as_view(), name='course'),
     url(r'^ggv/lesson/(?P<pk>\d+)$', LessonView.as_view(), name='lesson'),
     url(r'^ggv/activity/(?P<pk>\d+)$', ActivityView.as_view(), name='activity'),
@@ -33,6 +33,6 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')), 
     url(r'^admin/', include(admin.site.urls)),
 
-    url(r'^$', IndexView.as_view(), name='root')
+    url(r'^$', HomeView.as_view(), name='ggvhome'),
 )
 

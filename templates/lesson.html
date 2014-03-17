@@ -1,16 +1,17 @@
 <!-- lesson.html -->
 {% extends "base.html" %}
-{% block page_header %} GGV Lessons  {{ course.title }} {% endblock page_header %}
+{% block page_header %} {{ object.title }} {{ object.get_subject_display }} {% endblock page_header %}
 
 {% block content %}
 
-<h1> {{ object.title }} Activities </h1>
-<ul>
-{% for i in acts %}
-    <li><a href="{{ i.get_absolute_url }}"> {{ i.title }} </a></li>
-{% empty %}
-    <li>No activities yet.</li>
-{% endfor %}
-</ul>
-
+<div class="list-group">
+	{% for i in acts %}
+	<a href="{{ i.get_absolute_url }}" class="list-group-item">
+		<h4>{{ i.title }}</h4>
+		<p class="list-group-item-text">...</p>
+	</a>
+	{% empty %}
+	<h3>There are no activities assigned to this lesson.</h3>
+	{% endfor %}
+</div>
 {% endblock content %}

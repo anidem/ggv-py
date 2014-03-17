@@ -11,12 +11,22 @@
 	</ul>
 {% endif %}
 <h1>Current  Courses</h1>
-<ul>
-{% for i in courses %}
-    <li><a href="{{ i.get_absolute_url }} "> {{ i.title }} - {{ i.short_name }}</a></li>
-{% empty %}
-    <li>No courses yet.</li>
-{% endfor %}
-</ul>
+<div class="row">
+	{% for i in courses %}
+		<div class="col-sm-6 col-md-4">
+			<div class="thumbnail">
+				<img data-src="holder.js/300x200" alt="...">
+				<div class="caption">
+					<h3>{{ i.short_name }}</h3>
+					<p>{{ i.title }}</p>
+					<p><a href="{{ i.get_absolute_url }}" class="btn btn-primary" role="button">go</a></p>
+				</div>
+			</div>
+		</div>
+	{% empty %}
+	    <h3>Hi, you don't appear to have any lessons assigned.</h3>
+	{% endfor %}
+</div>
+
 
 {% endblock content %}

@@ -1,9 +1,10 @@
 <!-- activity.html -->
 {% extends "base.html" %}
-{% block page_header %} GGV Lessons  {{ object.lesson.title }} {% endblock page_header %}
+{% block page_header %} 
+<a href="{{ object.lesson.get_absolute_url }}">{{ object.lesson.title }} {{ object.lesson.get_subject_display }}</a> 
+{% endblock page_header %}
 
 {% block content %}
-
 <h1> {{ object.title }} </h1>
 <a href="{{ object.assets}}"></a>
 

@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 class Lesson(models.Model):
-	MATH = 'Math'
+	MATH = 'MATH'
 	SPMATH = 'SP_MATH'
 	SCIENCE = 'SCI'
 	SPSCIENCE = 'SP_SCI'

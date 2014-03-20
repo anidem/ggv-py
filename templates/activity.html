@@ -1,5 +1,22 @@
 <!-- activity.html -->
 {% extends "base.html" %}
+{% load staticfiles %}
+
+{% block local_nav %} 
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Activities <b class="caret"></b></a>
+  <ul class="dropdown-menu">
+    {% for i in lessons %}<li><a href="{{ i.get_absolute_url }}">Action</a></li> {% endfor %}
+  </ul>
+</li>
+<li class="dropdown">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Activities <b class="caret"></b></a>
+  <ul class="dropdown-menu">
+    {% for i in lessons %}<li><a href="#">Action</a></li> {% endfor %}
+  </ul>
+</li>
+{% endblock local_nav %}
+
 {% block page_header %} 
 <a href="{{ object.lesson.get_absolute_url }}">{{ object.lesson.title }} {{ object.lesson.get_subject_display }}</a> 
 {% endblock page_header %}

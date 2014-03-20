@@ -50,6 +50,7 @@ class CourseView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
 		context = super(CourseView, self).get_context_data(**kwargs)
 		course = self.get_object()
 		context['lessons'] = course.lesson_list()
+		context['courses'] = get_objects_for_user(self.request.user, 'view_course', Course)
 		context['members'] = get_users_with_perms(course)
 		return context
 

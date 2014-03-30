@@ -1,7 +1,7 @@
 import os
 from unipath import Path
 
-PROJECT_DIR = Path(__file__).ancestor(3) # Points to <repository root>
+PROJECT_DIR = Path(__file__).ancestor(3)  # Points to <repository root>
 
 MEDIA_URL = '/media/'
 
@@ -15,13 +15,23 @@ STATICFILES_DIRS = (
 
 # heroku uses dj_static to serve static files.
 # It does not require absolute path -- this is relative to development dir?
-STATIC_ROOT = 'staticfiles' 
+STATIC_ROOT = 'staticfiles'
 
+STATICFILES_FINDERS = (
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+)
+
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.core.context_processors.request",
+    "django.contrib.auth.context_processors.auth",
+)
 
 TEMPLATE_DIRS = PROJECT_DIR.child('templates')
 
 # Application definition
 INSTALLED_APPS = (
+    'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -31,14 +41,16 @@ INSTALLED_APPS = (
 
     'django.contrib.admindocs',
 
+    'courses',
     'lessons',
+    'slidestacks',
     'questions',
     'core',
-    
-    'crispy_forms',
 
+    'crispy_forms',
+    'django_wysiwyg',
     'guardian',
-    
+
     'south',
 )
 
@@ -73,7 +85,7 @@ USE_TZ = True
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-LOGIN_URL = '/accounts/login/'
+LOGIN_URL = '/login'
 
 LOGIN_REDIRECT_URL = '/'
 
@@ -83,16 +95,3 @@ AUTHENTICATION_BACKENDS = (
 )
 
 ANONYMOUS_USER_ID = -1
-
-# Stored in environment variable -- not here.
-SECRET_KEY = os.environ['SECRET_KEY']
-
-
-
-
-
-
-
-
-
-

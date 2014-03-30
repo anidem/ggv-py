@@ -1,0 +1,24 @@
+<!-- act_worksheet.html -->
+{% extends "base.html" %}
+
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+{% block content %}
+	<h1>{{ object }}</h1>
+	<div class="container">
+	<form id="ws_{{ object.id }}" method="post" action role="form">{% csrf_token %}
+		{% for i in questions %}
+		
+			<div class="row"><span>{{ forloop.counter }}.</span> {{ i.text }}</div>
+			{% for j in i.getOptions %}
+				<div class="row"><input name="q_{{ i.id }}" type="{{ i.select_type }}"/ >  {{ j }} </div>
+			{% endfor %}
+		<div class="row"><p></p></div>
+		{% endfor %}
+		
+		<div class="row"> <input type="button" id="submit_sheet" value="Check" /></div>
+	</form>	
+	</div>
+{% endblock content %}     

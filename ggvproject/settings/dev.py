@@ -12,8 +12,8 @@ TEMPLATE_DEBUG = True
 
 DATABASES = {
     'default': {
-        'ENGINE':'django.db.backends.postgresql_psycopg2',
-        'NAME': 'localdb',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': 'ggvdb2',
         'USER': 'djangodbuser',
         'PASSWORD': '1',
         'HOST': '127.0.0.1',
@@ -27,3 +27,6 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS += (
     'debug_toolbar',
 )
+
+# Stored in environment variable -- not here.
+SECRET_KEY = os.environ['SECRET_KEY']

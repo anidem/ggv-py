@@ -11,12 +11,13 @@
 </li>
 {% endblock local_nav %}
 
-{% block page_header %} {{ object.title }} {{ object.get_subject_display }} {% endblock page_header %}
+{% block page_header %} {{ object.title }} {% endblock page_header %}
 
 {% block content %}
 
 <div class="list-group">
 	{% for i in acts %}
+	{% ifchanged i.section %} <h2>{{ i.section }}</h2> {% endifchanged %}
 	<a href="{{ i.get_absolute_url }}" class="list-group-item">
 		<h4>{{ i.title }}</h4>
 		<p class="list-group-item-text">...</p>

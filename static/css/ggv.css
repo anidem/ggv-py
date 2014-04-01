@@ -20,6 +20,10 @@ body {
   padding: 0 0 60px;
 }
 
+.navbar {
+  background-color: white;
+}
+
 /* Set the fixed height of the footer here */
 #footer {
   height: 60px;

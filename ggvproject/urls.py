@@ -21,7 +21,7 @@ urlpatterns = patterns('',
     # url(r'^ggvstudent/lesson/(?P<pk>\d+)$', StudentLessonView.as_view(), name='lesson_student'),
     # url(r'^ggvstudent/activity/(?P<pk>\d+)$', StudentActivityView.as_view(), name='activity_student'),
 
-    
+
 # Login urls
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
@@ -31,6 +31,7 @@ urlpatterns = patterns('',
     url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^ggvadmin/',  include(admin.site.urls)),  # admin site
 
+    url(r'^start$', IndexView.as_view(), name='home'),
     url(r'^$', HomeView.as_view(), name='ggvhome'),
 )
 

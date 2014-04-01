@@ -1,11 +1,14 @@
 # questions/views.py
-from django.shortcuts import render, get_object_or_404
-from django.views.generic import DetailView, CreateView, UpdateView
+from django.views.generic import DetailView
+
+from braces.views import LoginRequiredMixin, CsrfExemptMixin
+
+from core.mixins import AccessRequiredMixin, AccessCodeRequiredMixin
 
 from .models import QuestionSet, MultipleChoiceQuestion
 
 
-class QuestionSetView(DetailView):
+class QuestionSetView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
     model = QuestionSet
     template_name = 'act_worksheet.html'
 

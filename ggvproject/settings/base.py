@@ -23,8 +23,9 @@ STATICFILES_FINDERS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.core.context_processors.request",
-    "django.contrib.auth.context_processors.auth",
+    'django.core.context_processors.request',
+    'django.contrib.auth.context_processors.auth',
+    'django.contrib.messages.context_processors.messages',
 )
 
 TEMPLATE_DIRS = PROJECT_DIR.child('templates')
@@ -82,6 +83,7 @@ USE_L10N = True
 
 USE_TZ = True
 
+GRAPPELLI_ADMIN_TITLE = 'GGV Admin'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 

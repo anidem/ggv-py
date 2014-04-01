@@ -9,9 +9,7 @@ class AccessRequiredMixin(object):
     def dispatch(self, *args, **kwargs):
 
         if not self.get_object().check_membership(self.request.user):
-            messages.error(
-                self.request, 'Sorry. You don\'t have access to this material.')
-            return render(self.request, 'ggv.html')
+            self.template_name = '404.html'
 
         return super(AccessRequiredMixin, self).dispatch(*args, **kwargs)
 

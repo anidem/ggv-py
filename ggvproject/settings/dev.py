@@ -27,6 +27,3 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS += (
     'debug_toolbar',
 )
-
-# Stored in environment variable -- not here.
-SECRET_KEY = os.environ['SECRET_KEY']

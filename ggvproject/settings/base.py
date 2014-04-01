@@ -97,3 +97,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 ANONYMOUS_USER_ID = -1
+
+# Stored in environment variable -- not here.
+SECRET_KEY = os.environ['SECRET_KEY']
+

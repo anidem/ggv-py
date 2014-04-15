@@ -65,11 +65,16 @@ class SlideStackInlineAdmin(admin.TabularInline):
 
 class SlideStackAdmin(admin.ModelAdmin):
     model = SlideStack
-    list_display = ('section', 'title', 'asset', 'display_order')
-    list_filter = ('section',)
+    list_display = ('lesson', 'title', 'section',  'asset', 'display_order')
+    list_editable = ('section',)
+    list_filter = ('lesson', 'section',)
 
 
 class QuestionSetAdmin(admin.ModelAdmin):
+    list_display = ('lesson', 'title', 'section', 'display_order')
+    list_editable = ('section',)
+    list_filter = ('lesson', 'section',)
+
     inlines = [
         QuestionSetInlineAdmin,
     ]

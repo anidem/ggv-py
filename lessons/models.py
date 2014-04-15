@@ -12,7 +12,7 @@ class LessonManager(models.Manager):
         questions = lesson_obj.worksheets.all()
         slidestacks = lesson_obj.slidestacks.all()
         activity_set = list(chain(questions, slidestacks))
-        activity_set = sorted(activity_set, key=attrgetter('section', 'display_order'))
+        activity_set = sorted(activity_set, key=attrgetter('section.display_order','display_order'))
         return activity_set
 
 class Lesson(models.Model):
@@ -59,10 +59,10 @@ class Section(models.Model):
     display_order = models.IntegerField(default=0)
 
     class Meta:
-        ordering = ['display_order']
+        ordering = ['title', 'display_order']
 
     def __unicode__(self):
-        return u'%s. %s' % (self.display_order, self.title)
+        return self.title
 
 class AbstractActivity(models.Model):
     title = models.CharField(max_length=256)

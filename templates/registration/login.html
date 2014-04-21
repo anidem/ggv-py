@@ -31,7 +31,7 @@
     <div class="container">
 		<form class="form-signin" role="form" method="post" action="{% url 'login' %}">
 			{% csrf_token %}
-			<img src="{% static 'img/logo.png' %}" style="width: 100%"/>
+			<img src="{% static 'img/logo.jpg' %}" style="width: 100%"/>
 			<h2 class="form-signin-heading">GED Gone Virtual</h2>
 			{% if form.errors %}
 			<h3>Your username and password didn't match. Please try again.</he>

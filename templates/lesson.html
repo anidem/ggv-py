@@ -17,13 +17,16 @@
 
 <div class="list-group">
 	{% for i in acts %}
-	{% ifchanged i.section %} <h2>{{ i.section }}</h2> {% endifchanged %}
-	<a href="{{ i.get_absolute_url }}" class="list-group-item">
-		<h4>{{ i.title }}</h4>
-		<p class="list-group-item-text">...</p>
-	</a>
+		{% ifchanged i.section %} <h2>{{ i.section }}</h2> {% endifchanged %}
+		<a href="{{ i.get_absolute_url }}" class="list-group-item">
+			<h4><span class="glyphicon glyphicon-{% if i.activity_type = 'slidestack' %}film" style="background: yellow"{% else %}list-alt" style="background: white"
+				{% endif %}> </span> 
+				{{ forloop.counter }}. {{ i.title }}
+			</h4>
+			<p class="list-group-item-text">...</p>
+		</a>
 	{% empty %}
-	<h3>There are no activities assigned to this lesson.</h3>
+		<h2>There are no activities assigned to this lesson.</h2>
 	{% endfor %}
 </div>
 {% endblock content %}

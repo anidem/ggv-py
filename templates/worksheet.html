@@ -1,0 +1,20 @@
+<!-- worksheet.html -->
+{% extends "base.html" %}
+
+{% load staticfiles %}
+
+
+{% block content %}
+	<h1>{{ object }}</h1>
+	<div class="container">
+<form method="post" action=".">
+    {{ formset.management_form }}
+    {% for form in formset %}
+    	ITEM: {{form.id}}
+        
+    {% endfor %}
+</form>
+	</div>
+{% endblock content %}     
+
+{% block local_js %} <script src="{% static '/js/questions.js' %}"></script> {% endblock local_js %}

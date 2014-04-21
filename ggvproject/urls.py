@@ -15,6 +15,7 @@ urlpatterns = patterns('',
     url(r'^ggv/lesson/(?P<pk>\d+)$', LessonView.as_view(), name='lesson'),
     url(r'^ggv/slidestack/(?P<pk>\d+)$', SlideStackView.as_view(), name='slidestack'),
     url(r'^ggv/worksheet/(?P<pk>\d+)$', QuestionSetView.as_view(), name='worksheet'),
+    # url(r'^ggv/sheet/(?P<pk>\d+)$', WorksheetView),
 
     # url(r'^ggvstudent/$', StudentAccessView.as_view(), name='student_login'),
     # url(r'^ggvstudent/(?P<pk>\w+)$', StudentCourseView.as_view(), name='course_student'),

@@ -10,7 +10,7 @@ from guardian.admin import GuardedModelAdmin
 
 from courses.models import Course
 from lessons.models import Lesson, Section
-from questions.models import QuestionSet, QuestionResponse, QuestionOption, SimpleQuestion, MultipleChoiceQuestion
+from questions.models import QuestionSet, QuestionResponse, QuestionOption, SimpleQuestion
 from slidestacks.models import SlideStack
 
 class ExtraMedia:
@@ -39,13 +39,13 @@ class QuestionOptionInlineAdmin(admin.TabularInline):
 
 
 class QuestionSetInlineAdmin(EditLinkToInlineObject, admin.TabularInline):
-    model = MultipleChoiceQuestion
+    model = SimpleQuestion
     list_display = ('text', 'select_type', 'question_set', 'display_order')
     extra = 1
     readonly_fields = ('edit_link', )
 
 
-class MultipleChoiceQuestionAdmin(admin.ModelAdmin):
+class SimpleQuestionAdmin(admin.ModelAdmin):
     inlines = [
         QuestionOptionInlineAdmin,
     ]
@@ -92,10 +92,8 @@ class LessonAdmin(GuardedModelAdmin):
 
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
 admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)
-admin.site.register(Section)
+admin.site.register(Section, Media=ExtraMedia)
 admin.site.register(SlideStack, SlideStackAdmin)
-admin.site.register(QuestionSet, QuestionSetAdmin)
+admin.site.register(QuestionSet, QuestionSetAdmin, Media=ExtraMedia)
 admin.site.register(QuestionResponse)
-admin.site.register(SimpleQuestion)
-admin.site.register(MultipleChoiceQuestion,
-                    MultipleChoiceQuestionAdmin, Media=ExtraMedia)
+admin.site.register(SimpleQuestion, SimpleQuestionAdmin, Media=ExtraMedia)

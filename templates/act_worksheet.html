@@ -7,20 +7,24 @@
 
 {% block content %}
 	<h1>{{ object }}</h1>
-	<div class="container">
-	<form id="ws_{{ object.id }}" method="post" action role="form">{% csrf_token %}
+	<div class="container">	
+	<h2>{{ feedback }}</h2>
+	<form method="post" action="" role="form">{% csrf_token %}
 		{% for i in questions %}
-		
 			<div class="row"><span>{{ forloop.counter }}.</span> {{ i.text }}</div>
 			{% for j in i.getOptions %}
-				<div class="row"><input name="q_{{ i.id }}" type="{{ i.select_type }}"/ >  {{ j }} </div>
+				<div class="row"><input name="q_{{ i.id }}" type="{{ i.select_type }}" value="{{ j }}"/ >  {{ j }} </div>
+			{% empty %}
+				<div class="row"><input name="q_{{ i.id }}" type="{{ i.select_type }}"/ ></div>
 			{% endfor %}
-		<div class="row"><p></p></div>
+
 		{% endfor %}
 		
-		<div class="row"> <input type="button" id="submit_sheet" value="Check" /></div>
+		<div class="row"> <input type="submit" id="submit_sheet" value="Check" /></div>
 	</form>	
 	</div>
 {% endblock content %}     
 
+{% comment %}
 {% block local_js %} <script src="{% static '/js/questions.js' %}"></script> {% endblock local_js %}
+{% endcomment %}

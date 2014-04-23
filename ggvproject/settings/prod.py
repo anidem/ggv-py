@@ -1,15 +1,21 @@
 # settings/prod.py - configured for Heroku deployment
 
+# april-22-2014
+# To run this settings file with heroku command: foreman start, 
+# the forman needs to access an environment variable as follows: (dbuser:pwd@host/dbname)
+
+# export DATABASE_URL=postgres://djangodbuser:1@localhost/ggvdb2    
+
+# This matches the local development database (see requirements/dev.txt). On Heroku, this is automagically set  (see your app settings)
+
 from .base import *
 import dj_database_url
 
-DEBUG = False
+DEBUG = True
 
 TEMPLATE_DEBUG = False
 
-DATABASES = {
-    'default': { }
-}
+DATABASES = {}
 
 DATABASES['default'] =  dj_database_url.config()
 
@@ -26,5 +32,5 @@ STATIC_ROOT = 'staticfiles'
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = (
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(PROJECT_DIR, 'static'),
 )

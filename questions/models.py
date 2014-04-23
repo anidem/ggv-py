@@ -18,7 +18,7 @@ class QuestionManager(models.Manager):
 
 class QuestionSet(AbstractActivity):
     lesson = models.ForeignKey(Lesson, null=True, blank=True, related_name='worksheets')
-    activity_type = models.CharField(max_length=48, default='worksheet')
+    activity_type = models.CharField(max_length=48, default='worksheet', null=True)
 
     objects = QuestionManager()
 

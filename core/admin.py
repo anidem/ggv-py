@@ -30,7 +30,6 @@ class EditLinkToInlineObject(object):
         else:
             return ''
 
-
 class QuestionOptionInlineAdmin(admin.TabularInline):
     model = QuestionOption
     formfield_overrides = {
@@ -66,13 +65,13 @@ class SlideStackInlineAdmin(admin.TabularInline):
 class SlideStackAdmin(admin.ModelAdmin):
     model = SlideStack
     list_display = ('lesson', 'title', 'section',  'asset', 'display_order')
-    list_editable = ('section',)
+    # list_editable = ('section',)
     list_filter = ('lesson', 'section',)
 
 
 class QuestionSetAdmin(admin.ModelAdmin):
     list_display = ('lesson', 'title', 'section', 'display_order')
-    list_editable = ('section',)
+    # list_editable = ('section',)
     list_filter = ('lesson', 'section',)
 
     inlines = [
@@ -89,10 +88,12 @@ class LessonAdmin(GuardedModelAdmin):
         WorksheetInlineAdmin, SlideStackInlineAdmin,
     ]
 
+class SectionAdmin(GuardedModelAdmin):
+    list_display = ('lesson', 'title', 'display_order')
 
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
 admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)
-admin.site.register(Section, Media=ExtraMedia)
+admin.site.register(Section, SectionAdmin, Media=ExtraMedia)
 admin.site.register(SlideStack, SlideStackAdmin)
 admin.site.register(QuestionSet, QuestionSetAdmin, Media=ExtraMedia)
 admin.site.register(QuestionResponse)

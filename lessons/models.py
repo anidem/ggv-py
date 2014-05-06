@@ -67,9 +67,10 @@ class Lesson(models.Model):
 class Section(models.Model):
     title = models.CharField(max_length=256)
     display_order = models.IntegerField(default=0)
+    lesson = models.ForeignKey(Lesson)
 
     class Meta:
-        ordering = ['title', 'display_order']
+        ordering = ['lesson', 'display_order', 'title']
 
     def __unicode__(self):
         return self.title

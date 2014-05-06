@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Count
 from itertools import chain
 from operator import attrgetter
 from django.core.urlresolvers import reverse
@@ -10,6 +11,13 @@ from lessons.models import Lesson, AbstractActivity
 
 class QuestionManager(models.Manager):
     
+    def worksheet(self, **kwargs):
+        print '%s:%s' % ('USER', kwargs['user'])
+        questions = SimpleQuestion.objects.filter(question_set=kwargs['id']).order_by('display_order')
+        responses = QuestionResponse.objects.filter(user__id=kwargs['user']).filter(worksheet__id=kwargs['id'])
+
+        return responses      
+
     def questions(self, **kwargs):
         sheet = QuestionSet.objects.get(pk=kwargs['id'])
         questions = sheet.questions.all().order_by('display_order')
@@ -54,8 +62,9 @@ class SimpleQuestion(AbstractQuestion):
     select_type = models.CharField(
         max_length=24, choices=SELECTION_TYPES, default='radio')
     question_set = models.ForeignKey(QuestionSet, null=True, related_name='questions')
+    correct_answer = models.TextField(null=True, blank=True)
 
-    def getOptions(self):
+    def get_options(self):
         return QuestionOption.objects.filter(question=self.id)
 
     def get_absolute_url(self):
@@ -63,9 +72,9 @@ class SimpleQuestion(AbstractQuestion):
 
 class QuestionOption(models.Model):
     text = models.CharField(max_length=512)
-    correct = models.BooleanField(blank=True)
+    is_correct = models.BooleanField(blank=True, default=False)
     question = models.ForeignKey(
-        SimpleQuestion, related_name='options', null=True)
+        SimpleQuestion, related_name='options')
     display_order = models.IntegerField(default=0)
 
     class Meta:
@@ -76,6 +85,7 @@ class QuestionOption(models.Model):
 
 class QuestionResponse(TimeStampedModel):
     user = models.ForeignKey(User)
+    worksheet = models.ForeignKey(QuestionSet)
     question = models.ForeignKey(SimpleQuestion)
     response = models.TextField()
 

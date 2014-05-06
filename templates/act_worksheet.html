@@ -6,18 +6,39 @@
 
 
 {% block content %}
+{{form.as_table}}
+{% comment %}
+		{% for i in questions %}
+			<div class="row"><span>[{{ i.id }}] {{ forloop.counter }}.</span> {{ i.question.text|safe }}</div>
+			{% for j in i.question.getOptions %}
+				<div class="row"><input name="q_{{ i.question.id }}" type="{{ i.question.select_type }}" value="{{ j }}"/ >  {{ j }} </div>
+			{% empty %}
+				<div class="row"><input name="q_{{ i.question.id }}" type="{{ i.question.select_type }}"/ ></div>
+			{% endfor %}
+			<div class="row">You Answered...<span>[{{ i.response }}]</span></div>
+		{% endfor %}
+{% endcomment %}
+
+{% if messages %}
+<ul class="messages">
+    {% for message in messages %}
+    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
 	<h1>{{ object }}</h1>
 	<div class="container">	
 	<h2>{{ feedback }}</h2>
 	<form method="post" action="" role="form">{% csrf_token %}
 		{% for i in questions %}
-			<div class="row"><span>{{ forloop.counter }}.</span> {{ i.text }}</div>
+			<div class="row"><span>[{{ i.id }}] {{ forloop.counter }}.</span> {{ i.text|safe }}</div>
 			{% for j in i.getOptions %}
 				<div class="row"><input name="q_{{ i.id }}" type="{{ i.select_type }}" value="{{ j }}"/ >  {{ j }} </div>
 			{% empty %}
 				<div class="row"><input name="q_{{ i.id }}" type="{{ i.select_type }}"/ ></div>
 			{% endfor %}
-
+			<div class="row">You Answered...<span>[{{ i.resp }}]</span></div>
 		{% endfor %}
 		
 		<div class="row"> <input type="submit" id="submit_sheet" value="Check" /></div>

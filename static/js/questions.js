@@ -1,6 +1,15 @@
 // questions.js
 jQuery(function($) {
-	$("#submitter").click(function () {
+	
+	$( "#worksheet_form" ).change(function( event ) {
+		console.log($this);
+		$(this).removeClass("required");
+		console.log("radio clicked: " + $('.required').length;
+	});
+	
+
+	$( "#submit_sheet" ).click(function( event ) {
+		
 		var worksheet = "2";
 		// Check the text areas
 		var noval = 0;
@@ -23,10 +32,11 @@ jQuery(function($) {
 		
 		// Send it off!
 		console.log(SITE_ROOT+"/submitprep");
-		$.post("/ggv/worksheet/"+worksheet, postdata, function(data) {
-			// $("#surveycontent").remove();
-			// $("#ajaxmsg").html(data);
-		});	
+		// $.post("/ggv/worksheet/"+worksheet, postdata, function(data) {
+		// 	// $("#surveycontent").remove();
+		// 	// $("#ajaxmsg").html(data);
+		// 	return alert("You're ready!");
+		// });	
 	});
 
 

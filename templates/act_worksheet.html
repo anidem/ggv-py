@@ -17,25 +17,39 @@
 <h1>{{ object }}</h1>
 <div class="container">	
 	<h2>{{ feedback }}</h2>
-	<form id="worksheet_form" method="post" action="" role="form">{% csrf_token %}
+	<form id="worksheet_form" method="post" action="" role="form" class="form-horizontal">{% csrf_token %}
 		{% for i in questions %}
-			<div class="row"><span>{{ forloop.counter }}. </span>{{ i.text|safe }}</div>
+			<div class="form-group has-success">
+				<div class="col-md-4">
+					<label>
+						<span class="glyphicon glyphicon-ok form-control-feedback"></span>
+						<span>{{ forloop.counter }}. </span>{{ i.text|safe }}
+					</label>
+				</div>
+				<div class="col-md-8">
+					<span>{{ i.resp }}</span>
+				</div>
+			
 			{% for j in i.get_options %}
-				<div class="row">
-					<input name="q_{{ i.id }}" type="{{ i.select_type }}" value="{{ j }}"/>{{ j }} 
+				<div class="col-md-12">  	
+						<input name="q_{{ i.id }}" {% if forloop.first %}class="required"{% endif %} type="{{ i.select_type }}" value="{{ j }}">
+						<label for="q_{{ i.id }}">{{ j }}</label>	
 				</div>
 			{% empty %}
-				<div class="row"><input name="q_{{ i.id }}" type="{{ i.select_type }}"/ ></div>
+				<div class="col-md-12">
+					<input name="q_{{ i.id }}" class="required" type="{{ i.select_type }}">
+					<label for="q_{{ i.id }}"></label>
+				</div>
 			{% endfor %}
-			<div class="row">You answered...<span>{{ i.resp }}</span></div>
+			</div>
 		{% endfor %}
 		
-		<div class="row"> <input type="submit" id="submit_sheet" value="Check"/></div>
+		<div class="form-group"> <input type="button" id="submit_sheet" value="Check"></div>
 	</form>	
 </div>
 
 {% endblock content %}     
 
-{% comment %}
-{% block local_js %} <script src="{% static '/js/questions.js' %}"></script> {% endblock local_js %}
-{% endcomment %}
+
+{% block local_js %} <script src="{% static 'js/questions.js' %}"></script> {% endblock local_js %}
+

@@ -15,36 +15,21 @@
 	</ul>
 {% endif %}
 <h1>{{ object }}</h1>
-<div class="container">	
-	<h2>{{ feedback }}</h2>
-	<form id="worksheet_form" method="post" action="" role="form" class="form-horizontal">{% csrf_token %}
+<div class="container">
+	<input id="worksheet" type="hidden" value={{ object.id }}>
+	<h2 id="feedback">{{ feedback }}</h2>
+
+	<form id="worksheet_form" method="post" role="form">{% csrf_token %}
 		{% for i in questions %}
-			<div class="form-group has-success">
-				<div class="col-md-4">
-					<label>
-						<span class="glyphicon glyphicon-ok form-control-feedback"></span>
-						<span>{{ forloop.counter }}. </span>{{ i.text|safe }}
-					</label>
-				</div>
-				<div class="col-md-8">
-					<span>{{ i.resp }}</span>
-				</div>
-			
+			<div><label><span>{{ forloop.counter }}. </span>{{ i.text|safe }}</label></div>			
 			{% for j in i.get_options %}
-				<div class="col-md-12">  	
-						<input name="q_{{ i.id }}" {% if forloop.first %}class="required"{% endif %} type="{{ i.select_type }}" value="{{ j }}">
-						<label for="q_{{ i.id }}">{{ j }}</label>	
-				</div>
-			{% empty %}
-				<div class="col-md-12">
-					<input name="q_{{ i.id }}" class="required" type="{{ i.select_type }}">
-					<label for="q_{{ i.id }}"></label>
-				</div>
-			{% endfor %}
+			<div class="radio">
+				<input id="option{{ i.id }}-{{ j.id }}" name="q_{{ i.id }}" type="{{ i.select_type }}" value="{{ j }}" required >
+				<label for="option{{ i.id }}-{{ j.id }}">{{ j }} </label>
 			</div>
-		{% endfor %}
-		
-		<div class="form-group"> <input type="button" id="submit_sheet" value="Check"></div>
+			{% endfor %}			
+		{% endfor %}		
+		<div><input type="button" id="submit_sheet" value="Check"></div>
 	</form>	
 </div>
 

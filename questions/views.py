@@ -78,6 +78,7 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
                 resp.response = request.POST[i]
                 resp.save()
         
+        return_data["request"] = request.POST
         return_data["success"] = 'Thanks!'
         return HttpResponse(json.dumps(return_data), content_type="application/json")
 

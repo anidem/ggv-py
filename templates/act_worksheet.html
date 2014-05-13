@@ -7,30 +7,60 @@
 
 {% block content %}
 
-{% if messages %}
-	<ul class="messages">
-	    {% for message in messages %}
-	    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-	    {% endfor %}
-	</ul>
-{% endif %}
 <h1>{{ object }}</h1>
 <div class="container">
 	<input id="worksheet" type="hidden" value={{ object.id }}>
-	<h2 id="feedback">{{ feedback }}</h2>
+	<h3 id="feedback"></h3>
+	<form id="worksheet_form" method="post" role="form">{% csrf_token %}
+	
+	{% for i in user_worksheet %}
+	
+	<div class="question-prompt required">
+		<label><span>{{ forloop.counter }}. </span>{{ i.question|safe }}</label>
+		{% for j in i.options %}
+
+		<div class="radio">			
+			{% if j.text == i.user_response.response %}
+				{% if j.is_correct %}
+					<span class="glyphicon glyphicon-ok" style="color:green"></span>
+				{% else %}
+					<span class="glyphicon glyphicon-remove" style="color:red"></span>
+				{% endif %}
+			{% elif j.is_correct %}
+				<span class="glyphicon glyphicon-ok" style="color:green"></span>
+			{% endif %}
+			<label for="option{{ i.question.id }}-{{ j.id }}">{{ j }}</label>
+  			<input id="option{{ i.question.id }}-{{ j.id }}" name="q_{{ i.question.id }}" type="{{ i.question.select_type }}" value="{{ j }}">
+
+  		</div>
+ 		{% endfor %}
+ 	</div>
+	
+	{% endfor %}
+	<div><input type="button" id="submit_sheet" value="Check"></div>
+	</form>
+	<hr>
+
+
+	{% comment %}
+	<input id="worksheet" type="hidden" value={{ object.id }}>
+	<h3 id="feedback"></h3>
 
 	<form id="worksheet_form" method="post" role="form">{% csrf_token %}
 		{% for i in questions %}
-			<div><label><span>{{ forloop.counter }}. </span>{{ i.text|safe }}</label></div>			
+		<div class="question-prompt required">
+			<label><span>{{ forloop.counter }}. </span>{{ i.text|safe }}</label>			
 			{% for j in i.get_options %}
 			<div class="radio">
 				<input id="option{{ i.id }}-{{ j.id }}" name="q_{{ i.id }}" type="{{ i.select_type }}" value="{{ j }}" required >
 				<label for="option{{ i.id }}-{{ j.id }}">{{ j }} </label>
 			</div>
-			{% endfor %}			
+			{% endfor %}
+		</div>		
 		{% endfor %}		
 		<div><input type="button" id="submit_sheet" value="Check"></div>
-	</form>	
+	</form>
+	{% endcomment %}
 </div>
 
 {% endblock content %}     

@@ -53,9 +53,7 @@ class QuestionForm(forms.Form):
     class Meta:
         fields = ['question', 'response']
 
-
-
-        
+   
 
 
 
@@ -65,10 +63,7 @@ class QuestionForm(forms.Form):
 class QuestionPostForm(ModelForm):
     class Meta:
         model = QuestionResponse
-        fields = ['user', 'question', 'response']
-
-
-
+        fields = ['question', 'response']
 
 
 class QuestionResponseFormDyno(ModelForm):

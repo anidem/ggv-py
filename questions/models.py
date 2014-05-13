@@ -23,6 +23,18 @@ class QuestionManager(models.Manager):
         questions = sheet.questions.all().order_by('display_order')
         return questions
 
+    def user_worksheet(self, **kwargs):
+        user = User.objects.get(pk=kwargs['user'])
+        questions = SimpleQuestion.objects.filter(question_set=kwargs['id']).order_by('display_order')
+        user_responses = QuestionResponse.objects.filter(user__id=kwargs['user'])
+        question_response_list = []
+        for q in questions:
+            response_obj = dict()
+            response_obj['question'] = q
+            response_obj['options'] = q.get_options()
+            response_obj['user_response'] = user_responses.get(question=q) or None
+            question_response_list.append(response_obj)
+        return question_response_list
 
 class QuestionSet(AbstractActivity):
     lesson = models.ForeignKey(Lesson, null=True, blank=True, related_name='worksheets')
@@ -65,7 +77,7 @@ class SimpleQuestion(AbstractQuestion):
     correct_answer = models.TextField(null=True, blank=True)
 
     def get_options(self):
-        return QuestionOption.objects.filter(question=self.id)
+        return QuestionOption.objects.filter(question=self.id).order_by('display_order')
 
     def get_absolute_url(self):
         return reverse('question', args=[str(self.id)])

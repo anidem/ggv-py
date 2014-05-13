@@ -30,9 +30,20 @@ class QuestionManager(models.Manager):
         question_response_list = []
         for q in questions:
             response_obj = dict()
+            option_obj_list = []
             response_obj['question'] = q
-            response_obj['options'] = q.get_options()
             response_obj['user_response'] = user_responses.get(question=q) or None
+            for opt in q.get_options():
+                option_obj = dict()
+                option_obj['option'] = opt
+                if opt.text == response_obj['user_response'].response:
+                    option_obj['response'] = response_obj['user_response']
+                else:
+                    option_obj['response'] = None
+                
+                option_obj_list.append(option_obj)
+            
+            response_obj['options'] = option_obj_list
             question_response_list.append(response_obj)
         return question_response_list
 

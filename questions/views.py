@@ -50,16 +50,15 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
             except QuestionResponse.DoesNotExist:
                 resp = QuestionResponse()
                 resp.user = request.user
-                resp.worksheet = worksheet
+                # resp.worksheet = worksheet
                 resp.question = question
                 resp.response = request.POST[i]
                 resp.save()
         
         messages.append('Thanks!')
         
-        return HttpResponse(json.dumps(messages), content_type="application/json")
-
-
+        # return HttpResponse(json.dumps(messages), content_type="application/json")
+        return HttpResponseRedirect(reverse('worksheet', args=(self.get_object().id,)))
 
 
 

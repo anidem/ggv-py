@@ -32,11 +32,14 @@ class QuestionManager(models.Manager):
             response_obj = dict()
             option_obj_list = []
             response_obj['question'] = q
-            response_obj['user_response'] = user_responses.get(question=q) or None
+            try:
+                response_obj['user_response'] = user_responses.get(question=q)
+            except:
+                response_obj['user_response'] = None
             for opt in q.get_options():
                 option_obj = dict()
                 option_obj['option'] = opt
-                if opt.text == response_obj['user_response'].response:
+                if response_obj['user_response'] and opt.text == response_obj['user_response'].response:
                     option_obj['response'] = response_obj['user_response']
                 else:
                     option_obj['response'] = None

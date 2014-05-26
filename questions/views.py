@@ -21,9 +21,8 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
     def get_context_data(self, **kwargs):
         context = super(QuestionSetView, self).get_context_data(**kwargs)
         worksheet = self.get_object()
-        context['questions'] = QuestionSet.objects.questions(id=worksheet.id)
+        # context['questions'] = QuestionSet.objects.questions(id=worksheet.id)
         context['user_worksheet'] = QuestionSet.objects.user_worksheet(id=worksheet.id, user=self.request.user.id)
-        print context['user_worksheet']
         return context
 
     def post(self, request, *args, **kwargs):
@@ -32,34 +31,47 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
         question_count = QuestionSet.objects.questions(id=self.get_object().id).count()
         messages = []
         errors = []
-        data = []
+        data = dict()
 
         if len(clean_request) < question_count:
+
             errors.append('Please answer all questions. :)')
-            return HttpResponse(json.dumps(errors), content_type="application/json")
+            data['errors'] = errors
+            return HttpResponse(json.dumps(data), content_type="application/json")
 
         for i in clean_request:
             question = SimpleQuestion.objects.get(pk=i[i.find('_') + 1:])
+
             try:
                 resp = QuestionResponse.objects.filter(
                     user=request.user).get(question__id=question.id)
                 if resp.response != request.POST[i]:
                     resp.response = request.POST[i]
                     resp.save()
+            except:
 
-            except QuestionResponse.DoesNotExist:
                 resp = QuestionResponse()
                 resp.user = request.user
-                # resp.worksheet = worksheet
+                resp.worksheet = question.question_set
                 resp.question = question
                 resp.response = request.POST[i]
                 resp.save()
         
         messages.append('Thanks!')
-        
-        # return HttpResponse(json.dumps(messages), content_type="application/json")
-        return HttpResponseRedirect(reverse('worksheet', args=(self.get_object().id,)))
+        data['messages'] = messages
+        print 'THanks'
+        return HttpResponse(json.dumps(data), content_type="application/json")
+        # return HttpResponseRedirect(reverse('worksheet_results', args=(self.get_object().id,)))
 
+class QuestionSetResultsView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
+    model = QuestionSet
+    template_name = 'act_worksheet_results.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(QuestionSetResultsView, self).get_context_data(**kwargs)
+        worksheet = self.get_object()
+        context['user_worksheet'] = QuestionSet.objects.user_worksheet(id=worksheet.id, user=self.request.user.id)
+        return context  
 
 
 

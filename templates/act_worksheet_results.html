@@ -1,4 +1,4 @@
-<!-- act_worksheet.html -->
+<!-- act_worksheet_results.html -->
 {% extends "base.html" %}
 
 {% load staticfiles %}
@@ -12,7 +12,6 @@
 	<input id="worksheet" type="hidden" value="{{ object.id }}">
 	<h3 id="feedback"> </h3>
 
-	<form id="worksheet_form" method="post" role="form">{% csrf_token %}
 	
 	{% for i in user_worksheet %}
 	
@@ -23,30 +22,26 @@
 
 			{% if j.option.text == j.response.response %}
 				{% if j.option.is_correct %}
-					<span class="glyphicon glyphicon-ok" style="display: none; color:green"></span>
+					<span class="glyphicon glyphicon-ok" style="color:green"></span>
 				{% else %}
-					<span class="glyphicon glyphicon-remove" style="display: none; color:red"></span>
+					<span class="glyphicon glyphicon-remove" style="color:red"></span>
 				{% endif %}
 			{% elif j.option.is_correct %}
-				<span class="glyphicon glyphicon-ok" style="display: none; color:green"></span>
+				<span class="glyphicon glyphicon-ok" style="color:green"></span>
 			{% endif %}
 			<label for="option{{ i.question.id }}-{{ j.id }}">{{ j.option }}</label>
-  			<input id="option{{ i.question.id }}-{{ j.option.id }}" 
-  				name="q_{{ i.question.id }}" 
-  				type="{{ i.question.select_type }}" 
-  				value="{{ j.option }}" {% if j.response.response %}checked{% endif %}>
+  			
   		</div>
  		{% endfor %}
 
  	</div>
 	
 	{% endfor %}
-	<div><input type="button" id="submit_sheet" value="Check"></div>
-	</form>
+	<div><a href="{% url 'worksheet' object.id %}"><input type="button" value="Try Again!"></a></div>
 </div>
 
 {% endblock content %}     
 
 
-{% block local_js %} <script src="{% static 'js/questions.js' %}"></script> {% endblock local_js %}
+
 

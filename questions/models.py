@@ -5,29 +5,54 @@ from operator import attrgetter
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.contenttypes import generic
+
+
 from model_utils.models import TimeStampedModel
 
 from lessons.models import Lesson, AbstractActivity
 
 class QuestionManager(models.Manager):
     
-    def worksheet(self, **kwargs):
-        print '%s:%s' % ('USER', kwargs['user'])
-        questions = SimpleQuestion.objects.filter(question_set=kwargs['id']).order_by('display_order')
-        responses = QuestionResponse.objects.filter(user__id=kwargs['user']).filter(worksheet__id=kwargs['id'])
+    # def worksheet(self, **kwargs):
+    #     print '%s:%s' % ('USER', kwargs['user'])
+    #     set_id = kwargs.pop('id')
+    #     questions = MultipleChoiceQuestion.objects.filter(question_set=set_id).order_by('display_order')
+    #     responses = QuestionResponse.objects.filter(user__id=kwargs['user']).filter(worksheet__id=set_id)
 
-        return responses      
+    #     return responses      
 
     def questions(self, **kwargs):
-        sheet = QuestionSet.objects.get(pk=kwargs['id'])
-        questions = sheet.questions.all().order_by('display_order')
+        set_id = kwargs.pop('id')
+        sheet = QuestionSet.objects.get(pk=set_id)
+        mc_questions = sheet.shortanswerquestions.all().order_by('display_order')
+        sa_questions = sheet.multiplechoicequestions.all().order_by('display_order')
+        
+        questions = sorted(
+            chain(mc_questions, sa_questions),
+            key=attrgetter('display_order')
+            )
         return questions
 
     def user_worksheet(self, **kwargs):
-        user = User.objects.get(pk=kwargs['user'])
-        questions = SimpleQuestion.objects.filter(question_set=kwargs['id']).order_by('display_order')
-        user_responses = QuestionResponse.objects.filter(user__id=kwargs['user'])
+        user_id = kwargs.pop('user')
+        worksheet_id = kwargs.pop('id')
+        user = User.objects.get(pk=user_id)
+        sheet = QuestionSet.objects.get(pk=worksheet_id)
+        
+        mc_questions = sheet.shortanswerquestions.all().order_by('display_order')
+        sa_questions = sheet.multiplechoicequestions.all().order_by('display_order')
+        
+        questions = sorted(
+            chain(mc_questions, sa_questions),
+            key=attrgetter('display_order')
+            )
+
+        user_responses = QuestionResponse.objects.filter(user__id=user.id)
         question_response_list = []
+
+        
         for q in questions:
             response_obj = dict()
             option_obj_list = []
@@ -36,6 +61,7 @@ class QuestionManager(models.Manager):
                 response_obj['user_response'] = user_responses.get(question=q)
             except:
                 response_obj['user_response'] = None
+            
             for opt in q.get_options():
                 option_obj = dict()
                 option_obj['option'] = opt
@@ -48,6 +74,7 @@ class QuestionManager(models.Manager):
             
             response_obj['options'] = option_obj_list
             question_response_list.append(response_obj)
+
         return question_response_list
 
 class QuestionSet(AbstractActivity):
@@ -74,33 +101,48 @@ class AbstractQuestion(models.Model):
         abstract = True
         ordering = ['display_order']
 
-class SimpleQuestion(AbstractQuestion):
+class ShortAnswerQuestion(AbstractQuestion):    
+    correct_answer = models.TextField()
+    question_set = models.ForeignKey(QuestionSet, related_name='shortanswerquestions')
+
+
+    def get_options(self):
+        return []
+
+    def get_correct_answer(self):
+        return correct_answer
+
+    def get_question_type(self):
+        return 'shortanswerquestion'
+
+
+class MultipleChoiceQuestion(AbstractQuestion):
     RADIO = 'radio'
     CHECK = 'checkbox'
-    TEXT = 'text'
 
-    SELECTION_TYPES = (
+    OPTION_TYPES = (
         (RADIO, 'radio'),
         (CHECK, 'checkbox'),
-        (TEXT, 'text'),
     )
 
     select_type = models.CharField(
-        max_length=24, choices=SELECTION_TYPES, default='radio')
-    question_set = models.ForeignKey(QuestionSet, null=True, related_name='questions')
-    correct_answer = models.TextField(null=True, blank=True)
+        max_length=24, choices=OPTION_TYPES, default=RADIO)
+    question_set = models.ForeignKey(QuestionSet, null=True, related_name='multiplechoicequestions')
 
     def get_options(self):
         return QuestionOption.objects.filter(question=self.id).order_by('display_order')
 
-    def get_absolute_url(self):
-        return reverse('question', args=[str(self.id)])
+    def get_correct_answer(self):
+        return QuestionOption.objects.filter(question=self.id).filter(is_correct=True).order_by('display_order')
+
+    def get_question_type(self):
+        return 'multiplechoicequestion'
 
 class QuestionOption(models.Model):
+    question = models.ForeignKey(
+        MultipleChoiceQuestion, related_name='options')
     text = models.CharField(max_length=512)
     is_correct = models.BooleanField(blank=True, default=False)
-    question = models.ForeignKey(
-        SimpleQuestion, related_name='options')
     display_order = models.IntegerField(default=0)
 
     class Meta:
@@ -111,9 +153,10 @@ class QuestionOption(models.Model):
 
 class QuestionResponse(TimeStampedModel):
     user = models.ForeignKey(User)
-    worksheet = models.ForeignKey(QuestionSet)
-    question = models.ForeignKey(SimpleQuestion)
     response = models.TextField()
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField(null=True)
+    content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     def __unicode__(self):
         return self.response

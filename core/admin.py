@@ -10,7 +10,7 @@ from guardian.admin import GuardedModelAdmin
 
 from courses.models import Course
 from lessons.models import Lesson, Section
-from questions.models import QuestionSet, QuestionResponse, QuestionOption, SimpleQuestion
+from questions.models import QuestionSet, QuestionResponse, QuestionOption, MultipleChoiceQuestion, ShortAnswerQuestion
 from slidestacks.models import SlideStack
 
 class ExtraMedia:
@@ -38,13 +38,19 @@ class QuestionOptionInlineAdmin(admin.TabularInline):
 
 
 class QuestionSetInlineAdmin(EditLinkToInlineObject, admin.TabularInline):
-    model = SimpleQuestion
+    model = MultipleChoiceQuestion
     list_display = ('text', 'select_type', 'question_set', 'display_order')
     extra = 1
     readonly_fields = ('edit_link', )
 
+class QuestionSetInlineShortAnswerAdmin(EditLinkToInlineObject, admin.TabularInline):
+    model = ShortAnswerQuestion
+    list_display = ('text', 'question_set', 'display_order', 'correct_answer')
+    extra = 1
+    readonly_fields = ('edit_link', )
 
-class SimpleQuestionAdmin(admin.ModelAdmin):
+
+class MultipleChoiceQuestionAdmin(admin.ModelAdmin):
     inlines = [
         QuestionOptionInlineAdmin,
     ]
@@ -55,6 +61,12 @@ class SimpleQuestionAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.IntegerField: {'widget': forms.NumberInput},
     }
+
+class ShortAnswerQuestionAdmin(admin.ModelAdmin):
+    list_display = ('text', 'question_set', 'display_order')
+    list_editable = ('display_order',)
+    list_filter = ('question_set',)
+
 
 class WorksheetInlineAdmin(admin.TabularInline):
     model = QuestionSet
@@ -75,7 +87,7 @@ class QuestionSetAdmin(admin.ModelAdmin):
     list_filter = ('lesson', 'section',)
 
     inlines = [
-        QuestionSetInlineAdmin,
+        QuestionSetInlineAdmin, QuestionSetInlineShortAnswerAdmin,
     ]
 
 class CourseAdmin(GuardedModelAdmin):
@@ -97,4 +109,5 @@ admin.site.register(Section, SectionAdmin, Media=ExtraMedia)
 admin.site.register(SlideStack, SlideStackAdmin)
 admin.site.register(QuestionSet, QuestionSetAdmin, Media=ExtraMedia)
 admin.site.register(QuestionResponse)
-admin.site.register(SimpleQuestion, SimpleQuestionAdmin, Media=ExtraMedia)
+admin.site.register(ShortAnswerQuestion, ShortAnswerQuestionAdmin, Media=ExtraMedia)
+admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin, Media=ExtraMedia)

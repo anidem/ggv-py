@@ -31,10 +31,12 @@
 				<span class="glyphicon glyphicon-ok" style="display: none; color:green"></span>
 			{% endif %}
 			<label for="option{{ i.question.id }}-{{ j.id }}">{{ j.option }}</label>
+  			
   			<input id="option{{ i.question.id }}-{{ j.option.id }}" 
-  				name="q_{{ i.question.id }}" 
+  				name="q-{{ i.question.get_question_type }}_{{ i.question.id }}" 
   				type="{{ i.question.select_type }}" 
   				value="{{ j.option }}" {% if j.response.response %}checked{% endif %}>
+  		
   		</div>
  		{% endfor %}
 

@@ -8,16 +8,22 @@ from django.db import models
 class Migration(SchemaMigration):
 
     def forwards(self, orm):
-        # Adding field 'QuestionSet.activity_type'
-        db.add_column(u'questions_questionset', 'activity_type',
-                      self.gf('django.db.models.fields.CharField')(default='worksheet', max_length=48),
+        # Adding field 'ShortAnswerQuestion.correct_answer'
+        db.add_column(u'questions_shortanswerquestion', 'correct_answer',
+                      self.gf('django.db.models.fields.TextField')(default='blue'),
                       keep_default=False)
 
 
-    def backwards(self, orm):
-        # Deleting field 'QuestionSet.activity_type'
-        db.delete_column(u'questions_questionset', 'activity_type')
+        # Changing field 'ShortAnswerQuestion.question_set'
+        db.alter_column(u'questions_shortanswerquestion', 'question_set_id', self.gf('django.db.models.fields.related.ForeignKey')(default=1, to=orm['questions.QuestionSet']))
 
+    def backwards(self, orm):
+        # Deleting field 'ShortAnswerQuestion.correct_answer'
+        db.delete_column(u'questions_shortanswerquestion', 'correct_answer')
+
+
+        # Changing field 'ShortAnswerQuestion.question_set'
+        db.alter_column(u'questions_shortanswerquestion', 'question_set_id', self.gf('django.db.models.fields.related.ForeignKey')(null=True, to=orm['questions.QuestionSet']))
 
     models = {
         u'auth.group': {
@@ -63,30 +69,41 @@ class Migration(SchemaMigration):
             'title': ('django.db.models.fields.CharField', [], {'default': "'Subject'", 'max_length': '256'})
         },
         u'lessons.section': {
-            'Meta': {'ordering': "['title', 'display_order']", 'object_name': 'Section'},
+            'Meta': {'ordering': "['lesson', 'display_order', 'title']", 'object_name': 'Section'},
             'display_order': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'lesson': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['lessons.Lesson']"}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '256'})
+        },
+        u'questions.multiplechoicequestion': {
+            'Meta': {'ordering': "['display_order']", 'object_name': 'MultipleChoiceQuestion'},
+            'display_order': ('django.db.models.fields.IntegerField', [], {}),
+            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
+            'question_set': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'multiplechoicequestions'", 'null': 'True', 'to': u"orm['questions.QuestionSet']"}),
+            'select_type': ('django.db.models.fields.CharField', [], {'default': "'radio'", 'max_length': '24'}),
+            'text': ('django.db.models.fields.TextField', [], {})
         },
         u'questions.questionoption': {
             'Meta': {'ordering': "['display_order']", 'object_name': 'QuestionOption'},
-            'correct': ('django.db.models.fields.BooleanField', [], {}),
             'display_order': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'question': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'options'", 'null': 'True', 'to': u"orm['questions.SimpleQuestion']"}),
+            'is_correct': ('django.db.models.fields.BooleanField', [], {'default': 'False'}),
+            'question': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'options'", 'to': u"orm['questions.MultipleChoiceQuestion']"}),
             'text': ('django.db.models.fields.CharField', [], {'max_length': '512'})
         },
         u'questions.questionresponse': {
             'Meta': {'object_name': 'QuestionResponse'},
+            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
+            'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'item': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['questions.SimpleQuestion']"}),
+            'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
+            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
             'response': ('django.db.models.fields.TextField', [], {}),
-            'sheet': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['questions.QuestionSet']"}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
         },
         u'questions.questionset': {
             'Meta': {'ordering': "['section', 'display_order']", 'object_name': 'QuestionSet'},
-            'activity_type': ('django.db.models.fields.CharField', [], {'default': "'worksheet'", 'max_length': '48'}),
+            'activity_type': ('django.db.models.fields.CharField', [], {'default': "'worksheet'", 'max_length': '48', 'null': 'True'}),
             'display_order': ('django.db.models.fields.IntegerField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'instructions': ('django.db.models.fields.TextField', [], {'null': 'True'}),
@@ -94,12 +111,12 @@ class Migration(SchemaMigration):
             'section': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['lessons.Section']", 'null': 'True', 'blank': 'True'}),
             'title': ('django.db.models.fields.CharField', [], {'max_length': '256'})
         },
-        u'questions.simplequestion': {
-            'Meta': {'ordering': "['display_order']", 'object_name': 'SimpleQuestion'},
+        u'questions.shortanswerquestion': {
+            'Meta': {'ordering': "['display_order']", 'object_name': 'ShortAnswerQuestion'},
+            'correct_answer': ('django.db.models.fields.TextField', [], {}),
             'display_order': ('django.db.models.fields.IntegerField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'question_set': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'questions'", 'null': 'True', 'to': u"orm['questions.QuestionSet']"}),
-            'select_type': ('django.db.models.fields.CharField', [], {'default': "'radio'", 'max_length': '24'}),
+            'question_set': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'shortanswerquestions'", 'to': u"orm['questions.QuestionSet']"}),
             'text': ('django.db.models.fields.TextField', [], {})
         }
     }

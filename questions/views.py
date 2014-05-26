@@ -4,14 +4,15 @@ from django.forms.models import formset_factory, modelformset_factory, inlinefor
 from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
+from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 import json
 
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
 from core.mixins import AccessRequiredMixin, AccessCodeRequiredMixin
-from .models import QuestionSet, SimpleQuestion, QuestionResponse
-from .forms import QuestionSetForm, QuestionForm
+from .models import QuestionSet, MultipleChoiceQuestion, ShortAnswerQuestion, QuestionResponse
+# from .forms import QuestionSetForm, QuestionForm
 
 class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
     model = QuestionSet
@@ -28,34 +29,54 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
     def post(self, request, *args, **kwargs):
         clean_request = request.POST.copy()
         clean_request.pop('csrfmiddlewaretoken')
-        question_count = QuestionSet.objects.questions(id=self.get_object().id).count()
+        question_count = len(QuestionSet.objects.questions(id=self.get_object().id))
         messages = []
         errors = []
         data = dict()
 
-        if len(clean_request) < question_count:
+        app = 'questions'
+        # if len(clean_request) < question_count:
 
-            errors.append('Please answer all questions. :)')
-            data['errors'] = errors
-            return HttpResponse(json.dumps(data), content_type="application/json")
+        #     errors.append('Please answer all questions. :)')
+        #     data['errors'] = errors
+        #     return HttpResponse(json.dumps(data), content_type="application/json")
 
         for i in clean_request:
-            question = SimpleQuestion.objects.get(pk=i[i.find('_') + 1:])
-
+            question_model = i[i.find('-') + 1:i.find('_')]
+            question_id = i[i.find('_') + 1:]
+            question_type = ContentType.objects.get(app_label=app, model=question_model)
+                        
+            question = question_type.get_object_for_this_type(pk=question_id)
+            print question.id
             try:
                 resp = QuestionResponse.objects.filter(
-                    user=request.user).get(question__id=question.id)
+                    user=request.user).get(content_object=question)
+                print resp
                 if resp.response != request.POST[i]:
                     resp.response = request.POST[i]
                     resp.save()
+                print 'response exists'
             except:
 
                 resp = QuestionResponse()
                 resp.user = request.user
-                resp.worksheet = question.question_set
-                resp.question = question
                 resp.response = request.POST[i]
+                resp.content_type = question_type 
+                resp.object_id = question.id
+                resp.save()                
+                resp.content_object = question
+                
                 resp.save()
+
+
+
+
+    # user = models.ForeignKey(User)
+    # response = models.TextField()
+    # content_type = models.ForeignKey(ContentType)
+    # object_id = models.PositiveIntegerField()
+    # content_object = generic.GenericForeignKey('content_type', 'object_id')
+
         
         messages.append('Thanks!')
         data['messages'] = messages

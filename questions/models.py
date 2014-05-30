@@ -13,26 +13,29 @@ from model_utils.models import TimeStampedModel
 
 from lessons.models import Lesson, AbstractActivity
 
+
 class QuestionManager(models.Manager):
-    
+
     # def worksheet(self, **kwargs):
     #     print '%s:%s' % ('USER', kwargs['user'])
     #     set_id = kwargs.pop('id')
     #     questions = MultipleChoiceQuestion.objects.filter(question_set=set_id).order_by('display_order')
     #     responses = QuestionResponse.objects.filter(user__id=kwargs['user']).filter(worksheet__id=set_id)
 
-    #     return responses      
+    #     return responses
 
     def questions(self, **kwargs):
         set_id = kwargs.pop('id')
         sheet = QuestionSet.objects.get(pk=set_id)
-        mc_questions = sheet.shortanswerquestions.all().order_by('display_order')
-        sa_questions = sheet.multiplechoicequestions.all().order_by('display_order')
-        
+        mc_questions = sheet.shortanswerquestions.all().order_by(
+            'display_order')
+        sa_questions = sheet.multiplechoicequestions.all().order_by(
+            'display_order')
+
         questions = sorted(
             chain(mc_questions, sa_questions),
             key=attrgetter('display_order')
-            )
+        )
         return questions
 
     def user_worksheet(self, **kwargs):
@@ -40,46 +43,67 @@ class QuestionManager(models.Manager):
         worksheet_id = kwargs.pop('id')
         user = User.objects.get(pk=user_id)
         sheet = QuestionSet.objects.get(pk=worksheet_id)
-        
-        mc_questions = sheet.shortanswerquestions.all().order_by('display_order')
-        sa_questions = sheet.multiplechoicequestions.all().order_by('display_order')
-        
+
+        mc_questions = sheet.shortanswerquestions.all().order_by(
+            'display_order')
+        sa_questions = sheet.multiplechoicequestions.all().order_by(
+            'display_order')
+
         questions = sorted(
             chain(mc_questions, sa_questions),
             key=attrgetter('display_order')
-            )
+        )
+        print 'user-worksheet-manager->', questions
 
-        user_responses = QuestionResponse.objects.filter(user__id=user.id)
+        # response object = {QUESTION} {RESPONSE} {OPTION_LIST [OPTIONS]}
+
         question_response_list = []
-
-        
         for q in questions:
+            user_response = q.responses.get(user=user)
+
             response_obj = dict()
-            option_obj_list = []
+            # Record question
             response_obj['question'] = q
+            response_obj[
+                'question_content_type'] = q.get_question_content_type().id
+
+            # Record previous response if it exists
+            response_obj['user_response'] = None
+            response_obj['correct'] = False
+
             try:
-                response_obj['user_response'] = user_responses.get(question=q)
+                response_obj['user_response'] = q.responses.get(user=user)
+                if response_obj['user_response'].response in q.correct_answer:
+                    response_obj['correct'] = True
+                    
             except:
-                response_obj['user_response'] = None
-            
+                pass
+
+            # Record question options if they exist
+            option_obj_list = []
             for opt in q.get_options():
                 option_obj = dict()
                 option_obj['option'] = opt
-                if response_obj['user_response'] and opt.text == response_obj['user_response'].response:
-                    option_obj['response'] = response_obj['user_response']
-                else:
-                    option_obj['response'] = None
-                
+                option_obj['response'] = None
+                if response_obj['user_response']:
+                    if opt.text == response_obj['user_response'].response:
+                        option_obj['response'] = response_obj['user_response']
+                        response_obj['correct'] = opt.is_correct
+                    
                 option_obj_list.append(option_obj)
             
             response_obj['options'] = option_obj_list
-            question_response_list.append(response_obj)
 
+            question_response_list.append(response_obj)
+        print 'user-worksheet-manager-List->', question_response_list
         return question_response_list
 
+
 class QuestionSet(AbstractActivity):
-    lesson = models.ForeignKey(Lesson, null=True, blank=True, related_name='worksheets')
-    activity_type = models.CharField(max_length=48, default='worksheet', null=True)
+    lesson = models.ForeignKey(
+        Lesson, null=True, blank=True, related_name='worksheets')
+    activity_type = models.CharField(
+        max_length=48, default='worksheet', null=True)
 
     objects = QuestionManager()
 
@@ -101,10 +125,13 @@ class AbstractQuestion(models.Model):
         abstract = True
         ordering = ['display_order']
 
-class ShortAnswerQuestion(AbstractQuestion):    
-    correct_answer = models.TextField()
-    question_set = models.ForeignKey(QuestionSet, related_name='shortanswerquestions')
 
+class ShortAnswerQuestion(AbstractQuestion):
+    correct_answer = models.TextField()
+    question_set = models.ForeignKey(
+        QuestionSet, related_name='shortanswerquestions')
+    responses = generic.GenericRelation(
+        'QuestionResponse', content_type_field='question_type', object_id_field='question_id')
 
     def get_options(self):
         return []
@@ -114,6 +141,10 @@ class ShortAnswerQuestion(AbstractQuestion):
 
     def get_question_type(self):
         return 'shortanswerquestion'
+
+    def get_question_content_type(self):
+        my_type = ContentType.objects.get_for_model(ShortAnswerQuestion)
+        return my_type
 
 
 class MultipleChoiceQuestion(AbstractQuestion):
@@ -127,7 +158,10 @@ class MultipleChoiceQuestion(AbstractQuestion):
 
     select_type = models.CharField(
         max_length=24, choices=OPTION_TYPES, default=RADIO)
-    question_set = models.ForeignKey(QuestionSet, null=True, related_name='multiplechoicequestions')
+    question_set = models.ForeignKey(
+        QuestionSet, null=True, related_name='multiplechoicequestions')
+    responses = generic.GenericRelation(
+        'QuestionResponse', content_type_field='question_type', object_id_field='question_id')
 
     def get_options(self):
         return QuestionOption.objects.filter(question=self.id).order_by('display_order')
@@ -137,6 +171,11 @@ class MultipleChoiceQuestion(AbstractQuestion):
 
     def get_question_type(self):
         return 'multiplechoicequestion'
+
+    def get_question_content_type(self):
+        my_type = ContentType.objects.get_for_model(MultipleChoiceQuestion)
+        return my_type
+
 
 class QuestionOption(models.Model):
     question = models.ForeignKey(
@@ -151,12 +190,13 @@ class QuestionOption(models.Model):
     def __unicode__(self):
         return self.text
 
+
 class QuestionResponse(TimeStampedModel):
     user = models.ForeignKey(User)
     response = models.TextField()
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField(null=True)
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    question_type = models.ForeignKey(ContentType)
+    question_id = models.PositiveIntegerField(null=True)
+    content_object = generic.GenericForeignKey('question_type', 'question_id')
 
     def __unicode__(self):
         return self.response

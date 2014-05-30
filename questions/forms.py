@@ -1,11 +1,11 @@
-# # questions/forms.py
-# from django import forms
-# from django.forms import ModelForm, CharField, MultipleChoiceField, IntegerField
+# questions/forms.py
+from django import forms
+from django.forms import ModelForm, CharField, MultipleChoiceField, IntegerField
 # from django.forms.models import BaseFormSet, BaseModelFormSet, modelformset_factory
 
 # from crispy_forms.helper import FormHelper
 
-# from .models import QuestionSet, SimpleQuestion, QuestionResponse
+from .models import QuestionSet, QuestionResponse
 
 # class QuestionSetForm(BaseFormSet):
 
@@ -60,10 +60,11 @@
 
 
 
-# class QuestionPostForm(ModelForm):
-#     class Meta:
-#         model = QuestionResponse
-#         fields = ['question', 'response']
+class QuestionPostForm(ModelForm):
+    class Meta:
+        model = QuestionResponse
+        fields = ['response', 'question_type', 'question_id']
+        widgets = { 'question_type': forms.HiddenInput()}
 
 
 # class QuestionResponseFormDyno(ModelForm):

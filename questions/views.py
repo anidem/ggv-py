@@ -1,6 +1,7 @@
 # questions/views.py
 from django.views.generic import DetailView, UpdateView, TemplateView, CreateView, FormView
-from django.forms.models import formset_factory, modelformset_factory, inlineformset_factory, BaseModelFormSet
+from django.forms.models import modelformset_factory
+from django.forms.formsets import formset_factory
 from django.shortcuts import render_to_response, render
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
@@ -12,19 +13,24 @@ from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
 from core.mixins import AccessRequiredMixin, AccessCodeRequiredMixin
 from .models import QuestionSet, MultipleChoiceQuestion, ShortAnswerQuestion, QuestionResponse
-# from .forms import QuestionSetForm, QuestionForm
+from .forms import  QuestionPostForm
+
+class QuestionFormView(CreateView):
+    model = QuestionResponse
+    form_class = QuestionPostForm
+    template_name = 'formtest.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(QuestionFormView, self).get_context_data(**kwargs)
+        formset = modelformset_factory(QuestionResponse)
+        context['form'] = formset
+        return context
+
 
 class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
     model = QuestionSet
     template_name = 'act_worksheet.html'
     questions = []
-
-    def get_context_data(self, **kwargs):
-        context = super(QuestionSetView, self).get_context_data(**kwargs)
-        worksheet = self.get_object()
-        # context['questions'] = QuestionSet.objects.questions(id=worksheet.id)
-        context['user_worksheet'] = QuestionSet.objects.user_worksheet(id=worksheet.id, user=self.request.user.id)
-        return context
 
     def post(self, request, *args, **kwargs):
         clean_request = request.POST.copy()
@@ -33,56 +39,52 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
         messages = []
         errors = []
         data = dict()
-
         app = 'questions'
-        # if len(clean_request) < question_count:
+        ResponseForm = formset_factory(QuestionPostForm)
+        formset = ResponseForm(request.POST)
+        if formset.is_valid():
+            print 'formset valid->', formset.cleaned_data
 
-        #     errors.append('Please answer all questions. :)')
-        #     data['errors'] = errors
-        #     return HttpResponse(json.dumps(data), content_type="application/json")
+            for form in formset.cleaned_data:
 
-        for i in clean_request:
-            question_model = i[i.find('-') + 1:i.find('_')]
-            question_id = i[i.find('_') + 1:]
-            question_type = ContentType.objects.get(app_label=app, model=question_model)
-                        
-            question = question_type.get_object_for_this_type(pk=question_id)
-            print question.id
-            try:
-                resp = QuestionResponse.objects.filter(
-                    user=request.user).get(content_object=question)
-                print resp
-                if resp.response != request.POST[i]:
-                    resp.response = request.POST[i]
-                    resp.save()
-                print 'response exists'
-            except:
-
-                resp = QuestionResponse()
-                resp.user = request.user
-                resp.response = request.POST[i]
-                resp.content_type = question_type 
-                resp.object_id = question.id
-                resp.save()                
-                resp.content_object = question
-                
-                resp.save()
-
-
-
-
-    # user = models.ForeignKey(User)
-    # response = models.TextField()
-    # content_type = models.ForeignKey(ContentType)
-    # object_id = models.PositiveIntegerField()
-    # content_object = generic.GenericForeignKey('content_type', 'object_id')
-
+                question = form['question_type'].get_object_for_this_type(pk=form['question_id'])
+                print question
+                try:
+                    # check for previous response
+                    resp = question.responses.get(user=request.user)
+                    print 'previous response exists->', resp
+                    if resp.response != form['response']:
+                        resp.response = form['response']
+                        resp.save()
+                except:
+                    print 'new response', form['response']
+                    resp = QuestionResponse()
+                    resp.user = request.user
+                    resp.response = form['response']
+                    resp.question_type = form['question_type'] 
+                    resp.question_id = question.id            
+                    resp.content_object = question                
+                    resp.save()            
+        else:
+            print 'formset INvalid->', formset
+            errors.append('Please answer all questions. :)')
+            data['errors'] = errors
+            return HttpResponse(json.dumps(data), content_type="application/json") 
         
         messages.append('Thanks!')
         data['messages'] = messages
-        print 'THanks'
         return HttpResponse(json.dumps(data), content_type="application/json")
         # return HttpResponseRedirect(reverse('worksheet_results', args=(self.get_object().id,)))
+
+    def get_context_data(self, **kwargs):
+        context = super(QuestionSetView, self).get_context_data(**kwargs)
+        worksheet = self.get_object()
+        context['user_worksheet'] = QuestionSet.objects.user_worksheet(id=worksheet.id, user=self.request.user.id)
+        return context
+
+
+
+
 
 class QuestionSetResultsView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
     model = QuestionSet

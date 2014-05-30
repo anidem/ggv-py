@@ -13,32 +13,57 @@
 	<h3 id="feedback"> </h3>
 
 	<form id="worksheet_form" method="post" role="form">{% csrf_token %}
-	
+		<input id="id_form-TOTAL_FORMS" name="form-TOTAL_FORMS" type="hidden" value="{{ user_worksheet|length }}" />
+		<input id="id_form-INITIAL_FORMS" name="form-INITIAL_FORMS" type="hidden" value="{{ user_worksheet|length }}" />
+		<input id="id_form-MAX_NUM_FORMS" name="form-MAX_NUM_FORMS" type="hidden" value="{{ user_worksheet|length }}" />
 	{% for i in user_worksheet %}
 	
-	<div class="question-prompt required">
-		<label><span>{{ forloop.counter }}. </span>{{ i.question|safe }}</label>
-		{% for j in i.options %}
-		<div class="radio">
-
-			{% if j.option.text == j.response.response %}
-				{% if j.option.is_correct %}
-					<span class="glyphicon glyphicon-ok" style="display: none; color:green"></span>
+	<div class="question-prompt">
+		<label><span>{{ forloop.counter }}. </span> {{ i.question|safe }}</label>
+		<input name="form-{{ forloop.counter0 }}-question_id" type="hidden" value="{{ i.question.id }}"/>
+		<input name="form-{{ forloop.counter0 }}-question_type" type="hidden" value="{{ i.question_content_type }}"/>
+		
+		{% if i.question.get_question_type == 'shortanswerquestion' %}
+			<br>
+			{% if i.user_response %}
+				{% if i.correct %}
+					<span class="glyphicon glyphicon-ok" style="color:green"></span>
 				{% else %}
-					<span class="glyphicon glyphicon-remove" style="display: none; color:red"></span>
+					<span class="glyphicon glyphicon-remove" style="color:red"></span>
 				{% endif %}
-			{% elif j.option.is_correct %}
-				<span class="glyphicon glyphicon-ok" style="display: none; color:green"></span>
-			{% endif %}
-			<label for="option{{ i.question.id }}-{{ j.id }}">{{ j.option }}</label>
-  			
-  			<input id="option{{ i.question.id }}-{{ j.option.id }}" 
-  				name="q-{{ i.question.get_question_type }}_{{ i.question.id }}" 
-  				type="{{ i.question.select_type }}" 
-  				value="{{ j.option }}" {% if j.response.response %}checked{% endif %}>
-  		
-  		</div>
- 		{% endfor %}
+			{% endif %}			
+			
+			<label for="id_form-{{ forloop.counter0 }}-response">Please type answer below.</label>
+			<input id="id_form-{{ forloop.counter0 }}-response" 
+				name="form-{{ forloop.counter0 }}-response" 
+				type="text" 
+				value="{{ i.user_response }}"/>
+
+		{% else %}
+
+			{% for j in i.options %}
+				<div class="radio">
+
+					{% if j.response %}
+						{% if i.correct %}
+							<span class="glyphicon glyphicon-ok" style="color:green"></span>
+						{% else %}
+							<span class="glyphicon glyphicon-remove" style="color:red"></span>
+						{% endif %}
+					{% endif %}
+					<label for="id_form-{{ forloop.parentloop.counter0 }}-response-{{ j.option.id }}">{{ j.option }}</label>
+		  			<input id="id_form-{{ forloop.parentloop.counter0 }}-response-{{ j.option.id }}" 
+		  				name="form-{{ forloop.parentloop.counter0 }}-response" 
+		  				type="{{ i.question.select_type }}" 
+		  				value="{{ j.option }}" {% if j.response %}checked{% endif %}/>
+		  		
+		  		</div>
+	 		{% endfor %}
+
+		{% endif %}
+
+
+
 
  	</div>
 	

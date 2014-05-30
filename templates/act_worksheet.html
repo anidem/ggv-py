@@ -6,12 +6,8 @@
 
 
 {% block content %}
-
 <h1>{{ object }}</h1>
 <div class="container">
-	<input id="worksheet" type="hidden" value="{{ object.id }}">
-	<h3 id="feedback"> </h3>
-
 	<form id="worksheet_form" method="post" role="form">{% csrf_token %}
 		<input id="id_form-TOTAL_FORMS" name="form-TOTAL_FORMS" type="hidden" value="{{ user_worksheet|length }}" />
 		<input id="id_form-INITIAL_FORMS" name="form-INITIAL_FORMS" type="hidden" value="{{ user_worksheet|length }}" />
@@ -59,21 +55,14 @@
 		  		
 		  		</div>
 	 		{% endfor %}
-
 		{% endif %}
-
-
-
-
  	</div>
 	
 	{% endfor %}
-	<div><input type="button" id="submit_sheet" value="Check"></div>
+	<div><input type="submit" id="submit_sheet" value="Check"></div>
 	</form>
 </div>
-
 {% endblock content %}     
-
 
 {% block local_js %} <script src="{% static 'js/questions.js' %}"></script> {% endblock local_js %}
 

@@ -2,7 +2,7 @@
 from django.views.generic import DetailView, UpdateView, TemplateView, CreateView, FormView
 from django.forms.models import modelformset_factory
 from django.forms.formsets import formset_factory
-from django.shortcuts import render_to_response, render
+from django.shortcuts import render_to_response, render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.contenttypes.models import ContentType
@@ -13,7 +13,8 @@ from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
 from core.mixins import AccessRequiredMixin, AccessCodeRequiredMixin
 from .models import QuestionSet, MultipleChoiceQuestion, ShortAnswerQuestion, QuestionResponse
-from .forms import  QuestionPostForm
+from .forms import QuestionPostForm
+
 
 class QuestionFormView(CreateView):
     model = QuestionResponse
@@ -33,57 +34,40 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
     questions = []
 
     def post(self, request, *args, **kwargs):
-        clean_request = request.POST.copy()
-        clean_request.pop('csrfmiddlewaretoken')
-        question_count = len(QuestionSet.objects.questions(id=self.get_object().id))
         messages = []
         errors = []
         data = dict()
-        app = 'questions'
         ResponseForm = formset_factory(QuestionPostForm)
         formset = ResponseForm(request.POST)
+
         if formset.is_valid():
-            print 'formset valid->', formset.cleaned_data
-
             for form in formset.cleaned_data:
-
-                question = form['question_type'].get_object_for_this_type(pk=form['question_id'])
-                print question
+                question = form['question_type'].get_object_for_this_type(
+                    pk=form['question_id'])
                 try:
                     # check for previous response
                     resp = question.responses.get(user=request.user)
-                    print 'previous response exists->', resp
                     if resp.response != form['response']:
                         resp.response = form['response']
                         resp.save()
                 except:
-                    print 'new response', form['response']
                     resp = QuestionResponse()
                     resp.user = request.user
-                    resp.response = form['response']
-                    resp.question_type = form['question_type'] 
-                    resp.question_id = question.id            
-                    resp.content_object = question                
-                    resp.save()            
-        else:
-            print 'formset INvalid->', formset
-            errors.append('Please answer all questions. :)')
-            data['errors'] = errors
-            return HttpResponse(json.dumps(data), content_type="application/json") 
-        
-        messages.append('Thanks!')
+                    resp.response = form['response'] or None
+                    resp.question_type = form['question_type']
+                    resp.question_id = question.id
+                    resp.content_object = question
+                    resp.save()
+
         data['messages'] = messages
-        return HttpResponse(json.dumps(data), content_type="application/json")
-        # return HttpResponseRedirect(reverse('worksheet_results', args=(self.get_object().id,)))
+        return redirect(self.get_object())
 
     def get_context_data(self, **kwargs):
         context = super(QuestionSetView, self).get_context_data(**kwargs)
         worksheet = self.get_object()
-        context['user_worksheet'] = QuestionSet.objects.user_worksheet(id=worksheet.id, user=self.request.user.id)
+        context['user_worksheet'] = QuestionSet.objects.user_worksheet(
+            id=worksheet.id, user=self.request.user.id)
         return context
-
-
-
 
 
 class QuestionSetResultsView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
@@ -91,11 +75,12 @@ class QuestionSetResultsView(LoginRequiredMixin, CsrfExemptMixin, AccessRequired
     template_name = 'act_worksheet_results.html'
 
     def get_context_data(self, **kwargs):
-        context = super(QuestionSetResultsView, self).get_context_data(**kwargs)
+        context = super(
+            QuestionSetResultsView, self).get_context_data(**kwargs)
         worksheet = self.get_object()
-        context['user_worksheet'] = QuestionSet.objects.user_worksheet(id=worksheet.id, user=self.request.user.id)
-        return context  
-
+        context['user_worksheet'] = QuestionSet.objects.user_worksheet(
+            id=worksheet.id, user=self.request.user.id)
+        return context
 
 
 class WorksheetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
@@ -123,9 +108,3 @@ class WorksheetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, De
             return render(request, self.template_name, {'feedback': 'thanks'})
 
         return render(request, self.template_name, self.get_context_data(form=f))
-
-
-
-
-
-

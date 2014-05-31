@@ -16,14 +16,6 @@ from lessons.models import Lesson, AbstractActivity
 
 class QuestionManager(models.Manager):
 
-    # def worksheet(self, **kwargs):
-    #     print '%s:%s' % ('USER', kwargs['user'])
-    #     set_id = kwargs.pop('id')
-    #     questions = MultipleChoiceQuestion.objects.filter(question_set=set_id).order_by('display_order')
-    #     responses = QuestionResponse.objects.filter(user__id=kwargs['user']).filter(worksheet__id=set_id)
-
-    #     return responses
-
     def questions(self, **kwargs):
         set_id = kwargs.pop('id')
         sheet = QuestionSet.objects.get(pk=set_id)
@@ -55,11 +47,11 @@ class QuestionManager(models.Manager):
         )
         print 'user-worksheet-manager->', questions
 
-        # response object = {QUESTION} {RESPONSE} {OPTION_LIST [OPTIONS]}
+        # response object is {QUESTION} {RESPONSE} {OPTION_LIST [OPTIONS]}
 
         question_response_list = []
         for q in questions:
-            user_response = q.responses.get(user=user)
+            # user_response = q.responses.get(user=user) or None
 
             response_obj = dict()
             # Record question

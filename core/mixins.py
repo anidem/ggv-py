@@ -7,8 +7,10 @@ from django.contrib import messages
 class AccessRequiredMixin(object):
 
     def dispatch(self, *args, **kwargs):
-
-        if not self.get_object().check_membership(self.request.user):
+        try:
+            self.get_object().check_membership(self.request.user)
+            
+        except:
             self.template_name = '404.html'
 
         return super(AccessRequiredMixin, self).dispatch(*args, **kwargs)

@@ -1,9 +1,9 @@
 // questions.js
 jQuery(function($) {
 	$("#worksheet_form").submit(function () {
-		// var worksheet = $("#worksheet").val();
+		var worksheet = $("#worksheet").val();
 		var postdata = $("#worksheet_form").serializeArray();
-		$.post("", postdata, function(data) {
+		$.post("/ggv/worksheet/"+worksheet, postdata, function(data) {
 			if (data.errors) {
 				$("#feedback").html(data.errors);
 
@@ -14,6 +14,7 @@ jQuery(function($) {
 		});	
 	});
 
+	$(document).ready(function() {
 
-	$(document).ready(function() {});
+	});
 });

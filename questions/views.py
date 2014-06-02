@@ -14,6 +14,7 @@ from braces.views import LoginRequiredMixin, CsrfExemptMixin
 from core.mixins import AccessRequiredMixin, AccessCodeRequiredMixin
 from .models import QuestionSet, MultipleChoiceQuestion, ShortAnswerQuestion, QuestionResponse
 from .forms import QuestionPostForm
+from .mixins import AjaxableResponseMixin
 
 
 class QuestionFormView(CreateView):
@@ -37,8 +38,8 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
         messages = []
         errors = []
         data = dict()
-        ResponseForm = formset_factory(QuestionPostForm)
-        formset = ResponseForm(request.POST)
+        ResponseFormset = formset_factory(QuestionPostForm)
+        formset = ResponseFormset(request.POST)
 
         if formset.is_valid():
             for form in formset.cleaned_data:
@@ -60,7 +61,12 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
                     resp.save()
 
         data['messages'] = messages
-        return redirect(self.get_object())
+        # data = json.dumps(self.get_context_data(**kwargs))
+        response_kwargs = {}
+        response_kwargs['content_type'] = 'application/json'
+
+        return HttpResponse(json.dumps(data), content_type="application/json")
+        # return redirect(self.get_object())
 
     def get_context_data(self, **kwargs):
         context = super(QuestionSetView, self).get_context_data(**kwargs)

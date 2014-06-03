@@ -8,7 +8,7 @@
 {% block content %}
 <h1>{{ object }}</h1>
 <div class="container">
-	<form id="worksheet_form" method="post" role="form">{% csrf_token %}
+	<form id="worksheet_form" action="/" role="form">{% csrf_token %}
 		<input id="id_form-TOTAL_FORMS" name="form-TOTAL_FORMS" type="hidden" value="{{ user_worksheet|length }}" />
 		<input id="id_form-INITIAL_FORMS" name="form-INITIAL_FORMS" type="hidden" value="{{ user_worksheet|length }}" />
 		<input id="id_form-MAX_NUM_FORMS" name="form-MAX_NUM_FORMS" type="hidden" value="{{ user_worksheet|length }}" />

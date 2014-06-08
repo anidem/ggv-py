@@ -25,7 +25,8 @@ class Migration(SchemaMigration):
             (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
             ('text', self.gf('django.db.models.fields.TextField')()),
             ('display_order', self.gf('django.db.models.fields.IntegerField')()),
-            ('question_set', self.gf('django.db.models.fields.related.ForeignKey')(related_name='shortanswerquestions', null=True, to=orm['questions.QuestionSet'])),
+            ('correct_answer', self.gf('django.db.models.fields.CharField')(max_length=256)),
+            ('question_set', self.gf('django.db.models.fields.related.ForeignKey')(related_name='shortanswerquestions', to=orm['questions.QuestionSet'])),
         ))
         db.send_create_signal(u'questions', ['ShortAnswerQuestion'])
 
@@ -56,8 +57,8 @@ class Migration(SchemaMigration):
             ('modified', self.gf('model_utils.fields.AutoLastModifiedField')(default=datetime.datetime.now)),
             ('user', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['auth.User'])),
             ('response', self.gf('django.db.models.fields.TextField')()),
-            ('content_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'])),
-            ('object_id', self.gf('django.db.models.fields.PositiveIntegerField')()),
+            ('question_type', self.gf('django.db.models.fields.related.ForeignKey')(to=orm['contenttypes.ContentType'])),
+            ('question_id', self.gf('django.db.models.fields.PositiveIntegerField')(null=True)),
         ))
         db.send_create_signal(u'questions', ['QuestionResponse'])
 
@@ -147,11 +148,11 @@ class Migration(SchemaMigration):
         },
         u'questions.questionresponse': {
             'Meta': {'object_name': 'QuestionResponse'},
-            'content_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
             'created': ('model_utils.fields.AutoCreatedField', [], {'default': 'datetime.datetime.now'}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
             'modified': ('model_utils.fields.AutoLastModifiedField', [], {'default': 'datetime.datetime.now'}),
-            'object_id': ('django.db.models.fields.PositiveIntegerField', [], {}),
+            'question_id': ('django.db.models.fields.PositiveIntegerField', [], {'null': 'True'}),
+            'question_type': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['contenttypes.ContentType']"}),
             'response': ('django.db.models.fields.TextField', [], {}),
             'user': ('django.db.models.fields.related.ForeignKey', [], {'to': u"orm['auth.User']"})
         },
@@ -167,9 +168,10 @@ class Migration(SchemaMigration):
         },
         u'questions.shortanswerquestion': {
             'Meta': {'ordering': "['display_order']", 'object_name': 'ShortAnswerQuestion'},
+            'correct_answer': ('django.db.models.fields.CharField', [], {'max_length': '256'}),
             'display_order': ('django.db.models.fields.IntegerField', [], {}),
             u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'question_set': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'shortanswerquestions'", 'null': 'True', 'to': u"orm['questions.QuestionSet']"}),
+            'question_set': ('django.db.models.fields.related.ForeignKey', [], {'related_name': "'shortanswerquestions'", 'to': u"orm['questions.QuestionSet']"}),
             'text': ('django.db.models.fields.TextField', [], {})
         }
     }

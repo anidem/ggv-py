@@ -1,6 +1,6 @@
 // questions.js
 jQuery(function($) {
-	$("#worksheet_form").submit(function () {
+	$("#submit_sheet").click(function () {
 		var worksheet = $("#worksheet").val();
 		var postdata = $("#worksheet_form").serializeArray();
 		$.post("/ggv/worksheet/"+worksheet, postdata, function(data) {

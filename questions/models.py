@@ -119,7 +119,7 @@ class AbstractQuestion(models.Model):
 
 
 class ShortAnswerQuestion(AbstractQuestion):
-    correct_answer = models.TextField()
+    correct_answer = models.CharField(max_length=256)
     question_set = models.ForeignKey(
         QuestionSet, related_name='shortanswerquestions')
     responses = generic.GenericRelation(

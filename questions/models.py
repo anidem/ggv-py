@@ -51,21 +51,20 @@ class QuestionManager(models.Manager):
 
         question_response_list = []
         for q in questions:
-            # user_response = q.responses.get(user=user) or None
-
             response_obj = dict()
             # Record question
-            response_obj['question'] = q
+            response_obj['question_id'] = q.id
+            response_obj['question_text'] = q.text
             response_obj[
-                'question_content_type'] = q.get_question_content_type().id
+                'question_type'] = q.get_question_content_type().id
 
             # Record previous response if it exists
-            response_obj['user_response'] = None
+            response_obj['response'] = None
             response_obj['correct'] = False
 
             try:
-                response_obj['user_response'] = q.responses.get(user=user)
-                if response_obj['user_response'].response in q.correct_answer:
+                response_obj['response'] = q.responses.get(user=user)
+                if response_obj['response'].response in q.correct_answer:
                     response_obj['correct'] = True
                     
             except:
@@ -74,12 +73,12 @@ class QuestionManager(models.Manager):
             # Record question options if they exist
             option_obj_list = []
             for opt in q.get_options():
-                option_obj = dict()
-                option_obj['option'] = opt
-                option_obj['response'] = None
-                if response_obj['user_response']:
-                    if opt.text == response_obj['user_response'].response:
-                        option_obj['response'] = response_obj['user_response']
+                option_obj = []
+                option_obj.append(opt.text)
+                option_obj.append(opt.text)
+                if response_obj['response']:
+                    if opt.text == response_obj['response'].response:
+                        # option_obj['response'] = response_obj['response']
                         response_obj['correct'] = opt.is_correct
                     
                 option_obj_list.append(option_obj)

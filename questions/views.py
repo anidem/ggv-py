@@ -1,20 +1,19 @@
 # questions/views.py
 from django.views.generic import DetailView, UpdateView, TemplateView, CreateView, FormView
-from django.forms.models import modelformset_factory
 from django.forms.formsets import formset_factory
 from django.shortcuts import render_to_response, render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
-import json
+
 
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
 from core.mixins import AccessRequiredMixin, AccessCodeRequiredMixin
 from .models import QuestionSet, MultipleChoiceQuestion, ShortAnswerQuestion, QuestionResponse
-from .forms import QuestionPostForm, QuestionSetForm, QuestionForm
-from .mixins import AjaxableResponseMixin
+from .forms import QuestionPostForm
+
 
 
 class QuestionFormView(CreateView):
@@ -31,15 +30,15 @@ class QuestionFormView(CreateView):
 
 class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
     model = QuestionSet
-    template_name = 'act_worksheet.html'
+    template_name = 'formtest.html'
     questions = []
 
     def post(self, request, *args, **kwargs):
-        messages = []
-        errors = []
-        data = dict()
-        ResponseFormset = formset_factory(QuestionPostForm)
-        formset = ResponseFormset(request.POST)
+        worksheet = self.get_object()
+        worksheet_data = QuestionSet.objects.user_worksheet(
+            id=worksheet.id, user=self.request.user.id)
+        worksheet_formset = formset_factory(QuestionPostForm)
+        formset = worksheet_formset(request.POST, initial=worksheet_data)
 
         if formset.is_valid():
             for form in formset.cleaned_data:
@@ -59,21 +58,20 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
                     resp.question_id = question.id
                     resp.content_object = question
                     resp.save()
+# TODO: redirect to success URL HERE
+        
 
-        messages.append('answers saved')
-        data['messages'] = messages
-        # data = json.dumps(self.get_context_data(**kwargs))
-        # response_kwargs = {}
-        # response_kwargs['content_type'] = 'application/json'
-
-        return HttpResponse(json.dumps(data), content_type="application/json")
+        return render(request, self.template_name, { 'formset': formset,})
         # return redirect(self.get_object())
 
     def get_context_data(self, **kwargs):
         context = super(QuestionSetView, self).get_context_data(**kwargs)
         worksheet = self.get_object()
-        context['user_worksheet'] = QuestionSet.objects.user_worksheet(
+        worksheet_data = QuestionSet.objects.user_worksheet(
             id=worksheet.id, user=self.request.user.id)
+        worksheet_formset = formset_factory(QuestionPostForm, extra=0)
+        context['formset'] = worksheet_formset(initial=worksheet_data)
+       
         return context
 
 

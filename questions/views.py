@@ -13,7 +13,7 @@ from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
 from core.mixins import AccessRequiredMixin, AccessCodeRequiredMixin
 from .models import QuestionSet, MultipleChoiceQuestion, ShortAnswerQuestion, QuestionResponse
-from .forms import QuestionPostForm
+from .forms import QuestionPostForm, QuestionSetForm, QuestionForm
 from .mixins import AjaxableResponseMixin
 
 
@@ -60,10 +60,11 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
                     resp.content_object = question
                     resp.save()
 
+        messages.append('answers saved')
         data['messages'] = messages
         # data = json.dumps(self.get_context_data(**kwargs))
-        response_kwargs = {}
-        response_kwargs['content_type'] = 'application/json'
+        # response_kwargs = {}
+        # response_kwargs['content_type'] = 'application/json'
 
         return HttpResponse(json.dumps(data), content_type="application/json")
         # return redirect(self.get_object())

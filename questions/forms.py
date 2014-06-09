@@ -1,64 +1,66 @@
 # questions/forms.py
 from django import forms
 from django.forms import ModelForm, CharField, MultipleChoiceField, IntegerField
-# from django.forms.models import BaseFormSet, BaseModelFormSet, modelformset_factory
+from django.forms.models import BaseFormSet, BaseModelFormSet, modelformset_factory
 
 # from crispy_forms.helper import FormHelper
 
-from .models import QuestionSet, QuestionResponse
+from .models import QuestionSet, QuestionResponse, ShortAnswerQuestion, MultipleChoiceQuestion
 
-# class QuestionSetForm(BaseFormSet):
+class QuestionSetForm(BaseFormSet):
 
-#     def __init__(self, questions, request=0,  *args, **kwargs):
+    def __init__(self, questions, request=0,  *args, **kwargs):
 
-#         self.questions = questions
-#         super(QuestionSetForm, self).__init__(*args, **kwargs)
+        self.questions = questions
+        super(QuestionSetForm, self).__init__(*args, **kwargs)
                 
-#         print 'initing formset==>%s' % request
-#         self._construct_forms()
+        print 'initing formset==>%s' % request
+        self._construct_forms()
 
-#     def _construct_forms(self):        
-#         self.forms = []
-#         print 'constructing forms==>%s' % self.questions
-#         for i in xrange(len(self.questions)):
-#             self.forms.append(self._construct_form(i, question_item=self.questions[i].id))
+    def _construct_forms(self):        
+        self.forms = []
+        print 'constructing forms==>%s' % self.questions
+        for i in xrange(len(self.questions)):
+            self.forms.append(self._construct_form(i, question_item=self.questions[i].id))
 
 
-# class QuestionForm(forms.Form):
-#     def __init__(self, *args, **kwargs):
-#         try:
-#             q = kwargs.pop('question_item') 
-#         except:
-#             q = None
+class QuestionForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        try:
+            q = kwargs.pop('question_item') 
+        except:
+            q = None
         
-#         super(QuestionForm, self).__init__(*args, **kwargs)
+        super(QuestionForm, self).__init__(*args, **kwargs)
         
-#         if q:
-#             question = SimpleQuestion.objects.get(pk=q)
-#             CHOICES = question.get_options().values_list('id', 'text')
-#             self.fields['question'] = IntegerField(widget=forms.HiddenInput, label=question.id)
+        if q:
+            # question = q.get_object_for_this_type(pk=q.id)
+            question = q
+            CHOICES = question.get_options().values_list('id', 'text')
+            self.fields['question'] = IntegerField(widget=forms.HiddenInput, label=question.id)
             
-#             if question.select_type == 'radio':
-#                 self.fields['response'] = MultipleChoiceField(choices=CHOICES, widget=forms.RadioSelect, label=question.text)
-#             elif q.select_type == 'checkbox':
-#                 self.fields['response'] = MultipleChoiceField(choices=CHOICES, widget=forms.CheckboxSelectMultiple, label=question.text)
-#             else:
-#                 self.fields['response'] = CharField(label=question.text)
+            if question.select_type == 'radio':
+                self.fields['response'] = MultipleChoiceField(choices=CHOICES, widget=forms.RadioSelect, label=question.text)
+            elif q.select_type == 'checkbox':
+                self.fields['response'] = MultipleChoiceField(choices=CHOICES, widget=forms.CheckboxSelectMultiple, label=question.text)
+            else:
+                self.fields['response'] = CharField(label=question.text)
     
-#     def clean(self):
-#         cleaned_data = self.cleaned_data
-#         response = cleaned_data.get(response)
-#         return cleaned_data
+    def clean(self):
+        cleaned_data = self.cleaned_data
+        response = cleaned_data.get(response)
+        return cleaned_data
 
-#     class Meta:
-#         fields = ['question', 'response']
+    class Meta:
+        fields = ['question', 'response']
 
-   
+class ShortAnswerForm(ModelForm):
+    class Meta:
+        model = QuestionResponse  
 
-
-
-
-
+class MultipleChoiceForm(ModelForm):
+    class Meta:
+        model = QuestionResponse
 
 class QuestionPostForm(ModelForm):
     class Meta:

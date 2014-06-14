@@ -1,0 +1,7 @@
+questions app -- notes
+
+For questionsetview, i need to try using formview instead of detailview. will need to figure out how to initialize the question set from request (url) parameter. -- This may be the proper way to customize a form for worksheets.
+
+for study: 
+http://ccbv.co.uk/projects/Django/1.6/django.views.generic.edit/FormMixin/
+http://lgiordani.github.io/blog/2014/02/14/digging-up-django-class-based-views-3/

@@ -1,0 +1,26 @@
+<!-- questions_response_form.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+
+	<form method="post" action="" role="form" class="form-horizontal">{% csrf_token %}	   
+	    {{ formset.management_form }}
+
+        {% for form in formset %}
+            {{ form.fields.correct.value }}
+            {{ form.fields.response }}
+            {{ form.fields.question_type }}
+            <div class="form-group">
+            {{ form }}
+            </div>
+        {% endfor %}
+	    <input type="submit" id="submit_sheet" value="Check It" />
+	</form>
+
+{% endblock content %}     
+
+{% comment %}
+{% block local_js %} <script src="{% static '/js/questions.js' %}"></script> {% endblock local_js %}
+{% endcomment %}

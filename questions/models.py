@@ -45,7 +45,6 @@ class QuestionManager(models.Manager):
             chain(mc_questions, sa_questions),
             key=attrgetter('display_order')
         )
-        print 'user-worksheet-manager->', questions
 
         # response object is {QUESTION} {RESPONSE} {OPTION_LIST [OPTIONS]}
 
@@ -53,6 +52,7 @@ class QuestionManager(models.Manager):
         for q in questions:
             response_obj = dict()
             # Record question
+            response_obj['question_obj'] = q
             response_obj['question_id'] = q.id
             response_obj['question_text'] = q.text
             response_obj[
@@ -86,7 +86,6 @@ class QuestionManager(models.Manager):
             response_obj['options'] = option_obj_list
 
             question_response_list.append(response_obj)
-        print 'user-worksheet-manager-List->', question_response_list
         return question_response_list
 
 
@@ -128,7 +127,7 @@ class ShortAnswerQuestion(AbstractQuestion):
         return []
 
     def get_correct_answer(self):
-        return correct_answer
+        return self.correct_answer
 
     def get_question_type(self):
         return 'shortanswerquestion'
@@ -158,7 +157,7 @@ class MultipleChoiceQuestion(AbstractQuestion):
         return QuestionOption.objects.filter(question=self.id).order_by('display_order')
 
     def get_correct_answer(self):
-        return QuestionOption.objects.filter(question=self.id).filter(is_correct=True).order_by('display_order')
+        return QuestionOption.objects.filter(question=self.id).filter(is_correct=True).order_by('display_order').values_list('text', flat=True)
 
     def get_question_type(self):
         return 'multiplechoicequestion'

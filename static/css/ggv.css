@@ -84,7 +84,15 @@ body {
 }
 
 /*******************************WORKSHEETS*******************************/
-div.required {
+.question_prompt {
   
+}
+
+.question_input {
+  padding: 10px;
+}
+
+form ul {
+  list-style-type: none
 }
 

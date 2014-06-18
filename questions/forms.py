@@ -7,8 +7,9 @@ class QuestionPostForm(ModelForm):
     correct = forms.CharField(widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
-        super(QuestionPostForm, self).__init__(*args, **kwargs)
+        
         try:
+            super(QuestionPostForm, self).__init__(*args, **kwargs)
             initial_data = kwargs.pop('initial')
             initial_options = initial_data['options']
             intial_question = initial_data['question_text']
@@ -16,7 +17,11 @@ class QuestionPostForm(ModelForm):
 
             if initial_options:
                 self.fields['response'].widget = forms.RadioSelect(choices=initial_options)
-                   
+            else:
+                self.fields['response'].widget.attrs = {
+                    'rows': '1',
+                    'size': '5',
+                    }
             self.fields['response'].label = intial_question
             self.fields['correct'].value = initial_check        
         except:

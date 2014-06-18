@@ -4,18 +4,26 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+    <h2>{{ object }}</h2>
 
-	<form method="post" action="" role="form" class="form-horizontal">{% csrf_token %}	   
-	    {{ formset.management_form }}
-
+	<form method="post" action="" role="form">{% csrf_token %}	   
+        {{ formset.management_form }}
         {% for form in formset %}
-            {{ form.fields.correct.value }}
-            {{ form.fields.response }}
-            {{ form.fields.question_type }}
-            <div class="form-group">
-            {{ form }}
-            </div>
+        <div class="form-group">
+            {{ form.question_id }}
+            {{ form.question_type }}
+            {{ form.correct }}
+            {% for field in form.visible_fields %}
+                <div class="question_prompt">
+                    <span>{{ forloop.parentloop.counter }}. </span>
+                    <span class="label label-danger">{{ field.errors.0 }}</span>
+                    <span class="question_text">{{ field.label }}</span>                    
+                </div>
+                <div class="question_input">{{ field }}</div>
+            {% endfor %}
+        </div>
         {% endfor %}
+
 	    <input type="submit" id="submit_sheet" value="Check It" />
 	</form>
 

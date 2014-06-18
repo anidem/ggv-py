@@ -3,7 +3,7 @@ from django.views.generic import DetailView, UpdateView, TemplateView, CreateVie
 from django.forms.formsets import formset_factory
 from django.shortcuts import render_to_response, render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
-from django.core.urlresolvers import reverse
+from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
 
@@ -14,13 +14,15 @@ from core.mixins import AccessRequiredMixin, AccessCodeRequiredMixin
 from .models import QuestionSet, MultipleChoiceQuestion, ShortAnswerQuestion, QuestionResponse
 from .forms import QuestionPostForm
 
-class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, FormView):
-    form_class = QuestionPostForm
-    # template_name = 'questions_response_form.html'
+class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
+    model = QuestionSet
+    template_name = 'questions_response_form.html'
+
 
     def post(self, request, *args, **kwargs):
+        
+
         worksheet = self.get_object()
-        print 'initial -- POST -->', self.initial
         worksheet_data = QuestionSet.objects.user_worksheet(
             id=worksheet.id, user=self.request.user.id)
         worksheet_formset = formset_factory(QuestionPostForm)
@@ -44,29 +46,32 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
                     resp.question_id = question.id
                     resp.content_object = question
                     resp.save()
-        # return redirect(self.get_object())
-# TODO: redirect to success URL HERE
-        
+            
+            print 'POST VALID--> ', kwargs
+            return HttpResponseRedirect(reverse('worksheet_results', args=kwargs['pk']))      
 
+        print 'POST NOT VALID'
         return render(request, self.template_name, { 'formset': formset,})
 
     def get_context_data(self, **kwargs):
         context = super(QuestionSetView, self).get_context_data(**kwargs)
         worksheet = self.get_object()
-
         worksheet_data = QuestionSet.objects.user_worksheet(
             id=worksheet.id, user=self.request.user.id)
-        self.initial = worksheet_data
-        print 'instance -- context -->', self.ws
+
         worksheet_formset = formset_factory(QuestionPostForm, extra=0)
-        context['formset'] = worksheet_formset(initial=worksheet_data)
-       
+        formset = worksheet_formset(initial=worksheet_data)
+        context['formset'] = formset
+        # worksheet_formset = formset_factory(QuestionPostForm, extra=0)
+        # context['formset'] = worksheet_formset(initial=self.initial)
+        # print 'GET -- context -->', context
+
         return context
 
 
 class QuestionSetResultsView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
     model = QuestionSet
-    template_name = 'act_worksheet_results.html'
+    template_name = 'questions_worksheet_results.html'
 
     def get_context_data(self, **kwargs):
         context = super(

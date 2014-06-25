@@ -1,11 +1,48 @@
 <!-- act_slidestack.html -->
 {% extends "base.html" %}
-
 {% load staticfiles %}
-{% load crispy_forms_tags %}
 
+{% block local_css %}
+    <style type="text/css">
+        {%for i in slide_images %}
+        .slide_{{ forloop.counter }} { 
+            background: url({% static 'stacks/' %}{{ object.id }}/{{ i }}) top left no-repeat; 
+        }
+        {% endfor %}
+        
+        div#slide{
+            width: 1024px;
+            height: 768px;
+        }
+    </style>
+{% endblock local_css %}
 
 {% block content %}
-	<h1>{{ object }}</h1>
-	
+	<h1>{{ object.id }}</h1>
+    <h2> </h2>
+    <p id="debug"></p>
+
+    <ul class="pagination">
+        {% for i in slide_images %}
+            <li class="active">
+                <a class="slide_selector" href="">{{ forloop.counter }}</a>
+                <input type="hidden" value="slide_{{ forloop.counter }}">
+            </li>
+        {% endfor %}        
+    </ul>
+    <div id="slide"></div>
+
 {% endblock content %}
+
+
+{% block local_js %}
+<script type="text/javascript">
+$(function() {
+    $(".slide_selector").click(function() {
+        var curr = $(this).next("input").val();
+        console.log(curr);
+        $("div#slide").removeClass().addClass("'" + curr + "'");
+    });
+})
+</script>
+{% endblock local_js %}

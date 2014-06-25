@@ -33,6 +33,7 @@ class Lesson(models.Model):
     SPSOCSTUDIES = 'SP_SOCSTUDIES'
     WRITING = 'WRITING'
     SPWRITING = 'SP_WRITING'
+    SAMPLE = 'SAMPLE'
 
     LESSON_SUBJECTS = (
         (MATH, 'Math'),
@@ -43,6 +44,7 @@ class Lesson(models.Model):
         (SPSOCSTUDIES, 'Social Studies en Espanol'),
         (WRITING, 'Writing'),
         (SPWRITING, 'Writing en Espanol'),
+        (SAMPLE, 'Sample Subject'),
     )
 
     title = models.CharField(max_length=256, default='Subject')

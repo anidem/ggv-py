@@ -6,7 +6,7 @@
     <style type="text/css">
         {%for i in slide_images %}
         .slide_{{ forloop.counter }} { 
-            background: url({% static 'stacks/' %}{{ object.id }}/{{ i }}) top left no-repeat; 
+            background: url({% static 'stacks/' %}{{ object.id }}/{{ i }}) top left no-repeat;
         }
         {% endfor %}
         
@@ -30,19 +30,9 @@
             </li>
         {% endfor %}        
     </ul>
-    <div id="slide"></div>
+    <div id="slide" class="slide_9"></div>
 
 {% endblock content %}
 
 
-{% block local_js %}
-<script type="text/javascript">
-$(function() {
-    $(".slide_selector").click(function() {
-        var curr = $(this).next("input").val();
-        console.log(curr);
-        $("div#slide").removeClass().addClass("'" + curr + "'");
-    });
-})
-</script>
-{% endblock local_js %}
+{% block local_js %} <script src="{% static 'js/slidestacks.js' %}"></script> {% endblock local_js %}

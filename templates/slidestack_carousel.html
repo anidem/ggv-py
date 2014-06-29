@@ -1,23 +1,35 @@
 <!-- slidestack_carousel.html -->
 {% extends "base.html" %}
 {% load staticfiles %}
+{% block local_css %}
+    <style type="text/css">
+
+    </style>
+{% endblock local_css %}
 {% block content %}
-  <div id="carousel-example-generic" class="carousel slide" data-ride="carousel">
+  <ul class="pagination">
+      {% for i in slide_images %}
+          <li class="active">
+              <a class="slide_selector" href="">{{ forloop.counter }}</a>
+              <input type="hidden" value="slide_{{ forloop.counter }}">
+          </li>
+      {% endfor %}        
+  </ul>
+  <div id="slider" class="carousel" data-ride="carousel" data-interval="" data-wrap="false">
     <!-- Indicators -->
-    <ol class="carousel-indicators">
-      <li data-target="#carousel-example-generic" data-slide-to="0" class="active"></li>
-      <li data-target="#carousel-example-generic" data-slide-to="1"></li>
-      <li data-target="#carousel-example-generic" data-slide-to="2"></li>
-    </ol>
+    <!-- <ol class="carousel-indicators">
+      {% for i in slide_images %}
+      <li data-target="#slider" data-slide-to="{{ forloop.counter0 }}"></li>
+      {% endfor %}
+    </ol> -->
 
     <!-- Wrapper for slides -->
     <div class="carousel-inner">
       {% for i in slide_images %}
       <div class="item {% if forloop.first %}active{% endif %}">
-        <img src="{% static 'stacks/' %}{{ object.id }}/{{ i }}" alt="...">
-        {{ i }}
+        <img class="slide_{{ forloop.counter }}" src="{% static 'stacks/' %}{{ object.id }}/{{ i }}" alt="...">
         <div class="carousel-caption">
-          {{ forloop.counter }}
+          
         </div>
       </div>
       {% endfor %}
@@ -25,13 +37,23 @@
 
 
   </div>
-  <div class="container">
+  <div class="row">
     <!-- Controls -->
-    <a class="left carousel-control" href="#carousel-example-generic" data-slide="prev">
+    <a style="float: left" class="" href="#slider" data-slide="prev">
       <span class="glyphicon glyphicon-chevron-left"></span>
     </a>
-    <a class="right carousel-control" href="#carousel-example-generic" data-slide="next">
+    <a style="float: right" class="" href="#slider" data-slide="next">
       <span class="glyphicon glyphicon-chevron-right"></span>
     </a>
   </div>
 {% endblock content %}
+{% block local_js %} 
+<script type="text/javascript">
+  var slides = {{ json_images|safe }}
+  for ( i in slides ){
+    console.log(slides[i]);
+  }
+
+</script>
+<script src="{% static 'js/slidestacks.js' %}"></script>
+{% endblock local_js %}

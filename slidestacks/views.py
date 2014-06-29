@@ -2,6 +2,7 @@
 from django.views.generic import DetailView
 from django.views.generic.edit import FormView
 from django.core.paginator import Paginator
+import json
 
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
 from unipath import Path
@@ -13,12 +14,20 @@ from .models import SlideStack
 
 class SlideStackView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
     model = SlideStack
-    template_name = 'act_slidestack.html'
+    template_name = 'slidestack_supersize.html'
 
     def get_context_data(self, **kwargs):
         context = super(SlideStackView, self).get_context_data(**kwargs) 
         path = Path(base.PROJECT_DIR.child('static', 'stacks'), self.get_object().id)
         image_names = path.listdir(names_only=True)
+        img_list = []
+        for i in image_names:
+            img_obj = {}
+            img_obj['image'] = '/static/stacks/%s/%s' % (self.get_object().id, i)
+            img_list.append(img_obj)
+
+        json_images = json.dumps(img_list)
+        print json_images
         paginator = Paginator(image_names, 1)
         stack = []
         for i in range(paginator.num_pages):
@@ -27,4 +36,5 @@ class SlideStackView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
         context['initial'] = paginator.page(1).object_list[0]
         context['stack'] = stack
         context['slide_images'] = image_names
+        context['json_images'] = json_images
         return context

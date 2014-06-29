@@ -20,7 +20,16 @@
   <![endif]-->
 
   <link href="{% static 'css/ggv.css' %}" rel="stylesheet">
-  {% block local_css %} {% endblock local_css %}
+ 
+
+  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="https://code.jquery.com/jquery.js"></script>
+  
+  <!-- Include all compiled plugins (below), or include individual files as needed -->
+  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+
+ {% block local_css %} {% endblock local_css %}
+
 
 </head>
 <body>
@@ -80,13 +89,6 @@
       <p class="text-muted">Brought to you by gedgonevirtual.com</p>
     </div>
   </div>
-
-
-  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-  <script src="https://code.jquery.com/jquery.js"></script>
-  
-  <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
 
   {% block local_js %} {% endblock local_js %}
 

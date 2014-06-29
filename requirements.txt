@@ -1,2 +1,0 @@
-# requirements.txt (designed for heroku deployment)
--r requirements/prod.txt

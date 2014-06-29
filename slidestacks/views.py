@@ -14,7 +14,11 @@ from .models import SlideStack
 
 class SlideStackView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
     model = SlideStack
+<<<<<<< HEAD
     template_name = 'slidestack_supersize.html'
+=======
+    template_name = 'slidestack_supersizer.html'
+>>>>>>> 80366b8e0a1088b22757a7c3fd93cc2b8c21a2f2
 
     def get_context_data(self, **kwargs):
         context = super(SlideStackView, self).get_context_data(**kwargs) 
@@ -35,6 +39,10 @@ class SlideStackView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
 
         context['initial'] = paginator.page(1).object_list[0]
         context['stack'] = stack
+<<<<<<< HEAD
         context['slide_images'] = image_names
         context['json_images'] = json_images
+=======
+        context['slide_images'] = json.dumps(image_names)
+>>>>>>> 80366b8e0a1088b22757a7c3fd93cc2b8c21a2f2
         return context

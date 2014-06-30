@@ -20,6 +20,8 @@
 {% block content %} 
 
 <div class="row">
+	<p>Hi {{ user }}, </p>
+
 	{% for i in lessons %}
 		<div class="col-xs-6 col-sm-3 col-md-3">
 			<a class="thumbnail" href="{{ i.get_absolute_url }}">
@@ -35,8 +37,7 @@
 </div>
 
 
-<h1>Current  Members </h1>
-<p>Hi {{ user }}, </p>
+<h1>Students </h1>
 <ul>
 {% for i in members %}
     <li>{{ i.username }}</li>

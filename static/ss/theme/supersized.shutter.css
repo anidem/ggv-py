@@ -34,7 +34,7 @@
 						ul#slide-list li a{ display:block; width:12px; height:12px; background:url('../img/nav-dot.png') no-repeat 0 -24px; }
 							ul#slide-list li a:hover{ background-position:0 -12px; cursor:pointer; }
 				
-				#tray-button{ float:right; margin-top:1px; border-left:1px solid #333; background:url('../img/bg-hover.png') repeat-x 0 44px; }
+				#tray-button{ float:left; margin-top:1px; border-left:1px solid #333; background:url('../img/bg-hover.png') repeat-x 0 44px; }
 					#tray-button:hover{ background-position:0 1px; cursor:pointer; }
 		
 	

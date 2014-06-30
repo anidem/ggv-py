@@ -4,33 +4,36 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>GGV</title>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>GGV</title>
 
-  <!-- Bootstrap -->
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+	<!-- Bootstrap -->
+	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
 
-  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
-  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-  <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
-    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
-  <![endif]-->
+	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+	<!--[if lt IE 9]>
+	<script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+	<script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+	<![endif]-->
 
-  <!-- <link href="{% static 'css/ggv.css' %}" rel="stylesheet"> -->
+	<!-- <link href="{% static 'css/ggv.css' %}" rel="stylesheet"> -->
+	
+
  
-  <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-  <script src="https://code.jquery.com/jquery.js"></script>
-  
-  <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+	<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+	<script src="https://code.jquery.com/jquery.js"></script>
 
+	<!-- Include all compiled plugins (below), or include individual files as needed -->
+	<script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
+
+
+<!-- Supersized Jquery Slider -->
 	<link rel="stylesheet" href="{% static 'ss/css/supersized.css' %}" type="text/css" media="screen" />
 	<link rel="stylesheet" href="{% static 'ss/theme/supersized.shutter.css' %}" type="text/css" media="screen" />
 
-<!-- Supersized Jquery Slider -->
 	<script type="text/javascript" src="{% static 'ss/js/jquery.easing.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'ss/js/supersized.3.2.7.min.js' %}"></script>
 	<script type="text/javascript" src="{% static 'ss/theme/supersized.shutter.min.js' %}"></script>
@@ -60,7 +63,7 @@
 				stop_loop				:	0,			// Pauses slideshow on last slide
 				random					: 	0,			// Randomize slide order (Ignores start slide)
 				slide_interval          :   3000,		// Length between transitions
-				transition              :   0, 			// 0-None, 1-Fade, 2-Slide Top, 3-Slide Right, 4-Slide Bottom, 5-Slide Left, 6-Carousel Right, 7-Carousel Left
+				transition              :   1, 			// 0-None, 1-Fade, 2-Slide Top, 3-Slide Right, 4-Slide Bottom, 5-Slide Left, 6-Carousel Right, 7-Carousel Left
 				transition_speed		:	1000,		// Speed of transition
 				new_window				:	1,			// Image links open in new window/tab
 				pause_hover             :   0,			// Pause slideshow on hover
@@ -73,19 +76,19 @@
 				min_height		        :   0,			// Min height allowed (in pixels)
 				vertical_center         :   1,			// Vertically center background
 				horizontal_center       :   1,			// Horizontally center background
-				fit_always				:	0,			// Image will never exceed browser width or height (Ignores min. dimensions)
+				fit_always				:	1,			// Image will never exceed browser width or height (Ignores min. dimensions)
 				fit_portrait         	:   1,			// Portrait images will not exceed browser height
 				fit_landscape			:   1,			// Landscape images will not exceed browser width
 														   
 				// Components							
 				slide_links				:	'blank',	// Individual links for each slide (Options: false, 'num', 'name', 'blank')
 				thumb_links				:	0,			// Individual thumb links for each slide
-				thumbnail_navigation    :   0,			// Thumbnail navigation
+				thumbnail_navigation    :   0,			// Thumbnail navigation								
 				slides 					:  	slide_data,
 											
 				// Theme Options			   
-				progress_bar			:	0,			// Timer for each slide							
-				mouse_scrub				:	1
+				// progress_bar			:	0,			// Timer for each slide							
+				// mouse_scrub				:	1
 				
 			});
 
@@ -100,14 +103,13 @@
 
 
 <body>
-
 	<!--Thumbnail Navigation-->
-	<!-- <div id="prevthumb"></div> -->
-	<!-- <div id="nextthumb"></div> -->
+	<div id="prevthumb"></div>
+	<div id="nextthumb"></div>
 	
 	<!--Arrow Navigation-->
-	<a id="prevslide" class="load-item"></a>
-	<a id="nextslide" class="load-item"></a>
+	<!-- <a id="prevslide" class="load-item"></a> -->
+	<!-- <a id="nextslide" class="load-item"></a> -->
 	
 	<div id="thumb-tray" class="load-item">
 		<div id="thumb-back"></div>
@@ -123,23 +125,22 @@
 	<div id="controls-wrapper" class="load-item">
 		<div id="controls">
 			
-			<!-- <a id="play-button"><img id="pauseplay" src="{% static 'ss/img/pause.png' %}"/></a> -->
+			<!-- <a id="play-button"><img id="pauseplay" src="{% static 'ss'%}/img/pause.png"/></a> -->
 		
 			<!--Slide counter-->
 			<div id="slidecounter">
-				<span id="fs" class="glyphicon glyphicon-fullscreen"> </span>
 				<span class="slidenumber"></span> / <span class="totalslides"></span>
-				<span id="fs" class="glyphicon glyphicon-comment"> </span>
 			</div>
 			
 			<!--Slide captions displayed here-->
-			<!-- <div id="slidecaption"></div> -->
+			<div id="slidecaption"></div>
 			
 			<!--Thumb Tray button-->
-			<a id="tray-button"><img id="tray-arrow" src="{% static 'ss/img/button-tray-up.png' %}"/></a>
+			<a id="tray-button"><img id="tray-arrow" src="{% static 'ss'%}/img/button-tray-up.png"/></a>
 			
 			<!--Navigation-->
-			<ul id="slide-list"></ul>
+			<!-- <ul id="slide-list"></ul> -->
+			
 		</div>
 	</div>
 </body>

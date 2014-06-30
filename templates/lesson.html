@@ -19,7 +19,7 @@
 	{% for i in acts %}
 		{% ifchanged i.section %} <h2>{{ i.section }}</h2> {% endifchanged %}
 		<a href="{{ i.get_absolute_url }}" class="list-group-item">
-			<h4><span class="glyphicon glyphicon-{% if i.activity_type = 'slidestack' %}film" style="background: yellow"{% else %}list-alt" style="background: white"
+			<h4><span class="glyphicon glyphicon-{% if i.activity_type = 'slidestack' %}film" style="color: gray; background: white"{% else %}list-alt" style="background: white"
 				{% endif %}> </span> 
 				{{ forloop.counter }}. {{ i.title }}
 			</h4>

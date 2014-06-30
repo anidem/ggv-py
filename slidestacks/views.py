@@ -17,7 +17,7 @@ class SlideStackView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(SlideStackView, self).get_context_data(**kwargs) 
-        path = Path(base.PROJECT_DIR.child('static', 'stacks'), self.get_object().id)
+        path = Path(base.PROJECT_DIR.child('static', 'stacks'), self.get_object().asset)
         image_names = path.listdir(names_only=True)
         context['slide_images'] = json.dumps(image_names)
         return context

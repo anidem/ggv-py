@@ -5,3 +5,16 @@ For questionsetview, i need to try using formview instead of detailview. will ne
 for study: 
 http://ccbv.co.uk/projects/Django/1.6/django.views.generic.edit/FormMixin/
 http://lgiordani.github.io/blog/2014/02/14/digging-up-django-class-based-views-3/
+
+TODO:
+add comment field to questions -- instructor only
+add login record view for printing.
+add worksheet response log for each student
+add email instructor when worksheet is responded.
+add eng/span toggle in lesson menu
+
+add commenting system on lesson stacks and worksheets. Teacher can message student or students
+students can create personal notes attached to a stack or worksheet and/or optionally send note to teacher(s). e.g. questions about a presentation or worksheet.
+add messaging system to stacks and worksheets.
+
+

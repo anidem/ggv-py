@@ -68,6 +68,9 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
 
         return context
 
+class QuestionSetScreenView(DetailView):
+    pass
+
 
 class QuestionSetResultsView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
     model = QuestionSet
@@ -80,3 +83,16 @@ class QuestionSetResultsView(LoginRequiredMixin, CsrfExemptMixin, AccessRequired
         context['user_worksheet'] = QuestionSet.objects.user_worksheet(
             id=worksheet.id, user=self.request.user.id)
         return context
+
+
+
+class QuestionResponseCreate(CreateView):
+    pass
+
+class QuestionResponseUpdate(UpdateView):
+    pass
+
+
+
+
+

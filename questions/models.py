@@ -23,7 +23,6 @@ class QuestionManager(models.Manager):
             'display_order')
         sa_questions = sheet.multiplechoicequestions.all().order_by(
             'display_order')
-
         questions = sorted(
             chain(mc_questions, sa_questions),
             key=attrgetter('display_order')
@@ -36,16 +35,7 @@ class QuestionManager(models.Manager):
         user = User.objects.get(pk=user_id)
         sheet = QuestionSet.objects.get(pk=worksheet_id)
 
-        mc_questions = sheet.shortanswerquestions.all().order_by(
-            'display_order')
-        sa_questions = sheet.multiplechoicequestions.all().order_by(
-            'display_order')
-
-        questions = sorted(
-            chain(mc_questions, sa_questions),
-            key=attrgetter('display_order')
-        )
-
+        questions = self.questions(id=worksheet_id)
         # response object is {QUESTION} {RESPONSE} {OPTION_LIST [OPTIONS]}
 
         question_response_list = []
@@ -96,6 +86,9 @@ class QuestionSet(AbstractActivity):
         max_length=48, default='worksheet', null=True)
 
     objects = QuestionManager()
+
+    def get_question(self, question):
+        pass
 
     def get_absolute_url(self):
         return reverse('worksheet', args=[str(self.id)])
@@ -155,6 +148,16 @@ class MultipleChoiceQuestion(AbstractQuestion):
 
     def get_options(self):
         return QuestionOption.objects.filter(question=self.id).order_by('display_order')
+
+    def get_options_map(self):
+        opts = self.get_options()
+        options = []
+        for option in opts:
+            opt_obj = []
+            opt_obj.append(option.text)
+            opt_obj.append(option.text)
+            options.append(opt_obj)
+        return options
 
     def get_correct_answer(self):
         return QuestionOption.objects.filter(question=self.id).filter(is_correct=True).order_by('display_order').values_list('text', flat=True)

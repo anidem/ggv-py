@@ -34,3 +34,49 @@ class QuestionPostForm(ModelForm):
             'question_type': forms.HiddenInput(),
             'question_id': forms.HiddenInput()
             }
+
+class MultipleChoiceQuestionForm(ModelForm):
+    user = None
+    correct = forms.CharField(widget=forms.HiddenInput(), required=False)
+
+    def clean(self):
+        cleaned_data = super(MultipleChoiceQuestionForm, self).clean()
+        cleaned_data['user'] = self.user
+        return cleaned_data
+
+    def __init__(self, *args, **kwargs):
+        super(MultipleChoiceQuestionForm, self).__init__(*args, **kwargs)
+        self.fields['response'].widget.choices = kwargs['initial']['choices']
+        self.fields['response'].label = kwargs['initial']['label']
+        self.user = kwargs['initial']['user']
+
+    class Meta: 
+        model = QuestionResponse
+        fields = ['response', 'question_type', 'question_id', 'correct']
+        widgets = {
+                'response': forms.RadioSelect(),
+                'question_type': forms.HiddenInput(),
+                'question_id': forms.HiddenInput() 
+            }
+
+# class MultipleChoiceQuestionForm(ModelForm):
+#     correct = forms.CharField(widget=forms.HiddenInput())
+#     question_type = forms.IntegerField(widget=forms.HiddenInput())
+#     question_id = forms.IntegerField(widget=forms.HiddenInput())
+
+#     class Meta:
+#         model = QuestionResponse
+#         fields = ['response', 'question_type', 'question_id', 'correct']
+#         labels = {'response': 'hi.'}
+
+class ShortAnswerQuestionForm(ModelForm):
+    correct = forms.CharField(widget=forms.HiddenInput())
+
+    class Meta:
+        model = QuestionResponse
+
+        fields = ['response', 'question_type', 'question_id', 'correct']
+        widgets = { 
+            'question_type': forms.HiddenInput(),
+            'question_id': forms.HiddenInput()
+            }

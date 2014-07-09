@@ -149,7 +149,7 @@ class MultipleChoiceQuestion(AbstractQuestion):
     def get_options(self):
         return QuestionOption.objects.filter(question=self.id).order_by('display_order')
 
-    def get_options_map(self):
+    def get_options_as_list(self):
         opts = self.get_options()
         options = []
         for option in opts:

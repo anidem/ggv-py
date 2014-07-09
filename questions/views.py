@@ -106,62 +106,73 @@ class CreateResponse(CreateView):
         return inits     
 
 # ***
-class QuestionResponseCreate(DetailView):
+class QuestionResponseView(DetailView):
     model = QuestionSet
     template_name = 'question.html'
 
     def post(self, request, *args, **kwargs):
-        QuestionForm = modelform_factory(QuestionResponse, form=MultipleChoiceQuestionForm)
-        form = QuestionForm(request.POST)
-        if form.is_valid():            
-            question = form['question_type'].get_object_for_this_type(
-                pk=form['question_id'])
+        question_type = ContentType.objects.get(id=request.POST['question_type'])
+        current_question = question_type.get_object_for_this_type(id=request.POST['question_id'])
+        form = MultipleChoiceQuestionForm(request.POST)
+                 
+        if form.is_valid():
+            # question = form.cleaned_data['question_type'].get_object_for_this_type(
+            #     pk=form.cleaned_data['question_id'])
             try:
                 # check for previous response
-                resp = question.responses.get(user=request.user)
-                if resp.response != form['response']:
-                    resp.response = form['response']
+                resp = current_question.responses.get(user=request.user)
+                if resp.response != form.cleaned_data['response']:
+                    resp.response = form.cleaned_data['response']
                     resp.save()
             except:
                 resp = QuestionResponse()
                 resp.user = request.user
-                resp.response = form['response'] or None
-                resp.question_type = form['question_type']
-                resp.question_id = question.id
-                resp.content_object = question
+                resp.response = form.cleaned_data['response'] or None
+                resp.question_type = form.cleaned_data['question_type']
+                resp.question_id = current_question.id
+                resp.content_object = current_question
                 resp.save()
                 
-            print 'POST VALID--> ', kwargs
-            return HttpResponseRedirect(reverse('worksheet_results', args=kwargs['pk']))
+            print 'POST VALID--> '
+            self.kwargs['q'] = int(kwargs['q'])+1
 
-        print 'POST NOT VALID'
-        return render(request, self.template_name, {'formset': formset, })
+            return HttpResponseRedirect(reverse('question', kwargs=self.kwargs))
+
+        else:
+            form.fields['response'].label = current_question
+            form.fields['response'].widget.choices = current_question.get_options_as_list()
+            print 'POST NOT VALID-> ',  form
+            return render(request, self.template_name, {'form': form})
 
     def get_context_data(self, **kwargs):
         context = super(
-            QuestionResponseCreate, self).get_context_data(**kwargs)
+            QuestionResponseView, self).get_context_data(**kwargs)
 
-        question_list = QuestionSet.objects.questions(id=self.get_object().id)
-        curr_question = question_list[int(self.kwargs['q'])]
+        questions = QuestionSet.objects.questions(id=self.get_object().id)
+        
+        try:
+            current_question = questions[int(self.kwargs['q'])]
+        except:
+            return HttpResponseRedirect(reverse('worksheet_results', args=kwargs['pk']))
 
-        print curr_question.get_question_content_type()
-
-        inits = {
-            'question_type': curr_question.get_question_content_type(),
-            'question_id': curr_question.id,
-            'label' : curr_question,
-            'choices': curr_question.get_options_map(),
-            'user': self.request.user
+        form_inits = {
+            'question_type': current_question.get_question_content_type(),
+            'question_id': current_question.id,
+            # 'question_prompt': current_question,
+            # 'user': self.request.user
         }
 
-        QuestionForm = modelform_factory(QuestionResponse,
-            form=MultipleChoiceQuestionForm,
-            widgets={
-                'response': forms.RadioSelect(choices=curr_question.get_options_map())
-            },
-            labels={'response': curr_question}
-        )
-        form = QuestionForm(initial=inits)
+        current_question_type = current_question.get_question_content_type().model
+        
+        if current_question_type == 'multiplechoicequestion':
+            # form_inits['choices'] = current_question.get_options_as_list()
+            form = MultipleChoiceQuestionForm(initial=form_inits)
+            form.fields['response'].widget.choices = current_question.get_options_as_list()
+        else:
+            form = ShortAnswerQuestionForm(initial=form_inits)
+        
+        form.user = self.request.user
+        form.fields['response'].label = current_question
+        
         context['form'] = form
-        context['question'] = curr_question
         return context

@@ -1,8 +1,6 @@
 <!-- question.html -->
 {% extends "base.html" %}
-
 {% load staticfiles %}
-
 
 {% block content %}
     <h1>{{ object }} <small>{{ object.instructions }}</small></h1>
@@ -10,7 +8,6 @@
     <form method="post" action="">
         {% csrf_token %}
         {{ form }}
-
         <div><input type="submit"></div>
     </form>
 {% endblock content %}     

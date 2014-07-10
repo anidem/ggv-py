@@ -119,6 +119,9 @@ class ShortAnswerQuestion(AbstractQuestion):
     def get_options(self):
         return []
 
+    def get_options_as_list(self):
+        return None
+        
     def get_correct_answer(self):
         return self.correct_answer
 

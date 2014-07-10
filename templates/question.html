@@ -3,13 +3,43 @@
 {% load staticfiles %}
 
 {% block content %}
+    <div class="row">
+		<ul class="pagination">
+			{% if prev >= 0 %}
+		  		<li><a href="/ggv/worksheet/{{ object.id }}/{{ prev }}">&laquo;</a></li>
+		  	{% else %}
+				<li class="disabled"><a href="#">&laquo;</a></li>
+			{% endif %}
+
+			{% for i in questions %}
+				{% if forloop.counter0 == active %}
+					<li class="active"><a href="#">{{ forloop.counter }}</a></li>
+				{% else %}
+					<li class="inactive"><a href="/ggv/worksheet/{{ object.id }}/{{ forloop.counter0 }}">{{ forloop.counter }}</a></li>				
+				{% endif %}
+			{% endfor %}
+
+			{% if next < questions|length %}
+				<li><a href="/ggv/worksheet/{{ object.id }}/{{ next }}">&raquo;</a></li>
+			{% else %}
+				<li class="disabled"><a href="#">&raquo;</a></li>
+			{% endif %}
+		</ul>
+    </div>
     <h1>{{ object }} <small>{{ object.instructions }}</small></h1>
     
-    <form method="post" action="">
-        {% csrf_token %}
-        {{ form }}
-        <div><input type="submit"></div>
-    </form>
-{% endblock content %}     
+    {% if form %}
+	    <form method="post" action="">
+	        {% csrf_token %}
+	        {{ form }}
+	        <div><input type="submit"></div>
+	    </form>
+    {% else %}
+    	You've reached the end of this worksheet.
+    {% endif %}
+
+
+
+{% endblock content %} 
 
 {% block local_js %} <script src=""></script> {% endblock local_js %}

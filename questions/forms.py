@@ -36,20 +36,7 @@ class QuestionPostForm(ModelForm):
             }
 
 class MultipleChoiceQuestionForm(ModelForm):
-    user = None
     correct = forms.CharField(widget=forms.HiddenInput(), required=False)
-
-    def clean(self):
-        cleaned_data = super(MultipleChoiceQuestionForm, self).clean()
-        cleaned_data['user'] = self.user
-        return cleaned_data
-
-    # def __init__(self, *args, **kwargs):
-    #     super(MultipleChoiceQuestionForm, self).__init__(*args, **kwargs)
-    #     if self.initial:
-    #         self.fields['response'].widget.choices = self.initial['choices']
-    #         self.fields['response'].label = self.initial['question_prompt']
-    #         self.user = self.initial['user']
 
     class Meta: 
         model = QuestionResponse
@@ -61,22 +48,10 @@ class MultipleChoiceQuestionForm(ModelForm):
             }
 
 class ShortAnswerQuestionForm(ModelForm):
-    user = None
     correct = forms.CharField(widget=forms.HiddenInput(), required=False)
-
-    def clean(self):
-        cleaned_data = super(ShortAnswerQuestionForm, self).clean()
-        cleaned_data['user'] = self.user
-        return cleaned_data
-
-    # def __init__(self, *args, **kwargs):
-    #     super(ShortAnswerQuestionForm, self).__init__(*args, **kwargs)
-    #     self.fields['response'].label = self.initial['question_prompt']
-    #     self.user = self.initial['user']
 
     class Meta:
         model = QuestionResponse
-
         fields = ['response', 'question_type', 'question_id', 'correct']
         widgets = { 
             'question_type': forms.HiddenInput(),

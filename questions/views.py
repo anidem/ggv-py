@@ -5,6 +5,7 @@ from django.forms.models import modelform_factory
 from django import forms
 from django.shortcuts import render_to_response, render, redirect
 from django.http import HttpResponseRedirect, HttpResponse
+from django.shortcuts import render_to_response, redirect
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
@@ -113,11 +114,17 @@ class QuestionResponseView(DetailView):
     def post(self, request, *args, **kwargs):
         question_type = ContentType.objects.get(id=request.POST['question_type'])
         current_question = question_type.get_object_for_this_type(id=request.POST['question_id'])
-        form = MultipleChoiceQuestionForm(request.POST)
-                 
+        current_question_type = current_question.get_question_content_type().model
+        
+        if current_question_type == 'multiplechoicequestion':
+            form = MultipleChoiceQuestionForm(request.POST)
+            form.fields['response'].widget = forms.RadioSelect(choices=current_question.get_options_as_list()) 
+        else:
+            form = ShortAnswerQuestionForm(request.POST)
+        
+        form.fields['response'].label = current_question
+
         if form.is_valid():
-            # question = form.cleaned_data['question_type'].get_object_for_this_type(
-            #     pk=form.cleaned_data['question_id'])
             try:
                 # check for previous response
                 resp = current_question.responses.get(user=request.user)
@@ -127,52 +134,55 @@ class QuestionResponseView(DetailView):
             except:
                 resp = QuestionResponse()
                 resp.user = request.user
-                resp.response = form.cleaned_data['response'] or None
+                resp.response = form.cleaned_data['response']
                 resp.question_type = form.cleaned_data['question_type']
                 resp.question_id = current_question.id
                 resp.content_object = current_question
                 resp.save()
                 
-            print 'POST VALID--> '
+            # Form is valid -- increment to next question index
             self.kwargs['q'] = int(kwargs['q'])+1
-
             return HttpResponseRedirect(reverse('question', kwargs=self.kwargs))
 
+        # Form is invalid -- redisplay the form
         else:
-            form.fields['response'].label = current_question
-            form.fields['response'].widget.choices = current_question.get_options_as_list()
-            print 'POST NOT VALID-> ',  form
-            return render(request, self.template_name, {'form': form})
+            redisplay = {}
+            redisplay['form'] = form
+            redisplay['object'] = self.get_object()
+            redisplay['questions'] = questions = QuestionSet.objects.questions(id=self.get_object().id)
+            redisplay['active'] = int(self.kwargs['q'])
+            redisplay['prev'] = int(self.kwargs['q']) - 1
+            redisplay['next'] = int(self.kwargs['q']) + 1
+            print 'context-> ', redisplay
+            return render(self.request, self.template_name, redisplay)
 
     def get_context_data(self, **kwargs):
         context = super(
             QuestionResponseView, self).get_context_data(**kwargs)
 
         questions = QuestionSet.objects.questions(id=self.get_object().id)
-        
         try:
             current_question = questions[int(self.kwargs['q'])]
         except:
-            return HttpResponseRedirect(reverse('worksheet_results', args=kwargs['pk']))
-
+            context['questions'] = questions
+            return context
+        
         form_inits = {
             'question_type': current_question.get_question_content_type(),
             'question_id': current_question.id,
-            # 'question_prompt': current_question,
-            # 'user': self.request.user
         }
 
-        current_question_type = current_question.get_question_content_type().model
-        
+        current_question_type = current_question.get_question_content_type().model        
         if current_question_type == 'multiplechoicequestion':
-            # form_inits['choices'] = current_question.get_options_as_list()
             form = MultipleChoiceQuestionForm(initial=form_inits)
-            form.fields['response'].widget.choices = current_question.get_options_as_list()
+            form.fields['response'].widget = forms.RadioSelect(choices=current_question.get_options_as_list())           
         else:
-            form = ShortAnswerQuestionForm(initial=form_inits)
-        
-        form.user = self.request.user
+            form = ShortAnswerQuestionForm(initial=form_inits)     
         form.fields['response'].label = current_question
         
         context['form'] = form
+        context['questions'] = questions
+        context['active'] = int(self.kwargs['q'])
+        context['prev'] = int(self.kwargs['q']) - 1
+        context['next'] = int(self.kwargs['q']) + 1
         return context

@@ -85,11 +85,15 @@ body {
 
 /*******************************WORKSHEETS*******************************/
 .question_prompt {
-  
+  font-size: 1.8em;
 }
 
 .question_input {
-  padding: 10px;
+  padding: 5px;
+}
+
+.question_submit {
+  text-align: center
 }
 
 form ul {

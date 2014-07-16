@@ -2,9 +2,11 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
+{% block page_title %} GGV | worksheet | {{ object.id }} | {{ active|add:"1" }} {% endblock page_title %}
 {% block content %}
+   	{% if active <= questions|length %}
     <div class="row">
-		<ul class="pagination">
+		<ul class="pagination pagination-lg">
 			{% if prev >= 0 %}
 		  		<li><a href="/ggv/worksheet/{{ object.id }}/{{ prev }}">&laquo;</a></li>
 		  	{% else %}
@@ -19,26 +21,46 @@
 				{% endif %}
 			{% endfor %}
 
-			{% if next < questions|length %}
+			{% if next < questions|length and active < questions|length %}
 				<li><a href="/ggv/worksheet/{{ object.id }}/{{ next }}">&raquo;</a></li>
 			{% else %}
 				<li class="disabled"><a href="#">&raquo;</a></li>
 			{% endif %}
 		</ul>
     </div>
+	{% endif %}
     <h1>{{ object }} <small>{{ object.instructions }}</small></h1>
     
+
+	<div class="col-md-4 col-md-offset-4">
     {% if form %}
-	    <form method="post" action="">
+    	
+	    <form method="post" action="" style="text-align: left">
 	        {% csrf_token %}
-	        {{ form }}
-	        <div><input type="submit"></div>
+	        
+	        {% for hidden in form.hidden_fields %} {{ hidden }}	{% endfor %}
+
+	        {% for field in form.visible_fields%}
+	        	{% for e in field.errors %}<span class="label label-danger"> {{ e }} </span>{% endfor %}
+				<p class="question_prompt">{{ field.label }}</p> 
+				<p class="question_input">{{ field }}</p>				
+			{% endfor %}
+
+			{% for e in field.non_field_errors %}<span class="label label-warning"> {{ e }} </span>{% endfor %}
+
+			<hr>
+	        
+	        <div class="question_submit"><button type="submit" class="btn btn-default">Submit</button></div>
 	    </form>
+
     {% else %}
-    	You've reached the end of this worksheet.
+    	{% if active == questions|length %}
+    		<p class="question_prompt">You've reached the end of this worksheet.</p>
+    	{% else %}
+    		<p class="question_prompt">This question does not exist.</p>
+    	{% endif %}
     {% endif %}
-
-
+    </div>
 
 {% endblock content %} 
 

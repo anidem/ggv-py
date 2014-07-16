@@ -28,6 +28,7 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
         worksheet_data = QuestionSet.objects.user_worksheet(
             id=worksheet.id, user=self.request.user.id)
         worksheet_formset = formset_factory(QuestionPostForm)
+
         formset = worksheet_formset(request.POST, initial=worksheet_data)
 
         if formset.is_valid():
@@ -60,7 +61,7 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
         worksheet = self.get_object()
         worksheet_data = QuestionSet.objects.user_worksheet(
             id=worksheet.id, user=self.request.user.id)
-
+        print worksheet_data
         worksheet_formset = formset_factory(QuestionPostForm, extra=0)
         formset = worksheet_formset(initial=worksheet_data)
         context['formset'] = formset
@@ -69,8 +70,6 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
         # print 'GET -- context -->', context
 
         return context
-
-
 
 class QuestionSetResultsView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
     model = QuestionSet
@@ -84,29 +83,6 @@ class QuestionSetResultsView(LoginRequiredMixin, CsrfExemptMixin, AccessRequired
             id=worksheet.id, user=self.request.user.id)
         return context
 
-
-class QuestionSetScreenView(DetailView):
-    pass
-
-
-class CreateResponse(CreateView):
-    model = QuestionResponse
-    template_name = 'question.html'
-    form_class = MultipleChoiceQuestionForm
-
-    def get_initial(self):
-        question_list = QuestionSet.objects.questions(id=self.kwargs['pk'])
-        curr_question = question_list[int(self.kwargs['q'])]
-        inits = {
-            'question_type': curr_question.get_question_content_type(),
-            'question_id': curr_question.id,
-            'label' : curr_question,
-            'choices': curr_question.get_options_map(),
-            'user': self.request.user
-        }
-        return inits     
-
-# ***
 class QuestionResponseView(DetailView):
     model = QuestionSet
     template_name = 'question.html'
@@ -153,7 +129,6 @@ class QuestionResponseView(DetailView):
             redisplay['active'] = int(self.kwargs['q'])
             redisplay['prev'] = int(self.kwargs['q']) - 1
             redisplay['next'] = int(self.kwargs['q']) + 1
-            print 'context-> ', redisplay
             return render(self.request, self.template_name, redisplay)
 
     def get_context_data(self, **kwargs):
@@ -165,6 +140,7 @@ class QuestionResponseView(DetailView):
             current_question = questions[int(self.kwargs['q'])]
         except:
             context['questions'] = questions
+            context['active'] = int(self.kwargs['q'])
             return context
         
         form_inits = {
@@ -175,11 +151,16 @@ class QuestionResponseView(DetailView):
         current_question_type = current_question.get_question_content_type().model        
         if current_question_type == 'multiplechoicequestion':
             form = MultipleChoiceQuestionForm(initial=form_inits)
-            form.fields['response'].widget = forms.RadioSelect(choices=current_question.get_options_as_list())           
+            form.fields['response'].widget = forms.RadioSelect(choices=current_question.get_options_as_list())       
         else:
             form = ShortAnswerQuestionForm(initial=form_inits)     
-        form.fields['response'].label = current_question
         
+        form.fields['response'].label = current_question
+        try: 
+            form.fields['response'].initial =  current_question.responses.get(user=self.request.user).response
+        except:
+            pass
+
         context['form'] = form
         context['questions'] = questions
         context['active'] = int(self.kwargs['q'])

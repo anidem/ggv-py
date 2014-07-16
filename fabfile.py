@@ -8,15 +8,16 @@ def push_changes(message='fabfile committed this, not me.'):
     local("git push origin master")
 
 def deploy():
-    code_dir = '/Users/rmedina/test-deploy'
+    code_dir = '~/pythonapps/test-deploy'
+    backup_dir = '~/pythonapps'
     with settings(warn_only=True):
         if run("cd %s" % code_dir).failed:
             run("git clone https://github.com/anidem/ggv-py.git %s" % code_dir)
-    with cd(code_dir):
-        ts = time.strftime('%Y%m%d')
-        run('cd ..')
+
+    with cd(backup_dir):
+        ts = time.strftime('%Y%m%d%HH%m')
         run('tar cvf ggv-py-%s.tar %s' % (ts, code_dir))
-        run('cd %s' % code_dir)
+    with cd(code_dir):
         run('git pull origin master')
         run('touch ggvproject/wsgi.py')
 

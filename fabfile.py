@@ -12,7 +12,8 @@ def deploy():
         if run("test -d %s" % code_dir).failed:
             run("git clone https://github.com/anidem/ggv-py.git %s" % code_dir)
     with cd(code_dir):
-        run('git pull')
+        run('git pull origin master')
         run('touch ggvproject/wsgi.py')
+        
 
 

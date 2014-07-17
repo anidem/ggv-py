@@ -13,13 +13,19 @@
 				<li class="disabled"><a href="#">&laquo;</a></li>
 			{% endif %}
 
-			{% for i in questions %}
-				{% if forloop.counter0 == active %}
-					<li class="active"><a href="#">{{ forloop.counter }}</a></li>
-				{% else %}
-					<li class="inactive"><a href="/ggv/worksheet/{{ object.id }}/{{ forloop.counter0 }}">{{ forloop.counter }}</a></li>				
-				{% endif %}
-			{% endfor %}
+            {% if questions|length < 20 %}
+    			{% for i in questions %}
+    				{% if forloop.counter0 == active %}
+    					<li class="active"><a href="#">{{ forloop.counter }}</a></li>
+    				{% else %}
+    					<li class="inactive"><a href="/ggv/worksheet/{{ object.id }}/{{ forloop.counter0 }}">{{ forloop.counter }}</a></li>				
+    				{% endif %}
+    			{% endfor %}
+            {% else %}
+                {% if active > 0 %}<li class="inactive"><a href="/ggv/worksheet/{{ object.id }}/{{ active|add:"-1" }}">{{ active|add:"-1" }}</a></li>{% endif %}
+                <li class="active"><a href="#">{{ active }}</a></li>
+                {% if active < questions|length|add:"-1" %}<li class="inactive"><a href="/ggv/worksheet/{{ object.id }}/{{ active|add:"1" }}">{{ active|add:"1" }}</a></li>{% endif %}
+            {% endif %}
 
 			{% if next < questions|length and active < questions|length %}
 				<li><a href="/ggv/worksheet/{{ object.id }}/{{ next }}">&raquo;</a></li>

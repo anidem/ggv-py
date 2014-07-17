@@ -17,9 +17,11 @@ def deploy():
     with cd(backup_dir):
         ts = time.strftime('%Y%m%d%H%M%S')
         run('tar cvf ggv-py-%s.tar %s' % (ts, code_dir))
+    
     with cd(code_dir):
         run('git pull origin master')
         run('touch ggvproject/wsgi.py')
+        run('tree')
 
 def prompt():
     if not confirm("You are about to push changes to the repository to a production environment. Are you sure you want to do this?"):

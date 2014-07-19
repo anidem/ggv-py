@@ -16,6 +16,29 @@ from lessons.models import Lesson, AbstractActivity
 
 class QuestionManager(models.Manager):
 
+    def worksheet_report(self, **kwargs):
+        report = []
+
+        try:
+            user = kwargs.pop('user')
+            questions = self.questions(id=kwargs.pop('worksheet').id)
+        except:
+            return report
+
+        for q in questions:
+            obj = {}
+            obj['question'] = q
+            try:
+                obj['response'] = q.responses.get(user=user)
+                obj['correct']  = (obj['response'].response in q.get_correct_answer())
+            except:
+                obj['response'] = None
+                obj['correct'] = None                
+
+            report.append(obj)
+        
+        return report
+
     def questions(self, **kwargs):
         set_id = kwargs.pop('id')
         sheet = QuestionSet.objects.get(pk=set_id)
@@ -121,16 +144,21 @@ class ShortAnswerQuestion(AbstractQuestion):
 
     def get_options_as_list(self):
         return None
-        
+    
+    def get_user_response(self, user):
+        response_obj = self.responses.get(user=user)
+        return response_obj
+
     def get_correct_answer(self):
         return self.correct_answer
 
     def get_question_type(self):
-        return 'shortanswerquestion'
+        # returns a string label for this model e.g., shortanswerquestion
+        return self.get_question_content_type().model
 
     def get_question_content_type(self):
-        my_type = ContentType.objects.get_for_model(ShortAnswerQuestion)
-        return my_type
+        content_type = ContentType.objects.get_for_model(ShortAnswerQuestion)
+        return content_type
 
 
 class MultipleChoiceQuestion(AbstractQuestion):
@@ -162,15 +190,27 @@ class MultipleChoiceQuestion(AbstractQuestion):
             options.append(opt_obj)
         return options
 
+    def get_user_response(self, user):
+        response_obj = self.responses.get(user=user)
+        # question_type = ContentType.objects.get(id=self.get_question_content_type())
+        # current_question = question_type.get_object_for_this_type(id=request.POST['question_id'])
+        # try:
+        #     response_obj = QuestionResponse.objects.filter()
+        # except:
+        #     response_obj = None
+        return response_obj
+
     def get_correct_answer(self):
         return QuestionOption.objects.filter(question=self.id).filter(is_correct=True).order_by('display_order').values_list('text', flat=True)
 
     def get_question_type(self):
-        return 'multiplechoicequestion'
+        # returns a string label for this model e.g., multiplechoicequestion
+        return self.get_question_content_type().model
 
     def get_question_content_type(self):
-        my_type = ContentType.objects.get_for_model(MultipleChoiceQuestion)
-        return my_type
+        # returns a ContentType object for this model
+        content_type = ContentType.objects.get_for_model(MultipleChoiceQuestion)
+        return content_type
 
 
 class QuestionOption(models.Model):

@@ -100,3 +100,8 @@ form ul {
   list-style-type: none
 }
 
+.pagination a {
+  color: #fff;
+}
+
+

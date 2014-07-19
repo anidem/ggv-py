@@ -90,15 +90,16 @@ class QuestionResponseView(DetailView):
     def post(self, request, *args, **kwargs):
         question_type = ContentType.objects.get(id=request.POST['question_type'])
         current_question = question_type.get_object_for_this_type(id=request.POST['question_id'])
-        current_question_type = current_question.get_question_content_type().model
         
-        if current_question_type == 'multiplechoicequestion':
+        if current_question.get_question_type() == 'multiplechoicequestion':
             form = MultipleChoiceQuestionForm(request.POST)
             form.fields['response'].widget = forms.RadioSelect(choices=current_question.get_options_as_list()) 
         else:
             form = ShortAnswerQuestionForm(request.POST)
         
         form.fields['response'].label = current_question
+        
+        resp = None
 
         if form.is_valid():
             try:
@@ -115,32 +116,39 @@ class QuestionResponseView(DetailView):
                 resp.question_id = current_question.id
                 resp.content_object = current_question
                 resp.save()
-                
-            # Form is valid -- increment to next question index
-            self.kwargs['q'] = int(kwargs['q'])+1
-            return HttpResponseRedirect(reverse('question', kwargs=self.kwargs))
 
-        # Form is invalid -- redisplay the form
-        else:
-            redisplay = {}
-            redisplay['form'] = form
-            redisplay['object'] = self.get_object()
-            redisplay['questions'] = questions = QuestionSet.objects.questions(id=self.get_object().id)
-            redisplay['active'] = int(self.kwargs['q'])
-            redisplay['prev'] = int(self.kwargs['q']) - 1
-            redisplay['next'] = int(self.kwargs['q']) + 1
-            return render(self.request, self.template_name, redisplay)
+                
+        qindex = int(self.kwargs['q'])
+        redisplay = {}
+        redisplay['form'] = form
+        redisplay['object'] = self.get_object()
+        redisplay['questions'] = QuestionSet.objects.worksheet_report(worksheet=self.get_object(), user=self.request.user)
+        redisplay['active'] = qindex
+        redisplay['prev'] = qindex - 1
+        redisplay['next'] = qindex + 1
+
+        if resp:
+            redisplay['response'] = resp
+            redisplay['correct'] = resp.response in current_question.get_correct_answer()
+
+        return render(self.request, self.template_name, redisplay)
 
     def get_context_data(self, **kwargs):
         context = super(
             QuestionResponseView, self).get_context_data(**kwargs)
 
-        questions = QuestionSet.objects.questions(id=self.get_object().id)
+        qindex = int(self.kwargs['q'])
+        questions = QuestionSet.objects.worksheet_report(worksheet=self.get_object(), user=self.request.user)
+
         try:
-            current_question = questions[int(self.kwargs['q'])]
+            if qindex == 0:
+                raise NameError('bad index')
+            current = questions[qindex-1]
+            current_question = current['question']
+            current_question_type_name = current_question.get_question_content_type().model
         except:
             context['questions'] = questions
-            context['active'] = int(self.kwargs['q'])
+            context['active'] = qindex
             return context
         
         form_inits = {
@@ -148,22 +156,24 @@ class QuestionResponseView(DetailView):
             'question_id': current_question.id,
         }
 
-        current_question_type = current_question.get_question_content_type().model        
-        if current_question_type == 'multiplechoicequestion':
+        if current_question_type_name == 'multiplechoicequestion':
             form = MultipleChoiceQuestionForm(initial=form_inits)
             form.fields['response'].widget = forms.RadioSelect(choices=current_question.get_options_as_list())       
         else:
             form = ShortAnswerQuestionForm(initial=form_inits)     
         
         form.fields['response'].label = current_question
-        try: 
-            form.fields['response'].initial =  current_question.responses.get(user=self.request.user).response
+        form.fields['response'].initial =  current['response']
+
+        try:
+            context['correct'] = current['correct']
         except:
             pass
 
         context['form'] = form
-        context['questions'] = questions
-        context['active'] = int(self.kwargs['q'])
-        context['prev'] = int(self.kwargs['q']) - 1
-        context['next'] = int(self.kwargs['q']) + 1
+        context['questions'] = questions        
+        context['response'] = current['response']
+        context['active'] = qindex
+        context['prev'] = qindex - 1
+        context['next'] = qindex + 1
         return context

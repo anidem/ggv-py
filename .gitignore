@@ -40,4 +40,5 @@ Thumbs.db
 # Django #
 ############
 stacks
+prod.py
 

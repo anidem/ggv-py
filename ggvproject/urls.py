@@ -2,8 +2,6 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-
-
 from core.views import IndexView, HomeView
 from courses.views import CourseView, StudentCourseView
 from lessons.views import LessonView
@@ -37,5 +35,5 @@ urlpatterns = patterns('',
 
     url(r'^start$', IndexView.as_view(), name='home'),
     url(r'^$', HomeView.as_view(), name='ggvhome'),
-)
+) 
 

@@ -13,7 +13,7 @@ from .models import SlideStack
 
 class SlideStackView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
     model = SlideStack
-    template_name = 'slidestack_carousel.html'
+    template_name = 'slidestack.html'
 
     def get_context_data(self, **kwargs):
         context = super(SlideStackView, self).get_context_data(**kwargs) 

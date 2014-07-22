@@ -1,13 +1,7 @@
-<!-- slidestack_carousel.html -->
-{% extends "base.html" %}
+<!-- slidestack.html -->
 {% load staticfiles %}
-{% block local_css %}
-    <style type="text/css">
-
-    </style>
-{% endblock local_css %}
 {% block content %}
 <div style="text-align: center">
-<iframe width="100%" height="640px" src="{% static 'stacks/1/index.html' %}" style="background-color: black">
+<iframe width="100%" height="100%" src="{% static 'stacks/1/index.html' %}" style="background-color: white; border: none">
 </div>
 {% endblock content %}

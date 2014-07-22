@@ -17,10 +17,13 @@ from core.mixins import AccessRequiredMixin, AccessCodeRequiredMixin
 from .models import QuestionSet, MultipleChoiceQuestion, ShortAnswerQuestion, QuestionResponse
 from .forms import QuestionPostForm, MultipleChoiceQuestionForm, ShortAnswerQuestionForm
 
+class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
+    model = QuestionSet
+    template_name = 'worksheet.html'
 
 class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
     model = QuestionSet
-    template_name = 'questions_response_form.html'
+    template_name = 'questions_full_form.html'
 
     def post(self, request, *args, **kwargs):
 
@@ -69,18 +72,6 @@ class QuestionSetView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, 
         # context['formset'] = worksheet_formset(initial=self.initial)
         # print 'GET -- context -->', context
 
-        return context
-
-class QuestionSetResultsView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
-    model = QuestionSet
-    template_name = 'questions_worksheet_results.html'
-
-    def get_context_data(self, **kwargs):
-        context = super(
-            QuestionSetResultsView, self).get_context_data(**kwargs)
-        worksheet = self.get_object()
-        context['user_worksheet'] = QuestionSet.objects.user_worksheet(
-            id=worksheet.id, user=self.request.user.id)
         return context
 
 class QuestionResponseView(DetailView):
@@ -176,4 +167,16 @@ class QuestionResponseView(DetailView):
         context['active'] = qindex
         context['prev'] = qindex - 1
         context['next'] = qindex + 1
+        return context
+
+class QuestionSetResultsView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
+    model = QuestionSet
+    template_name = 'questions_worksheet_results.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(
+            QuestionSetResultsView, self).get_context_data(**kwargs)
+        worksheet = self.get_object()
+        context['user_worksheet'] = QuestionSet.objects.user_worksheet(
+            id=worksheet.id, user=self.request.user.id)
         return context

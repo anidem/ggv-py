@@ -5,7 +5,7 @@ admin.autodiscover()
 from core.views import IndexView, HomeView
 from courses.views import CourseView, StudentCourseView
 from lessons.views import LessonView
-from questions.views import QuestionSetView, QuestionSetResultsView, QuestionResponseView
+from questions.views import WorksheetHomeView, QuestionSetView, QuestionSetResultsView, QuestionResponseView
 from slidestacks.views import SlideStackView
 
 urlpatterns = patterns('',
@@ -14,9 +14,9 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<pk>\d+)$', CourseView.as_view(), name='course'),
     url(r'^ggv/lesson/(?P<pk>\d+)$', LessonView.as_view(), name='lesson'),
     url(r'^ggv/slidestack/(?P<pk>\d+)$', SlideStackView.as_view(), name='slidestack'),
-    url(r'^ggv/worksheet/(?P<pk>\d+)$', QuestionSetView.as_view(), name='worksheet'),
-    url(r'^ggv/worksheet_results/(?P<pk>\d+)$', QuestionSetResultsView.as_view(), name='worksheet_results'),
+    url(r'^ggv/worksheet/(?P<pk>\d+)$', WorksheetHomeView.as_view(), name='worksheet'),
     url(r'^ggv/worksheet/(?P<pk>\d+)/(?P<q>\d+)$', QuestionResponseView.as_view(), name='question'),
+    url(r'^ggv/worksheet_results/(?P<pk>\d+)$', QuestionSetResultsView.as_view(), name='worksheet_results'),
 
     # url(r'^ggvstudent/$', StudentAccessView.as_view(), name='student_login'),
     # url(r'^ggvstudent/(?P<pk>\w+)$', StudentCourseView.as_view(), name='course_student'),

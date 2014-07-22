@@ -39,7 +39,7 @@
 
         {{ active }}           
 
-        {% if next < questions|length and active < questions|length %}
+        {% if next <= questions|length and active < questions|length %}
             <a href="/ggv/worksheet/{{ object.id }}/{{ next }}" style="color: black">
                 <span class="label label-default"><span class="glyphicon glyphicon-chevron-right"></span></span>
             </a>
@@ -81,7 +81,7 @@
 
 			<hr>
 	        
-	        <div class="question_submit"><button type="submit" class="btn btn-default">Submit</button></div>
+	        <div class="question_submit"><button type="submit" class="btn btn-default">Check it!</button></div>
 	    </form>
 
     {% else %}

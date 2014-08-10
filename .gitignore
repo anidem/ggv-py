@@ -40,5 +40,7 @@ Thumbs.db
 # Django #
 ############
 stacks
+applescripts
 prod.py
+
 

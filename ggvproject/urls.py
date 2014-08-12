@@ -6,14 +6,15 @@ from core.views import IndexView, HomeView
 from courses.views import CourseView, StudentCourseView
 from lessons.views import LessonView
 from questions.views import WorksheetHomeView, QuestionSetView, QuestionSetResultsView, QuestionResponseView
-from slidestacks.views import SlideStackView
+from slidestacks.views import SlideStackInitView, SlideStackView
 
 urlpatterns = patterns('',
 
 # GGV
     url(r'^ggv/(?P<pk>\d+)$', CourseView.as_view(), name='course'),
     url(r'^ggv/lesson/(?P<pk>\d+)$', LessonView.as_view(), name='lesson'),
-    url(r'^ggv/slidestack/(?P<pk>\d+)$', SlideStackView.as_view(), name='slidestack'),
+    url(r'^ggv/slidestack-init/(?P<pk>\d+)', SlideStackInitView.as_view(), name='slidestack_init'),
+    url(r'^ggv/slidestack/(?P<pk>\d+)', SlideStackView.as_view(), name='slidestack'),
     url(r'^ggv/worksheet/(?P<pk>\d+)$', WorksheetHomeView.as_view(), name='worksheet'),
     url(r'^ggv/worksheet/(?P<pk>\d+)/(?P<q>\d+)$', QuestionResponseView.as_view(), name='question'),
     url(r'^ggv/worksheet_results/(?P<pk>\d+)$', QuestionSetResultsView.as_view(), name='worksheet_results'),

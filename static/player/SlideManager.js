@@ -1,6 +1,6 @@
 var SlideManager = Class.create({
     initialize: function(c) {
-        this.showUrl = c.showUrl
+        this.showUrl = c.showUrl /*koalinix*/
         this.header = c.header;
         this.slides = {};
         for (var a = 0, b = this.header.slideList.length; a < b; a++) {
@@ -29,7 +29,6 @@ var SlideManager = Class.create({
     },
     downloadSlide: function(b) {
         var c = this.showUrl + b + "/" + b + ".json";
-        console.log("SLIDE LOC -> " + c)
         if (window.location.protocol === "file:") {
             c = c + "p";
             if (window.local_slide == null || window.local_slide == undefined) {

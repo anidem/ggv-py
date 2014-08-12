@@ -24,6 +24,6 @@ DATABASES = {
 # Allow all host headers
 ALLOWED_HOSTS = []
 
-INSTALLED_APPS += (
-    'debug_toolbar',
-)
+# INSTALLED_APPS += (
+#     'debug_toolbar', # This breaks the pres player -- conflicts with prototype.
+# )

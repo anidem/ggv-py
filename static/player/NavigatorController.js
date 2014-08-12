@@ -1,17 +1,7 @@
 var NavigatorController = Class.create({
     initialize: function(a) {
         
-        /* DJANGO LOCALIZE PATH TO OBJECT_ID */
-            var slashIndex = window.location.href.lastIndexOf("/");
-            var shebangIndex = window.location.href.lastIndexOf("#");
-            var static_show = "";
-            if (shebangIndex > 0)
-                static_show = window.location.href.slice(slashIndex+1,shebangIndex);
-            else
-                static_show = window.location.href.slice(slashIndex+1, window.location.href.length);
-        
-        this.static_path = static_show;
-        /* END LOCALIZATION*/
+        this.static_path = window.media_assets; /*koalinix*/
 
         this.domNode = a;
         this.thumbnailSidebar = new NavigatorThumbnailSidebar();
@@ -113,8 +103,7 @@ var NavigatorController = Class.create({
             setElementProperty(b.domNode, "top", e * 76 + "px");
             this.thumbnailContainer.addItem(b);
             if (gShowController.delegate.getKPFJsonStringForShow == null) {
-                var h = "/static/" + this.static_path +"/assets/" + d + "/thumbnail.jpeg";
-                console.log("h is : " + h);
+                var h = "/static/" + this.static_path +"/assets/" + d + "/thumbnail.jpeg"; /*koalinix*/
                 var a = document.createElement("img");
                 Event.observe(a, "load", this.updateThumbnail.bind(this, e, a));
                 a.src = h

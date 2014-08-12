@@ -6,7 +6,7 @@ var kSlideDidNotDownloadEvent = "SlideManager:SlideDidNotDownloadEvent";
 var ScriptManager = Class.create({
     initialize: function(a) {
         this.script = null;
-        this.showUrl = a;
+        this.showUrl = a; /*koalinix*/
         this.slideManager = null;
         document.observe(kSlideDidDownloadEvent, this.handleSlideDidDownloadEvent.bind(this));
         document.observe(kSlideDidNotDownloadEvent, this.handleSlideDidDownloadEvent.bind(this))
@@ -984,14 +984,14 @@ var ScriptManager = Class.create({
             }
             this.slideManager = new SlideManager({
                 header: this.script,
-                showUrl: this.showUrl
+                showUrl: this.showUrl /*koalinix*/
             });
             this.slideManager.getSlides(this.script.slideList, this.delegate);
             return
         }
         this.downloadTimeout = setTimeout(this.scriptDidNotDownload.bind(this), kMaxScriptDownloadWaitTime);
         this.downloadAlreadyFailed = false;
-        var c = this.showUrl + "header.json";
+        var c = this.showUrl + "header.json"; /*koalinix*/
         if (window.location.protocol === "file:") {
             c = c + "p";
             window.local_header = (function(d) {
@@ -1017,7 +1017,7 @@ var ScriptManager = Class.create({
         }
         this.slideManager = new SlideManager({
             header: this.script,
-            showUrl: this.showUrl
+            showUrl: this.showUrl /*koalinix*/
         });
         this.slideManager.downloadSlides(this.script.slideList)
     },

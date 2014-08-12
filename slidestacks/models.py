@@ -9,4 +9,4 @@ class SlideStack(AbstractActivity):
     asset = models.CharField(max_length=512, default='not specified', null=True, blank=True)
 
     def get_absolute_url(self):
-        return reverse('slidestack', args=[str(self.id)])
+        return reverse('slidestack_init', args=[str(self.id)])

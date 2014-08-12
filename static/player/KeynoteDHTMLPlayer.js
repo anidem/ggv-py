@@ -119,6 +119,7 @@ var browserPrefix, browserVersion;
 var userAgentString = window.navigator.userAgent;
 var isMacOS = window.navigator.platform.indexOf("Mac") !== -1;
 var isChrome = userAgentString.lastIndexOf("Chrome/") > 0;
+
 if (Prototype.Browser.WebKit) {
     browserPrefix = "webkit"
 } else {

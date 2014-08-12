@@ -1,13 +1,11 @@
 var KNStaticAssets = {};
 KNStaticAssets["KNTransitionSwoosh_Shadow.png"] = new Image();
-KNStaticAssets["KNTransitionSwoosh_Shadow.png"].src = static_url("/static/player/KNTransitionSwoosh_Shadow.png");
+KNStaticAssets["KNTransitionSwoosh_Shadow.png"].src = static_url("/static/player/KNTransitionSwoosh_Shadow.png"); /*koalinix*/
 KNStaticAssets["KNTransitionSlide_Black.png"] = new Image();
-console.log("TextureManager->" + window.location);
-KNStaticAssets["KNTransitionSlide_Black.png"].src = static_url("/static/player/KNTransitionSlide_Black.png");
+KNStaticAssets["KNTransitionSlide_Black.png"].src = static_url("/static/player/KNTransitionSlide_Black.png"); /*koalinix*/
 var TextureManager = Class.create({
     initialize: function(a) {
         this.script = null;
-        console.log ("TextureManager->" + a)
         this.showUrl = a;
         this.sceneCache = {};
         this.slideCache = {};

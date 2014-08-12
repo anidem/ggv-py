@@ -14,23 +14,11 @@ var kShowControllerState_Playing = "Playing";
 var kKeyDownEvent = "keydown";
 var kSlideIndexDidChangeEvent = "ShowController:SlideIndexDidChangeEvent";
 var ShowController = Class.create({
-    initialize: function(django_object) {
-
+    initialize: function() {
         this.delegate = extractDelegateFromUrlParameter();
         this.delegate.showDidLoad();
-
-        /* DJANGO LOCALIZE PATH TO OBJECT_ID */
-            var slashIndex = window.location.href.lastIndexOf("/");
-            var shebangIndex = window.location.href.lastIndexOf("#");
-            var static_show = "";
-            if (shebangIndex > 0)
-                static_show = window.location.href.slice(slashIndex+1,shebangIndex);
-            else
-                static_show = window.location.href.slice(slashIndex+1, window.location.href.length);
-
-        this.showUrl = "/static/" + static_show + "/assets/";
-        /* END LOCALIZATION*/
-       
+        console.log("ShowController -> " + window.media_assets);
+        this.showUrl = "/static/" + window.media_assets + "/assets/"; /*koalinix*/
         this.displayManager = new DisplayManager();
         this.scriptManager = new ScriptManager(this.showUrl);
         this.textureManager = new TextureManager(this.showUrl);

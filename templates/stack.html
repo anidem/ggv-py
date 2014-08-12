@@ -6,6 +6,12 @@
         <link href="{% static 'player/' %}KeynoteDHTMLPlayer.css" rel="stylesheet" type="text/css" media="screen"/>
         <meta name="viewport" content="initial-scale = 1.0, minimum-scale = 1.0, maximum-scale = 1.0, user-scalable = no, width = device-width" />
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+
+        <script type="text/javascript">
+            var media_assets = "{{ object.asset }}";
+
+        </script>   
+
         <script type="text/javascript" src="{% static 'player/' %}prototype.js"></script>
         <script type="text/javascript" src="{% static 'player/' %}DebuggingSupport.js"></script>
         <script type="text/javascript" src="{% static 'player/' %}string.js"></script>
@@ -25,7 +31,7 @@
         <script type="text/javascript" src="{% static 'player/' %}SlideNumberController.js"></script>
         <script type="text/javascript" src="{% static 'player/' %}HelpPlacardController.js"></script>
         <script type="text/javascript" src="{% static 'player/' %}NarrationManager.js"></script>
-	</head>
+    </head>
     <body id="body" bgcolor="black">
         <div id="background" class="bigBlackSquare">
         </div>
@@ -51,8 +57,9 @@
         <div id="helpPlacard">
         </div>
         <div id="waitingIndicator">
-        	<div id="waitingSpinner">
-        	</div>
-        </div>
-	</body>
+            <div id="waitingSpinner">
+            </div>
+        </div>      
+              
+    </body>
 </html>

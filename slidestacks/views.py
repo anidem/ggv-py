@@ -11,13 +11,11 @@ from ggvproject.settings import base
 
 from .models import SlideStack
 
+class SlideStackInitView(DetailView):
+    model = SlideStack
+    template_name = 'stack_init.html'
+
 class SlideStackView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
     model = SlideStack
-    template_name = 'slidestack.html'
+    template_name = 'stack.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(SlideStackView, self).get_context_data(**kwargs) 
-        # path = Path(base.PROJECT_DIR.child('static', 'stacks'), self.get_object().asset)
-        # image_names = path.listdir(names_only=True)
-        # context['slide_images'] = json.dumps(image_names)
-        return context

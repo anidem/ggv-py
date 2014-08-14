@@ -1,3 +1,5 @@
+
+
 questions app -- notes
 
 For questionsetview, i need to try using formview instead of detailview. will need to figure out how to initialize the question set from request (url) parameter. -- This may be the proper way to customize a form for worksheets.
@@ -17,4 +19,24 @@ add commenting system on lesson stacks and worksheets. Teacher can message stude
 students can create personal notes attached to a stack or worksheet and/or optionally send note to teacher(s). e.g. questions about a presentation or worksheet.
 add messaging system to stacks and worksheets.
 
+using csvkit:
+# THIS outputs the options list as json object
 
+csvgrep -r '\d' -c "CORRECT ANSWER","option 1","option 2","option 3","option 4" place-01.csv | csvcut -c "WID","CORRECT ANSWER","option 1","option 2","option 3","option 4" | csvjson -i 4
+
+
+
+# THIS outputs the question list as json object
+
+csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","SELECT TYPE" place-01.csv | csvjson -i 4 
+
+
+
+# This outputs the entire row in json.
+
+csvjson -i 4 place-01.csv
+
+
+
+rsyncing
+rsync -arv -e 'ssh -i <PATH_TO_KEY>' --ignore-existing <LOCALDIR/FILE> <SERVER>:<REMOTE_DIR>

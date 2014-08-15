@@ -8,6 +8,7 @@ from lessons.views import LessonView
 from questions.views import WorksheetHomeView, QuestionSetView, QuestionSetResultsView, QuestionResponseView
 from slidestacks.views import SlideStackInitView, SlideStackView
 
+
 urlpatterns = patterns('',
 
 # GGV

@@ -4,9 +4,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="initial-scale = 1.0, minimum-scale = 1.0, maximum-scale = 1.0, user-scalable = no, width = device-width" />
+
   <title>{% block page_title %} GGV {% endblock page_title %}</title>
 
   <!-- Bootstrap -->
@@ -28,12 +29,12 @@
   <!-- Include all compiled plugins (below), or include individual files as needed -->
   <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
 
- {% block local_css %} {% endblock local_css %}
+ {% block local_head %} {% endblock local_head %}
 
 
 </head>
-<body>
-  <div id="wrap">
+<body id="body">
+
     <!-- Fixed navbar -->
     <div class="navbar navbar-default navbar-fixed-top">
       <div class="container-fluid">
@@ -82,15 +83,15 @@
       <div class="row">{% block content %} {% endblock content %}</div>
     </div><!-- End page content -->
 
-  </div><!-- End wrap -->
 
-  <div id="footer">
-    <div class="container">
-      <p class="text-muted">Brought to you by gedgonevirtual.com</p>
+
+  <div class="navbar navbar-default navbar-fixed-bottom" style="border: none">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <p class="text-muted" style="text-align: center; "><small>gedgonevirtual.com</small></p>
+      </div>
     </div>
   </div>
-
-  {% block local_js %} {% endblock local_js %}
-
+{% block local_js %} {% endblock local_js %}
 </body>
 </html>

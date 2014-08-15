@@ -11,7 +11,7 @@ def push_changes(message='fabfile committed with this message, not me.'):
 def deploy(remote_dir):
     with settings(warn_only=True):        
         if run("cd %s" % remote_dir).failed:
-            run("git clone https://github.com/anidem/ggv-py.git %s" % code_dir)
+            run("git clone https://github.com/anidem/ggv-py.git %s" % remote_dir)
 
     with cd(remote_dir):
         ts = time.strftime('%Y%m%d%H%M%S')

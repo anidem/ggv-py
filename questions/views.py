@@ -17,6 +17,29 @@ from core.mixins import AccessRequiredMixin, AccessCodeRequiredMixin
 from .models import QuestionSet, MultipleChoiceQuestion, ShortAnswerQuestion, QuestionResponse
 from .forms import QuestionPostForm, MultipleChoiceQuestionForm, ShortAnswerQuestionForm
 
+# process json question data imports
+import json
+
+class ImportQuestionDataView(DetailView):
+    model = QuestionSet
+    
+    def get_context_data(self, **kwargs):
+        context = super(ImportQuestionDataView, self).get_context_data(**kwargs)
+        #This should load a preprocessed json file and write to the db with json values.
+        # SEE: question_builder.py
+        # json_file = open('static/question1.json')
+        # json_data = json_file.read()
+        # data1 = json.loads(json_data) 
+              
+        # for i in data1:
+        #     for key, value in i.iteritems():
+        #         print '%s ==> %s' % (key, value)
+
+
+        # json_file.close()
+        # print data1
+           
+
 class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
     model = QuestionSet
     template_name = 'worksheet.html'

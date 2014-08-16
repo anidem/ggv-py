@@ -5,7 +5,7 @@ admin.autodiscover()
 from core.views import IndexView, HomeView
 from courses.views import CourseView, StudentCourseView
 from lessons.views import LessonView
-from questions.views import WorksheetHomeView, QuestionSetView, QuestionSetResultsView, QuestionResponseView
+from questions.views import WorksheetHomeView, QuestionSetView, QuestionSetResultsView, QuestionResponseView, ImportQuestionDataView
 from slidestacks.views import SlideStackInitView, SlideStackView
 
 
@@ -25,6 +25,9 @@ urlpatterns = patterns('',
     # url(r'^ggvstudent/lesson/(?P<pk>\d+)$', StudentLessonView.as_view(), name='lesson_student'),
     # url(r'^ggvstudent/activity/(?P<pk>\d+)$', StudentActivityView.as_view(), name='activity_student'),
 
+# Utility - NON Production use only!
+
+    url(r'^ggv/worksheet_import/(?P<pk>\d+)$', ImportQuestionDataView.as_view(), name='data_import'),
 
 # Login urls
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),

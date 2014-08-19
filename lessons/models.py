@@ -21,7 +21,7 @@ class LessonManager(models.Manager):
                        slidestacks.filter(section__isnull=True)))
         activity_set += sorted(orphans, key=attrgetter('display_order'))
 
-        return activity_set
+        return activity_set        
 
 
 class Lesson(models.Model):
@@ -69,7 +69,7 @@ class Lesson(models.Model):
 class Section(models.Model):
     title = models.CharField(max_length=256)
     display_order = models.IntegerField(default=0)
-    lesson = models.ForeignKey(Lesson)
+    lesson = models.ForeignKey(Lesson, related_name='sections')
 
     class Meta:
         ordering = ['lesson', 'display_order', 'title']

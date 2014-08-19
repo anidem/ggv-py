@@ -25,7 +25,7 @@ class IndexView(TemplateView):
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
-    template_name = 'ggv.html'
+    template_name = 'ggvhome.html'
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)

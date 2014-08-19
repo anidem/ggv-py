@@ -11,7 +11,13 @@
   <title>{% block page_title %} GGV {% endblock page_title %}</title>
 
   <!-- Bootstrap -->
-  <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+  <!-- Font Awesome for icons -->
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
 
   <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
   <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -20,21 +26,18 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
   <![endif]-->
 
-  <link href="{% static 'css/ggv.css' %}" rel="stylesheet">
- 
+  <link rel="stylesheet" href="{% static 'css/ggv.css' %}">
 
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://code.jquery.com/jquery.js"></script>
   
-  <!-- Include all compiled plugins (below), or include individual files as needed -->
-  <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.0/js/bootstrap.min.js"></script>
-
- {% block local_head %} {% endblock local_head %}
-
-
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  
+  {% block local_head %} {% endblock local_head %}
 </head>
-<body id="body">
 
+<body>
     <!-- Fixed navbar -->
     <div class="navbar navbar-default navbar-fixed-top">
       <div class="container-fluid">
@@ -45,7 +48,7 @@
             <span class="icon-bar"></span>
           </button>
 
-          <a class="navbar-brand" href="{% url 'home' %}"><img class="logo" src="{% static 'img/logo.jpg' %}"/></a>
+          <!-- <a class="navbar-brand" href="{% url 'splash' %}"><img class="logo" src="{% static 'img/logo.jpg' %}"/></a> -->
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-left">
@@ -68,30 +71,27 @@
         </div><!--/.nav-collapse -->
       </div>
     </div>
-    {% if messages %}
-    <div class="container-fluid"><div class="row">
-      <ul class="messages">
-          {% for message in messages %}
-          <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-          {% endfor %}
-      </ul>
-    </div></div>
-    {% endif %}
+
+    
+
+
     <!-- Begin page content -->
     <div class="container-fluid">      
-      <div class="row"><h1>{% block page_header %} {% endblock page_header %}</h1></div>
+      <div class="row"><div class="page-lead">{% block page_header %} {% endblock page_header %}</div></div>
       <div class="row">{% block content %} {% endblock content %}</div>
-    </div><!-- End page content -->
-
-
-
-  <div class="navbar navbar-default navbar-fixed-bottom" style="border: none">
-    <div class="container-fluid">
-      <div class="navbar-header">
-        <p class="text-muted" style="text-align: center; "><small>gedgonevirtual.com</small></p>
-      </div>
     </div>
-  </div>
+    <!-- End page content -->
+
+
+    <!-- Footer -->
+<!--     <div class="navbar navbar-default navbar-fixed-bottom" style="border: none">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <p class="text-muted" style="text-align: center; "><small>gedgonevirtual.com</small></p>
+        </div>
+      </div>
+    </div> -->
+
 {% block local_js %} {% endblock local_js %}
 </body>
 </html>

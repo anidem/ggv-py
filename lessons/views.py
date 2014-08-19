@@ -19,6 +19,7 @@ class LessonView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
         context = super(LessonView, self).get_context_data(**kwargs)
         lesson = self.get_object()
         context['acts'] = Lesson.objects.activities(id=lesson.id) # using custom model manager
+        context['sections'] = lesson.sections.all()
         return context
 
 

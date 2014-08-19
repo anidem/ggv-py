@@ -6,6 +6,9 @@ from guardian.shortcuts import get_users_with_perms
 
 from lessons.models import Lesson
 
+"""
+Courses are synomous with a testing site. A course contains one or more lessons and has zero or more designated instuctors and zero or more students.
+"""
 
 class Course(models.Model):
     title = models.CharField(max_length=256)

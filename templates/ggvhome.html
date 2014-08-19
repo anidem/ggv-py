@@ -1,0 +1,28 @@
+<!-- ggv.html -->
+{% extends "base.html" %}
+
+{% block page_header %} Current Courses {% endblock page_header %}
+{% block content %}
+
+{% if messages %}
+	<ul class="messages">
+	    {% for message in messages %}
+	    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+	    {% endfor %}
+	</ul>
+{% endif %}
+
+{% for i in courses %}
+	<div class="col-md-12">
+		<h3>{{ i.short_name }}</h3>
+		<p>{{ i.title }}</p>
+		<p><a href="{{ i.get_absolute_url }}" class="btn btn-primary" role="button">go</a></p>
+	</div>
+{% empty %}
+    
+    <h3>Hi, you don't appear to have any courses.</h3>
+
+{% endfor %}
+
+
+{% endblock content %}

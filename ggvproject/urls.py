@@ -14,8 +14,10 @@ urlpatterns = patterns('',
 # GGV
     url(r'^ggv/(?P<pk>\d+)$', CourseView.as_view(), name='course'),
     url(r'^ggv/lesson/(?P<pk>\d+)$', LessonView.as_view(), name='lesson'),
+    
     url(r'^ggv/slidestack-init/(?P<pk>\d+)', SlideStackInitView.as_view(), name='slidestack_init'),
     url(r'^ggv/slidestack/(?P<pk>\d+)', SlideStackView.as_view(), name='slidestack'),
+    
     url(r'^ggv/worksheet/(?P<pk>\d+)$', WorksheetHomeView.as_view(), name='worksheet'),
     url(r'^ggv/worksheet/(?P<pk>\d+)/(?P<q>\d+)$', QuestionResponseView.as_view(), name='question'),
     url(r'^ggv/worksheet_results/(?P<pk>\d+)$', QuestionSetResultsView.as_view(), name='worksheet_results'),
@@ -38,7 +40,8 @@ urlpatterns = patterns('',
     url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^ggvadmin/',  include(admin.site.urls)),  # admin site
 
-    url(r'^start$', IndexView.as_view(), name='home'),
-    url(r'^$', HomeView.as_view(), name='ggvhome'),
+    
+    url(r'^home$', HomeView.as_view(), name='ggvhome'),
+    url(r'^$', IndexView.as_view(), name='splash'),
 ) 
 

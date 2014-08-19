@@ -38,5 +38,3 @@ csvjson -i 4 place-01.csv
 
 
 
-rsyncing
-rsync -arv -e 'ssh -i <PATH_TO_KEY>' --ignore-existing <LOCALDIR/FILE> <SERVER>:<REMOTE_DIR>

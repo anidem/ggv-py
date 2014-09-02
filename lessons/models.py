@@ -55,7 +55,7 @@ class Lesson(models.Model):
     def check_membership(self, user):
         courses = self.course_set.all()
         for i in courses:
-            if user.has_perm('view_course', i):
+            if user.has_perm('courses.view_course', i):
                 return True
         return False
 

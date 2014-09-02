@@ -1,6 +1,7 @@
 <!-- course.html -->
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load guardian_tags %}
 
 {% block local_nav %} 
 <li class="dropdown">
@@ -29,12 +30,44 @@
 	{% endfor %}
 </div>
 
-<h1>Students </h1>
-<ul>
-{% for i in members %}
-    <li>{{ i.username }}</li>
+<h4>Instructors </h4>
+<div class="panel-group" id="accordion">
+{% for i in instructors %}      
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <a data-toggle="collapse" data-parent="#accordion" href="#{{ i.username }}-data">
+                <p class="panel-title">{{ i.first_name }} {{ i.last_name }}</p>
+            </a>
+        </div>
+        <div id="{{ i.username }}-data" class="panel-collapse collapse">
+          <div class="panel-body">
+            Anim pariatur cliche reprehenderit, ...
+          </div>
+        </div>
+    </div>
 {% empty %}
-    <li>No members here.</li>
+    <li>No instructors are assigned?</li>
 {% endfor %}
-</ul>
+</div>
+
+<h4>Students </h4>
+<div class="panel-group" id="accordion">
+    {% for i in students %}
+    <div class="panel panel-info">
+        <div class="panel-heading">
+            <a data-toggle="collapse" data-parent="#accordion" href="#{{ i.username }}-data">
+                <p class="panel-title">{{ i.first_name }} {{ i.last_name }}</p>
+            </a>
+        </div>
+        <div id="{{ i.username }}-data" class="panel-collapse collapse">
+          <div class="panel-body">
+            Anim pariatur cliche reprehenderit, ...
+          </div>
+        </div>
+    </div>
+    {% empty %}
+        <li>No students are assigned?</li>
+    {% endfor %}
+</div>
+
 {% endblock content %}

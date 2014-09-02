@@ -12,6 +12,7 @@ from courses.models import Course
 from lessons.models import Lesson, Section
 from questions.models import QuestionSet, QuestionResponse, QuestionOption, MultipleChoiceQuestion, ShortAnswerQuestion
 from slidestacks.models import SlideStack
+from core.models import UserNote
 
 class ExtraMedia:
     js = [
@@ -30,12 +31,12 @@ class EditLinkToInlineObject(object):
         else:
             return ''
 
+
 class QuestionOptionInlineAdmin(admin.TabularInline):
     model = QuestionOption
     formfield_overrides = {
         models.IntegerField: {'widget': forms.NumberInput},
     }
-
 
 class QuestionSetInlineAdmin(EditLinkToInlineObject, admin.TabularInline):
     model = MultipleChoiceQuestion
@@ -111,3 +112,4 @@ admin.site.register(QuestionSet, QuestionSetAdmin, Media=ExtraMedia)
 admin.site.register(QuestionResponse)
 admin.site.register(ShortAnswerQuestion, ShortAnswerQuestionAdmin, Media=ExtraMedia)
 admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin, Media=ExtraMedia)
+admin.site.register(UserNote)

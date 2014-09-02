@@ -9,6 +9,7 @@
 		<small>{{ object.instructions }}</small>
 	</h1>
 	<h2><a href="/ggv/worksheet/{{ object.id }}/1">Begin</a></h2>
-	
+    <h2>Messages</h2>
+    <p>{{ object.notes.all.0 }}</p>	
 {% endblock content %}     
 

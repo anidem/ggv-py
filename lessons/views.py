@@ -4,7 +4,7 @@ from django.views.generic.edit import FormView
 
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
-from core.mixins import AccessRequiredMixin, AccessCodeRequiredMixin
+from core.mixins import AccessRequiredMixin
 from courses.models import Course
 
 from .models import Lesson

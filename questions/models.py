@@ -12,6 +12,7 @@ from django.contrib.contenttypes import generic
 from model_utils.models import TimeStampedModel
 
 from lessons.models import Lesson, AbstractActivity
+from core.models import UserNote
 
 
 class QuestionManager(models.Manager):
@@ -107,6 +108,7 @@ class QuestionSet(AbstractActivity):
         Lesson, null=True, blank=True, related_name='worksheets')
     activity_type = models.CharField(
         max_length=48, default='worksheet', null=True)
+    notes = generic.GenericRelation(UserNote)
 
     objects = QuestionManager()
 
@@ -138,6 +140,7 @@ class ShortAnswerQuestion(AbstractQuestion):
         QuestionSet, related_name='shortanswerquestions')
     responses = generic.GenericRelation(
         'QuestionResponse', content_type_field='question_type', object_id_field='question_id')
+    notes = generic.GenericRelation(UserNote)
 
     def get_options(self):
         return []
@@ -176,6 +179,7 @@ class MultipleChoiceQuestion(AbstractQuestion):
         QuestionSet, null=True, related_name='multiplechoicequestions')
     responses = generic.GenericRelation(
         'QuestionResponse', content_type_field='question_type', object_id_field='question_id')
+    notes = generic.GenericRelation(UserNote)
 
     def get_options(self):
         return QuestionOption.objects.filter(question=self.id).order_by('display_order')

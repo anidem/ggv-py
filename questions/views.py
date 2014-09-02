@@ -13,7 +13,7 @@ from django.contrib import messages
 
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
-from core.mixins import AccessRequiredMixin, AccessCodeRequiredMixin
+from core.mixins import AccessRequiredMixin
 from .models import QuestionSet, MultipleChoiceQuestion, ShortAnswerQuestion, QuestionResponse
 from .forms import QuestionPostForm, MultipleChoiceQuestionForm, ShortAnswerQuestionForm
 

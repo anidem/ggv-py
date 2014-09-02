@@ -3,7 +3,7 @@ from django.contrib import admin
 admin.autodiscover()
 
 from core.views import IndexView, HomeView
-from courses.views import CourseView, StudentCourseView
+from courses.views import CourseView
 from lessons.views import LessonView
 from questions.views import WorksheetHomeView, QuestionSetView, QuestionSetResultsView, QuestionResponseView, ImportQuestionDataView
 from slidestacks.views import SlideStackInitView, SlideStackView

@@ -7,14 +7,18 @@ from guardian.shortcuts import ObjectPermissionChecker
 class AccessRequiredMixin(object):
 
     def dispatch(self, *args, **kwargs):
+        """ 
+        Successful execution of permission checks here rely on the object having a method
+        check_membership being defined for the object. E.g. Courses and Lessons each have this
+        method.
+        """
         try:
-            print self.get_object().check_membership(self.request.user)
-            
-            if not self.get_object().check_membership(self.request.user):          
-                self.template_name = '404.html'
-
+            print type(self.get_object()).__name__
+            if not self.get_object().check_membership(self.request.session):          
+                self.template_name = 'access_error.html'
         except:
-            self.template_name = '404.html'
+            self.template_name = 'access_error.html'        
         
         return super(AccessRequiredMixin, self).dispatch(*args, **kwargs)
+        
 

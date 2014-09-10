@@ -4,36 +4,14 @@
 
 {% block page_title %} GGV | worksheet | {{ object.id }} | {{ active|add:"1" }} {% endblock page_title %}
 {% block content %}
+    
    	{% if active <= questions|length %}
-    <div class="row" style="text-align: center">
-
-		<ul class="pagination pagination-sm">
-
-
-			{% for i in questions %}
-                {% if forloop.counter == active %}
-
-                    <span class="label label-primary"><a href="#">{{ forloop.counter }}</a></span>
-                {% else %}
-                    {% if not i.response %}
-                        <span class="label label-default"><a href="/ggv/worksheet/{{ object.id }}/{{ forloop.counter }}">{{ forloop.counter }}</a></span>
-                    {% elif i.correct %}
-                        <span class="label label-success"><a href="/ggv/worksheet/{{ object.id }}/{{ forloop.counter }}">{{ forloop.counter }}</a></span> 
-                    {% else %}
-                        <span class="label label-danger"><a href="/ggv/worksheet/{{ object.id }}/{{ forloop.counter }}">{{ forloop.counter }}</a></span>
-                    {% endif %}   			
-				{% endif %}
-			{% endfor %}
-
-            
-
-		</ul>
-
-        <h2>
+    <div class="col-md-2 leftscroll">
+        <h3></h3>
+        <div>
         {% if prev > 0 %}
             <a href="/ggv/worksheet/{{ object.id }}/{{ prev }}" style="color: black">
                 <span class="label label-default"><span class="glyphicon glyphicon-chevron-left"></span></span>
-
             </a>
         {% endif %}
 
@@ -45,14 +23,34 @@
             </a>
         
         {% endif %}
-        </h2>
-        
+        </div>
+
+		<ul class="pagination pagination-sm ">
+
+			{% for i in questions %}
+                {% if forloop.counter == active %}
+                    <div class=""><span class="label label-primary"><a href="#">{{ forloop.counter }}</a></span></div>
+                {% else %}
+                    {% if not i.response %}
+                        <div class=""><span class="label label-default"><a href="/ggv/worksheet/{{ object.id }}/{{ forloop.counter }}">{{ forloop.counter }}</a></span></div>
+                    {% elif i.correct %}
+                        <div class=""><span class="label label-success"><a href="/ggv/worksheet/{{ object.id }}/{{ forloop.counter }}">{{ forloop.counter }}</a></span></div> 
+                    {% else %}
+                        <div class=""><span class="label label-danger"><a href="/ggv/worksheet/{{ object.id }}/{{ forloop.counter }}">{{ forloop.counter }}</a></span></div>
+                    {% endif %}   			
+				{% endif %}
+			{% endfor %}
+
+            
+
+		</ul>
+
     </div>
-	{% endif %}
-    <h1>{{ object }} <small>{{ object.instructions }}</small></h1>
+	{% endif %}    
     
 
-	<div class="col-md-6 col-md-offset-3">
+	<div class="col-md-10 rightscroll">
+        <h3>{{ object }} <small>{{ object.instructions }}</small></h3>
     {% if form %}
     	
 	    <form method="post" action="" style="text-align: left">

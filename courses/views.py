@@ -3,7 +3,6 @@ from django.views.generic import DetailView
 from operator import attrgetter
 
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
-from guardian.mixins import PermissionRequiredMixin
 from guardian.shortcuts import get_users_with_perms, get_objects_for_user, get_perms
 
 from core.mixins import AccessRequiredMixin

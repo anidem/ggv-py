@@ -47,8 +47,11 @@ class Course(models.Model):
     def lesson_list(self):
         return self.lessons.all()
 
-    def check_membership(self, user):
-        return user.has_perm('courses.view_course', self)
+    def check_membership(self, user_session):
+        """
+        Utilizes session variable set at user login
+        """
+        return self.id in user_session['user_courses']
 
     def __unicode__(self):
         return self.title

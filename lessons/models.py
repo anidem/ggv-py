@@ -52,12 +52,11 @@ class Lesson(models.Model):
 
     objects = LessonManager()
 
-    def check_membership(self, user):
-        courses = self.course_set.all()
-        for i in courses:
-            if user.has_perm('courses.view_course', i):
-                return True
-        return False
+    def check_membership(self, user_session):
+        """
+        Utilizes session variable set at user login
+        """
+        return self.id in user_session['user_lessons']
 
     def __unicode__(self):
         return self.title
@@ -84,8 +83,9 @@ class AbstractActivity(models.Model):
     section = models.ForeignKey(Section, null=True, blank=True)
     display_order = models.IntegerField()
 
-    def check_membership(self, user):
-        return self.lesson.check_membership(user)
+    def check_membership(self, user_session):
+        """ Delegates to its parent lesson container. """
+        return self.lesson.check_membership(user_session)
 
     def __unicode__(self):
         return self.title

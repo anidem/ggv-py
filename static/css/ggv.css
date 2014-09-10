@@ -92,3 +92,62 @@ form ul {
 .inline_adjust {
   padding-top: 55px;
 }
+
+
+/*Scrollable columns*/
+@media (min-width: 768px){
+  .leftscroll {
+    position: absolute;
+    top: 50px;
+    margin-bottom: 10px;
+    left: 0;
+    width: 10%;
+    overflow-y: scroll; 
+  }
+  
+  .rightscroll {
+    position: absolute;
+    top: 50px;
+    bottom: 0;
+    right: 0;
+    overflow-y: scroll;
+    width: 90%;
+  }
+}
+
+.leftscroll {
+  height:100%;
+}
+
+.rightscroll {
+  height:100%;
+}
+/*
+span {
+  width: 40px;
+}*/
+
+
+/*Scrollspy experiment for lesson list pages */
+.affix-top,.affix{
+ position: static;
+}
+
+@media (min-width: 979px) {
+  #sidebar.affix-top {
+    position: static;
+    margin-top:30px;
+    width:228px;
+  }
+  
+  #sidebar.affix {
+    position: fixed;
+    top:70px;
+    width:228px;
+  }
+}
+
+#sidebar li.active {
+  border:0 #eee solid;
+  border-right-width:5px;
+}

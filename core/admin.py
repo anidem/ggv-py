@@ -97,6 +97,8 @@ class CourseAdmin(GuardedModelAdmin):
 
 
 class LessonAdmin(GuardedModelAdmin):
+    list_display = ('title', 'subject', 'icon_class', 'language')
+    list_editable = ('subject', 'icon_class', 'language')
     inlines = [
         WorksheetInlineAdmin, SlideStackInlineAdmin,
     ]

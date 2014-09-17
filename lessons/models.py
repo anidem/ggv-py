@@ -25,30 +25,18 @@ class LessonManager(models.Manager):
 
 
 class Lesson(models.Model):
-    MATH = 'MATH'
-    SPMATH = 'SP_MATH'
-    SCIENCE = 'SCI'
-    SPSCIENCE = 'SP_SCI'
-    SOCSTUDIES = 'SOCSTUDIES'
-    SPSOCSTUDIES = 'SP_SOCSTUDIES'
-    WRITING = 'WRITING'
-    SPWRITING = 'SP_WRITING'
-    SAMPLE = 'SAMPLE'
-
     LESSON_SUBJECTS = (
-        (MATH, 'Math'),
-        (SPMATH, 'Math en Espanol'),
-        (SCIENCE, 'Science'),
-        (SPSCIENCE, 'Science en Espanol'),
-        (SOCSTUDIES, 'Social Studies'),
-        (SPSOCSTUDIES, 'Social Studies en Espanol'),
-        (WRITING, 'Writing'),
-        (SPWRITING, 'Writing en Espanol'),
-        (SAMPLE, 'Sample Subject'),
+        ('math', 'math'),
+        ('science', 'science'),
+        ('socialstudies', 'socialstudies'),
+        ('writing', 'writing'),
+        ('default', 'default'),
     )
 
     title = models.CharField(max_length=256, default='Subject')
     subject = models.CharField(max_length=32, choices=LESSON_SUBJECTS)
+    language = models.CharField(max_length=32, default='eng', choices=(('eng', 'English'), ('span', 'Spanish')))
+    icon_class = models.CharField(max_length=32, default='university', blank=True)
 
     objects = LessonManager()
 

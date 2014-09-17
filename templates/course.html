@@ -3,6 +3,28 @@
 {% load staticfiles %}
 {% load guardian_tags %}
 
+
+{% block page_crumb %} 
+
+  {{ object }} Lessons 
+  <div class="btn-group btn-toggle">
+    {% if eng_lessons and span_lessons %}
+      <button class="btn btn-xs btn-info active">English</button>
+      <button class="btn btn-xs btn-default">Spanish</button>
+    {% endif %}
+  </div>
+  <script>
+      $('.btn-toggle').click(function() {
+          $(this).find('.btn').toggleClass('active'); 
+          $(this).find('.btn').toggleClass('btn-info');
+          $(this).find('.btn').toggleClass('btn-default'); 
+          
+          $('.eng').toggleClass('collapse')
+          $('.span').toggleClass('collapse')            
+      });
+  </script>
+{% endblock page_crumb %}
+
 {% block local_nav %} 
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Courses <b class="caret"></b></a>
@@ -12,23 +34,33 @@
 </li>
 {% endblock local_nav %}
 
-{% block page_header %} {{ object }} Lessons {% endblock page_header %}
+{% block page_header %} 
+<div class="col-md-12"><h1></h1></div>
+{% endblock page_header %}
 
 {% block content %} 
-    <div class="row">
-	{% for i in lessons %}
-		<div class="col-xs-6 col-sm-3 col-md-3">
-			<a class="thumbnail" href="{{ i.get_absolute_url }}">
-				<img src="{% static 'img/'|add:i.subject|add:'.png' %}" alt="...">
-				<div class="caption">
-					<h3>{{ i.title }}</h3>
-				</div>
+  <div class="row icon eng">
+	{% for i in eng_lessons %}
+		<div class="col-md-3 icon-{{ i.subject }}">
+			<a class="static" href="{{ i.get_absolute_url }}">
+				<i class="fa fa-{{ i.icon_class }} fa-5x"></i>
+        <p class="icon-title">{{ i.title }}</p>
 			</a>
 		</div>
-	{% empty %}
-	    <h3>Hi, you don't appear to have any lessons assigned.</h3>
 	{% endfor %}
-</div>
+  </div>
+  <div class="row span {% if eng_lessons %}collapse{% endif %}"> 
+  {% for i in span_lessons %}
+    <div class="col-md-3 icon-{{ i.subject }}">
+      <a class="static" href="{{ i.get_absolute_url }}">
+        <i class="fa fa-{{ i.icon_class }} fa-5x"></i>
+        <p class="icon-title">{{ i.title }}</p>
+      </a>
+    </div>
+  {% endfor %}
+  </div>
+
+
 
 <h4>Instructors </h4>
 <div class="panel-group" id="accordion">

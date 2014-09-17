@@ -4,7 +4,29 @@ body {
   padding-right: 15px;
   padding-left: 15px;
   padding-top: 30px;
+  font-family: 'Open Sans', sans-serif;
 }
+
+/* No frills a tags */
+a.static:link {
+    color: #333;
+}
+
+/* visited link */
+a.static:visited {
+    color: #333;
+}
+
+/* mouse over link */
+a.static:hover {
+    color: #000;
+}
+
+/* selected link */
+a.static:active {
+    color: #333;
+}
+
 
 .navbar {
   background-color: white;
@@ -59,7 +81,7 @@ body {
   height: 30px;
 }
 
-/*******************************WORKSHEETS*******************************/
+/* Worksheets */
 .question_prompt {
   font-size: 1.8em;
 }
@@ -93,8 +115,26 @@ form ul {
   padding-top: 55px;
 }
 
+/* Lesson icons */
+.icon { text-align: center; }
+.icon-title { font-size: 2.5em; }
 
-/*Scrollable columns*/
+.icon-math i { color: #A0A0A0; }
+.icon-math .icon-title { font-family: 'Cinzel', serif; }
+
+.icon-writing i { color: #ff9900; }
+.icon-writing .icon-title { font-family: 'Shadows Into Light', cursive; }
+
+.icon-science i { color: #007A00; }
+.icon-science .icon-title { font-family: 'Orbitron', sans-serif; }
+
+.icon-socialstudies i { color: #66A3E0; }
+.icon-socialstudies .icon-title { font-family: 'Josefin Sans', sans-serif; }
+
+  /* No colors */
+/*.icon i { color: #A0A0A0; }*/
+
+/* Scrollable columns */
 @media (min-width: 768px){
   .leftscroll {
     position: absolute;
@@ -122,13 +162,8 @@ form ul {
 .rightscroll {
   height:100%;
 }
-/*
-span {
-  width: 40px;
-}*/
 
-
-/*Scrollspy experiment for lesson list pages */
+/* Scrollspy experiment for lesson list pages */
 .affix-top,.affix{
  position: static;
 }

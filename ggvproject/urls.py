@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 admin.autodiscover()
 
-from core.views import IndexView, HomeView
+from core.views import IndexView, HomeView, NoteCreateView, NoteView
 from courses.views import CourseView
 from lessons.views import LessonView
 from questions.views import WorksheetHomeView, QuestionSetView, QuestionSetResultsView, QuestionResponseView, ImportQuestionDataView
@@ -22,10 +22,9 @@ urlpatterns = patterns('',
     url(r'^ggv/worksheet/(?P<pk>\d+)/(?P<q>\d+)$', QuestionResponseView.as_view(), name='question'),
     url(r'^ggv/worksheet_results/(?P<pk>\d+)$', QuestionSetResultsView.as_view(), name='worksheet_results'),
 
-    # url(r'^ggvstudent/$', StudentAccessView.as_view(), name='student_login'),
-    # url(r'^ggvstudent/(?P<pk>\w+)$', StudentCourseView.as_view(), name='course_student'),
-    # url(r'^ggvstudent/lesson/(?P<pk>\d+)$', StudentLessonView.as_view(), name='lesson_student'),
-    # url(r'^ggvstudent/activity/(?P<pk>\d+)$', StudentActivityView.as_view(), name='activity_student'),
+    url(r'^ggv/notes/$', NoteView.as_view(), name='list_notes'),
+    url(r'^ggv/note/add/$', NoteCreateView.as_view(), name='create_note'),
+
 
 # Utility - NON Production use only!
 

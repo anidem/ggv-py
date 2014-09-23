@@ -14,6 +14,9 @@ from django.contrib import messages
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
 from core.mixins import AccessRequiredMixin
+from core.models import UserNote
+from core.forms import UserNoteForm
+
 from .models import QuestionSet, MultipleChoiceQuestion, ShortAnswerQuestion, QuestionResponse
 from .forms import QuestionPostForm, MultipleChoiceQuestionForm, ShortAnswerQuestionForm
 
@@ -141,6 +144,10 @@ class QuestionResponseView(DetailView):
         redisplay['prev'] = qindex - 1
         redisplay['next'] = qindex + 1
 
+        redisplay['note_form'] = UserNoteForm()
+        redisplay['notes'] = self.get_object().notes.all()
+
+
         if resp:
             redisplay['response'] = resp
             redisplay['correct'] = resp.response in current_question.get_correct_answer()
@@ -190,6 +197,9 @@ class QuestionResponseView(DetailView):
         context['active'] = qindex
         context['prev'] = qindex - 1
         context['next'] = qindex + 1
+
+        context['note_form'] = UserNoteForm()
+        context['notes'] = current_question.notes.all()
         return context
 
 class QuestionSetResultsView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):

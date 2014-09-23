@@ -1,13 +1,17 @@
 # core/views.py
 from django.contrib.auth.signals import user_logged_in
 from django.dispatch import receiver
+from django.core.urlresolvers import reverse
 
-from django.views.generic.base import TemplateView
+
+from django.views.generic import TemplateView, CreateView, ListView
 
 from braces.views import LoginRequiredMixin
 from guardian.shortcuts import get_objects_for_user
 
 from courses.models import Course
+
+from .models import UserNote
 
 @receiver(user_logged_in)
 def init_session(sender, **kwargs):
@@ -46,3 +50,23 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context['courses'] = get_objects_for_user(
             self.request.user, 'view_course', Course)
         return context
+
+class NoteView(ListView):
+    model = UserNote
+    template_name = 'messenger.html'
+
+class NoteCreateView(CreateView):
+    model = UserNote
+    template_name = 'messenger.html'
+
+    def get_success_url(self):
+        return reverse('create_note')
+
+    def get_context_data(self, **kwargs):
+        context = super(NoteCreateView, self).get_context_data(**kwargs)
+        context['object_list'] = UserNote.objects.all()
+        return context
+
+
+
+

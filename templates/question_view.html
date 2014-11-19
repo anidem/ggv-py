@@ -3,13 +3,16 @@
 {% load staticfiles %}
 
 {% block content %}
-    <div>
-        {{ object | safe }} 
-        <a href="{{ object.get_edit_url }}"> edit</a> 
-        <a href="{{ object.get_sequence_url }}"> view in worksheet </a>
-    </div>
-
+    <h1>{{ object|safe }}</h1>
+    <p><a href="{{ object.get_edit_url }}"> edit </a> </p>
+    <p><a href="{{ object.get_sequence_url }}"> view in worksheet </a></p>
+    
+    {% if object.display_image %}
+        <p><img src="{{ object.display_image.url }}"></p>   
+        <p><i>{{ object.display_image.url }}</i></p>
+    {% endif %}
+    
     {% for opt in options  %}
-        <div><input type="radio" name="radios"> {{ opt.1 }} </input></div>
+        <h2><input type="radio" name="radios"> {{ opt.1 }} </input></h2>
     {% endfor %}
 {% endblock content %}

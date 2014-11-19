@@ -21,8 +21,11 @@ class NoteCreateView(LoginRequiredMixin, CsrfExemptMixin, JSONResponseMixin, Aja
         noteform = UserNoteForm(request.POST)
         if noteform.is_valid():
             newnote = noteform.save()
-            data = noteform.cleaned_data
+            data = {}
             data['modified'] = newnote.modified
+            data['text'] = newnote.text
+            data['creator'] = newnote.creator.username
+
             # print self.render_json_response(data)
             return self.render_json_response(data)
         else:

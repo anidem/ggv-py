@@ -10,13 +10,13 @@
 
             <div class="col-md-12">
                 {%if question.display_image %}
-                    <p><img src="{{ MEDIA_URL }}{{ question.display_image }}"></p>
+                    <p><img src="{{ question.display_image.url }}"></p>
                     <p>{{ question.display_image.url }}</p>
                 {% endif %}
                 
                 <h4> {{ question_position }}. {{ question | safe }}</h4>
                 
-                <form id="response_form" action="" method="post">{% csrf_token %}
+                <form id="response_form" action="" method="post" >{% csrf_token %}
                     {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
                     
                     {{ form.response.errors}}

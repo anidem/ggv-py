@@ -11,7 +11,8 @@ class QuestionResponseForm(ModelForm):
         super(QuestionResponseForm, self).__init__(*args, **kwargs)
 
         # question and user are assigned by the caller of the form
-        # assigning to local variables for readability            
+        # assigning to local variables for readability
+
         question = self.initial['question']
         user = self.initial['user']
 
@@ -28,10 +29,10 @@ class QuestionResponseForm(ModelForm):
             # Set user feedback info (correct or incorrect response)
             if question.check_answer(response):
                 self.fields[
-                    'response'].help_text = '<span class="label label-success">correct</span>'
+                    'response'].help_text = 'success'
             else:
                 self.fields[
-                    'response'].help_text = '<span class="label label-danger">incorrect</span>'
+                    'response'].help_text = 'danger'
 
         except:
             pass
@@ -73,7 +74,7 @@ class QuestionResponseForm(ModelForm):
 class OptionQuestionUpdateForm(ModelForm):
     class Meta:
         model = OptionQuestion
-        fields = ['display_text', 'display_order', 'input_select']
+        fields = ['display_text', 'display_order', 'input_select', 'display_image']
         widgets = {
             'display_text': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'class': 'editor'}),
             'display_order': forms.NumberInput(attrs={'min': -99, 'max': 99})
@@ -93,7 +94,7 @@ OptionFormset = inlineformset_factory(OptionQuestion, Option, extra=1, form=Opti
 class TextQuestionUpdateForm(ModelForm):
     class Meta:
         model = TextQuestion
-        fields = ['display_text', 'display_order', 'correct', 'input_size']
+        fields = ['display_text', 'display_order', 'correct', 'input_size', 'display_image']
         widgets = {
             'display_text': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'class': 'editor'}),
             'display_order': forms.NumberInput(attrs={'min': -99, 'max': 99}),

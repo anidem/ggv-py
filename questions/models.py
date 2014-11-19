@@ -151,11 +151,14 @@ class AbstractQuestion(models.Model):
 
     def get_sequence_url(self):
         try:
-            seqitem = self.sequence.get()
+            seqitem = self.sequence.all()[0]
+            print 'seqitem', seqitem
             worksheet = seqitem.question_sequence
             position = worksheet.get_ordered_question_list().index(self)
+            
             return reverse('question_response', args=[worksheet.id, position+1])
-        except:
+        except Exception as inst:
+            print inst
             return None
 
     def __unicode__(self):

@@ -17,6 +17,7 @@ class CourseView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(CourseView, self).get_context_data(**kwargs)
         course = self.get_object()
+        
         lessons = course.lesson_list()
         context['eng_lessons'] = lessons.filter(language='eng').order_by('subject')
         context['span_lessons'] = lessons.filter(language='span').order_by('subject')

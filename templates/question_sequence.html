@@ -1,0 +1,91 @@
+<!-- question_embed.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+     <div class="col-md-12"><h1> {{ worksheet }} </h1></div>
+    
+    <div class="col-md-10">
+        <div class="row">
+
+            <div class="col-md-12">
+                {%if question.display_image %}
+                    <p><img src="{{ MEDIA_URL }}{{ question.display_image }}"></p>
+                    <p>{{ question.display_image.url }}</p>
+                {% endif %}
+                
+                <h4> {{ question_position }}. {{ question | safe }}</h4>
+                
+                <form id="response_form" action="" method="post">{% csrf_token %}
+                    {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
+                    
+                    {{ form.response.errors}}
+                    
+                    {{ form.response }}
+
+                    <p><input id="chk_response_btn" 
+                        type="submit"                 
+                        {% if form.response.help_text == 'success' %}
+                            value="Correct!"
+                            class="btn btn-success"
+                        {% elif form.response.help_text == 'danger' %}
+                            value="Incorrect. Try Again"
+                            class="btn btn-danger"
+                        {% else %}
+                            value="Check your answer?"
+                            class="btn btn-default"
+                        {% endif %}
+                        >
+                    </p>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6">
+                <legend>Add Note</legend>
+                <form id="noteform" action="" method="post">{% csrf_token %}
+                    {{ noteform.as_p }}
+                    <p><input id="note_submit_btn" type="submit" class="btn btn-default" value="Add Note"/></p>
+                </form>
+            </div>
+            <div class="col-md-6">
+                <legend>Notes</legend>
+                <div id="notes">      
+                {% for i in note_list  %}
+                    <div><span class="ts"> {{ i.modified }} </span> {{ i.creator }}: {{ i.text }}</div>
+                {% endfor %}
+                </div>
+            </div>            
+        </div>
+
+    </div> 
+
+    <div class="col-md-2 question_list" >
+        {% for k, v in question_list.items %}
+            <div class="row text-{{v}}">
+
+                <a href="{% url 'question_response' worksheet.id forloop.counter %}">
+                    <div class="col-md-4" style="">
+                        {% if forloop.counter == question_position  %}<i class="fa fa-circle text-default"></i>{% endif %}
+                        <span class="text-{{ v }}">{{ forloop.counter }}</span>
+                    </div>
+                    <div class="col-md-4">
+                    
+                        <span class="text-{{ v }}"> view </span>
+                    
+                    </div>
+                </a>
+                <div class="col-md-4">
+                    {% if edit_url %}<a href="{{ k.get_edit_url }}"><span class="text-{{ v }}">edit</span></a>{% endif %}
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+
+
+
+{% endblock content %}
+
+{% block local_js %}
+<script src="{% static 'js/questions.js'%}"></script>
+{% endblock local_js %}

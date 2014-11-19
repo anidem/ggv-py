@@ -3,7 +3,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.contenttypes import generic
 
 from lessons.models import Lesson, AbstractActivity
-from core.models import UserNote
+from notes.models import UserNote
 
 class SlideStack(AbstractActivity):
     lesson = models.ForeignKey(Lesson, null=True, blank=True, related_name='slidestacks')

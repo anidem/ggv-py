@@ -28,7 +28,7 @@ class ActivityReportManager(models.Manager):
 
 class Course(models.Model):
     title = models.CharField(max_length=256)
-    short_name = models.CharField(max_length=32)
+    slug = models.SlugField(max_length=128, unique=True)
     lessons = models.ManyToManyField(Lesson)
     access_code = models.CharField(max_length=8, null=True, blank=True)
 
@@ -57,4 +57,4 @@ class Course(models.Model):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('course', args=[str(self.id)])
+        return reverse('course', args=[str(self.slug)])

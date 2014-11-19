@@ -1,51 +1,39 @@
 # -*- coding: utf-8 -*-
-from south.utils import datetime_utils as datetime
-from south.db import db
-from south.v2 import SchemaMigration
-from django.db import models
+from __future__ import unicode_literals
+
+from django.db import models, migrations
 
 
-class Migration(SchemaMigration):
+class Migration(migrations.Migration):
 
-    def forwards(self, orm):
-        # Adding model 'Lesson'
-        db.create_table(u'lessons_lesson', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(default='Subject', max_length=256)),
-            ('subject', self.gf('django.db.models.fields.CharField')(max_length=32)),
-        ))
-        db.send_create_signal(u'lessons', ['Lesson'])
+    dependencies = [
+    ]
 
-        # Adding model 'Section'
-        db.create_table(u'lessons_section', (
-            (u'id', self.gf('django.db.models.fields.AutoField')(primary_key=True)),
-            ('title', self.gf('django.db.models.fields.CharField')(max_length=256)),
-            ('display_order', self.gf('django.db.models.fields.IntegerField')(default=0)),
-        ))
-        db.send_create_signal(u'lessons', ['Section'])
-
-
-    def backwards(self, orm):
-        # Deleting model 'Lesson'
-        db.delete_table(u'lessons_lesson')
-
-        # Deleting model 'Section'
-        db.delete_table(u'lessons_section')
-
-
-    models = {
-        u'lessons.lesson': {
-            'Meta': {'object_name': 'Lesson'},
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'subject': ('django.db.models.fields.CharField', [], {'max_length': '32'}),
-            'title': ('django.db.models.fields.CharField', [], {'default': "'Subject'", 'max_length': '256'})
-        },
-        u'lessons.section': {
-            'Meta': {'object_name': 'Section'},
-            'display_order': ('django.db.models.fields.IntegerField', [], {'default': '0'}),
-            u'id': ('django.db.models.fields.AutoField', [], {'primary_key': 'True'}),
-            'title': ('django.db.models.fields.CharField', [], {'max_length': '256'})
-        }
-    }
-
-    complete_apps = ['lessons']
+    operations = [
+        migrations.CreateModel(
+            name='Lesson',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('title', models.CharField(default=b'Subject', max_length=256)),
+                ('subject', models.CharField(max_length=32, choices=[(b'math', b'math'), (b'science', b'science'), (b'socialstudies', b'socialstudies'), (b'writing', b'writing'), (b'default', b'default')])),
+                ('language', models.CharField(default=b'eng', max_length=32, choices=[(b'eng', b'English'), (b'span', b'Spanish')])),
+                ('icon_class', models.CharField(default=b'university', max_length=32, blank=True)),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
+        migrations.CreateModel(
+            name='Section',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('title', models.CharField(max_length=256)),
+                ('display_order', models.IntegerField(default=0)),
+                ('lesson', models.ForeignKey(related_name=b'sections', to='lessons.Lesson')),
+            ],
+            options={
+                'ordering': ['lesson', 'display_order', 'title'],
+            },
+            bases=(models.Model,),
+        ),
+    ]

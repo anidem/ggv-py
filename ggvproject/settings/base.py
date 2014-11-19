@@ -28,7 +28,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.contrib.messages.context_processors.messages',
 )
 
-TEMPLATE_DIRS = PROJECT_DIR.child('templates')
+TEMPLATE_DIRS = [PROJECT_DIR.child('templates')]
 
 # Application definition
 INSTALLED_APPS = (
@@ -46,13 +46,12 @@ INSTALLED_APPS = (
     'lessons',
     'slidestacks',
     'questions',
+    'notes',
     'core',
 
     'crispy_forms',
     'django_wysiwyg',
     'guardian',
-
-    'south',
 )
 
 

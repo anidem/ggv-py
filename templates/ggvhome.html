@@ -14,7 +14,7 @@
 
 {% for i in courses %}
 	<div class="col-md-12">
-		<h3>{{ i.short_name }}</h3>
+		<h3>{{ i.slug }}</h3>
 		<p>{{ i.title }}</p>
 		<p><a href="{{ i.get_absolute_url }}" class="btn btn-primary" role="button">go</a></p>
 	</div>

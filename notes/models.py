@@ -9,13 +9,13 @@ from model_utils.models import TimeStampedModel
 
 class UserNote(TimeStampedModel):
     text = models.TextField()
-    creator = models.ForeignKey(User)
-    content_type = models.ForeignKey(ContentType)
+    creator = models.ForeignKey(User, related_name="user")
+    content_type = models.ForeignKey(ContentType, related_name="content")
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
 
     def __unicode__(self):
         return self.text
 
-    # def get_absolute_url(self):
-    #     return reverse('course', args=[str(self.id)])
+    def get_absolute_url(self):
+        return reverse('view_note', args=[str(self.id)])

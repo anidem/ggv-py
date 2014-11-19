@@ -26,15 +26,40 @@ csvgrep -r '\d' -c "CORRECT ANSWER","option 1","option 2","option 3","option 4" 
 
 
 
+csvgrep -r '\d' -c "CORRECT ANSWER","option 1","option 2","option 3","option 4" Place\ Value-Table\ 1.csv
+
+csvcut -c "SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","option 4" Place\ Value-Table\ 1.csv | csvjson -i 4
+
 # THIS outputs the question list as json object
 
-csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","SELECT TYPE" place-01.csv | csvjson -i 4 
+csvcut -c "QUESTION DISPLAY ORDER","QUESTION","SELECT TYPE"  | csvjson -i 4 
 
 
+
+Place\ Value-Table\ 1.csv
 
 # This outputs the entire row in json.
 
 csvjson -i 4 place-01.csv
+
+
+/ggv/sanluis
+/ggv/sanluis/lesson/1
+/ggv/sanluis/slidestack/684
+/ggv/sanluis/worksheet/418
+/ggv/sanluis/worksheet/418/1
+
+nov-3-2014
+LIST Options: (will need to insert question id)
+csvcut -c "SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","option 4" Rounding\ Rules-Table\ 1.csv | csvjson -i 4
+
+LIST Questions:
+csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","SELECT TYPE" Rounding\ Rules-Tale\ 1.csv  | csvjson -i 4
+
+LIST Complete row:
+csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","IMAGE","SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","option 4" <CSV FILENAME> | csvjson -i 4
+
+
 
 
 

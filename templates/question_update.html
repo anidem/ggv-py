@@ -1,0 +1,54 @@
+<!-- question_update.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <h1></h1>
+    <form action="." method="post">{% csrf_token %}
+        <div class="row">
+            <div class="col-md-6">
+                <legend>Question</legend>
+                {% for field in form %}
+                    <div class="fieldWrapper">                     
+                        {{ field.errors }}
+                        {{ field.label_tag }}<br>
+                        {{ field }}
+                    </div>
+                {% endfor %}       
+            </div>
+                
+            {% if  optionsform %}
+            <div class="col-md-6">
+                <fieldset>
+                    <legend>Options</legend>
+                    <table>
+                        <tr>
+                            <td>Order</td>
+                            <td>Option Text</td>
+                            <td>Correct?</td>
+                            <td>Delete?</td>
+                        </tr>
+                    {{ optionsform.management_form }}
+                    {% for opt in optionsform %}
+                        <tr>{{ opt.id }}
+                            <td> {{ opt.display_order }} </td>
+                            <td> {{ opt.display_text }} </td>
+                            <td> {{ opt.correct }} </td>
+                            <td> {{ opt.DELETE }} </td>
+                        </tr>
+                    {% endfor %}
+                    </table>
+                </fieldset>
+            </div>
+            {% endif %}
+        </div>
+        <div class="row">
+            <h1></h1>
+            <input type="submit" value="Update">
+        </div>
+    </form>
+{% endblock content %}
+{% block local_js %}
+    <script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>
+    <script>tinymce.init({selector:'textarea.editor'});</script>
+{% endblock local_js %}

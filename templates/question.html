@@ -1,10 +1,11 @@
 <!-- question.html -->
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load crispy_forms_tags %}
 
 {% block page_title %} GGV | worksheet | {{ object.id }} | {{ active|add:"1" }} {% endblock page_title %}
 {% block content %}
-    
+    {{ access }}
    	{% if active <= questions|length %}
     <div class="row">
         <div class="col-md-12" style="text-align: center">
@@ -83,18 +84,23 @@
         
         <div class="col-md-4">
             <h3></h3>
-            <form action="{% url 'create_note'%}" method="POST">
-              {% csrf_token %}              
-                {{ note_form.as_p }}
-              <input id="save_note" type="submit" value="Save" />
-            </form>
-
-            <div class="row">
+            <div id="note_list" class="row">
             {% for i in notes %}
-                <p class="small"> {{ i.creator }} </p>
-                <p>{{ i.text }}</p>
+                <!-- <div class="note_block"> -->
+                    <p class="small"> {{ i.creator }} </p>
+                    <p>{{ i.text }}</p>
+                <!-- </div> -->
             {% endfor %}
             </div>
+            {% if instructor %}
+            <form id="note_form" action="{% url 'create_note'%}" method="POST">
+              {% csrf_token %}              
+                {{ note_form|crispy }}
+              <input id="note_submit" type="button" value="Save" />
+            </form>
+            {% endif %}
+
+
         </div>
 
         {% else %}
@@ -110,4 +116,4 @@
 
 {% endblock content %} 
 
-{% block local_js %} <script src=""></script> {% endblock local_js %}
+{% block local_js %} <script src="{% static 'js/questions.js' %}"></script> {% endblock local_js %}

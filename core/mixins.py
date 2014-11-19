@@ -1,5 +1,6 @@
 # core/mixins.py
 from django.shortcuts import render, redirect
+from django.http import JsonResponse
 
 from django.contrib import messages
 from guardian.shortcuts import ObjectPermissionChecker
@@ -13,7 +14,6 @@ class AccessRequiredMixin(object):
         method.
         """
         try:
-            print type(self.get_object()).__name__
             if not self.get_object().check_membership(self.request.session):          
                 self.template_name = 'access_error.html'
         except:
@@ -21,4 +21,3 @@ class AccessRequiredMixin(object):
         
         return super(AccessRequiredMixin, self).dispatch(*args, **kwargs)
         
-

@@ -4,15 +4,16 @@ from itertools import chain
 from operator import attrgetter
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
-
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django import forms
+from operator import itemgetter
+import json
 
 from model_utils.models import TimeStampedModel
 
 from lessons.models import Lesson, AbstractActivity
-from core.models import UserNote
+from notes.models import UserNote
 
 
 class QuestionManager(models.Manager):
@@ -108,135 +109,203 @@ class QuestionSet(AbstractActivity):
         Lesson, null=True, blank=True, related_name='worksheets')
     activity_type = models.CharField(
         max_length=48, default='worksheet', null=True)
-    notes = generic.GenericRelation(UserNote)
+    notes = GenericRelation(UserNote)
 
-    objects = QuestionManager()
+    # objects = QuestionManager()
 
-    def get_question(self, question):
-        pass
+    def get_ordered_question_list(self):
+        seqitems = [(x.content_object, x.content_object.display_order) for x in self.sequence_items.all()]
+        return [x[0] for x in sorted(seqitems, key=itemgetter(1))]
 
     def get_absolute_url(self):
-        return reverse('worksheet', args=[str(self.id)])
+        return reverse('question_response', args=[self.id, '1'])
 
     def __unicode__(self):
         return self.title
 
 
+class QuestionSequenceItem(models.Model):
+
+    """
+    Functions as a list of questions for QuestionSet.
+    Allow QuestionSets to contain varied question types.
+    Content objects reference types derived from Abstract Question.
+    """
+    question_sequence = models.ForeignKey(
+        QuestionSet, related_name='sequence_items')
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    # class Meta:
+    #     ordering = ['content_object__display_order']
+
 class AbstractQuestion(models.Model):
-    text = models.TextField()
-    display_order = models.IntegerField()
+
+    """
+    A super class specifying the question text to display and the display order of the question.
+    """
+    display_text = models.TextField()
+    display_order = models.IntegerField(default=0)
+    display_image = models.FileField(null=True, blank=True, upload_to='img')
+
+    def get_sequence_url(self):
+        try:
+            seqitem = self.sequence.get()
+            worksheet = seqitem.question_sequence
+            position = worksheet.get_ordered_question_list().index(self)
+            return reverse('question_response', args=[worksheet.id, position+1])
+        except:
+            return None
 
     def __unicode__(self):
-        return self.text
+        return self.display_text
 
     class Meta:
         abstract = True
         ordering = ['display_order']
 
 
-class ShortAnswerQuestion(AbstractQuestion):
-    correct_answer = models.CharField(max_length=256)
-    question_set = models.ForeignKey(
-        QuestionSet, related_name='shortanswerquestions')
-    responses = generic.GenericRelation(
-        'QuestionResponse', content_type_field='question_type', object_id_field='question_id')
-    notes = generic.GenericRelation(UserNote)
+class TextQuestion(AbstractQuestion):
 
-    def get_options(self):
-        return []
+    """
+    A question type that accepts text input.
+    """
+    input_size = models.CharField(max_length=64, choices=[
+        ('1', 'short answer: (1 row 50 cols)'),
+        ('5', 'sentence: (5 rows 50 cols'),
+        ('15', 'paragraph(s): (15 rows 50 cols)')], default='1')
+    correct = models.TextField(blank=True)
+    sequence = GenericRelation(
+        QuestionSequenceItem, related_query_name='questions')
+    responses = GenericRelation('QuestionResponse')
+    notes = GenericRelation(UserNote)
 
-    def get_options_as_list(self):
-        return None
-    
-    def get_user_response(self, user):
-        response_obj = self.responses.get(user=user)
-        return response_obj
+    def get_input_widget(self):
+        widget_attrs = {
+            'rows': self.input_size,
+            'cols': 50,
+            'style': 'resize: vertical'
+        }
+        if self.input_size == '1':
+            return forms.CharField(label='', widget=forms.TextInput(attrs={'size': 50}))
+        else:
+            return forms.CharField(label='', widget=forms.Textarea(attrs=widget_attrs))
 
-    def get_correct_answer(self):
-        return self.correct_answer
+    def correct_answer(self):
+        return self.correct
 
-    def get_question_type(self):
-        # returns a string label for this model e.g., shortanswerquestion
-        return self.get_question_content_type().model
+    def check_answer(self, json_str):
+        return json_str == self.correct
 
-    def get_question_content_type(self):
-        content_type = ContentType.objects.get_for_model(ShortAnswerQuestion)
-        return content_type
+    def user_response_object(self, user):        
+        """
+        Returns a QuestionResponse object related to user.
+        """
+        try:
+            return self.responses.all().get(user=user)
+        except:
+            return None
 
+    def get_edit_url(self):
+        return reverse('text_question_update', args=[self.id])
 
-class MultipleChoiceQuestion(AbstractQuestion):
-    RADIO = 'radio'
-    CHECK = 'checkbox'
-
-    OPTION_TYPES = (
-        (RADIO, 'radio'),
-        (CHECK, 'checkbox'),
-    )
-
-    select_type = models.CharField(
-        max_length=24, choices=OPTION_TYPES, default=RADIO)
-    question_set = models.ForeignKey(
-        QuestionSet, null=True, related_name='multiplechoicequestions')
-    responses = generic.GenericRelation(
-        'QuestionResponse', content_type_field='question_type', object_id_field='question_id')
-    notes = generic.GenericRelation(UserNote)
-
-    def get_options(self):
-        return QuestionOption.objects.filter(question=self.id).order_by('display_order')
-
-    def get_options_as_list(self):
-        opts = self.get_options()
-        options = []
-        for option in opts:
-            opt_obj = []
-            opt_obj.append(option.text)
-            opt_obj.append(option.text)
-            options.append(opt_obj)
-        return options
-
-    def get_user_response(self, user):
-        response_obj = self.responses.get(user=user)
-        # question_type = ContentType.objects.get(id=self.get_question_content_type())
-        # current_question = question_type.get_object_for_this_type(id=request.POST['question_id'])
-        # try:
-        #     response_obj = QuestionResponse.objects.filter()
-        # except:
-        #     response_obj = None
-        return response_obj
-
-    def get_correct_answer(self):
-        return QuestionOption.objects.filter(question=self.id).filter(is_correct=True).order_by('display_order').values_list('text', flat=True)
-
-    def get_question_type(self):
-        # returns a string label for this model e.g., multiplechoicequestion
-        return self.get_question_content_type().model
-
-    def get_question_content_type(self):
-        # returns a ContentType object for this model
-        content_type = ContentType.objects.get_for_model(MultipleChoiceQuestion)
-        return content_type
+    def get_absolute_url(self):
+        return reverse('text_question', args=[self.id])
 
 
-class QuestionOption(models.Model):
-    question = models.ForeignKey(
-        MultipleChoiceQuestion, related_name='options')
-    text = models.CharField(max_length=512)
-    is_correct = models.BooleanField(blank=True, default=False)
+
+class OptionQuestion(AbstractQuestion):
+
+    """
+    A question type that accepts a selection from a list of choices (multiple choice).
+    """
+    input_select = models.CharField(max_length=64, choices=[(
+        'radio', 'single responses'), ('checkbox', 'multiple responses')], default='radio')
+
+    sequence = GenericRelation(
+        QuestionSequenceItem, related_query_name='questions')
+    responses = GenericRelation('QuestionResponse')
+    notes = GenericRelation(UserNote)
+
+    def get_input_widget(self):
+        if self.input_select == 'checkbox':
+            field_widget = forms.CheckboxSelectMultiple()
+            return forms.MultipleChoiceField(label='', choices=self.options_list(), widget=field_widget)
+        else:
+            field_widget = forms.RadioSelect()
+            return forms.ChoiceField(label='', choices=self.options_list(), widget=field_widget)
+
+    def options_list(self):
+        return [(i.id, i.display_text) for i in self.options.all()]
+
+    def correct_answer(self):
+        if self.input_select == 'checkbox':
+            return [str(i.id) for i in self.options.filter(correct=True)]
+        else:
+            return str(self.options.get(correct=True).id)
+
+    def check_answer(self, json_str):
+        # Need to process option responses as lists. json used to coerce
+        # string representation to list.
+        try:
+            return self.correct_answer() == json_str
+        except:
+            print 'error doing json compare check'
+
+    def user_response_object(self, user):
+        """
+        Returns a QuestionResponse object related to user.
+        """
+        try:
+            return self.responses.get(user=user)
+        except:
+            return None
+
+    def get_edit_url(self):
+        return reverse('option_question_update', args=[self.id])
+
+    def get_absolute_url(self):
+        return reverse('option_question', args=[self.id])
+
+class Option(models.Model):
+
+    """
+    Stores a single option to list as a choice for a :model:`questions.OptionQuestion`.
+    """
+    question = models.ForeignKey(OptionQuestion, related_name='options')
+    correct = models.BooleanField(default=False)
+    display_text = models.CharField(max_length=256)
     display_order = models.IntegerField(default=0)
 
-    class Meta:
-        ordering = ['display_order']
-
     def __unicode__(self):
-        return self.text
+        return self.display_text
+
+    class Meta:
+        ordering = ['display_order', 'id']
 
 
 class QuestionResponse(TimeStampedModel):
-    user = models.ForeignKey(User)
+    """
+    Generic question response container. 
+    """
+    user = models.ForeignKey(User, related_name='question_responses')
     response = models.TextField()
-    question_type = models.ForeignKey(ContentType)
-    question_id = models.PositiveIntegerField(null=True)
-    content_object = generic.GenericForeignKey('question_type', 'question_id')
 
-    def __unicode__(self):
-        return self.response
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    def json_response(self):
+        try:
+            return json.loads(self.response)
+        except:
+            return None        
+
+    def save(self, *args, **kwargs):
+        self.response = json.dumps(self.response)
+        super(QuestionResponse, self).save(*args, **kwargs)
+
+    # Fix this to contruct arguments relative to question sequence object
+    def get_absolute_url(self):
+        return reverse('home')

@@ -11,7 +11,6 @@ from guardian.shortcuts import get_objects_for_user
 
 from courses.models import Course
 
-from .models import UserNote
 
 @receiver(user_logged_in)
 def init_session(sender, **kwargs):
@@ -51,21 +50,6 @@ class HomeView(LoginRequiredMixin, TemplateView):
             self.request.user, 'view_course', Course)
         return context
 
-class NoteView(ListView):
-    model = UserNote
-    template_name = 'messenger.html'
-
-class NoteCreateView(CreateView):
-    model = UserNote
-    template_name = 'messenger.html'
-
-    def get_success_url(self):
-        return reverse('create_note')
-
-    def get_context_data(self, **kwargs):
-        context = super(NoteCreateView, self).get_context_data(**kwargs)
-        context['object_list'] = UserNote.objects.all()
-        return context
 
 
 

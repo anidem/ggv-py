@@ -5,14 +5,15 @@ from django.contrib import admin
 from django import forms
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
+from django.contrib.contenttypes.admin import GenericInlineModelAdmin
 
 from guardian.admin import GuardedModelAdmin
 
 from courses.models import Course
 from lessons.models import Lesson, Section
-from questions.models import QuestionSet, QuestionResponse, QuestionOption, MultipleChoiceQuestion, ShortAnswerQuestion
+from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option, QuestionSequenceItem
 from slidestacks.models import SlideStack
-from core.models import UserNote
+from notes.models import UserNote
 
 class ExtraMedia:
     js = [
@@ -33,40 +34,40 @@ class EditLinkToInlineObject(object):
 
 
 class QuestionOptionInlineAdmin(admin.TabularInline):
-    model = QuestionOption
+    model = Option
     formfield_overrides = {
         models.IntegerField: {'widget': forms.NumberInput},
     }
 
-class QuestionSetInlineAdmin(EditLinkToInlineObject, admin.TabularInline):
-    model = MultipleChoiceQuestion
-    list_display = ('text', 'select_type', 'question_set', 'display_order')
-    extra = 1
-    readonly_fields = ('edit_link', )
+# class QuestionSetInlineAdmin(EditLinkToInlineObject, admin.TabularInline):
+#     model = MultipleChoiceQuestion
+#     list_display = ('text', 'select_type', 'question_set', 'display_order')
+#     extra = 1
+#     readonly_fields = ('edit_link', )
 
-class QuestionSetInlineShortAnswerAdmin(EditLinkToInlineObject, admin.TabularInline):
-    model = ShortAnswerQuestion
-    list_display = ('text', 'question_set', 'display_order', 'correct_answer')
-    extra = 1
-    readonly_fields = ('edit_link', )
+# class QuestionSetInlineShortAnswerAdmin(EditLinkToInlineObject, admin.TabularInline):
+#     model = ShortAnswerQuestion
+#     list_display = ('text', 'question_set', 'display_order', 'correct_answer')
+#     extra = 1
+#     readonly_fields = ('edit_link', )
 
 
-class MultipleChoiceQuestionAdmin(admin.ModelAdmin):
-    inlines = [
-        QuestionOptionInlineAdmin,
-    ]
-    list_display = ('text', 'select_type', 'question_set', 'display_order')
-    list_editable = ('display_order',)
-    list_filter = ('question_set',)
+# class MultipleChoiceQuestionAdmin(admin.ModelAdmin):
+#     inlines = [
+#         QuestionOptionInlineAdmin,
+#     ]
+#     list_display = ('text', 'select_type', 'question_set', 'display_order')
+#     list_editable = ('display_order',)
+#     list_filter = ('question_set',)
 
-    formfield_overrides = {
-        models.IntegerField: {'widget': forms.NumberInput},
-    }
+#     formfield_overrides = {
+#         models.IntegerField: {'widget': forms.NumberInput},
+#     }
 
-class ShortAnswerQuestionAdmin(admin.ModelAdmin):
-    list_display = ('text', 'question_set', 'display_order')
-    list_editable = ('display_order',)
-    list_filter = ('question_set',)
+# class ShortAnswerQuestionAdmin(admin.ModelAdmin):
+#     list_display = ('text', 'question_set', 'display_order')
+#     list_editable = ('display_order',)
+#     list_filter = ('question_set',)
 
 
 class WorksheetInlineAdmin(admin.TabularInline):
@@ -78,22 +79,31 @@ class SlideStackInlineAdmin(admin.TabularInline):
 class SlideStackAdmin(admin.ModelAdmin):
     model = SlideStack
     list_display = ('title', 'lesson', 'section',  'asset', 'display_order')
-    # list_editable = ('section',)
     list_filter = ('lesson', 'section',)
 
 
 class QuestionSetAdmin(admin.ModelAdmin):
     list_display = ('title', 'lesson', 'section', 'display_order')
-    # list_editable = ('section',)
     list_filter = ('lesson', 'section',)
 
-    inlines = [
-        QuestionSetInlineAdmin, QuestionSetInlineShortAnswerAdmin,
-    ]
+#     inlines = [
+#         QuestionSetInlineAdmin, QuestionSetInlineShortAnswerAdmin,
+#     ]
+
+class QuestionSequenceItemAdmin(admin.ModelAdmin):
+    list_display = ('question_sequence',)
+
+class OptionQuestionAdmin(admin.ModelAdmin):
+    list_display = ('display_text', 'display_order')
+    inlines = [ QuestionOptionInlineAdmin ]
+
+class TextQuestionAdmin(admin.ModelAdmin):
+    list_display = ('display_text', 'correct', 'display_order')
+
 
 class CourseAdmin(GuardedModelAdmin):
     model = Course
-    list_display = ('title', 'short_name', 'access_code', 'lesson_list')
+    list_display = ('title', 'slug', 'access_code', 'lesson_list')
 
 
 class LessonAdmin(GuardedModelAdmin):
@@ -111,7 +121,10 @@ admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)
 admin.site.register(Section, SectionAdmin, Media=ExtraMedia)
 admin.site.register(SlideStack, SlideStackAdmin)
 admin.site.register(QuestionSet, QuestionSetAdmin, Media=ExtraMedia)
+admin.site.register(OptionQuestion, OptionQuestionAdmin, Media=ExtraMedia)
+admin.site.register(TextQuestion, TextQuestionAdmin, Media=ExtraMedia)
 admin.site.register(QuestionResponse)
-admin.site.register(ShortAnswerQuestion, ShortAnswerQuestionAdmin, Media=ExtraMedia)
-admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin, Media=ExtraMedia)
+admin.site.register(QuestionSequenceItem, QuestionSequenceItemAdmin)
+# admin.site.register(ShortAnswerQuestion, ShortAnswerQuestionAdmin, Media=ExtraMedia)
+# admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin, Media=ExtraMedia)
 admin.site.register(UserNote)

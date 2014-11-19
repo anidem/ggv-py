@@ -1,8 +1,9 @@
 from __future__ import with_statement
-from fabric.api import local, settings, abort, run, cd
+from fabric.api import local, settings, abort, run, cd, lcd
 from fabric.contrib.console import confirm
 from fabric.operations import prompt
 import time
+import os
 
 def push_changes(m='fabfile committed with this message, not me.'):
     local("git add -A && git commit -m '%s'" % m)
@@ -34,6 +35,24 @@ def start_deploy(rd, ad):
 
 def tester(args='default arguments'):
     print args
+
+def readfiles(dirpath):
+    files = []
+    for fstr in os.listdir(dirpath):
+        if fstr != '.DS_Store':
+            files.append(fstr)    
+
+    with lcd(dirpath):
+        local('pwd')
+
+        for f in files:
+            j = f.replace('.csv', '.json')
+            local('csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","IMAGE","SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","option 4" %s | csvjson -i 4 > jsondir/%s'%(f, j))
+
+
+    
+
+
 
 
 

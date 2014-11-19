@@ -1,11 +1,13 @@
 <!-- login.html -->
 {% load staticfiles %}
 {% load crispy_forms_tags %}
-{% load url from future %}
 
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <link href='http://fonts.googleapis.com/css?family=Lato:100,300,400' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Oxygen:400,300' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,400,300,600' rel='stylesheet' type='text/css'>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -18,6 +20,41 @@
 	<!-- Bootstrap -->
 	<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css">
 	<link href="{% static 'css/ggv.css' %}" rel="stylesheet">
+
+    <style type="text/css">
+        .logoblk {
+            text-align: center;
+            font-size: 5.0em;
+            font-family: 'Lato  ', sans-serif;
+            font-weight: 400;
+            color: #c0c0c0;
+        }
+        .logo_left {}
+        .logo_right {}
+
+        .logo_middle {
+            font-size: 1.0em;
+            font-family: 'Lato', sans-serif;
+            color: #303030;
+        }
+
+        .logo_byline {
+            font-size: 0.5em;
+            font-weight: 400;
+            color: #f0f0f0;
+            margin-top: -20px;          
+        }
+
+        input:-webkit-autofill {
+            -webkit-box-shadow: 0 0 0px 1000px white inset;
+        }
+
+        input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+            background-color: white;
+            background-image: none;
+            color: rgb(0, 0, 0);
+        }
+    </style>
 	<!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
 	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
 	<!--[if lt IE 9]>
@@ -29,17 +66,29 @@
   <body>
 
     <div class="container">
-		<form class="form-signin" role="form" method="post" action="{% url 'login' %}">
-			{% csrf_token %}
-			<img src="{% static 'img/logo.jpg' %}" style="width: 100%"/>
-			<h2 class="form-signin-heading">GED Gone Virtual</h2>
-			{% if form.errors %}
-			<h3>Your username and password didn't match. Please try again.</he>
-			{% endif %}
-			<input id="id_username" name="username" type="username" class="form-control" placeholder="Username" required autofocus>
-			<input  id="id_password" name="password"type="password" class="form-control" placeholder="Password" required>
-			<button class="btn btn-lg btn-default btn-block" type="submit" value="login">Sign in</button>
-		</form>
+        <div class="row">
+            <div class="col-md-12 logoblk">
+                <div>
+                    <span class="logo_left">g</span><span class="logo_middle">2</span><span class="logo_right">v</span>
+                </div>
+                <div class="logo_byline"><span>ged gone virtual</span></div>
+            </div>
+
+            <div class="col-md-12">
+        		<form class="form-signin" role="form" method="post" action="{% url 'login' %}">
+        			{% csrf_token %}
+
+        			<input id="id_username" name="username" type="username" class="form-control" placeholder="Username" required autofocus>
+        			<input  id="id_password" name="password"type="password" class="form-control" placeholder="Password" required>
+        			<button class="btn btn-lg btn-block" type="submit" value="login" style="color: white; background-color: #303030">Sign in</button>
+                    {% if form.errors %}
+                    <div class=" label-danger" style="text-align: center; color: white;">
+                        Username and/or password not found.
+                    </div>
+                    {% endif %}
+        		</form>
+            </div>
+        </div>
     </div>
   </body>
 </html>

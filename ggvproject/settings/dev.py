@@ -13,8 +13,8 @@ TEMPLATE_DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ggvdb',
-        'USER': 'djangodbuser',
+        'NAME': 'ggvdb2',
+        'USER': 'ggvdbuser',
         'PASSWORD': '1',
         'HOST': '127.0.0.1',
         'PORT': '5432',
@@ -27,3 +27,12 @@ ALLOWED_HOSTS = []
 # INSTALLED_APPS += (
 #     'debug_toolbar', # This breaks the pres player -- conflicts with prototype.
 # )
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = os.environ['EMAIL_HOST']
+EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
+EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
+EMAIL_PORT = 587
+
+MEDIA_ROOT = '/Library/WebServer/Documents/media'
+MEDIA_URL = 'http://localhost/media/'

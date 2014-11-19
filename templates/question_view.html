@@ -1,0 +1,15 @@
+<!-- question_view.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <div>
+        {{ object | safe }} 
+        <a href="{{ object.get_edit_url }}"> edit</a> 
+        <a href="{{ object.get_sequence_url }}"> view in worksheet </a>
+    </div>
+
+    {% for opt in options  %}
+        <div><input type="radio" name="radios"> {{ opt.1 }} </input></div>
+    {% endfor %}
+{% endblock content %}

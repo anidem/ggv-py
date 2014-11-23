@@ -14,8 +14,9 @@ urlpatterns = patterns('',
 
 # GGV
     url(r'^ggv/(?P<slug>[-\w]+)/$', CourseView.as_view(), name='course'),
-    url(r'^ggv/lesson/(?P<pk>\d+)$', LessonView.as_view(), name='lesson'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)$', LessonView.as_view(), name='lesson'),
     
+# GGV lesson activities
     url(r'^ggv/slidestack-init/(?P<pk>\d+)', SlideStackInitView.as_view(), name='slidestack_init'),
     url(r'^ggv/slidestack/(?P<pk>\d+)', SlideStackView.as_view(), name='slidestack'),
     
@@ -27,6 +28,7 @@ urlpatterns = patterns('',
     url(r'^ggv/questions/optionquestions/(?P<pk>\d+)/$', OptionQuestionView.as_view(), name='option_question'),
     url(r'^ggv/questions/optionquestions/edit/(?P<pk>\d+)/$', OptionQuestionUpdateView.as_view(), name='option_question_update'),
 
+# GGV components
     url(r'^ggv/note/(?P<pk>\d+)/$', NoteView.as_view(), name='view_note'),
     url(r'^ggv/note/add/$', NoteCreateView.as_view(), name='create_note'),
 

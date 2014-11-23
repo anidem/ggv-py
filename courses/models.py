@@ -7,9 +7,7 @@ from guardian.shortcuts import get_users_with_perms, get_perms
 
 from lessons.models import Lesson
 
-"""
-Courses are synomous with a testing site. A course contains one or more lessons and has zero or more designated instuctors and zero or more students.
-"""
+
 class ActivityReportManager(models.Manager):
     def get_course_activity(self, **kwargs):
         try:
@@ -27,6 +25,10 @@ class ActivityReportManager(models.Manager):
 
 
 class Course(models.Model):
+    """
+    Courses are synomous with a testing site. 
+    A course contains one or more lessons and has zero or more designated instuctors and zero or more students.
+    """
     title = models.CharField(max_length=256)
     slug = models.SlugField(max_length=128, unique=True)
     lessons = models.ManyToManyField(Lesson)
@@ -45,7 +47,7 @@ class Course(models.Model):
         return get_users_with_perms(self)
 
     def lesson_list(self):
-        return self.lessons.all()
+        return self.crs_lessons.all()
 
     def check_membership(self, user_session):
         """
@@ -58,3 +60,19 @@ class Course(models.Model):
 
     def get_absolute_url(self):
         return reverse('course', args=[str(self.slug)])
+
+class CourseLesson(models.Model):
+    """ 
+        This replaces the ManyToManyField in Course.
+        Although it is nearly identical in function it defined here to be more explicit
+    """ 
+
+    course = models.ForeignKey(Course, related_name='crs_lessons')
+    lesson = models.ForeignKey(Lesson, related_name='crs_courses')
+
+    def __unicode__(self):
+        return '%s (%s)' % (self.course.title, self.lesson.title)
+
+    def get_absolute_url(self):
+        return reverse('lesson', args=[str(self.course.slug), str(self.lesson.id)])
+

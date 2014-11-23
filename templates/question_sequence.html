@@ -42,20 +42,24 @@
         </div>
         <div class="row">
             <div class="col-md-6">
+                <legend>Notes</legend>
+                <dl id="notes">      
+                {% for i in note_list  %}
+                    <dt><small>{{ i.creator }}</small><small style="float: right">{{ i.modified|date:"M j Y" }}</small></dt>
+                    <dd>{{ i.text }}</dd>
+                {% endfor %}
+                </dl>
+            </div>      
+            <div class="col-md-6">
+                {% if instructor %}
                 <legend>Add Note</legend>
                 <form id="noteform" action="" method="post">{% csrf_token %}
                     {{ noteform.as_p }}
                     <p><input id="note_submit_btn" type="submit" class="btn btn-default" value="Add Note"/></p>
                 </form>
+                {% endif %}
             </div>
-            <div class="col-md-6">
-                <legend>Notes</legend>
-                <div id="notes">      
-                {% for i in note_list  %}
-                    <div><span class="ts"> {{ i.modified }} </span> {{ i.creator }}: {{ i.text }}</div>
-                {% endfor %}
-                </div>
-            </div>            
+      
         </div>
 
     </div> 
@@ -87,5 +91,8 @@
 {% endblock content %}
 
 {% block local_js %}
-<script src="{% static 'js/questions.js'%}"></script>
+    <script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>
+    <script>tinymce.init({selector:'textarea.editor'});</script>
+    <script src="{% static 'js/questions.js'%}"></script>
+
 {% endblock local_js %}

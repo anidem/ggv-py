@@ -41,20 +41,20 @@
 {% block content %} 
   <div class="row icon eng">
 	{% for i in eng_lessons %}
-		<div class="col-md-3 icon-{{ i.subject }}">
+		<div class="col-md-3 icon-{{ i.lesson.subject }}">
 			<a class="static" href="{{ i.get_absolute_url }}">
-				<i class="fa fa-{{ i.icon_class }} fa-5x"></i>
-        <p class="icon-title">{{ i.title }}</p>
+				<i class="fa fa-{{ i.lesson.icon_class }} fa-5x"></i>
+        <p class="icon-title">{{ i.lesson.title }}</p>
 			</a>
 		</div>
 	{% endfor %}
   </div>
   <div class="row span {% if eng_lessons %}collapse{% endif %}"> 
   {% for i in span_lessons %}
-    <div class="col-md-3 icon-{{ i.subject }}">
+    <div class="col-md-3 icon-{{ i.lesson.subject }}">
       <a class="static" href="{{ i.get_absolute_url }}">
-        <i class="fa fa-{{ i.icon_class }} fa-5x"></i>
-        <p class="icon-title">{{ i.title }}</p>
+        <i class="fa fa-{{ i.lesson.icon_class }} fa-5x"></i>
+        <p class="icon-title">{{ i.lesson.title }}</p>
       </a>
     </div>
   {% endfor %}

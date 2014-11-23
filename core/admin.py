@@ -9,7 +9,7 @@ from django.contrib.contenttypes.admin import GenericInlineModelAdmin
 
 from guardian.admin import GuardedModelAdmin
 
-from courses.models import Course
+from courses.models import Course, CourseLesson
 from lessons.models import Lesson, Section
 from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option, QuestionSequenceItem
 from slidestacks.models import SlideStack
@@ -117,6 +117,7 @@ class SectionAdmin(GuardedModelAdmin):
     list_display = ('lesson', 'title', 'display_order')
 
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
+admin.site.register(CourseLesson)
 admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)
 admin.site.register(Section, SectionAdmin, Media=ExtraMedia)
 admin.site.register(SlideStack, SlideStackAdmin)

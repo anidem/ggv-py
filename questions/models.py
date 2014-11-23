@@ -113,6 +113,12 @@ class QuestionSet(AbstractActivity):
 
     # objects = QuestionManager()
 
+    def check_membership(self, user_session):
+        """
+        Utilizes session variable set at user login
+        """
+        return self.lesson in user_session['user_lessons']
+
     def get_ordered_question_list(self):
         seqitems = [(x.content_object, x.content_object.display_order) for x in self.sequence_items.all()]
         return [x[0] for x in sorted(seqitems, key=itemgetter(1))]
@@ -136,9 +142,6 @@ class QuestionSequenceItem(models.Model):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
-
-    # class Meta:
-    #     ordering = ['content_object__display_order']
 
 class AbstractQuestion(models.Model):
 
@@ -290,7 +293,8 @@ class Option(models.Model):
 
 class QuestionResponse(TimeStampedModel):
     """
-    Generic question response container. 
+    Generic question response container.
+    Designed to reference objects derived from AbstractQuestion (e.g., OptionQuestion, TextQuestion) 
     """
     user = models.ForeignKey(User, related_name='question_responses')
     response = models.TextField()

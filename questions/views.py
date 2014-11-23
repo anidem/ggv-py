@@ -27,7 +27,7 @@ class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin
     model = QuestionSet
     template_name = 'worksheet.html'
 
-class QuestionResponseView(CreateView):
+class QuestionResponseView(LoginRequiredMixin, CreateView):
     model = QuestionResponse
     template_name = 'question_sequence.html'
     form_class = QuestionResponseForm
@@ -38,7 +38,7 @@ class QuestionResponseView(CreateView):
 
     def get_initial(self):
         self.sequence = get_object_or_404(QuestionSet, pk=self.kwargs.pop('i'))
-        # question_item = get_object_or_404(self.sequence.questions, pk=self.kwargs.pop('j'))
+
         sequence_items = self.sequence.get_ordered_question_list()
         item = sequence_items[ int(self.kwargs.pop('j'))-1 ]
         self.initial['question'] = item
@@ -47,6 +47,10 @@ class QuestionResponseView(CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(QuestionResponseView, self).get_context_data(**kwargs)
+        if not self.sequence.lesson.check_membership(self.request.session):
+            self.template_name = 'access_error.html'
+            return context
+
         context['worksheet'] = self.sequence
         current_question = self.initial['question']
         # Tally -- move this to object manager...
@@ -69,17 +73,18 @@ class QuestionResponseView(CreateView):
         if self.request.user.is_staff:
             context['edit_url'] = current_question.get_edit_url()
 
-        initial = {}
-        initial['content_type'] = ContentType.objects.get_for_model(current_question).id
-        initial['object_id'] = current_question.id
-        initial['creator'] = self.request.user 
+        initial_note_data = {}
+        initial_note_data['content_type'] = ContentType.objects.get_for_model(current_question).id
+        initial_note_data['object_id'] = current_question.id
+        initial_note_data['creator'] = self.request.user 
 
-        context['noteform'] = UserNoteForm(initial=initial)        
-        context['note_list'] = UserNote.objects.all()
+        context['noteform'] = UserNoteForm(initial=initial_note_data)        
+        context['note_list'] = current_question.notes.all()
         context['question'] = current_question
         context['question_position'] = self.sequence.get_ordered_question_list().index(current_question)+1
         context['question_list'] = tally
         context['worksheet'] = self.sequence
+        context['instructor'] = self.request.user.has_perm('courses.edit_course')
         return context
 
 

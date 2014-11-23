@@ -10,7 +10,7 @@ class AccessRequiredMixin(object):
     def dispatch(self, *args, **kwargs):
         """ 
         Successful execution of permission checks here rely on the object having a method
-        check_membership being defined for the object. E.g. Courses and Lessons each have this
+        check_membership being defined for the object. E.g. Course and Lesson each have this
         method.
         """
         try:

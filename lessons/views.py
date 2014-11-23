@@ -5,7 +5,7 @@ from django.views.generic.edit import FormView
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
 from core.mixins import AccessRequiredMixin
-from courses.models import Course
+from courses.models import Course, CourseLesson
 
 from .models import Lesson
 from .forms import StudentAccessForm
@@ -15,40 +15,22 @@ class LessonView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
     model = Lesson
     template_name = 'lesson.html'
 
+    
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        try:
+            course = self.object.crs_courses.get(course__slug=kwargs.pop('crs_slug'))
+        except CourseLesson.DoesNotExist:
+            self.template_name = 'access_error.html'
+            return self.render_to_response([])
+
+        # Adding course to the context data.
+        context = self.get_context_data(object=self.object, course=course)
+        return self.render_to_response(context)
+
     def get_context_data(self, **kwargs):
         context = super(LessonView, self).get_context_data(**kwargs)
         lesson = self.get_object()
         context['acts'] = Lesson.objects.activities(id=lesson.id) # using custom model manager
         context['sections'] = lesson.sections.all()
         return context
-
-
-# TODO: Refactor the student views.
-# class StudentLessonView(AccessCodeRequiredMixin, DetailView):
-#     model = Lesson
-#     template_name = 'lesson.html'
-
-#     def get_context_data(self, **kwargs):
-#         context = super(StudentLessonView, self).get_context_data(**kwargs)
-#         lesson = self.get_object()
-#         context['acts'] = lesson.activity_set.all()
-#         return context
-
-
-# class StudentActivityView(AccessCodeRequiredMixin, DetailView):
-#     model = Activity
-#     template_name = 'activity.html'
-
-
-class StudentAccessView(FormView):
-    template_name = 'student_login.html'
-    form_class = StudentAccessForm
-
-    def form_valid(self, form):
-        course = get_object_or_404(
-            Course, access_code=form.cleaned_data['access_code'])
-        if not course:
-            return course
-        self.success_url = '/ggvstudent/' + str(course.id)
-        self.request.session['student_visitor'] = True
-        return super(StudentAccessView, self).form_valid(form)

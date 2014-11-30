@@ -8,8 +8,11 @@ class UserNoteForm(forms.ModelForm):
         model = UserNote
         fields = ['text', 'creator', 'content_type', 'object_id']
         widgets = {
-            'text': forms.Textarea(attrs={'rows': 5, 'cols': 30}),
+            'text': forms.Textarea(attrs={'rows': 2, 'cols': 20}),
             'creator': forms.HiddenInput(), 
             'content_type': forms.HiddenInput(), 
             'object_id': forms.HiddenInput() 
-            }
+        }
+        labels = {
+            'text': ''
+        }

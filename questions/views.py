@@ -1,5 +1,5 @@
 # questions/views.py
-from django.views.generic import DetailView, UpdateView, TemplateView, CreateView, FormView
+from django.views.generic import DetailView, UpdateView, TemplateView, CreateView, FormView, RedirectView
 from django.forms.formsets import formset_factory
 from django.forms.models import modelform_factory
 from django import forms
@@ -22,10 +22,10 @@ from .forms import QuestionResponseForm, OptionQuestionUpdateForm, TextQuestionU
 
 import os, json
 
-
 class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
     model = QuestionSet
-    template_name = 'worksheet.html'
+    template_name = 'question_worksheet.html'
+
 
 class QuestionResponseView(LoginRequiredMixin, CreateView):
     model = QuestionResponse
@@ -38,11 +38,15 @@ class QuestionResponseView(LoginRequiredMixin, CreateView):
 
     def get_initial(self):
         self.sequence = get_object_or_404(QuestionSet, pk=self.kwargs.pop('i'))
-
         sequence_items = self.sequence.get_ordered_question_list()
-        item = sequence_items[ int(self.kwargs.pop('j'))-1 ]
+        if sequence_items:
+            item = sequence_items[int(self.kwargs.pop('j'))-1]
+        else:
+            return redirect('http://localhost')
+
         self.initial['question'] = item
         self.initial['user'] = self.request.user
+
         return self.initial
 
     def get_context_data(self, **kwargs):
@@ -73,6 +77,7 @@ class QuestionResponseView(LoginRequiredMixin, CreateView):
         if self.request.user.is_staff:
             context['edit_url'] = current_question.get_edit_url()
 
+        question_index = self.sequence.get_ordered_question_list().index(current_question)+1
         initial_note_data = {}
         initial_note_data['content_type'] = ContentType.objects.get_for_model(current_question).id
         initial_note_data['object_id'] = current_question.id
@@ -81,7 +86,11 @@ class QuestionResponseView(LoginRequiredMixin, CreateView):
         context['noteform'] = UserNoteForm(initial=initial_note_data)        
         context['note_list'] = current_question.notes.all()
         context['question'] = current_question
-        context['question_position'] = self.sequence.get_ordered_question_list().index(current_question)+1
+        context['question_position'] = question_index
+        if question_index-1 > 0: 
+            context['previous_position'] = question_index-1
+        if question_index+1 <= len(list(tally)): 
+            context['next_position'] = question_index+1
         context['question_list'] = tally
         context['worksheet'] = self.sequence
         context['instructor'] = self.request.user.has_perm('courses.edit_course')

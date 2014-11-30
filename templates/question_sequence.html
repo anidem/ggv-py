@@ -1,11 +1,37 @@
 <!-- question_embed.html -->
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-     <div class="col-md-12"><h1> {{ worksheet }} </h1></div>
-    
-    <div class="col-md-10">
+    <div class="col-md-10"><h1> {{ worksheet }} </h1></div>
+    <div class="col-md-2">
+        <div class="dropdown">
+            <a id="dLabel" data-target="#" href="http://example.com" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
+            Question List
+            <span class="caret"></span>
+            </a>
+
+            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            {% for k, v in question_list.items %}
+                <div class="" style="padding: 5px; background-color: {{ v }}">
+
+                    <a href="{% url 'question_response' worksheet.id forloop.counter %}">
+                        {% if forloop.counter == question_position  %}
+                            <i class="fa fa-circle text-{{ v }}"></i>
+                        {% endif %}
+                        <span class="">{{ forloop.counter }}</span>                          
+                    </a>
+                    {% if edit_url %}
+                        <a href="{{ question.get_edit_url }}"> <span style="float: right">edit</span> </a>
+                    {% endif %}
+                </div>
+            {% endfor %}                  
+            </ul>
+        </div>
+    </div>
+
+    <div class="col-md-12">
         <div class="row">
 
             <div class="col-md-12">
@@ -14,16 +40,29 @@
                     <p>{{ question.display_image.url }}</p>
                 {% endif %}
                 
-                <h4> {{ question_position }}. {{ question | safe }}</h4>
-                
+                <small>
+                        {% if edit_url %}
+                        <a href="{{ question.get_edit_url }}"><div class="label label-primary">edit</div></a>
+                        {% endif %}
+                </small>
+                <h4>{{ question | safe }}</h4>
+            </div>
+
+            <div class="col-md-12">
                 <form id="response_form" action="" method="post" >{% csrf_token %}
                     {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
                     
                     {{ form.response.errors}}
                     
-                    {{ form.response }}
-
-                    <p><input id="chk_response_btn" 
+                    <p>{{ form.response }}</p>
+            
+                    <p>
+                        {%if previous_position %} 
+                            <span>
+                            <a href="{% url 'question_response' worksheet.id previous_position %}" class="btn">Previous</a> 
+                            </span>
+                        {% endif %}
+                        <input id="chk_response_btn" 
                         type="submit"                 
                         {% if form.response.help_text == 'success' %}
                             value="Correct!"
@@ -36,6 +75,9 @@
                             class="btn btn-default"
                         {% endif %}
                         >
+                        {%if next_position %} 
+                        <a href="{% url 'question_response' worksheet.id next_position %}" class="btn">Next</a> 
+                        {% endif %}
                     </p>
                 </form>
             </div>
@@ -49,44 +91,26 @@
                     <dd>{{ i.text }}</dd>
                 {% endfor %}
                 </dl>
-            </div>      
-            <div class="col-md-6">
+
                 {% if instructor %}
-                <legend>Add Note</legend>
-                <form id="noteform" action="" method="post">{% csrf_token %}
-                    {{ noteform.as_p }}
-                    <p><input id="note_submit_btn" type="submit" class="btn btn-default" value="Add Note"/></p>
-                </form>
+                <legend>
+                    <a data-toggle="collapse" href="#add_note_panel" aria-controls="add_note_panel">
+                    <small>+ Note</small>
+                    </a>
+                </legend>
+                <div id="add_note_panel" class="panel-collapse collapse">
+                        <form id="noteform" action="" method="post">{% csrf_token %}
+                            {{ noteform|crispy }}
+                            <p><input id="note_submit_btn" type="submit" class="btn btn-default" value="Add Note"/></p>
+                        </form>        
+                </div>
                 {% endif %}
-            </div>
+
+            </div>      
+            <div class="col-md-6"></div>
       
         </div>
-
     </div> 
-
-    <div class="col-md-2 question_list" >
-        {% for k, v in question_list.items %}
-            <div class="row text-{{v}}">
-
-                <a href="{% url 'question_response' worksheet.id forloop.counter %}">
-                    <div class="col-md-4" style="">
-                        {% if forloop.counter == question_position  %}<i class="fa fa-circle text-default"></i>{% endif %}
-                        <span class="text-{{ v }}">{{ forloop.counter }}</span>
-                    </div>
-                    <div class="col-md-4">
-                    
-                        <span class="text-{{ v }}"> view </span>
-                    
-                    </div>
-                </a>
-                <div class="col-md-4">
-                    {% if edit_url %}<a href="{{ k.get_edit_url }}"><span class="text-{{ v }}">edit</span></a>{% endif %}
-                </div>
-            </div>
-        {% endfor %}
-    </div>
-
-
 
 {% endblock content %}
 

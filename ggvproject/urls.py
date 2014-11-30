@@ -7,20 +7,23 @@ from notes.views import NoteCreateView, NoteView
 from courses.views import CourseView
 from lessons.views import LessonView
 from questions.views import WorksheetHomeView, QuestionResponseView, ImportJsonQuestion, OptionQuestionUpdateView, TextQuestionUpdateView, OptionQuestionView, TextQuestionView
-from slidestacks.views import SlideStackInitView, SlideStackView
+from slidestacks.views import SlideView, SlideAssetHandlerView
+
+import questions
 
 
 urlpatterns = patterns('',
-
 # GGV
     url(r'^ggv/(?P<slug>[-\w]+)/$', CourseView.as_view(), name='course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)$', LessonView.as_view(), name='lesson'),
     
 # GGV lesson activities
-    url(r'^ggv/slidestack-init/(?P<pk>\d+)', SlideStackInitView.as_view(), name='slidestack_init'),
-    url(r'^ggv/slidestack/(?P<pk>\d+)', SlideStackView.as_view(), name='slidestack'),
+    # slides are independent files but protected here.
+    url(r'^ggv/slidestack/(?P<slideroot>[-\w]+)/$', SlideView.as_view(), name='slideview'),
+    url(r'^ggv/slidestack/(?P<slideroot>[-\w]+)/data/(?P<asset>.+)/$', SlideAssetHandlerView.as_view(), name='slide_asset'),
     
     url(r'^ggv/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', QuestionResponseView.as_view(), name='question_response'),
+    url(r'^ggv/worksheet/(?P<i>\d+)/$', WorksheetHomeView.as_view(), name='worksheet'),
     
     url(r'^ggv/questions/textquestions/(?P<pk>\d+)/$', TextQuestionView.as_view(), name='text_question'),
     url(r'^ggv/questions/textquestions/edit/(?P<pk>\d+)/$', TextQuestionUpdateView.as_view(), name='text_question_update'),

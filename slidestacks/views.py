@@ -12,21 +12,21 @@ from django.conf import settings
 
 class SlideView(LoginRequiredMixin, RedirectView):
 
-    def get(self, request, *args, **kwargs):
-        slideroot = kwargs.pop('slideroot')
-        abs_filename = os.path.join(
-            os.path.join(settings.STACKS_ROOT, slideroot),
-            'html5.html'
-        )
-        return redirect(abs_filename)
-        
     # def get(self, request, *args, **kwargs):
     #     slideroot = kwargs.pop('slideroot')
     #     abs_filename = os.path.join(
     #         os.path.join(settings.STACKS_ROOT, slideroot),
     #         'html5.html'
     #     )
-    #     return sendfile(request, abs_filename)
+    #     return redirect(abs_filename)
+        
+    def get(self, request, *args, **kwargs):
+        slideroot = kwargs.pop('slideroot')
+        abs_filename = os.path.join(
+            os.path.join(settings.STACKS_ROOT, slideroot),
+            'html5.html'
+        )
+        return sendfile(request, abs_filename)
 
 class SlideAssetHandlerView(LoginRequiredMixin, RedirectView):
     def get(self, request, *args, **kwargs):

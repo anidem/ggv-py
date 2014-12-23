@@ -6,7 +6,7 @@ from core.views import IndexView, HomeView
 from notes.views import NoteCreateView, NoteView
 from courses.views import CourseView
 from lessons.views import LessonView
-from questions.views import WorksheetHomeView, QuestionResponseView, ImportJsonQuestion, OptionQuestionUpdateView, TextQuestionUpdateView, OptionQuestionView, TextQuestionView
+from questions.views import WorksheetHomeView, QuestionResponseView, ImportJsonQuestion, OptionQuestionUpdateView, TextQuestionUpdateView, OptionQuestionView, TextQuestionView, QuestionAssetHandlerView
 from slidestacks.views import SlideView, SlideAssetHandlerView
 
 import questions
@@ -30,6 +30,9 @@ urlpatterns = patterns('',
     
     url(r'^ggv/questions/optionquestions/(?P<pk>\d+)/$', OptionQuestionView.as_view(), name='option_question'),
     url(r'^ggv/questions/optionquestions/edit/(?P<pk>\d+)/$', OptionQuestionUpdateView.as_view(), name='option_question_update'),
+
+    url(r'^ggv/questions/(?P<asset>.+)/$', QuestionAssetHandlerView.as_view(), name='question_asset'),
+
 
 # GGV components
     url(r'^ggv/note/(?P<pk>\d+)/$', NoteView.as_view(), name='view_note'),

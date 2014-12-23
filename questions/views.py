@@ -1,4 +1,7 @@
 # questions/views.py
+import os, json
+from collections import OrderedDict
+
 from django.views.generic import DetailView, UpdateView, TemplateView, CreateView, FormView, RedirectView
 from django.forms.formsets import formset_factory
 from django.forms.models import modelform_factory
@@ -8,10 +11,11 @@ from django.http import HttpResponseRedirect, HttpResponse
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.contenttypes.models import ContentType
 from django.contrib import messages
-from collections import OrderedDict
+from django.conf import settings
 
 
-from braces.views import CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, LoginRequiredMixin
+from braces.views import CsrfExemptMixin, LoginRequiredMixin
+from sendfile import sendfile
 
 from core.mixins import AccessRequiredMixin
 from notes.models import UserNote
@@ -20,7 +24,16 @@ from notes.forms import UserNoteForm
 from .models import TextQuestion, OptionQuestion, QuestionResponse, QuestionSet, QuestionSequenceItem, Option
 from .forms import QuestionResponseForm, OptionQuestionUpdateForm, TextQuestionUpdateForm, OptionFormset
 
-import os, json
+
+
+class QuestionAssetHandlerView(LoginRequiredMixin, RedirectView):
+
+    def get(self, request, *args, **kwargs):
+        asset = kwargs.pop('asset')
+        abs_filename = os.path.join(
+            os.path.join(settings.PDF_ROOT, asset)
+        )
+        return sendfile(request, abs_filename)
 
 class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
     model = QuestionSet

@@ -5,24 +5,26 @@
 
 
 {% block page_crumb %} 
-
-  {{ object }} Lessons 
+  <a href="#">
+  <span>{{ object }}</span>
   <div class="btn-group btn-toggle">
+    
     {% if eng_lessons and span_lessons %}
       <button class="btn btn-xs btn-info active">English</button>
       <button class="btn btn-xs btn-default">Spanish</button>
     {% endif %}
   </div>
-  <script>
+  </a>
+    <script>
       $('.btn-toggle').click(function() {
           $(this).find('.btn').toggleClass('active'); 
           $(this).find('.btn').toggleClass('btn-info');
           $(this).find('.btn').toggleClass('btn-default'); 
-          
           $('.eng').toggleClass('collapse')
           $('.span').toggleClass('collapse')            
       });
   </script>
+
 {% endblock page_crumb %}
 
 {% block local_nav %} 

@@ -2,6 +2,12 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
+{% block page_crumb %}
+  <a href="{% url 'course' course.course.slug %}">
+    <span>{{ course.course }}</span>
+  </a>
+{% endblock page_crumb %}
+
 {% block local_nav %} 
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Activities <b class="caret"></b></a>
@@ -20,25 +26,62 @@
 {% block page_header %} {{ object.title }} {% endblock page_header %}
 
 {% block content %}
+
 <div class="col-md-12 lesson_list">
-    <div class="list-group">
     	{% for i in acts %}
-    		{% ifchanged i.section %} <h4 id="{{ i.section|title }}" class="inline_adjust">{{ i.section|title }}</h4> {% endifchanged %}
-    		<a href="{{ i.get_absolute_url }}" class="list-group-item">
-    			<h4>
-                    {% if i.activity_type = 'slidestack' %}
-                        <i class="fa fa-desktop"></i>
-                    {% else %}
-                        <i class="fa fa-pencil-square-o"></i>
-    				{% endif %}
-    				{{ forloop.counter }}. {{ i.title }} 
-    			</h4>
-    			<p class="list-group-item-text">...</p>
-    		</a>
+        {% ifchanged i.section %}<h3 id="{{ i.section|title }}" class="">{{ i.section|title }}</h3>{% endifchanged %}
+        <div class="block row">
+            <div class="block col-md-12">
+                <div class="block-heading row">
+                    <div class="col-md-12">
+                        <i style="float: left; color: orange" class="fa fa-star-o fa-6"></i>
+                        
+                        <div class="" style="float: right"> 
+                          <i class="fa fa-plus-square-o"></i> <a href="#">note</a> &nbsp;&nbsp;&nbsp;  
+                          <i class="fa fa-plus-square-o"></i> <a href="#">date</a> &nbsp;&nbsp;&nbsp;  
+                          
+                          <i class="fa fa-caret-square-o-down"></i> <a href="#" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">status</a>
+                        
+                          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" style="position: relative;">
+                              <li><a href="#">start</a></li>
+                              <li><a href="#">completed</a></li>
+                              <li><a href="#">homework</a></li>
+                              <li><a href="#">n/a</a></li>
+                              <li><a href="#">reset</a></li>
+                          </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-12" style="clear: both">
+                      <h4>
+                        {% if i.activity_type = 'slidestack' %}
+                            <i class="fa fa-desktop"></i>
+                        {% else %}
+                            <i class="fa fa-pencil-square-o"></i>
+                        {% endif %}
+                        {{ forloop.counter }}.<a class="media-heading" href="{{ i.get_absolute_url }}"> {{ i.title }} </a>
+                      </h4>
+                    </div>
+                  
+                </div>
+
+                <div class="block-body well row" style="margin: 10px 40px 10px 40px">
+                    <div class="col-md-12">
+                    Cras sit amet nibh libero, in gravida nulla. 
+                    </div>
+                </div>
+                
+                <div class="block-footer row">
+                    <div class="col-md-12" style="text-align: right">
+                        <a href="#"> activity </a> last opened
+                    </div>
+                 </div>
+            </div>
+        </div>
+                    <hr>
+
     	{% empty %}
     		<h2>There are no activities assigned to this lesson.</h2>
     	{% endfor %}
-    </div>
 </div>
 
 {% endblock content %}

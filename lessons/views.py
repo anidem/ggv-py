@@ -15,22 +15,17 @@ class LessonView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
     model = Lesson
     template_name = 'lesson.html'
 
-    
-    def get(self, request, *args, **kwargs):
-        self.object = self.get_object()
+    def get_context_data(self, **kwargs):
+        context = super(LessonView, self).get_context_data(**kwargs)
+        lesson = self.get_object()
+
         try:
-            course = self.object.crs_courses.get(course__slug=kwargs.pop('crs_slug'))
+            course = lesson.crs_courses.get(course__slug=self.kwargs.pop('crs_slug'))
         except CourseLesson.DoesNotExist:
             self.template_name = 'access_error.html'
             return self.render_to_response([])
 
-        # Adding course to the context data.
-        context = self.get_context_data(object=self.object, course=course)
-        return self.render_to_response(context)
-
-    def get_context_data(self, **kwargs):
-        context = super(LessonView, self).get_context_data(**kwargs)
-        lesson = self.get_object()
         context['acts'] = Lesson.objects.activities(id=lesson.id) # using custom model manager
         context['sections'] = lesson.sections.all()
+        context['course'] = course
         return context

@@ -15,7 +15,7 @@ for i in files:
     print i
     os.rename(
         os.path.join(input_dir, i),
-        os.path.join(input_dir, slugify(unicode(i, errors='replace')))
+        os.path.join(input_dir, slugify(unicode(i.replace('-web', ''), errors='replace')))
     )
 
 

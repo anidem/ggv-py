@@ -3,9 +3,72 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
+{% block page_crumb %}
+    <a href="#">{{ worksheet }}</a>
+{% endblock page_crumb %}
+
 {% block content %}
-    <div class="col-md-10"><h1> {{ worksheet }} </h1></div>
-    <div class="col-md-2">
+
+
+
+    <div class="col-md-12">
+        {% if edit_url %}<a href="{{ question.get_edit_url }}"><small class="label label-primary">edit</small></a>{% endif %}
+        <div class="row">
+            <div class="col-md-12" style="">
+                {%if question.display_image %}
+                    <p><img src="{{ question.display_image.url }}"></p>
+                {% endif %}
+                <h3>{{ question | safe }} </h3>
+                <form id="response_form" action="" method="post" >{% csrf_token %}
+                    {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
+                    {{ form.response.errors }}                    
+                    <p>{{ form.response }}</p>            
+                    <p>
+                        {%if previous_position %} 
+                            <span>
+                            <a href="{% url 'question_response' worksheet.id previous_position %}" class="btn">Previous</a> 
+                            </span>
+                        {% endif %}
+                        
+                        <input id="chk_response_btn" type="submit" value="Save?" class="btn btn-default">
+                        
+                        {% if next_position %} 
+                            <a href="{% url 'question_response' worksheet.id next_position %}" class="btn">Next</a> 
+                        {% endif %}
+                    </p>
+                </form>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <legend>Notes 
+                {% if instructor %}
+                    <a data-toggle="collapse" href="#add_note_panel" aria-controls="add_note_panel"><small>+</small></a>
+                {% endif %}
+                </legend>
+                
+                {% if instructor %}                
+                    <div id="add_note_panel" class="panel-collapse collapse">
+                            <form id="noteform" action="" method="post">{% csrf_token %}
+                                {{ noteform|crispy }}
+                                <p><input id="note_submit_btn" type="submit" class="btn btn-default" value="Add Note"/></p>
+                            </form>        
+                    </div>
+                {% endif %}
+
+                <dl id="notes">      
+                {% for i in note_list  %}
+                    <dt><small>{{ i.creator }}</small><small style="float: right">{{ i.modified|date:"M j Y" }}</small></dt>
+                    <dd class="well">{{ i.text }}</dd>
+                {% endfor %}
+                </dl>
+
+
+            </div>      
+      
+        </div>
+    </div> 
+    <div class="col-md-12">
         <div class="dropdown">
             <a id="dLabel" data-target="#" href="http://example.com" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
             Question List
@@ -22,96 +85,12 @@
                         {% endif %}
                         <span class="">{{ forloop.counter }}</span>                          
                     </a>
-                    {% if edit_url %}
-                        <a href="{{ question.get_edit_url }}"> <span style="float: right">edit</span> </a>
-                    {% endif %}
+
                 </div>
             {% endfor %}                  
             </ul>
         </div>
     </div>
-
-    <div class="col-md-12">
-        <div class="row">
-
-            <div class="col-md-12">
-                {%if question.display_image %}
-                    <p><img src="{{ question.display_image.url }}"></p>
-                    <p>{{ question.display_image.url }}</p>
-                {% endif %}
-                
-                <small>
-                        {% if edit_url %}
-                        <a href="{{ question.get_edit_url }}"><div class="label label-primary">edit</div></a>
-                        {% endif %}
-                </small>
-                <h4>{{ question | safe }}</h4>
-            </div>
-
-            <div class="col-md-12">
-                <form id="response_form" action="" method="post" >{% csrf_token %}
-                    {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
-                    
-                    {{ form.response.errors}}
-                    
-                    <p>{{ form.response }}</p>
-            
-                    <p>
-                        {%if previous_position %} 
-                            <span>
-                            <a href="{% url 'question_response' worksheet.id previous_position %}" class="btn">Previous</a> 
-                            </span>
-                        {% endif %}
-                        <input id="chk_response_btn" 
-                        type="submit"                 
-                        {% if form.response.help_text == 'success' %}
-                            value="Correct!"
-                            class="btn btn-success"
-                        {% elif form.response.help_text == 'danger' %}
-                            value="Incorrect. Try Again"
-                            class="btn btn-danger"
-                        {% else %}
-                            value="Check your answer?"
-                            class="btn btn-default"
-                        {% endif %}
-                        >
-                        {%if next_position %} 
-                        <a href="{% url 'question_response' worksheet.id next_position %}" class="btn">Next</a> 
-                        {% endif %}
-                    </p>
-                </form>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6">
-                <legend>Notes</legend>
-                <dl id="notes">      
-                {% for i in note_list  %}
-                    <dt><small>{{ i.creator }}</small><small style="float: right">{{ i.modified|date:"M j Y" }}</small></dt>
-                    <dd>{{ i.text }}</dd>
-                {% endfor %}
-                </dl>
-
-                {% if instructor %}
-                <legend>
-                    <a data-toggle="collapse" href="#add_note_panel" aria-controls="add_note_panel">
-                    <small>+ Note</small>
-                    </a>
-                </legend>
-                <div id="add_note_panel" class="panel-collapse collapse">
-                        <form id="noteform" action="" method="post">{% csrf_token %}
-                            {{ noteform|crispy }}
-                            <p><input id="note_submit_btn" type="submit" class="btn btn-default" value="Add Note"/></p>
-                        </form>        
-                </div>
-                {% endif %}
-
-            </div>      
-            <div class="col-md-6"></div>
-      
-        </div>
-    </div> 
-
 {% endblock content %}
 
 {% block local_js %}

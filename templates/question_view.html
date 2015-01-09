@@ -3,6 +3,7 @@
 {% load staticfiles %}
 
 {% block content %}
+
     <h1>{{ object|safe }}</h1>
     <p><a href="{{ object.get_edit_url }}"> edit </a> </p>
     <p><a href="{{ object.get_sequence_url }}"> view in worksheet </a></p>
@@ -15,4 +16,5 @@
     {% for opt in options  %}
         <h2><input type="radio" name="radios"> {{ opt.1 }} </input></h2>
     {% endfor %}
+
 {% endblock content %}

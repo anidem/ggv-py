@@ -47,13 +47,14 @@ class QuestionResponseView(LoginRequiredMixin, CreateView):
     sequence = None
 
     def get_success_url(self):
-        return self.request.path
+        next_item = int(self.kwargs['j']) + 1
+        return reverse_lazy('question_response', args=[self.sequence.id, next_item])
 
     def get_initial(self):
-        self.sequence = get_object_or_404(QuestionSet, pk=self.kwargs.pop('i'))
+        self.sequence = get_object_or_404(QuestionSet, pk=self.kwargs['i'])
         sequence_items = self.sequence.get_ordered_question_list()
         if sequence_items:
-            item = sequence_items[int(self.kwargs.pop('j'))-1]
+            item = sequence_items[int(self.kwargs['j'])-1]
         else:
             return redirect('http://localhost')
 

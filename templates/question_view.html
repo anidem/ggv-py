@@ -7,9 +7,8 @@
     <h1>{{ object|safe }}</h1>
     <p><a href="{{ object.get_edit_url }}"> edit </a> </p>
     <p><a href="{{ object.get_sequence_url }}"> view in worksheet </a></p>
-    <p></p>
     {% if object.display_image %}
-        <p><img src="{{ object.display_image }}"></p>   
+        <p><img src="{{ object.display_image.url }}"></p>   
         <p><i>{{ object.display_image.url }}</i></p>
     {% endif %}
     

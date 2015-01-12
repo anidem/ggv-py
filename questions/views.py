@@ -183,22 +183,6 @@ class TextQuestionUpdateView(UpdateView):
     model = TextQuestion
     template_name = 'question_update.html'
     form_class = TextQuestionUpdateForm
-    
-    def post(self, request, *args, **kwargs):
-        self.object = self.get_object()
-        form = self.get_form(self.get_form_class())
-        form = TextQuestionUpdateForm(self.request.POST, self.request.FILES)   
-        if form.is_valid():
-            return self.form_valid(form)
-        else:
-            return self.form_invalid(form)
-    
-    def form_valid(self, form):
-        return super(TextQuestionUpdateView, self).form_valid(form)
-
-    def form_invalid(self, form):
-        return self.render_to_response(
-            self.get_context_data(form=form))
 
 class OptionQuestionView(DetailView):
     model = OptionQuestion

@@ -16,8 +16,8 @@ TEMPLATE_DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ggvdb2',
-        'USER': 'ggvdbuser',
+        'NAME': 'ggvdb3',
+        'USER': 'djangodbuser',
         'PASSWORD': '1',
         'HOST': '127.0.0.1',
         'PORT': '5432',

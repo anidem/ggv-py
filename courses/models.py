@@ -31,7 +31,7 @@ class Course(models.Model):
     """
     title = models.CharField(max_length=256)
     slug = models.SlugField(max_length=128, unique=True)
-    lessons = models.ManyToManyField(Lesson)
+    # lessons = models.ManyToManyField(Lesson)
     access_code = models.CharField(max_length=8, null=True, blank=True)
 
     objects = ActivityReportManager()
@@ -64,7 +64,7 @@ class Course(models.Model):
 class CourseLesson(models.Model):
     """ 
         This replaces the ManyToManyField in Course.
-        Although it is nearly identical in function it defined here to be more explicit
+        Although it is nearly identical in function it is defined here to be more explicit
     """ 
 
     course = models.ForeignKey(Course, related_name='crs_lessons')

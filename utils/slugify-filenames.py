@@ -15,21 +15,21 @@ for i in files:
     # print i
     os.rename(
         os.path.join(input_dir, i),
-        os.path.join(input_dir, slugify(unicode(i, errors='replace')))
+        os.path.join(input_dir, slugify(unicode(i.replace('(Web)',''), errors='replace')))
     )
  
-files = []
-for fstr in os.listdir(input_dir):
-    if fstr != '.DS_Store':
-        files.append(fstr)
-        # print fstr
+# files = []
+# for fstr in os.listdir(input_dir):
+#     if fstr != '.DS_Store':
+#         files.append(fstr)
+#         # print fstr
 
-for i in files:
-    # print i
-    os.rename(
-        os.path.join(input_dir, i),
-        os.path.join(input_dir, i.replace('png', '.png'))
-    )
-for fstr in os.listdir(input_dir):
-    if fstr != '.DS_Store':
-        print fstr
+# for i in files:
+#     # print i
+#     os.rename(
+#         os.path.join(input_dir, i),
+#         os.path.join(input_dir, i.replace('png', '.png'))
+#     )
+# for fstr in os.listdir(input_dir):
+#     if fstr != '.DS_Store':
+#         print fstr

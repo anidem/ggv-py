@@ -1,29 +1,16 @@
 {% extends "base.html" %}
 
-<!-- Wrap all page content here -->
-<div id="wrap">
-  
-  <!-- Begin page content -->
-  <div class="container">
-    {% block page_header %}
-      <h1>Lessons @ gedgonevirtual</h1>
-    {% endblock page_header %}
 
-    {% block content %}
+{% block page_header %}<h1>Lessons @ gedgonevirtual</h1>{% endblock page_header %}
 
-    <p class="lead">Welcome to version 2 of the GED Gone Virtual interactive curriculum for GED exam preparation (<b>g2v</b> for short). </p>
-    <p><legend>For Students</legend></p>
 
-    <p><legend>For Teachers</legend></p>
 
-    <p><legend>For Testing Site Administrators</legend></p>
 
-    {% endblock content %}
+{% block content %}
+  <p class="lead">Welcome to version <em>dos</em> of the GED Gone Virtual interactive curriculum for GED exam preparation (<b>g2v</b> for short). </p>
+  <div class="btn-group btn-group-justified center-block" style="width: 100px">
+    <a href="{% url 'ggvhome' %}" class="btn btn-success" role="button">Get Started</a>
   </div>
-</div>
 
-<div id="footer">
-  <div class="container">
-    <p class="text-muted credit">Example courtesy <a href="http://martinbean.co.uk">Martin Bean</a> and <a href="http://ryanfait.com/sticky-footer/">Ryan Fait</a>.</p>
-  </div>
-</div>
+{% endblock content %}
+

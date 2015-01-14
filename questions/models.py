@@ -143,6 +143,7 @@ class QuestionSequenceItem(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
+
 class AbstractQuestion(models.Model):
 
     """

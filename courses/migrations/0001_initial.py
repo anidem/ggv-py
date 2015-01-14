@@ -25,4 +25,15 @@ class Migration(migrations.Migration):
             },
             bases=(models.Model,),
         ),
+        migrations.CreateModel(
+            name='CourseLesson',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('course', models.ForeignKey(related_name='crs_lessons', to='courses.Course')),
+                ('lesson', models.ForeignKey(related_name='crs_courses', to='lessons.Lesson')),
+            ],
+            options={
+            },
+            bases=(models.Model,),
+        ),
     ]

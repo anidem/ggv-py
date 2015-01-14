@@ -9,12 +9,38 @@
 
 {% block content %}
 
+    <div style="text-align: center">
+        <div class="dropdown">
+            <a class="btn btn-info" id="dLabel" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
+            Progress
+            <span class="caret"></span>
+            </a>
 
+            <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            {% for k, v in question_list.items %}
+                <div class="pull-left" style="padding: 5px; background-color: {{ v }}">
+
+                    <a href="{% url 'question_response' worksheet.id forloop.counter %}">
+                        {% if forloop.counter == question_position  %}
+                            <span class="badge">{{ forloop.counter }}</span>
+                        {% else %}
+                            <span>{{ forloop.counter }}</span>
+                        {% endif %}
+                                                  
+                    </a>
+
+                </div>
+            {% endfor %}                  
+            </div>
+        </div>
+    </div>
 
     <div class="col-md-12">
         {% if edit_url %}<a href="{{ question.get_edit_url }}"><small class="label label-primary">edit</small></a>{% endif %}
         <div class="row">
+
             <div class="col-md-12" style="">
+                <p>{{ question_position }}.</p>
                 {%if question.display_image %}
                     <p><img src="{{ question.display_image.url }}"></p>
                 {% endif %}
@@ -68,29 +94,6 @@
       
         </div>
     </div> 
-    <div class="col-md-12">
-        <div class="dropdown">
-            <a id="dLabel" data-target="#" href="http://example.com" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
-            Question List
-            <span class="caret"></span>
-            </a>
-
-            <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-            {% for k, v in question_list.items %}
-                <div class="" style="padding: 5px; background-color: {{ v }}">
-
-                    <a href="{% url 'question_response' worksheet.id forloop.counter %}">
-                        {% if forloop.counter == question_position  %}
-                            <i class="fa fa-circle text-{{ v }}"></i>
-                        {% endif %}
-                        <span class="">{{ forloop.counter }}</span>                          
-                    </a>
-
-                </div>
-            {% endfor %}                  
-            </ul>
-        </div>
-    </div>
 {% endblock content %}
 
 {% block local_js %}

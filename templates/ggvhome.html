@@ -1,7 +1,6 @@
 <!-- ggv.html -->
 {% extends "base.html" %}
 
-{% block page_header %} Your Sites {% endblock page_header %}
 {% block content %}
 
 {% if messages %}
@@ -13,11 +12,12 @@
 {% endif %}
 
 {% for i in courses %}
-	<div class="col-md-12">
-		<h3>{{ i.slug }}</h3>
-		<p>{{ i.title }}</p>
-		<p><a href="{{ i.get_absolute_url }}" class="btn btn-primary" role="button">go</a></p>
-	</div>
+	<a href="{{ i.get_absolute_url }}" class="">
+		<div class="col-md-4 col-md-offset-1 thumbnail" style="text-align: center">
+			<h2>{{ i.title }}</h2>
+			<div class="center-block" style=""></div>
+		</div>
+	</a>
 {% empty %}
     
     <h3>Hi, you don't appear to have any courses.</h3>

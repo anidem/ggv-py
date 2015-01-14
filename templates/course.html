@@ -6,19 +6,19 @@
 
 {% block page_crumb %} 
   <a href="#">
-  <span>{{ object }}</span>
-  <div class="btn-group btn-toggle">
+    <span>{{ object }}</span>
     
-    {% if eng_lessons and span_lessons %}
-      <button class="btn btn-xs btn-info active">English</button>
-      <button class="btn btn-xs btn-default">Spanish</button>
-    {% endif %}
-  </div>
+    <div class="btn-group btn-toggle">
+      {% if eng_lessons and span_lessons %}
+        <button class="btn btn-xs btn-success active">English</button>
+        <button class="btn btn-xs btn-default">Español</button>
+      {% endif %}
+    </div>
   </a>
     <script>
       $('.btn-toggle').click(function() {
           $(this).find('.btn').toggleClass('active'); 
-          $(this).find('.btn').toggleClass('btn-info');
+          $(this).find('.btn').toggleClass('btn-success');
           $(this).find('.btn').toggleClass('btn-default'); 
           $('.eng').toggleClass('collapse')
           $('.span').toggleClass('collapse')            
@@ -51,7 +51,8 @@
 		</div>
 	{% endfor %}
   </div>
-  <div class="row span {% if eng_lessons %}collapse{% endif %}"> 
+
+  <div class="row icon span {% if eng_lessons %}collapse{% endif %}"> 
   {% for i in span_lessons %}
     <div class="col-md-3 icon-{{ i.lesson.subject }}">
       <a class="static" href="{{ i.get_absolute_url }}">
@@ -74,34 +75,30 @@
             </a>
         </div>
         <div id="{{ i.username }}-data" class="panel-collapse collapse">
-          <div class="panel-body">
-            Anim pariatur cliche reprehenderit, ...
-          </div>
+          <div class="panel-body"></div>
         </div>
     </div>
 {% empty %}
-    <li>No instructors are assigned?</li>
+    <p>No instructors are assigned to this lesson.</p>
 {% endfor %}
 </div>
 
-<h4>Students </h4>
+<h4>{{ students|length}} Students </h4>
 <div class="panel-group" id="accordion">
-    {% for i in students %}
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <a data-toggle="collapse" data-parent="#accordion" href="#{{ i.username }}-data">
-                <p class="panel-title">{{ i.first_name }} {{ i.last_name }}</p>
-            </a>
-        </div>
-        <div id="{{ i.username }}-data" class="panel-collapse collapse">
-          <div class="panel-body">
-            Anim pariatur cliche reprehenderit, ...
-          </div>
-        </div>
+{% for i in students %}
+<div class="panel panel-info">
+    <div class="panel-heading">
+        <a data-toggle="collapse" data-parent="#accordion" href="#{{ i.username }}-data">
+            <p class="panel-title">{{ i.first_name }} {{ i.last_name }} ({{ i.username }})</p>
+        </a>
     </div>
-    {% empty %}
-        <li>No students are assigned?</li>
-    {% endfor %}
+    <div id="{{ i.username }}-data" class="panel-collapse collapse">
+      <div class="panel-body"></div>
+    </div>
+</div>
+{% empty %}
+    <p>No students are assigned this lesson.</p>
+{% endfor %}
 </div>
 
 {% endblock content %}

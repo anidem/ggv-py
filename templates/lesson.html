@@ -33,6 +33,7 @@
         <div class="block row">
             <div class="block col-md-12">
                 <div class="block-heading row">
+                    {% comment %}
                     <div class="col-md-12">
                         <i style="float: left; color: orange" class="fa fa-star-o fa-6"></i>
                         
@@ -51,6 +52,7 @@
                           </ul>
                         </div>
                     </div>
+                    {% endcomment %}
                     <div class="col-md-12" style="clear: both">
                       <h4>
                         {% if i.activity_type = 'slidestack' %}
@@ -58,23 +60,26 @@
                         {% else %}
                             <i class="fa fa-pencil-square-o"></i>
                         {% endif %}
-                        {{ forloop.counter }}.<a class="media-heading" href="{{ i.get_absolute_url }}"> {{ i.title }} </a>
+                        {{ forloop.counter }}.<a class="media-heading" href="{{ i.get_absolute_url }}">{{ i.title }}</a>
                       </h4>
                     </div>
                   
                 </div>
 
+                {% comment %}
                 <div class="block-body well row" style="margin: 10px 40px 10px 40px">
                     <div class="col-md-12">
                     Cras sit amet nibh libero, in gravida nulla. 
                     </div>
                 </div>
-                
+                {% endcomment %}
+                {% comment %}
                 <div class="block-footer row">
                     <div class="col-md-12" style="text-align: right">
                         <a href="#"> activity </a> last opened
                     </div>
                  </div>
+                 {% endcomment %}
             </div>
         </div>
                     <hr>

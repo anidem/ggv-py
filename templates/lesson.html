@@ -33,32 +33,34 @@
         <div class="block row">
             <div class="block col-md-12">
                 <div class="block-heading row">
-                    {% comment %}
-                    <div class="col-md-12">
-                        <i style="float: left; color: orange" class="fa fa-star-o fa-6"></i>
-                        
-                        <div class="" style="float: right"> 
-                          <i class="fa fa-plus-square-o"></i> <a href="#">note</a> &nbsp;&nbsp;&nbsp;  
-                          <i class="fa fa-plus-square-o"></i> <a href="#">date</a> &nbsp;&nbsp;&nbsp;  
-                          
-                          <i class="fa fa-caret-square-o-down"></i> <a href="#" class="dropdown-toggle" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">status</a>
-                        
-                          <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu1" style="position: relative;">
-                              <li><a href="#">start</a></li>
-                              <li><a href="#">completed</a></li>
-                              <li><a href="#">homework</a></li>
-                              <li><a href="#">n/a</a></li>
-                              <li><a href="#">reset</a></li>
-                          </ul>
-                        </div>
-                    </div>
-                    {% endcomment %}
+                    
+                    <div class="col-md-9 pull-left">
+                        <i class="fa fa-star-o fa-6"></i>
+                    </div>   
+                    <div class="col-md-1"> 
+                       <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-plus-square-o"></i> note</a>
+                    </div> 
+                    <div class="col-md-1">
+                      <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-plus-square-o"></i> date</a>
+                    </div> 
+                    <div class="col-md-1">
+                      <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-caret-square-o-down"></i> status</a>
+                      <ul class="dropdown-menu" role="menu">
+                          <li><a href="#">start</a></li>
+                          <li><a href="#">completed</a></li>
+                          <li><a href="#">homework</a></li>
+                          <li><a href="#">n/a</a></li>
+                          <li><a href="#">reset</a></li>
+                      </ul>
+                    </div>  
+                    
+                    
                     <div class="col-md-12" style="clear: both">
                       <h4>
                         {% if i.activity_type = 'slidestack' %}
-                            <i class="fa fa-desktop"></i>
+                            <i class="fa fa-desktop fa-2x"></i>
                         {% else %}
-                            <i class="fa fa-pencil-square-o"></i>
+                            <i class="fa fa-pencil-square-o fa-2x"></i>
                         {% endif %}
                         {{ forloop.counter }}.<a class="media-heading" href="{{ i.get_absolute_url }}">{{ i.title }}</a>
                       </h4>

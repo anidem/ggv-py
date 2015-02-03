@@ -29,7 +29,7 @@ class Migration(migrations.Migration):
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
                 ('title', models.CharField(max_length=256)),
                 ('display_order', models.IntegerField(default=0)),
-                ('lesson', models.ForeignKey(related_name=b'sections', to='lessons.Lesson')),
+                ('lesson', models.ForeignKey(related_name='sections', to='lessons.Lesson')),
             ],
             options={
                 'ordering': ['lesson', 'display_order', 'title'],

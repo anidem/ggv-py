@@ -52,6 +52,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'django_wysiwyg',
     'guardian',
+
 )
 
 
@@ -96,6 +97,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 ANONYMOUS_USER_ID = -1
+SESSION_COOKIE_AGE = 86400 # 1 day inactivity logout
 
 
 

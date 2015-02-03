@@ -23,8 +23,8 @@ class Migration(migrations.Migration):
                 ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
                 ('text', models.TextField()),
                 ('object_id', models.PositiveIntegerField()),
-                ('content_type', models.ForeignKey(related_name=b'content', to='contenttypes.ContentType')),
-                ('creator', models.ForeignKey(related_name=b'user', to=settings.AUTH_USER_MODEL)),
+                ('content_type', models.ForeignKey(related_name='content', to='contenttypes.ContentType')),
+                ('creator', models.ForeignKey(related_name='user', to=settings.AUTH_USER_MODEL)),
             ],
             options={
                 'abstract': False,

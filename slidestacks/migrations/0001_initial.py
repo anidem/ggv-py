@@ -20,7 +20,7 @@ class Migration(migrations.Migration):
                 ('display_order', models.IntegerField()),
                 ('activity_type', models.CharField(default=b'slidestack', max_length=48, null=True)),
                 ('asset', models.CharField(default=b'not specified', max_length=512, null=True, blank=True)),
-                ('lesson', models.ForeignKey(related_name=b'slidestacks', blank=True, to='lessons.Lesson', null=True)),
+                ('lesson', models.ForeignKey(related_name='slidestacks', blank=True, to='lessons.Lesson', null=True)),
                 ('section', models.ForeignKey(blank=True, to='lessons.Section', null=True)),
             ],
             options={

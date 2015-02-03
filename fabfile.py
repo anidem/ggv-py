@@ -6,6 +6,8 @@ from fabric.api import local, settings, abort, run, cd, lcd
 from fabric.contrib.console import confirm
 from fabric.operations import prompt
 
+from django.utils.text import slugify
+
 
 
 
@@ -58,28 +60,29 @@ def readfiles(dirpath):
         for f in files:
             j = f.replace('.csv', '.json')
             local(
-                'csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","IMAGE","SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","option 4" %s | csvjson -i 4 > jsondir/%s' % (f, j))
+                'csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","IMAGE","SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","option 4" %s | csvjson -i 4 > ../jsondir/%s' % (f, j))
 
 # Creates a slugified copy of files in the directory specified by path. IS NOT recursive.
 def slug_names(path='.'):
     pdir = os.path.abspath(path) 
     if not confirm('Preparing to slug files in %s. Continue?' % pdir):
         return
-    files = [fstr for fstr in os.listdir(pdir) if fstr != '.DS_Store']
+    # files = [fstr for fstr in os.listdir(pdir) if fstr != '.DS_Store']
+    files = os.listdir(pdir)
     for f in files:
-        f1 = os.path.join(pdir, f)
-        f2 = os.path.join(pdir, slugify(unicode(f, errors='replace')))
-        f2 = f2.replace('-web', '')
-        f2 = os.path.join(pdir, f2)
-        shutil.copytree(f1, f2)
+        # f1 = os.path.join(pdir, f)
+        # f2 = os.path.join(pdir, slugify(unicode(f, errors='replace')))
+        # f2 = f2.replace('-web', '')
+        # f2 = os.path.join(pdir, f2)
+        # shutil.copytree(f1, f2)
         
         # print f, f2
         # local('cp %s %s'%(unicode(f), f2))
 
-        # os.rename(
-        #     os.path.join(pdir, f),
-        #     os.path.join(pdir, slugify(unicode(f, errors='replace')))
-        # )
-    files = [fstr for fstr in os.listdir(pdir) if fstr != '.DS_Store']
+        os.rename(
+            os.path.join(pdir, f),
+            os.path.join(pdir, slugify(unicode(f, errors='replace')))
+        )
+    # files = [fstr for fstr in os.listdir(pdir) if fstr != '.DS_Store']
 
 

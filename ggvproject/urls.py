@@ -9,10 +9,14 @@ from lessons.views import LessonView
 from questions.views import WorksheetHomeView, QuestionResponseView, ImportJsonQuestion, OptionQuestionUpdateView, TextQuestionUpdateView, OptionQuestionView, TextQuestionView, QuestionAssetHandlerView
 from slidestacks.views import SlideView, SlideAssetHandlerView
 
-import questions
-
+import core.signals
 
 urlpatterns = patterns('',
+
+# Utility - NON Production use only!
+
+    url(r'^ggv/import/$', ImportJsonQuestion.as_view(), name='data_import'),
+    
 # GGV
     url(r'^ggv/(?P<slug>[-\w]+)/$', CourseView.as_view(), name='course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)$', LessonView.as_view(), name='lesson'),
@@ -39,9 +43,7 @@ urlpatterns = patterns('',
     url(r'^ggv/note/add/$', NoteCreateView.as_view(), name='create_note'),
 
 
-# Utility - NON Production use only!
 
-    # url(r'^ggv/import/$', ImportJsonQuestion.as_view(), name='data_import'),
 
 # Login urls
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),

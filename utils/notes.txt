@@ -60,6 +60,18 @@ LIST Complete row:
 csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","IMAGE","SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","option 4" <CSV FILENAME> | csvjson -i 4
 
 
+login duration - measurement
+measure by section
+measure by activity
+
+* force sequence
+* everyone can put note 
+* everyone can flag
+* students can see results after completion
+
+march 1st
+
+
 
 
 

@@ -5,25 +5,12 @@
 
 
 {% block page_crumb %} 
-  <a href="#">
-    <span>{{ object }}</span>
-    
-    <div class="btn-group btn-toggle">
-      {% if eng_lessons and span_lessons %}
-        <button class="btn btn-xs btn-success active">English</button>
-        <button class="btn btn-xs btn-default">Español</button>
-      {% endif %}
-    </div>
-  </a>
-    <script>
-      $('.btn-toggle').click(function() {
-          $(this).find('.btn').toggleClass('active'); 
-          $(this).find('.btn').toggleClass('btn-success');
-          $(this).find('.btn').toggleClass('btn-default'); 
-          $('.eng').toggleClass('collapse')
-          $('.span').toggleClass('collapse')            
-      });
-  </script>
+  <li><a>{{ object }}</a></li>
+  <li>
+    <a href="#">
+
+    </a>
+  </li>
 
 {% endblock page_crumb %}
 
@@ -37,10 +24,27 @@
 {% endblock local_nav %}
 
 {% block page_header %} 
-<div class="col-md-12"><h1></h1></div>
+<div class="col-md-12 center-block">
+      <div class="btn-group btn-toggle">
+        {% if eng_lessons and span_lessons %}
+          <button class="btn btn-xs btn-success active">English</button>
+          <button class="btn btn-xs btn-default">Español</button>
+        {% endif %}
+      </div>
+    <script>
+      $('.btn-toggle').click(function() {
+          $(this).find('.btn').toggleClass('active'); 
+          $(this).find('.btn').toggleClass('btn-success');
+          $(this).find('.btn').toggleClass('btn-default'); 
+          $('.eng').toggleClass('collapse')
+          $('.span').toggleClass('collapse')            
+      });
+  </script>
+      <h1></h1>
+</div>
 {% endblock page_header %}
 
-{% block content %} 
+{% block content %}
   <div class="row icon eng">
 	{% for i in eng_lessons %}
 		<div class="col-md-3 icon-{{ i.lesson.subject }}">

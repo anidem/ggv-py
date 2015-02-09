@@ -14,7 +14,7 @@ from model_utils.models import TimeStampedModel
 
 from lessons.models import Lesson, AbstractActivity
 from notes.models import UserNote
-
+from core.models import Bookmark
 
 class QuestionManager(models.Manager):
 
@@ -110,6 +110,7 @@ class QuestionSet(AbstractActivity):
     activity_type = models.CharField(
         max_length=48, default='worksheet', null=True)
     notes = GenericRelation(UserNote)
+    bookmarks = GenericRelation(Bookmark)
 
     # objects = QuestionManager()
 
@@ -153,12 +154,13 @@ class AbstractQuestion(models.Model):
     display_order = models.IntegerField(default=0)
     display_image = models.FileField(null=True, blank=True, upload_to='img')
 
-    def get_sequence_url(self):
+
+    def get_sequence_url(self, course):
         try:
             seqitem = self.sequence.all()[0]
             worksheet = seqitem.question_sequence
             position = worksheet.get_ordered_question_list().index(self)
-            return reverse('question_response', args=[worksheet.id, position+1])
+            return reverse('question_response', args=[course.slug, worksheet.id, position+1])
         except Exception as inst:
             return None
 
@@ -183,6 +185,7 @@ class TextQuestion(AbstractQuestion):
     sequence = GenericRelation(QuestionSequenceItem)
     responses = GenericRelation('QuestionResponse')
     notes = GenericRelation(UserNote)
+    bookmarks = GenericRelation(Bookmark)
 
     def get_input_widget(self):
         widget_attrs = {
@@ -210,8 +213,8 @@ class TextQuestion(AbstractQuestion):
         except:
             return None
 
-    def get_edit_url(self):
-        return reverse('text_question_update', args=[self.id])
+    def get_edit_url(self, course):
+        return reverse('text_question_update', args=[course.slug, self.id])
 
     def get_absolute_url(self):
         return reverse('text_question', args=[self.id])
@@ -229,6 +232,7 @@ class OptionQuestion(AbstractQuestion):
     sequence = GenericRelation(QuestionSequenceItem)
     responses = GenericRelation('QuestionResponse')
     notes = GenericRelation(UserNote)
+    bookmarks = GenericRelation(Bookmark)
 
     def get_input_widget(self):
         if self.input_select == 'checkbox':
@@ -264,8 +268,8 @@ class OptionQuestion(AbstractQuestion):
         except:
             return None
 
-    def get_edit_url(self):
-        return reverse('option_question_update', args=[self.id])
+    def get_edit_url(self, course):
+        return reverse('option_question_update', args=[course.slug, self.id])
 
     def get_absolute_url(self):
         return reverse('option_question', args=[self.id])

@@ -27,7 +27,9 @@ a.static:active {
     color: #333;
 }
 
-
+.well {
+  background: white;
+}
 .navbar {
   background-color: white;
 }
@@ -130,6 +132,13 @@ form ul {
 
 .icon-socialstudies i { color: #66A3E0; }
 .icon-socialstudies .icon-title { font-family: 'Josefin Sans', sans-serif; }
+
+/* Bookmarks */
+.bkset {
+  color: orange
+}
+
+
 
   /* No colors */
 /*.icon i { color: #A0A0A0; }*/

@@ -4,73 +4,78 @@
 {% load crispy_forms_tags %}
 
 {% block page_crumb %}
-    <a href="">{{ worksheet.lesson.course }} {{ worksheet.lesson }}</a>
+    <li><a href="{{ course.get_absolute_url }}">{{ course }} <i class="fa fa-caret-right"></i></a></li>
+    <li><a href="{% url 'lesson' course.slug worksheet.lesson.id %}">{{ worksheet.lesson }} <i class="fa fa-caret-right"></i></a></li>
+    <li><a>{{ worksheet }}</a></li>
+    <li>                
+        <a class="dropdown" id="dLabel" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" role="" aria-expanded="false">
+        Progress
+        <span class="caret"></span>
+        </a>
+        <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+        {% for k, v in question_list.items %}
+            <div class="pull-left" style="padding: 5px; background-color: {{ v }}">
+
+                <a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}">
+                    {% if forloop.counter == question_position  %}
+                        <span class="badge">{{ forloop.counter }}</span>
+                    {% else %}
+                        <span>{{ forloop.counter }}</span>
+                    {% endif %}                                                  
+                </a>
+
+            </div>
+        {% endfor %}                  
+        </div>     
+    </li>
 {% endblock page_crumb %}
 
 {% block content %}
+    <div class="col-md-12">
+        <div class="row " style="padding-top: 10px">
 
-    <div style="text-align: center">
-        <div class="dropdown">
-            <a class="btn btn-info" id="dLabel" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" role="button" aria-expanded="false">
-            Progress
-            <span class="caret"></span>
-            </a>
-
-            <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-            {% for k, v in question_list.items %}
-                <div class="pull-left" style="padding: 5px; background-color: {{ v }}">
-
-                    <a href="{% url 'question_response' worksheet.id forloop.counter %}">
-                        {% if forloop.counter == question_position  %}
-                            <span class="badge">{{ forloop.counter }}</span>
-                        {% else %}
-                            <span>{{ forloop.counter }}</span>
-                        {% endif %}
-                                                  
-                    </a>
+            <div class="col-md-4 ">
+                <div class="lead">
+                    {{ question_position }}.
+                    {% if edit_url %}<a href="{{ edit_url }}" class="btn btn-xs btn-success">edit</a>{% endif %}
+                    
+                    <form  action="" method="post" class="bookmarkform">{% csrf_token %}
+                        {{ bookmarkform|crispy }}
+                        <input id="note_submit_btn" type="submit" class="btn btn-xs btn-success" value="flag"/>
+                    </form>
 
                 </div>
-            {% endfor %}                  
-            </div>
-        </div>
-    </div>
-
-    <div class="col-md-12">
-        {% if edit_url %}<a href="{{ question.get_edit_url }}"><small class="label label-primary">edit</small></a>{% endif %}
-        <div class="row">
-
-            <div class="col-md-12" style="">
-                <p>{{ question_position }}.</p>
-                {%if question.display_image %}
-                    <p><img src="{{ question.display_image.url }}"></p>
-                {% endif %}
-                <h3>{{ question | safe }} </h3>
+                <div class="lead">{{ question | safe }} </div>
                 <form id="response_form" action="" method="post" >{% csrf_token %}
                     {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
                     {{ form.response.errors }}                    
                     <p>{{ form.response }}</p>            
                     <p>
                         {%if previous_position %} 
-                            <span>
-                            <a href="{% url 'question_response' worksheet.id previous_position %}" class="btn">Previous</a> 
-                            </span>
+                            <a href="{% url 'question_response' course.slug worksheet.id previous_position %}" class="btn">Previous</a>
                         {% endif %}
                         
                         <input id="chk_response_btn" type="submit" value="Save?" class="btn btn-default">
                         
                         {% if next_position %} 
-                            <a href="{% url 'question_response' worksheet.id next_position %}" class="btn">Next</a> 
+                            <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Next</a> 
                         {% endif %}
                     </p>
                 </form>
             </div>
+            {%if question.display_image %}
+            <div class="col-md-8">
+                
+                    <div><img width="100%" src="{{ question.display_image.url }}"></div>
+                
+            </div>
+            {% endif %}
+
         </div>
         <div class="row">
             <div class="col-md-12">
-                <legend>Notes 
-                {% if instructor %}
-                    <a data-toggle="collapse" href="#add_note_panel" aria-controls="add_note_panel"><small>+</small></a>
-                {% endif %}
+                <legend>Messages 
+                {% if instructor %}<a data-toggle="collapse" href="#add_note_panel" aria-controls="add_note_panel"><small>+</small></a>{% endif %}
                 </legend>
                 
                 {% if instructor %}                

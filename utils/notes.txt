@@ -59,6 +59,7 @@ csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","SELECT TYPE" Rounding\ Rule
 LIST Complete row:
 csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","IMAGE","SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","option 4" <CSV FILENAME> | csvjson -i 4
 
+csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","IMAGE","SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","option 4" /Users/rmedina/Desktop/ggvworksheet-conversion/worksheet-downloads/worksheets-social/csvdir/SOCIAL-ENG-QUESTIONS-INPUT | csvjson -i 4
 
 login duration - measurement
 measure by section

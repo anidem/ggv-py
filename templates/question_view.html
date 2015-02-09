@@ -5,8 +5,8 @@
 {% block content %}
 
     <h1>{{ object|safe }}</h1>
-    <p><a href="{{ object.get_edit_url }}"> edit </a> </p>
-    <p><a href="{{ object.get_sequence_url }}"> view in worksheet </a></p>
+    {% if edit_url %}<p><a href="{{ edit_url }}"> edit </a> </p>{% endif %}
+    <p><a href="{{ sequence_url }}"> view in worksheet </a></p>
     {% if object.display_image %}
         <p><img src="{{ object.display_image.url }}"></p>   
         <p><i>{{ object.display_image.url }}</i></p>

@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 # admin.autodiscover()
 
-from core.views import IndexView, HomeView
+from core.views import IndexView, HomeView, BookmarkAjaxCreateView
 from notes.views import NoteCreateView, NoteView
 from courses.views import CourseView
 from lessons.views import LessonView
@@ -23,24 +23,25 @@ urlpatterns = patterns('',
     
 # GGV lesson activities
     # slides are independent files but protected here.
-    url(r'^ggv/slidestack/(?P<slideroot>[-\w]+)/$', SlideView.as_view(), name='slideview'),
-    url(r'^ggv/slidestack/(?P<slideroot>[-\w]+)/data/(?P<asset>.+)/$', SlideAssetHandlerView.as_view(), name='slide_asset'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<slideroot>[-\w]+)/$', SlideView.as_view(), name='slideview'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<slideroot>[-\w]+)/data/(?P<asset>.+)/$', SlideAssetHandlerView.as_view(), name='slide_asset'),
     
-    url(r'^ggv/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', QuestionResponseView.as_view(), name='question_response'),
-    url(r'^ggv/worksheet/(?P<i>\d+)/$', WorksheetHomeView.as_view(), name='worksheet'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', QuestionResponseView.as_view(), name='question_response'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<i>\d+)/$', WorksheetHomeView.as_view(), name='worksheet'),
     
-    url(r'^ggv/questions/textquestions/(?P<pk>\d+)/$', TextQuestionView.as_view(), name='text_question'),
-    url(r'^ggv/questions/textquestions/edit/(?P<pk>\d+)/$', TextQuestionUpdateView.as_view(), name='text_question_update'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/questions/textquestions/(?P<pk>\d+)/$', TextQuestionView.as_view(), name='text_question'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/questions/textquestions/edit/(?P<pk>\d+)/$', TextQuestionUpdateView.as_view(), name='text_question_update'),
     
-    url(r'^ggv/questions/optionquestions/(?P<pk>\d+)/$', OptionQuestionView.as_view(), name='option_question'),
-    url(r'^ggv/questions/optionquestions/edit/(?P<pk>\d+)/$', OptionQuestionUpdateView.as_view(), name='option_question_update'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/questions/optionquestions/(?P<pk>\d+)/$', OptionQuestionView.as_view(), name='option_question'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/questions/optionquestions/edit/(?P<pk>\d+)/$', OptionQuestionUpdateView.as_view(), name='option_question_update'),
 
-    url(r'^ggv/questions/(?P<asset>.+)/$', QuestionAssetHandlerView.as_view(), name='question_asset'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/questions/(?P<asset>.+)/$', QuestionAssetHandlerView.as_view(), name='question_asset'),
 
 
 # GGV components
-    url(r'^ggv/note/(?P<pk>\d+)/$', NoteView.as_view(), name='view_note'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/note/(?P<pk>\d+)/$', NoteView.as_view(), name='view_note'),
     url(r'^ggv/note/add/$', NoteCreateView.as_view(), name='create_note'),
+    url(r'^ggv/bookmark/add/$', BookmarkAjaxCreateView.as_view(), name='create_bookmark'),
 
 
 

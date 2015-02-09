@@ -17,7 +17,8 @@ from django.utils.text import slugify
 from braces.views import CsrfExemptMixin, LoginRequiredMixin
 from sendfile import sendfile
 
-from core.mixins import AccessRequiredMixin
+from core.mixins import AccessRequiredMixin, CourseContextMixin
+from core.forms import PresetBookmarkForm
 from notes.models import UserNote
 from notes.forms import UserNoteForm
 
@@ -39,7 +40,7 @@ class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin
     template_name = 'question_worksheet.html'
 
 
-class QuestionResponseView(LoginRequiredMixin, CreateView):
+class QuestionResponseView(LoginRequiredMixin, CourseContextMixin, CreateView):
     model = QuestionResponse
     template_name = 'question_sequence.html'
     form_class = QuestionResponseForm
@@ -47,7 +48,8 @@ class QuestionResponseView(LoginRequiredMixin, CreateView):
 
     def get_success_url(self):
         next_item = int(self.kwargs['j']) + 1
-        return reverse_lazy('question_response', args=[self.sequence.id, next_item])
+        course = self.kwargs['crs_slug']
+        return reverse_lazy('question_response', args=[course, self.sequence.id, next_item])
 
     def get_initial(self):
         self.sequence = get_object_or_404(QuestionSet, pk=self.kwargs['i'])
@@ -69,6 +71,7 @@ class QuestionResponseView(LoginRequiredMixin, CreateView):
             return context
 
         current_question = self.initial['question']
+        
         # Tally -- move this to object manager...
         tally = OrderedDict()
         for i in self.sequence.get_ordered_question_list():
@@ -87,16 +90,26 @@ class QuestionResponseView(LoginRequiredMixin, CreateView):
                 tally[i] = tally[i] + ' current'
 
         if self.request.user.is_staff:
-            context['edit_url'] = current_question.get_edit_url()
+            context['edit_url'] = current_question.get_edit_url(context['course'])
 
         question_index = self.sequence.get_ordered_question_list().index(current_question)+1
         initial_note_data = {}
         initial_note_data['content_type'] = ContentType.objects.get_for_model(current_question).id
         initial_note_data['object_id'] = current_question.id
-        initial_note_data['creator'] = self.request.user 
+        initial_note_data['creator'] = self.request.user
+        initial_note_data['course_context'] = context['course']
 
-        context['noteform'] = UserNoteForm(initial=initial_note_data)        
-        context['note_list'] = current_question.notes.all()
+        initial_bookmark_data = {}
+        initial_bookmark_data['mark_type'] = 'question'
+        initial_bookmark_data['content_type'] = ContentType.objects.get_for_model(current_question).id
+        initial_bookmark_data['object_id'] = current_question.id
+        initial_bookmark_data['creator'] = self.request.user
+        initial_bookmark_data['course_context'] = context['course'] 
+        
+        context['noteform'] = UserNoteForm(initial=initial_note_data)
+        context['bookmarkform'] = PresetBookmarkForm(initial=initial_bookmark_data)
+        context['bookmark'] = current_question.bookmarks.filter(creator=self.request.user).filter(course_context=context['course'])
+        context['note_list'] = current_question.notes.all().filter(course_context=context['course']).order_by('-created')
         context['question'] = current_question
         context['question_position'] = question_index
         if question_index-1 > 0: 
@@ -106,33 +119,48 @@ class QuestionResponseView(LoginRequiredMixin, CreateView):
         context['question_list'] = tally
         context['worksheet'] = self.sequence
         context['instructor'] = self.request.user.has_perm('courses.edit_course')
-
         
         return context
 
 
-class TextQuestionView(DetailView):
+class TextQuestionView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = TextQuestion
     template_name = 'question_view.html'
 
-class TextQuestionUpdateView(UpdateView):
+    def get_context_data(self, **kwargs):
+        context = super(TextQuestionView, self).get_context_data(**kwargs)
+        context['edit_url'] = self.get_object().get_edit_url(context['course'])
+        context['sequence_url'] = self.get_object().get_sequence_url(context['course'])
+        return context
+
+class TextQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateView):
     model = TextQuestion
     template_name = 'question_update.html'
     form_class = TextQuestionUpdateForm
 
-class OptionQuestionView(DetailView):
+    def get_success_url(self):
+        course = self.kwargs['crs_slug']
+        return reverse_lazy('text_question', args=[course, self.get_object().id])
+
+class OptionQuestionView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = OptionQuestion
     template_name = 'question_view.html'
     
     def get_context_data(self, **kwargs):
         context = super(OptionQuestionView, self).get_context_data(**kwargs)
         context['options'] = self.get_object().options_list()
+        context['edit_url'] = self.get_object().get_edit_url(context['course'])
+        context['sequence_url'] = self.get_object().get_sequence_url(context['course'])
         return context
 
-class OptionQuestionUpdateView(UpdateView):
+class OptionQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateView):
     model = OptionQuestion
     template_name = 'question_update.html'
     form_class = OptionQuestionUpdateForm
+
+    def get_success_url(self):
+        course = self.kwargs['crs_slug']
+        return reverse_lazy('option_question', args=[course, self.get_object().id])
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()

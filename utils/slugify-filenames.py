@@ -25,11 +25,12 @@ def slugify_dir(directory):
 
 
 
+slugify_dir(input_dir)
 
-for j in filter(os.path.isdir, os.listdir(input_dir)):
-    subdir = os.path.abspath(os.path.join(input_dir, j))
-    # print subdir
-    slugify_dir(subdir)
+# for j in filter(os.path.isdir, os.listdir(input_dir)):
+#     subdir = os.path.abspath(os.path.join(input_dir, j))
+#     # print subdir
+#     slugify_dir(subdir)
 
 
 

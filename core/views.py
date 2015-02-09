@@ -2,10 +2,15 @@
 from django.core.urlresolvers import reverse
 from django.views.generic import TemplateView, CreateView, ListView
 
-from braces.views import LoginRequiredMixin
+from braces.views import CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, LoginRequiredMixin
 from guardian.shortcuts import get_objects_for_user
 
 from courses.models import Course
+
+from .models import Bookmark
+from .forms import BookmarkForm
+from .mixins import CourseContextMixin
+
 
 class IndexView(TemplateView):
     template_name = 'index.html'
@@ -22,6 +27,22 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
 class ActivityLogView(TemplateView):
     pass
+
+class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, CreateView):
+    model = Bookmark
+
+    def post_ajax(self, request, *args, **kwargs):
+        bookmarkform = BookmarkForm(request.POST)
+        if bookmarkform.is_valid():
+            new_bookmark = bookmarkform.save()
+            data = {}
+            data['mark_type'] = new_bookmark.mark_type
+            return self.render_json_response(data)
+        else:
+            data = bookmarkform.errors
+            print 'Errors?' , data
+            return self.render_json_response(data)
+
 
 
 

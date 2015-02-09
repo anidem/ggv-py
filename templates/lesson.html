@@ -1,18 +1,28 @@
 <!-- lesson.html -->
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load crispy_forms_tags %}
 
 {% block page_crumb %}
-  <a href="{% url 'course' course.course.slug %}">
-    <span>{{ course.course }}</span>
-  </a>
+  <li><a href="{% url 'course' course.course.slug %}">{{ course.course }} <i class="fa fa-caret-right"></i> </a></li>
+  <li><a>{{ object.title }}</a></li>
 {% endblock page_crumb %}
 
 {% block local_nav %} 
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Activities <b class="caret"></b></a>
   <ul class="dropdown-menu">
-    {% for i in acts %}<li><a href="{{ i.get_absolute_url }}">{{ i.title }}</a></li> {% endfor %}
+    {% for i in acts %}
+      <li>
+        {% if i.act.activity_type = 'slidestack' %}
+            
+            <a href="{% url 'slideview' course.course.slug i.act.id %}"><i class="fa fa-desktop"></i> {{ i.act.title }}</a>
+        {% else %}
+            
+            <a href="{% url 'question_response' course.course.slug i.act.id 1 %}"><i class="fa fa-pencil-square-o"></i> {{ i.act.title }}</a>
+        {% endif %}
+      </li> 
+    {% endfor %}
   </ul>
 </li>
 <li class="dropdown">
@@ -23,48 +33,42 @@
 </li>
 {% endblock local_nav %}
 
-{% block page_header %} {{ object.title }} {% endblock page_header %}
-
 {% block content %}
 
 <div class="col-md-12 lesson_list">
     	{% for i in acts %}
-        {% ifchanged i.section %}<h3 id="{{ i.section|title }}" class="">{{ i.section|title }}</h3>{% endifchanged %}
+        {% ifchanged i.act.section %}<h3 id="{{ i.act.section|title }}" class="">{{ i.act.section|title }}</h3>{% endifchanged %}
         <div class="block row">
             <div class="block col-md-12">
-                <div class="block-heading row">                    
-                    <div class="col-md-9 pull-left">
-                        <i class="fa fa-star-o fa-6"></i>
-                    </div>   
-                    <div class="col-md-1"> 
-                       <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-plus-square-o"></i> note</a>
-                    </div> 
-                    <div class="col-md-1">
-                      <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-plus-square-o"></i> date</a>
-                    </div> 
-                    <div class="col-md-1">
-                      <a href="#" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false"><i class="fa fa-caret-square-o-down"></i> status</a>
-                      <ul class="dropdown-menu" role="menu">
-                          <li><a href="#">start</a></li>
-                          <li><a href="#">completed</a></li>
-                          <li><a href="#">homework</a></li>
-                          <li><a href="#">n/a</a></li>
-                          <li><a href="#">reset</a></li>
-                      </ul>
-                    </div>  
-                    
-                    
-                    <div class="col-md-12" style="clear: both">
+                <div class="block-heading row">
+                    <div class="col-md-10" style="clear: both">
                       <h4>
-                        {% if i.activity_type = 'slidestack' %}
+                        {% if i.act.activity_type = 'slidestack' %}
                             <i class="fa fa-desktop fa-2x"></i>
+                            {{ forloop.counter }}.<a class="media-heading" href="{% url 'slideview' course.course.slug i.act.id %}">{{ i.act.title }}</a>
                         {% else %}
                             <i class="fa fa-pencil-square-o fa-2x"></i>
+                            {{ forloop.counter }}.<a class="media-heading" href="{% url 'question_response' course.course.slug i.act.id 1 %}">{{ i.act.title }}</a>
                         {% endif %}
-                        {{ forloop.counter }}.<a class="media-heading" href="{{ i.get_absolute_url }}">{{ i.title }}</a>
                       </h4>
                     </div>
-                  
+
+                    <div class="col-md-1">
+                      <a href="#" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <i class="fa fa-calendar-o"></i> date</a>
+                    </div> 
+                    
+                    <div class="col-md-1">
+                      
+                      <a href="#{{i.act.id}}_add_bookmark" class="btn btn-xs" data-toggle="collapse" aria-expanded="false"> <i class="fa fa-star bkset"></i> {{ i.bookmark.0.mark_type }}</a>
+                      <div id="{{i.act.id}}_add_bookmark" class="panel-collapse collapse">
+                        <form  action="" method="post" class="bookmarkform">{% csrf_token %}
+                            {{ i.bookmarkform|crispy }}
+                            <p><input id="note_submit_btn" type="submit" class="btn btn-xs btn-success" value="Add Bookmark"/></p>
+                        </form>
+                      </div>
+
+                    </div>
+
                 </div>
 
                 {% comment %}
@@ -91,3 +95,7 @@
 </div>
 
 {% endblock content %}
+
+{% block local_js %}
+    <script src="{% static 'js/lessons.js'%}"></script>
+{% endblock local_js %}

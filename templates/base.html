@@ -68,14 +68,13 @@
         </div>
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav navbar-left">
-            
-            <li>{% block page_crumb %} {% endblock page_crumb %}</li>
+            <li><a href="{% url 'ggvhome' %}"><span class="glyphicon glyphicon-home"></span></a></li>
+            {% block page_crumb %} {% endblock page_crumb %}
           </ul>
 
           <ul class="nav navbar-nav navbar-right">
             {% block local_nav %} {% endblock local_nav %}
 
-            <li><a href="{% url 'ggvhome' %}"><span class="glyphicon glyphicon-home"></span></a></li>
             <!-- login/logout button -->
             <li>
             {% if user.is_authenticated %}

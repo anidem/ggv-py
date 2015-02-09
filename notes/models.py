@@ -5,6 +5,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from model_utils.models import TimeStampedModel
+from courses.models import Course
 
 
 class UserNote(TimeStampedModel):
@@ -13,6 +14,7 @@ class UserNote(TimeStampedModel):
     content_type = models.ForeignKey(ContentType, related_name="content")
     object_id = models.PositiveIntegerField()
     content_object = generic.GenericForeignKey('content_type', 'object_id')
+    course_context = models.ForeignKey(Course, null=True, blank=True)
 
     def __unicode__(self):
         return self.text

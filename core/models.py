@@ -15,11 +15,12 @@ ACTIONS = (
 )
 
 BOOKMARK_TYPES = (
-    ('marked', 'Marker'),
+    ('remember', 'Remember'),
     ('todo', 'Todo'),
     ('started', 'Started'),
     ('completed', 'Completed'),
     ('question', 'Question'),
+    ('none', 'None'),
 )
 
 class ActivityLog(models.Model):

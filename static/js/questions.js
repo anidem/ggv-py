@@ -21,25 +21,6 @@ jQuery(function($) {
         });        
 	});
 
-    $( ".bookmarkform" ).submit(function( event ) {
-        event.preventDefault();
-        // $.ajax({
-        //     url : "/ggv/bookmark/add/",
-        //     type : "POST",
-        //     data : $(this).serializeArray(),
-        //     dataType : "json",
-
-        //     // handle a successful response
-        //     success : function(json) {   
-        //         console.log('success');
-        //     },
-
-        //     // handle a non-successful response
-        //     error : function(xhr, errmsg, err) {
-        //         console.log(xhr.status + ": " + err ); // provide a bit more info about the error to the console
-        //     }
-        // });        
-    });
     $( ".flagger" ).click(function( event ) {
         var flagger = $(this)
         form = $( flagger.attr('data-form') );

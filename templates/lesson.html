@@ -59,11 +59,14 @@
                     
                     <div class="col-md-1">
                       
-                      <a href="#{{i.act.id}}_add_bookmark" class="btn btn-xs" data-toggle="collapse" aria-expanded="false"> <i class="fa fa-star bkset"></i> {{ i.bookmark.0.mark_type }}</a>
+                      <a id="{{i.act.id}}_bkbtn" href="#{{i.act.id}}_add_bookmark" class="btn btn-xs" data-toggle="collapse" aria-expanded="false">
+                        <i class="fa fa-star fa-2x flagger {% if i.bookmark %}bkset{% endif %}"></i> 
+                        <span>{{ i.bookmark.mark_type }}</span>
+                      </a>
+
                       <div id="{{i.act.id}}_add_bookmark" class="panel-collapse collapse">
-                        <form  action="" method="post" class="bookmarkform">{% csrf_token %}
+                        <form id="{{i.act.id}}_flag_form" action="" method="post" class="bookmarkform" data-panel="#{{i.act.id}}_add_bookmark" data-update="#{{i.act.id}}_bkbtn" data-target="{{ i.bookmark.id }}">{% csrf_token %}
                             {{ i.bookmarkform|crispy }}
-                            <p><input id="note_submit_btn" type="submit" class="btn btn-xs btn-success" value="Add Bookmark"/></p>
                         </form>
                       </div>
 

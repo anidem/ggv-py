@@ -1,10 +1,11 @@
 # notes/views.py
 from django.shortcuts import render
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.views.generic import TemplateView, CreateView, ListView
+from django.views.generic import TemplateView, CreateView, ListView, UpdateView
 
 from braces.views import CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, LoginRequiredMixin
 
+from core.mixins import CourseContextMixin
 from .models import UserNote
 from .forms import UserNoteForm
 
@@ -16,7 +17,6 @@ class NoteCreateView(LoginRequiredMixin, CsrfExemptMixin, JSONResponseMixin, Aja
     model = UserNote
     template_name = 'create_note.html'
     form_class= UserNoteForm
-    # success_url = reverse_lazy('view_note')
 
     def post_ajax(self, request, *args, **kwargs):
         noteform = UserNoteForm(request.POST)
@@ -26,11 +26,23 @@ class NoteCreateView(LoginRequiredMixin, CsrfExemptMixin, JSONResponseMixin, Aja
             data['modified'] = newnote.modified
             data['text'] = newnote.text
             data['creator'] = newnote.creator.username
-
-            # print self.render_json_response(data)
             return self.render_json_response(data)
         else:
             data = noteform.errors
-            print 'Errors?' , data
             return self.render_json_response(data)
+
+class NoteDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, UpdateView):
+    model = UserNote
+
+    def post_ajax(self, request, *args, **kwargs):
+        noteform = UserNoteForm(request.POST)
+        if noteform.is_valid():
+            self.get_object().delete()
+            data = {}
+            data['deleted'] = 'deleted' #self.get_object().id
+            return self.render_json_response(data)
+        else:
+            data = noteform.errors
+            return self.render_json_response(data)
+
 

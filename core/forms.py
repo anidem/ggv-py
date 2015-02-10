@@ -8,6 +8,7 @@ class BookmarkForm(forms.ModelForm):
         model = Bookmark
         fields = ['mark_type', 'creator', 'content_type', 'object_id', 'course_context']
         widgets = {
+            'mark_type': forms.RadioSelect(),
             'creator': forms.HiddenInput(), 
             'content_type': forms.HiddenInput(), 
             'object_id': forms.HiddenInput(), 

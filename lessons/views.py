@@ -33,23 +33,31 @@ class LessonView(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, De
         acts = []
 
         for i in Lesson.objects.activities(id=lesson.id):
-            initial_bookmark_data = {}
-            initial_bookmark_data['content_type'] = ContentType.objects.get_for_model(i).id
-            initial_bookmark_data['object_id'] = i.id
-            initial_bookmark_data['creator'] = self.request.user
-            initial_bookmark_data['course_context'] = context['course'] 
-            
+            try:
+                bookmark = i.bookmarks.filter(creator=self.request.user).filter(course_context=context['course']).get()
+                bookmarkform = BookmarkForm(instance=bookmark)
+
+            except:
+                bookmark = None
+                initial_bookmark_data = {}
+                initial_bookmark_data['content_type'] = ContentType.objects.get_for_model(i).id
+                initial_bookmark_data['object_id'] = i.id
+                initial_bookmark_data['creator'] = self.request.user
+                initial_bookmark_data['course_context'] = context['course']
+                
+                bookmarkform = BookmarkForm(initial=initial_bookmark_data)
+
             a = {}
             a['act'] = i
             a['note'] = None
-            a['bookmarkform'] = BookmarkForm(initial=initial_bookmark_data)
-            a['bookmark'] = i.bookmarks.filter(creator=self.request.user).filter(course_context=context['course'])
+            a['bookmarkform'] = bookmarkform
+            a['bookmark'] = bookmark
             a['date'] = None
 
             acts.append(a)
 
 
-        context['acts'] = acts # using custom model manager 
+        context['acts'] = acts 
         context['sections'] = lesson.sections.all()
         context['course'] = course
         return context

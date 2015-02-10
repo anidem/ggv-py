@@ -2,8 +2,8 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 # admin.autodiscover()
 
-from core.views import IndexView, HomeView, BookmarkAjaxCreateView, BookmarkAjaxDeleteView
-from notes.views import NoteCreateView, NoteView
+from core.views import IndexView, HomeView, BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView
+from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import CourseView
 from lessons.views import LessonView
 from questions.views import WorksheetHomeView, QuestionResponseView, ImportJsonQuestion, OptionQuestionUpdateView, TextQuestionUpdateView, OptionQuestionView, TextQuestionView, QuestionAssetHandlerView
@@ -41,11 +41,12 @@ urlpatterns = patterns('',
 # GGV components
     url(r'^ggv/(?P<crs_slug>[-\w]+)/note/(?P<pk>\d+)/$', NoteView.as_view(), name='view_note'),
     url(r'^ggv/note/add/$', NoteCreateView.as_view(), name='create_note'),
+    # url(r'^ggv/note/update/(?P<pk>\d+)/$', NoteUpdateView.as_view(), name='update_note'),
+    url(r'^ggv/note/delete/(?P<pk>\d+)/$', NoteDeleteView.as_view(), name='delete_note'),
+    
     url(r'^ggv/bookmark/add/$', BookmarkAjaxCreateView.as_view(), name='create_bookmark'),
+    url(r'^ggv/bookmark/update/(?P<pk>\d+)/$', BookmarkAjaxUpdateView.as_view(), name='update_bookmark'),
     url(r'^ggv/bookmark/delete/(?P<pk>\d+)/$', BookmarkAjaxDeleteView.as_view(), name='delete_bookmark'),
-
-
-
 
 # Login urls
     url(r'^login/$', 'django.contrib.auth.views.login', name='login'),

@@ -41,8 +41,27 @@ class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             return self.render_json_response(data)
         else:
             data = bookmarkform.errors
+            return self.render_json_response(data)
+
+class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, UpdateView):
+    model = Bookmark
+
+    def post_ajax(self, request, *args, **kwargs):
+        bookmarkform = BookmarkForm(request.POST)
+        if bookmarkform.is_valid():
+            updated_bk = self.get_object()
+            updated_bk.mark_type = bookmarkform.cleaned_data['mark_type']
+            updated_bk.save()
+            
+            data = {}
+            data['mark_type'] = updated_bk.mark_type
+            data['bookmark_id'] = updated_bk.id
+            return self.render_json_response(data)
+        else:
+            data = bookmarkform.errors
             print 'Errors?' , data
             return self.render_json_response(data)
+
 
 class BookmarkAjaxDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, UpdateView):
     model = Bookmark

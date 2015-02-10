@@ -2,7 +2,7 @@ from django.conf.urls import patterns, include, url
 from django.contrib import admin
 # admin.autodiscover()
 
-from core.views import IndexView, HomeView, BookmarkAjaxCreateView
+from core.views import IndexView, HomeView, BookmarkAjaxCreateView, BookmarkAjaxDeleteView
 from notes.views import NoteCreateView, NoteView
 from courses.views import CourseView
 from lessons.views import LessonView
@@ -42,6 +42,7 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/note/(?P<pk>\d+)/$', NoteView.as_view(), name='view_note'),
     url(r'^ggv/note/add/$', NoteCreateView.as_view(), name='create_note'),
     url(r'^ggv/bookmark/add/$', BookmarkAjaxCreateView.as_view(), name='create_bookmark'),
+    url(r'^ggv/bookmark/delete/(?P<pk>\d+)/$', BookmarkAjaxDeleteView.as_view(), name='delete_bookmark'),
 
 
 

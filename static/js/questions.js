@@ -23,22 +23,57 @@ jQuery(function($) {
 
     $( ".bookmarkform" ).submit(function( event ) {
         event.preventDefault();
+        // $.ajax({
+        //     url : "/ggv/bookmark/add/",
+        //     type : "POST",
+        //     data : $(this).serializeArray(),
+        //     dataType : "json",
+
+        //     // handle a successful response
+        //     success : function(json) {   
+        //         console.log('success');
+        //     },
+
+        //     // handle a non-successful response
+        //     error : function(xhr, errmsg, err) {
+        //         console.log(xhr.status + ": " + err ); // provide a bit more info about the error to the console
+        //     }
+        // });        
+    });
+    $( ".flagger" ).click(function( event ) {
+        var flagger = $(this)
+        form = $( flagger.attr('data-form') );
+        bkmark = flagger.attr('data-target');
+        flagger.toggleClass('bkset');
+        
+        if (flagger.hasClass('bkset'))
+            action_handler = "/ggv/bookmark/add/"
+        else
+            action_handler = "/ggv/bookmark/delete/" + bkmark + "/"
+
         $.ajax({
-            url : "/ggv/bookmark/add/",
+            url : action_handler,
             type : "POST",
-            data : $(this).serializeArray(),
+            data : form.serializeArray(),
             dataType : "json",
 
             // handle a successful response
-            success : function(json) {   
-                console.log('success');
+            success : function(json) {
+                if(json.bookmark_id) { 
+                    flagger.attr('data-target', json.bookmark_id);
+                }
+                if(json.deleted) {
+                    flagger.attr('data-target', '');
+                }
+                console.log(json);
             },
 
             // handle a non-successful response
             error : function(xhr, errmsg, err) {
                 console.log(xhr.status + ": " + err ); // provide a bit more info about the error to the console
             }
-        });        
+        });  
+
     });
 
 	$(document).ready(function() {

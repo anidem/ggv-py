@@ -33,16 +33,15 @@
 {% block content %}
     <div class="col-md-12">
         <div class="row " style="padding-top: 10px">
-
+            <form  id="flag_form" action="" method="post">{% csrf_token %}
+                {{ bookmarkform|crispy }}
+            </form>
             <div class="col-md-4 ">
                 <div class="lead">
                     {{ question_position }}.
                     {% if edit_url %}<a href="{{ edit_url }}" class="btn btn-xs btn-success">edit</a>{% endif %}
                     
-                    <form  action="" method="post" class="bookmarkform">{% csrf_token %}
-                        {{ bookmarkform|crispy }}
-                        <input id="note_submit_btn" type="submit" class="btn btn-xs btn-success" value="flag"/>
-                    </form>
+                    <i class="fa fa-flag flagger {% if bookmark %}bkset{% endif %}" data-target="{{ bookmark.id }}" data-form="#flag_form"></i>
 
                 </div>
                 <div class="lead">{{ question | safe }} </div>

@@ -17,6 +17,7 @@ from django.utils.text import slugify
 from braces.views import CsrfExemptMixin, LoginRequiredMixin
 from sendfile import sendfile
 
+from core.models import Bookmark
 from core.mixins import AccessRequiredMixin, CourseContextMixin
 from core.forms import PresetBookmarkForm
 from notes.models import UserNote
@@ -99,16 +100,23 @@ class QuestionResponseView(LoginRequiredMixin, CourseContextMixin, CreateView):
         initial_note_data['creator'] = self.request.user
         initial_note_data['course_context'] = context['course']
 
-        initial_bookmark_data = {}
-        initial_bookmark_data['mark_type'] = 'question'
-        initial_bookmark_data['content_type'] = ContentType.objects.get_for_model(current_question).id
-        initial_bookmark_data['object_id'] = current_question.id
-        initial_bookmark_data['creator'] = self.request.user
-        initial_bookmark_data['course_context'] = context['course'] 
+        try:
+            bookmark = current_question.bookmarks.filter(creator=self.request.user).filter(course_context=context['course']).get()
+            context['bookmarkform'] = PresetBookmarkForm(instance=bookmark)
+            context['bookmark'] = bookmark
+        except:
+            bookmark = None
+            initial_bookmark_data = {}
+            initial_bookmark_data['mark_type'] = 'question'
+            initial_bookmark_data['content_type'] = ContentType.objects.get_for_model(current_question).id
+            initial_bookmark_data['object_id'] = current_question.id
+            initial_bookmark_data['creator'] = self.request.user
+            initial_bookmark_data['course_context'] = context['course']
+            
+            context['bookmarkform'] = PresetBookmarkForm(initial=initial_bookmark_data)
+            context['bookmark'] = bookmark        
         
         context['noteform'] = UserNoteForm(initial=initial_note_data)
-        context['bookmarkform'] = PresetBookmarkForm(initial=initial_bookmark_data)
-        context['bookmark'] = current_question.bookmarks.filter(creator=self.request.user).filter(course_context=context['course'])
         context['note_list'] = current_question.notes.all().filter(course_context=context['course']).order_by('-created')
         context['question'] = current_question
         context['question_position'] = question_index

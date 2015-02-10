@@ -1,6 +1,6 @@
 # core/views.py
 from django.core.urlresolvers import reverse
-from django.views.generic import TemplateView, CreateView, ListView
+from django.views.generic import View, TemplateView, CreateView, ListView, UpdateView
 
 from braces.views import CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, LoginRequiredMixin
 from guardian.shortcuts import get_objects_for_user
@@ -8,7 +8,7 @@ from guardian.shortcuts import get_objects_for_user
 from courses.models import Course
 
 from .models import Bookmark
-from .forms import BookmarkForm
+from .forms import BookmarkForm, PresetBookmarkForm
 from .mixins import CourseContextMixin
 
 
@@ -37,12 +37,28 @@ class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             new_bookmark = bookmarkform.save()
             data = {}
             data['mark_type'] = new_bookmark.mark_type
+            data['bookmark_id'] = new_bookmark.id
             return self.render_json_response(data)
         else:
             data = bookmarkform.errors
             print 'Errors?' , data
             return self.render_json_response(data)
 
+class BookmarkAjaxDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, UpdateView):
+    model = Bookmark
+
+    def post_ajax(self, request, *args, **kwargs):
+        bookmarkform = PresetBookmarkForm(request.POST)
+        if bookmarkform.is_valid():
+            self.get_object().delete()
+            data = {}
+            data['deleted'] = 'deleted' #self.get_object().id
+
+            return self.render_json_response(data)
+        else:
+            data = bookmarkform.errors
+            print 'Errors?' , data
+            return self.render_json_response(data)
 
 
 

@@ -59,7 +59,6 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             return self.render_json_response(data)
         else:
             data = bookmarkform.errors
-            print 'Errors?' , data
             return self.render_json_response(data)
 
 
@@ -67,16 +66,14 @@ class BookmarkAjaxDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
     model = Bookmark
 
     def post_ajax(self, request, *args, **kwargs):
-        bookmarkform = PresetBookmarkForm(request.POST)
+        bookmarkform = BookmarkForm(request.POST)
         if bookmarkform.is_valid():
             self.get_object().delete()
             data = {}
-            data['deleted'] = 'deleted' #self.get_object().id
-
+            data['deleted'] = 'deleted'
             return self.render_json_response(data)
         else:
             data = bookmarkform.errors
-            print 'Errors?' , data
             return self.render_json_response(data)
 
 

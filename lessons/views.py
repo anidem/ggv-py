@@ -43,8 +43,7 @@ class LessonView(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, De
                 initial_bookmark_data['content_type'] = ContentType.objects.get_for_model(i).id
                 initial_bookmark_data['object_id'] = i.id
                 initial_bookmark_data['creator'] = self.request.user
-                initial_bookmark_data['course_context'] = context['course']
-                
+                initial_bookmark_data['course_context'] = context['course']                
                 bookmarkform = BookmarkForm(initial=initial_bookmark_data)
 
             a = {}

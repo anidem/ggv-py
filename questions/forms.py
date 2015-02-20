@@ -5,6 +5,8 @@ from django.forms import ModelForm
 from django.forms.models import inlineformset_factory
 from .models import QuestionResponse, OptionQuestion, TextQuestion, Option
 
+from filebrowser.widgets import FileInput, ClearableFileInput
+
 class QuestionResponseForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -77,7 +79,8 @@ class OptionQuestionUpdateForm(ModelForm):
         fields = ['display_text', 'display_order', 'input_select', 'display_image']
         widgets = {
             'display_text': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'class': 'editor'}),
-            'display_order': forms.NumberInput(attrs={'min': -99, 'max': 99})
+            'display_order': forms.NumberInput(attrs={'min': -99, 'max': 99}),
+            'display_image': ClearableFileInput(),
         }
 
 class OptionUpdateForm(ModelForm):

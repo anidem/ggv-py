@@ -32,7 +32,10 @@ TEMPLATE_DIRS = [PROJECT_DIR.child('templates')]
 
 # Application definition
 INSTALLED_APPS = (
+    'grappelli.dashboard',
     'grappelli',
+    'filebrowser',
+
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -98,6 +101,15 @@ AUTHENTICATION_BACKENDS = (
 
 ANONYMOUS_USER_ID = -1
 SESSION_COOKIE_AGE = 86400 # 1 day inactivity logout
+
+GRAPPELLI_INDEX_DASHBOARD = 'ggvproject.ggvadmindashboard.CustomIndexDashboard'
+
+FILEBROWSER_DIRECTORY = ''
+FILEBROWSER_MEDIA_URL = '/media/'
+FILEBROWSER_MEDIA_ROOT = 'media'
+
+FILEBROWSER_VERSIONS_BASEDIR = '_versions'
+
 
 
 

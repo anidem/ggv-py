@@ -39,7 +39,7 @@ class NoteDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JS
         if noteform.is_valid():
             self.get_object().delete()
             data = {}
-            data['deleted'] = 'deleted' #self.get_object().id
+            data['deleted'] = 'deleted'
             return self.render_json_response(data)
         else:
             data = noteform.errors

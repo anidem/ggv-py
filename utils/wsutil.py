@@ -115,7 +115,7 @@ def slug_curr_dir():#filter(os.path.isdir, os.listdir(os.getcwd()))
 def import_json_questions():
     optsmap ={'A': '1', 'B': '2', 'C': '3', 'D': '4' }
     files = []
-    json_dir = os.path.abspath('/Users/rmedina/Desktop/ggvworksheet-conversion/worksheet-downloads/worksheets-social/jsondir')
+    json_dir = os.path.abspath('/Users/rmedina/Desktop/ggvworksheet-conversion/worksheet-downloads/worksheets-social-span/jsondir')
     for fstr in os.listdir(json_dir):
         if fstr != '.DS_Store':
             files.append(fstr)
@@ -132,20 +132,28 @@ def import_json_questions():
                 WID = i.get('WID')
                 print 'worksheet id: ', WID
             try:
+                if i.get('IMAGE') != '':
+                    imgpath = 'img/' + slugify(i.get('IMAGE')) + '.png'
+                else:
+                    imgpath = ''
+                    
                 if i.get('SELECT TYPE') == 'text':
                     question = TextQuestion()
                     question.display_text = i.get('QUESTION')
                     question.display_order = i.get('QUESTION DISPLAY ORDER')
                     question.correct = i.get('CORRECT ANSWER')
-                    question.display_image = slugify(i.get('IMAGE')) + '.png'
+                    question.display_image = imgpath
                     question.save()
                 else:
                     question = OptionQuestion()
                     question.display_text = i.get('QUESTION')
                     question.display_order = i.get('QUESTION DISPLAY ORDER')
-                    question.display_image = slugify(i.get('IMAGE')) + '.png'
+                    question.display_image = imgpath
                     question.input_select = i.get('SELECT TYPE')
                     question.save()
+                    corstr =  i.get('CORRECT ANSWER')
+                    corlist = corstr.split(',')
+
                     opts = dict((k, v) for k, v in sorted(i.items()) if k.startswith('option'))
                     for k, v in opts.items():
                         try:
@@ -153,13 +161,12 @@ def import_json_questions():
                             opt = Option()
                             opt.display_text = v
                             opt.display_order = order
+                            for c in corlist:
+                                try:
+                                    opt.correct = order == optsmap[c]
+                                except:
+                                    opt.correct = order == c
 
-                            try:
-                                opt.correct = order == optsmap[i.get('CORRECT ANSWER')]
-                            except:
-                                opt.correct = order == i.get('CORRECT ANSWER')
-
-                            opt.question = question
                             opt.question = question
                         except Exception as e:
                             print '%s (%s)' % (e.message, type(e))
@@ -168,10 +175,10 @@ def import_json_questions():
                         opt.save()
 
             except ValueError:
-                # print '[%s] not saved'% i.get('QUESTION')
+                print '[%s] not saved'% i.get('QUESTION')
                 continue
             except KeyError as e:
-                # print '%s (%s)' % (e.message, type(e))
+                print '%s (%s)' % (e.message, type(e))
                 # print e.message
                 continue
             
@@ -179,7 +186,7 @@ def import_json_questions():
             seqitem = QuestionSequenceItem(content_object=question, question_sequence=seq)
             seqitem.save()
 
-        # print seq
+        print seq
         json_file.close()
 
 

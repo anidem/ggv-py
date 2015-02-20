@@ -60,7 +60,7 @@ def readfiles(dirpath):
         for f in files:
             j = f.replace('csv', '.json')
             local(
-                'csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","IMAGE","SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","option 4" %s | csvjson -i 4 > ../../jsondir/%s' % (f, j))
+                'csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","IMAGE","SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","option 4" %s | csvjson -i 4 > ../jsondir/%s' % (f, j))
 
 # Creates a slugified copy of files in the directory specified by path. IS NOT recursive.
 def slug_names(path='.'):
@@ -81,7 +81,7 @@ def slug_names(path='.'):
 
         os.rename(
             os.path.join(pdir, f),
-            os.path.join(pdir, slugify(unicode(f, errors='replace')))
+            os.path.join(pdir, slugify(unicode(f.replace('(Web)',''), errors='replace')))
         )
     # files = [fstr for fstr in os.listdir(pdir) if fstr != '.DS_Store']
 

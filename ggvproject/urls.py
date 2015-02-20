@@ -1,12 +1,13 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
-# admin.autodiscover()
+
+from filebrowser.sites import site
 
 from core.views import IndexView, HomeView, BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import CourseView
 from lessons.views import LessonView
-from questions.views import WorksheetHomeView, QuestionResponseView, ImportJsonQuestion, OptionQuestionUpdateView, TextQuestionUpdateView, OptionQuestionView, TextQuestionView, QuestionAssetHandlerView
+from questions.views import WorksheetHomeView, QuestionResponseView, OptionQuestionUpdateView, TextQuestionUpdateView, OptionQuestionView, TextQuestionView, QuestionAssetHandlerView
 from slidestacks.views import SlideView, SlideAssetHandlerView
 
 import core.signals
@@ -14,8 +15,6 @@ import core.signals
 urlpatterns = patterns('',
 
 # Utility - NON Production use only!
-
-    url(r'^ggv/import/$', ImportJsonQuestion.as_view(), name='data_import'),
     
 # GGV
     url(r'^ggv/(?P<slug>[-\w]+)/$', CourseView.as_view(), name='course'),
@@ -54,6 +53,7 @@ urlpatterns = patterns('',
 
 # Administration pages
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')), 
+    url(r'^ggvadmin/filebrowser/', include(site.urls)),
     url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^ggvadmin/',  include(admin.site.urls)),  # admin site
 

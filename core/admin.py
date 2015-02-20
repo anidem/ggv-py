@@ -11,7 +11,7 @@ from guardian.admin import GuardedModelAdmin
 
 from courses.models import Course, CourseLesson
 from lessons.models import Lesson, Section
-from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option, QuestionSequenceItem
+from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option
 from slidestacks.models import SlideStack
 from notes.models import UserNote
 from core.models import ActivityLog
@@ -81,6 +81,7 @@ class SlideStackAdmin(admin.ModelAdmin):
     model = SlideStack
     list_display = ('title', 'lesson', 'section',  'asset', 'display_order')
     list_filter = ('lesson', 'section',)
+    list_editable = ('asset',)
 
 
 class QuestionSetAdmin(admin.ModelAdmin):
@@ -90,9 +91,6 @@ class QuestionSetAdmin(admin.ModelAdmin):
 #     inlines = [
 #         QuestionSetInlineAdmin, QuestionSetInlineShortAnswerAdmin,
 #     ]
-
-class QuestionSequenceItemAdmin(admin.ModelAdmin):
-    list_display = ('question_sequence',)
 
 class OptionQuestionAdmin(admin.ModelAdmin):
     list_display = ('display_text', 'display_order')
@@ -126,7 +124,6 @@ admin.site.register(QuestionSet, QuestionSetAdmin, Media=ExtraMedia)
 admin.site.register(OptionQuestion, OptionQuestionAdmin, Media=ExtraMedia)
 admin.site.register(TextQuestion, TextQuestionAdmin, Media=ExtraMedia)
 admin.site.register(QuestionResponse)
-admin.site.register(QuestionSequenceItem, QuestionSequenceItemAdmin)
 admin.site.register(ActivityLog)
 # admin.site.register(ShortAnswerQuestion, ShortAnswerQuestionAdmin, Media=ExtraMedia)
 # admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin, Media=ExtraMedia)

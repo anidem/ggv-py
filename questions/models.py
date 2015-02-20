@@ -11,6 +11,7 @@ from operator import itemgetter
 import json
 
 from model_utils.models import TimeStampedModel
+from filebrowser.fields import FileBrowseField
 
 from lessons.models import Lesson, AbstractActivity
 from notes.models import UserNote
@@ -40,19 +41,6 @@ class QuestionManager(models.Manager):
             report.append(obj)
         
         return report
-
-    def questions(self, **kwargs):
-        set_id = kwargs.pop('id')
-        sheet = QuestionSet.objects.get(pk=set_id)
-        mc_questions = sheet.shortanswerquestions.all().order_by(
-            'display_order')
-        sa_questions = sheet.multiplechoicequestions.all().order_by(
-            'display_order')
-        questions = sorted(
-            chain(mc_questions, sa_questions),
-            key=attrgetter('display_order')
-        )
-        return questions
 
     def user_worksheet(self, **kwargs):
         user_id = kwargs.pop('user')
@@ -112,8 +100,6 @@ class QuestionSet(AbstractActivity):
     notes = GenericRelation(UserNote)
     bookmarks = GenericRelation(Bookmark)
 
-    # objects = QuestionManager()
-
     def check_membership(self, user_session):
         """
         Utilizes session variable set at user login
@@ -121,29 +107,19 @@ class QuestionSet(AbstractActivity):
         return self.lesson in user_session['user_lessons']
 
     def get_ordered_question_list(self):
-        seqitems = [(x.content_object, x.content_object.display_order) for x in self.sequence_items.all()]
-        return [x[0] for x in sorted(seqitems, key=itemgetter(1))]
+        option_questions = self.option_questions.all()
+        text_questions = self.text_questions.all()
+        questions = sorted(
+            chain(option_questions, text_questions),
+            key=attrgetter('display_order')
+        )
+        return questions
 
     def get_absolute_url(self):
         return reverse('question_response', args=[self.id, '1'])
 
     def __unicode__(self):
         return self.title
-
-
-class QuestionSequenceItem(models.Model):
-
-    """
-    Functions as a list of questions for QuestionSet.
-    Allow QuestionSets to contain varied question types.
-    Content objects reference types derived from Abstract Question.
-    """
-    question_sequence = models.ForeignKey(
-        QuestionSet, related_name='sequence_items')
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
 
 class AbstractQuestion(models.Model):
 
@@ -157,10 +133,8 @@ class AbstractQuestion(models.Model):
 
     def get_sequence_url(self, course):
         try:
-            seqitem = self.sequence.all()[0]
-            worksheet = seqitem.question_sequence
-            position = worksheet.get_ordered_question_list().index(self)
-            return reverse('question_response', args=[course.slug, worksheet.id, position+1])
+            position = self.question_set.get_ordered_question_list().index(self)
+            return reverse('question_response', args=[course.slug, self.question_set.id, position+1])      
         except Exception as inst:
             return None
 
@@ -177,12 +151,12 @@ class TextQuestion(AbstractQuestion):
     """
     A question type that accepts text input.
     """
+    question_set = models.ForeignKey(QuestionSet, related_name='text_questions')
     input_size = models.CharField(max_length=64, choices=[
         ('1', 'short answer: (1 row 50 cols)'),
         ('5', 'sentence: (5 rows 50 cols'),
         ('15', 'paragraph(s): (15 rows 50 cols)')], default='1')
     correct = models.TextField(blank=True)
-    sequence = GenericRelation(QuestionSequenceItem)
     responses = GenericRelation('QuestionResponse')
     notes = GenericRelation(UserNote)
     bookmarks = GenericRelation(Bookmark)
@@ -190,7 +164,7 @@ class TextQuestion(AbstractQuestion):
     def get_input_widget(self):
         widget_attrs = {
             'rows': self.input_size,
-            'cols': 50,
+            'cols': 40,
             'style': 'resize: vertical'
         }
         if self.input_size == '1':
@@ -228,8 +202,8 @@ class OptionQuestion(AbstractQuestion):
     """
     input_select = models.CharField(max_length=64, choices=[(
         'radio', 'single responses'), ('checkbox', 'multiple responses')], default='radio')
-
-    sequence = GenericRelation(QuestionSequenceItem)
+    
+    question_set = models.ForeignKey(QuestionSet, related_name='option_questions')
     responses = GenericRelation('QuestionResponse')
     notes = GenericRelation(UserNote)
     bookmarks = GenericRelation(Bookmark)
@@ -298,7 +272,6 @@ class QuestionResponse(TimeStampedModel):
     """
     user = models.ForeignKey(User, related_name='question_responses')
     response = models.TextField()
-
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')

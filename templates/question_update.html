@@ -1,8 +1,10 @@
 <!-- question_update.html -->
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load fb_versions %}
 
 {% block content %}
+<div class="col-md-12">
     <h1></h1>
     <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
         <div class="row">
@@ -14,7 +16,8 @@
                         {{ field.label_tag }}<br>
                         {{ field }}
                     </div>
-                {% endfor %}       
+                {% endfor %}
+                <a href="/ggvadmin/filebrowser/browse">Browse on server.</a>      
             </div>
                 
             {% if  optionsform %}
@@ -48,6 +51,21 @@
         </div>
 
     </form>
+</div>
+{% comment %}
+{% for f in filelisting %}
+<div class="col-md-3" style="text-align: center">
+    <div class="row">
+        <div class="col-md-12">
+            <img height="240px" src="{{ MEDIA_URL }}{{ f.url }}" />
+        </div>
+        <div class="col-md-12">{{f}}</div>
+    </div>
+</div>
+{% endfor %}
+{% endcomment %}
+
+
 {% endblock content %}
 {% block local_js %}
     <script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>

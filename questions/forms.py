@@ -18,10 +18,13 @@ class QuestionResponseForm(ModelForm):
         question = self.initial['question']
         user = self.initial['user']
 
-        self.initial[
-            'content_type'] = ContentType.objects.get_for_model(question)
-        self.initial['object_id'] = question.id
-        self.fields['response'] = question.get_input_widget()
+        try:
+            self.initial[
+                'content_type'] = ContentType.objects.get_for_model(question)
+            self.initial['object_id'] = question.id
+            self.fields['response'] = question.get_input_widget()
+        except:
+            return
 
         # Check for previous response to question by user
         try:

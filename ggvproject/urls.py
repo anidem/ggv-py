@@ -17,7 +17,7 @@ urlpatterns = patterns('',
 # Utility - NON Production use only!
     
 # GGV
-    url(r'^ggv/(?P<slug>[-\w]+)/$', CourseView.as_view(), name='course'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/$', CourseView.as_view(), name='course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)$', LessonView.as_view(), name='lesson'),
     
 # GGV lesson activities

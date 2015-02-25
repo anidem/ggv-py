@@ -20,7 +20,7 @@ from filebrowser.base import FileListing
 from sendfile import sendfile
 
 from core.models import Bookmark
-from core.mixins import AccessRequiredMixin, CourseContextMixin
+from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import PresetBookmarkForm
 from notes.models import UserNote
 from notes.forms import UserNoteForm
@@ -45,30 +45,41 @@ class QuestionAssetHandlerView(LoginRequiredMixin, RedirectView):
         )
         return sendfile(request, abs_filename)
 
-class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, AccessRequiredMixin, DetailView):
+class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, DetailView):
     model = QuestionSet
     template_name = 'question_worksheet.html'
 
 
-class QuestionResponseView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, CreateView):
+class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, CreateView):
     model = QuestionResponse
     template_name = 'question_sequence.html'
     form_class = QuestionResponseForm
-    sequence = None
+    worksheet = None
+    lesson = None
+    access_object = 'activity'
+
+    def dispatch(self, *args, **kwargs):
+        try:
+            self.worksheet = get_object_or_404(QuestionSet, pk=self.kwargs['i'])
+            self.lesson = self.worksheet.lesson
+        except Exception as e:
+            pass        
+        
+        return super(QuestionResponseView, self).dispatch(*args, **kwargs)
+
 
     def get_success_url(self):
         next_item = int(self.kwargs['j']) + 1
         course = self.kwargs['crs_slug']
-        return reverse_lazy('question_response', args=[course, self.sequence.id, next_item])
+        return reverse_lazy('question_response', args=[course, self.worksheet.id, next_item])
 
     def get_initial(self):
-        self.sequence = get_object_or_404(QuestionSet, pk=self.kwargs['i'])
-        sequence_items = self.sequence.get_ordered_question_list()
-        print self.sequence
-        if sequence_items:
+        
+        sequence_items = self.worksheet.get_ordered_question_list()
+        if len(sequence_items) > 0:
             item = sequence_items[int(self.kwargs['j'])-1]
         else:
-            return redirect('http://localhost:8000')
+            item = None
 
         self.initial['question'] = item
         self.initial['user'] = self.request.user
@@ -77,15 +88,19 @@ class QuestionResponseView(LoginRequiredMixin, CourseContextMixin, AccessRequire
 
     def get_context_data(self, **kwargs):
         context = super(QuestionResponseView, self).get_context_data(**kwargs)
-        if not self.sequence.lesson.check_membership(self.request.session):
-            self.template_name = 'access_error.html'
-            return context
+        # if not self.sequence.lesson.check_membership(self.request.session):
+        #     self.template_name = 'access_error.html'
+        #     return context
 
         current_question = self.initial['question']
+        if not current_question:
+            self.template_name = '404.html'
+            return context
+
         
         # Tally -- move this to object manager...
         tally = OrderedDict()
-        for i in self.sequence.get_ordered_question_list():
+        for i in self.worksheet.get_ordered_question_list():
 
             try:
                 response = i.user_response_object(
@@ -103,7 +118,7 @@ class QuestionResponseView(LoginRequiredMixin, CourseContextMixin, AccessRequire
         if self.request.user.is_staff:
             context['edit_url'] = current_question.get_edit_url(context['course'])
 
-        question_index = self.sequence.get_ordered_question_list().index(current_question)+1
+        question_index = self.worksheet.get_ordered_question_list().index(current_question)+1
         initial_note_data = {}
         initial_note_data['content_type'] = ContentType.objects.get_for_model(current_question).id
         initial_note_data['object_id'] = current_question.id
@@ -135,7 +150,7 @@ class QuestionResponseView(LoginRequiredMixin, CourseContextMixin, AccessRequire
         if question_index+1 <= len(list(tally)): 
             context['next_position'] = question_index+1
         context['question_list'] = tally
-        context['worksheet'] = self.sequence
+        context['worksheet'] = self.worksheet
         context['instructor'] = self.request.user.has_perm('courses.edit_course')
         
         return context

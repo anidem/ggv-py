@@ -1,12 +1,13 @@
+# courses/models.py
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from itertools import chain
+import operator
 
 from guardian.shortcuts import get_users_with_perms, get_perms
 
 from lessons.models import Lesson
-
 
 class ActivityReportManager(models.Manager):
     def get_course_activity(self, **kwargs):
@@ -31,29 +32,32 @@ class Course(models.Model):
     """
     title = models.CharField(max_length=256)
     slug = models.SlugField(max_length=128, unique=True)
-    # lessons = models.ManyToManyField(Lesson)
     access_code = models.CharField(max_length=8, null=True, blank=True)
 
     objects = ActivityReportManager()
 
     class Meta:
         permissions = (
-            ('view_course', 'Course Access'),
-            ('edit_course', 'Instructor'),
-            ('manage_course', 'Manager'),
+            ('access', 'Access'),
+            ('instructor', 'Instructor'),
+            ('manage', 'Manager'),
         )
 
     def member_list(self):
-        return get_users_with_perms(self)
+        members = get_users_with_perms(self, attach_perms=True)
+        return members
 
     def lesson_list(self):
         return self.crs_lessons.all()
+
+    def get_user_role(self, user):
+        return get_perms(user, self)
 
     def check_membership(self, user_session):
         """
         Utilizes session variable set at user login
         """
-        return self.id in user_session['user_courses']
+        return self.slug in user_session['user_courses']
 
     def __unicode__(self):
         return self.title
@@ -63,7 +67,7 @@ class Course(models.Model):
 
 class CourseLesson(models.Model):
     """ 
-        This replaces the ManyToManyField in Course.
+        This class is used rather than a ManyToManyField in Course.
         Although it is nearly identical in function it is defined here to be more explicit
     """ 
 
@@ -76,3 +80,20 @@ class CourseLesson(models.Model):
     def get_absolute_url(self):
         return reverse('lesson', args=[str(self.course.slug), str(self.lesson.id)])
 
+class CoursePermission(models.Model):
+    """
+        This class maps users with courses. It also indicates the user role.
+    """
+
+    USER_ROLES = (
+        ('manager', 'Manager'),
+        ('instructor', 'Instructor'),
+        ('student', 'Student'),
+    )
+
+    user = models.ForeignKey(User, related_name='user_course_permissions')
+    course = models.ForeignKey(Course, related_name='course_permissions')
+    role = models.CharField(max_length=48, choices=USER_ROLES, default='student')
+
+    def __unicode__(self):
+        return '%s %s (%s)' %(self.course, self.user, self.role)

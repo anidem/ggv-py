@@ -6,7 +6,7 @@ from django.contrib.contenttypes.models import ContentType
 
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
-from core.mixins import AccessRequiredMixin, CourseContextMixin
+from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import BookmarkForm
 from courses.models import Course, CourseLesson
 from notes.models import UserNote
@@ -19,16 +19,11 @@ from .forms import StudentAccessForm
 class LessonView(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, DetailView):
     model = Lesson
     template_name = 'lesson.html'
+    access_object = 'lesson'
 
     def get_context_data(self, **kwargs):
         context = super(LessonView, self).get_context_data(**kwargs)
         lesson = self.get_object()
-
-        try:
-            course = lesson.crs_courses.get(course__slug=self.kwargs.pop('crs_slug'))
-        except CourseLesson.DoesNotExist:
-            self.template_name = 'access_error.html'
-            return self.render_to_response([])
 
         acts = []
 
@@ -58,5 +53,4 @@ class LessonView(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, De
 
         context['acts'] = acts 
         context['sections'] = lesson.sections.all()
-        context['course'] = course
         return context

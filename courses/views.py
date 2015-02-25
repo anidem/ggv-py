@@ -13,6 +13,8 @@ from .models import Course
 class CourseView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
     model = Course
     template_name = 'course.html'
+    slug_url_kwarg = 'crs_slug'
+    access_object = 'course'
 
     def get_context_data(self, **kwargs):
         context = super(CourseView, self).get_context_data(**kwargs)
@@ -21,17 +23,17 @@ class CourseView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
         context['eng_lessons'] = lessons.filter(lesson__language='eng').order_by('lesson__subject')
         context['span_lessons'] = lessons.filter(lesson__language='span').order_by('lesson__subject')
         
-        # this provides access to the users full list of courses.
-        context['courses'] = get_objects_for_user(
-            self.request.user, 'view_course', Course)
-
         instructors = []
         students = []
-        for i in course.member_list():
-            if i.has_perm('courses.edit_course', course):
-                instructors.append(i)
-            else:
+        for i, j in course.member_list().items():
+            if 'access' in j:
                 students.append(i)
-        context['instructors'] = sorted(instructors)
-        context['students'] = sorted(students)
+            elif 'instructor' in j:
+                instructors.append(i)
+
+        # this provides access to the users full list of courses.
+        context['courses'] = [Course.objects.get(slug=i) for i in self.request.session['user_courses']]
+        context['instructors'] = instructors
+        context['students'] = students
+
         return context

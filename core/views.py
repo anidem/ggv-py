@@ -21,8 +21,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        context['courses'] = get_objects_for_user(
-            self.request.user, 'view_course', Course)
+        context['courses'] = [Course.objects.get(slug=i) for i in self.request.session['user_courses']]
         return context
 
 class ActivityLogView(TemplateView):

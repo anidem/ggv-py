@@ -5,7 +5,7 @@ from operator import attrgetter
 from braces.views import LoginRequiredMixin, CsrfExemptMixin
 from guardian.shortcuts import get_users_with_perms, get_objects_for_user, get_perms
 
-from core.mixins import AccessRequiredMixin
+from core.mixins import CourseContextMixin, AccessRequiredMixin
 
 from .models import Course
 
@@ -14,7 +14,7 @@ class CourseView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
     model = Course
     template_name = 'course.html'
     slug_url_kwarg = 'crs_slug'
-    access_object = 'course'
+    access_object = None
 
     def get_context_data(self, **kwargs):
         context = super(CourseView, self).get_context_data(**kwargs)

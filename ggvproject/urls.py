@@ -7,7 +7,7 @@ from core.views import IndexView, HomeView, BookmarkAjaxCreateView, BookmarkAjax
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import CourseView
 from lessons.views import LessonView
-from questions.views import WorksheetHomeView, QuestionResponseView, OptionQuestionUpdateView, TextQuestionUpdateView, OptionQuestionView, TextQuestionView, QuestionAssetHandlerView
+from questions.views import WorksheetHomeView, QuestionResponseView, OptionQuestionUpdateView, TextQuestionUpdateView, OptionQuestionView, TextQuestionView, QuestionAssetHandlerView, UserReportView, CourseWorksheetReport
 from slidestacks.views import SlideView, SlideAssetHandlerView
 
 import core.signals
@@ -26,6 +26,8 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<slideroot>[-\w]+)/data/(?P<asset>.+)/$', SlideAssetHandlerView.as_view(), name='slide_asset'),
     
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', QuestionResponseView.as_view(), name='question_response'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/report/$', UserReportView.as_view(), name='worksheet_user_report'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/fullreport/$', CourseWorksheetReport.as_view(), name='worksheet_report'),    
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<i>\d+)/$', WorksheetHomeView.as_view(), name='worksheet'),
     
     url(r'^ggv/(?P<crs_slug>[-\w]+)/questions/textquestions/(?P<pk>\d+)/$', TextQuestionView.as_view(), name='text_question'),

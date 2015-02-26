@@ -220,3 +220,31 @@ class OptionQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateVie
         
 
         return context
+
+class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
+    model = QuestionSet
+    template_name = 'question_worksheet_report.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(UserReportView, self).get_context_data(**kwargs)
+        worksheet = self.get_object()
+        context['report'] =  worksheet.get_user_responses(self.request.user, worksheet.get_ordered_question_list(), context['course'])       
+
+        return context
+
+class CourseWorksheetReport(LoginRequiredMixin, CourseContextMixin, DetailView):
+    model = QuestionSet
+    template_name = 'question_worksheet_report.html'
+    
+    def get_context_data(self, **kwargs):
+        context = super(CourseWorksheetReport, self).get_context_data(**kwargs)
+        worksheet = self.get_object()
+        context['reports'] = worksheet.get_all_responses(context['course'])     
+
+        return context
+
+
+
+
+
+

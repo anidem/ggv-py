@@ -14,6 +14,7 @@ class AccessRequiredMixin(object):
         Permission checks here rely on session variables user_courses and user_lessons
         to make checks without hitting database.
         """
+        self.request.session['user_lessons']
         try:
             print 'Checking access: ', self.access_object
             if self.access_object == 'course':

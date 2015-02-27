@@ -14,7 +14,7 @@ from .models import SlideStack
 
 
 
-class SlideView(LoginRequiredMixin, RedirectView):
+class SlideView(LoginRequiredMixin, AccessRequiredMixin, RedirectView):
     slide = None
     lesson = None
     access_object = 'activity'

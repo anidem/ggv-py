@@ -115,6 +115,27 @@ class QuestionSet(AbstractActivity):
         )
         return questions
 
+    def get_user_responses(self, user, questions, course):
+        report = []
+        # bookmarks = self.bookmarks.filter(creator=user).get()
+        for i in questions:
+            bookmark = i.bookmarks.filter(creator=user).filter(course_context=course)
+            bk = None
+            if bookmark:
+                bk = bookmark[0]
+            response = (bk, i, i.user_response_object(user))
+            report.append(response)
+        return report
+
+    def get_all_responses(self, course):
+        members = course.member_list()
+        questions = self.get_ordered_question_list()
+        report = []
+        for i in members:
+            user_report = (i, self.get_user_responses(i, questions, course))
+            report.append(user_report)
+        return report
+
     def get_absolute_url(self):
         return reverse('question_response', args=[self.id, '1'])
 
@@ -221,9 +242,9 @@ class OptionQuestion(AbstractQuestion):
 
     def correct_answer(self):
         if self.input_select == 'checkbox':
-            return [str(i.id) for i in self.options.filter(correct=True)]
+            return [i.id for i in self.options.filter(correct=True)]
         else:
-            return str(self.options.get(correct=True).id)
+            return self.options.get(correct=True).id
 
     def check_answer(self, json_str):
         # Need to process option responses as lists. json used to coerce
@@ -280,12 +301,14 @@ class QuestionResponse(TimeStampedModel):
         try:
             return json.loads(self.response)
         except:
-            return None        
+            return None
+
+
 
     def save(self, *args, **kwargs):
         self.response = json.dumps(self.response)
         super(QuestionResponse, self).save(*args, **kwargs)
 
-    # Fix this to contruct arguments relative to question sequence object
+    # Fix this to construct arguments relative to question sequence object
     def get_absolute_url(self):
         return reverse('home')

@@ -1,0 +1,33 @@
+<!-- question_worksheet_report.html -->
+{% extends "base.html" %}
+
+{% block page_crumb %}
+    
+{% endblock page_crumb %}
+
+{% block content %}
+    {% for h,i,j in report %}
+    <div class="row">
+        <div class="col-md-1 text-right">{% if h %} <i class="fa fa-flag fa-1x flagger bkset"></i>{% endif %} {{ forloop.counter }}. </div>
+        <a href="{% url 'question_response' course.slug object.id forloop.counter %}">
+        <div class="col-md-5 text-left">{{ i.display_text | safe }} </div>
+        <div class="col-md-3 text-left">{{ j.response|safe }}</div>
+        <div class="col-md-3 text-left">{{ i.correct_answer }}</div>
+        </a>
+    </div>
+    {% endfor %}
+
+    {% for report in reports %}
+        <h3>{{ report.0 }}</h3>
+        {% for h, i, j in report.1 %}
+            <div class="row">
+                <div class="col-md-1 text-right">{% if h %} <i class="fa fa-flag fa-1x flagger bkset"></i>{% endif %} {{ forloop.counter }}. </div>
+                <a href="{% url 'question_response' course.slug object.id forloop.counter %}">
+                <div class="col-md-5 text-left">{{ i.display_text | safe }} </div>
+                <div class="col-md-3 text-left">{{ j.response|safe }}</div>
+                <div class="col-md-3 text-left">{{ i.correct_answer }}</div>
+                </a>
+            </div>
+        {% endfor %}
+    {% endfor %}
+{% endblock content %}

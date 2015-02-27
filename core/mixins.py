@@ -1,5 +1,6 @@
 # core/mixins.py
 from django.shortcuts import render, redirect
+from django.core.exceptions import PermissionDenied
 from django.http import JsonResponse
 
 from django.contrib import messages
@@ -14,23 +15,16 @@ class AccessRequiredMixin(object):
         Permission checks here rely on session variables user_courses and user_lessons
         to make checks without hitting database.
         """
-        self.request.session['user_lessons']
-        try:
-            print 'Checking access: ', self.access_object
-            if self.access_object == 'course':
-                if self.get_object().slug not in self.request.session['user_courses']:
-                    self.template_name = 'access_error.html'
-            elif self.access_object == 'lesson':
-                if self.get_object().id not in self.request.session['user_lessons']:
-                    self.template_name = 'access_error.html'
-            elif self.access_object == 'activity':
-                print 'checking', self.lesson
-                if self.lesson.id not in self.request.session['user_lessons']:
-                    self.template_name = 'access_error.html'
+        course_access = self.kwargs['crs_slug'] in self.request.session['user_courses']
+        if not course_access:
+            raise PermissionDenied  # early exit -- user accessing non assigned course      
+        if self.access_object == 'lesson':
+            course_access = self.get_object().id in self.request.session['user_lessons']
+        elif self.access_object == 'activity':
+            course_access = self.lesson.id in self.request.session['user_lessons']
 
-        except Exception as e:
-            print e
-            self.template_name = 'access_error.html'
+        if not course_access:
+            raise PermissionDenied         
 
         return super(AccessRequiredMixin, self).dispatch(*args, **kwargs)
 

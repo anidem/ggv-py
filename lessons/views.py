@@ -16,7 +16,7 @@ from .models import Lesson
 from .forms import StudentAccessForm
 
 
-class LessonView(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, DetailView):
+class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, DetailView):
     model = Lesson
     template_name = 'lesson.html'
     access_object = 'lesson'

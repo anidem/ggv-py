@@ -6,13 +6,21 @@
 {% endblock page_crumb %}
 
 {% block content %}
+    <div class="row"> 
+        <div class="col-md-1 text-left">Question number</div>
+        <div class="col-md-5 text-left">Question </div>
+        <div class="col-md-3 text-right">Response</div>
+        <div class="col-md-3 text-right">Correct Answer</div>
+    </div>
     {% for h,i,j in report %}
     <div class="row">
-        <div class="col-md-1 text-right">{% if h %} <i class="fa fa-flag fa-1x flagger bkset"></i>{% endif %} {{ forloop.counter }}. </div>
+        <div class="col-md-1 text-left">
+            {%if j.response == i.correct_answer %}C <i class="label label-success fa fa-check"></i>{% endif %}
+            {% if h %} <i class="fa fa-flag fa-1x flagger bkset"></i>{% endif %} {{ forloop.counter }}. </div>
         <a href="{% url 'question_response' course.slug object.id forloop.counter %}">
         <div class="col-md-5 text-left">{{ i.display_text | safe }} </div>
-        <div class="col-md-3 text-left">{{ j.response|safe }}</div>
-        <div class="col-md-3 text-left">{{ i.correct_answer }}</div>
+        <div class="col-md-3 text-right">{{ j.response|safe }}</div>
+        <div class="col-md-3 text-right">{{ i.correct_answer }}</div>
         </a>
     </div>
     {% endfor %}
@@ -21,11 +29,11 @@
         <h3>{{ report.0 }}</h3>
         {% for h, i, j in report.1 %}
             <div class="row">
-                <div class="col-md-1 text-right">{% if h %} <i class="fa fa-flag fa-1x flagger bkset"></i>{% endif %} {{ forloop.counter }}. </div>
+                <div class="col-md-1 text-left">{% if h %} <i class="fa fa-flag fa-1x flagger bkset"></i>{% endif %} {{ forloop.counter }}. </div>
                 <a href="{% url 'question_response' course.slug object.id forloop.counter %}">
                 <div class="col-md-5 text-left">{{ i.display_text | safe }} </div>
-                <div class="col-md-3 text-left">{{ j.response|safe }}</div>
-                <div class="col-md-3 text-left">{{ i.correct_answer }}</div>
+                <div class="col-md-3 text-right">{{ j.response|safe }}</div>
+                <div class="col-md-3 text-right">{{ i.correct_answer }}</div>
                 </a>
             </div>
         {% endfor %}

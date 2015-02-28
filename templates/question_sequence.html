@@ -13,6 +13,8 @@
         <span class="caret"></span>
         </a>
         <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+            <h5 class=""><a href="{% url 'worksheet_user_report' course.slug worksheet.id %}">Report</a></h5>
+            <h5 class=""><a href="{% url 'worksheet_report' course.slug worksheet.id %}">Full Report</a></h5>
         {% for k, v in question_list.items %}
             <div class="pull-left" style="padding: 5px; background-color: {{ v }}">
 

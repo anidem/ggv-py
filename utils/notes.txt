@@ -73,6 +73,23 @@ measure by activity
 march 1st
 
 
+# print the image path for each question
+from utils.wsutil import *
+import sys
+x=open('imgmapper.csv', 'w')
+sys.displayhook(x)
+sys.stdout=x
+
+worksheets = QuestionSet.objects.all()
+q = [i.get_ordered_question_list() for i in worksheets]
+for sheet in worksheets:
+	for questions in sheet.get_ordered_question_list():
+		for q in questions:
+			if q.display_image != '':
+				print '%s, %s, %s, %s, %s,' % sheet.section, sheet, q.display_order, q.display_text, q.display_image
+
+
+
 
 
 

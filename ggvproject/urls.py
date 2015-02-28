@@ -7,7 +7,7 @@ from core.views import IndexView, HomeView, BookmarkAjaxCreateView, BookmarkAjax
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import CourseView
 from lessons.views import LessonView
-from questions.views import WorksheetHomeView, QuestionResponseView, OptionQuestionUpdateView, TextQuestionUpdateView, OptionQuestionView, TextQuestionView, QuestionAssetHandlerView, UserReportView, CourseWorksheetReport
+from questions.views import WorksheetHomeView, QuestionResponseView, OptionQuestionUpdateView, TextQuestionUpdateView, OptionQuestionView, TextQuestionView, QuestionAssetHandlerView, UserReportView, CourseWorksheetReport, UtilityListingView
 from slidestacks.views import SlideView, SlideAssetHandlerView
 
 import core.signals
@@ -15,7 +15,7 @@ import core.signals
 urlpatterns = patterns('',
 
 # Utility - NON Production use only!
-    
+    url(r'^ggv/utility/$', UtilityListingView.as_view(), name='util'),
 # GGV
     url(r'^ggv/(?P<crs_slug>[-\w]+)/$', CourseView.as_view(), name='course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)$', LessonView.as_view(), name='lesson'),

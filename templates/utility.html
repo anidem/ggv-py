@@ -1,0 +1,11 @@
+<!-- utility.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+{% for i in questions %}
+	
+	<p>{{i.id}}, {{i.question_set}}, {{i.display_order}}, {{i.display_image}}</p>
+{% endfor %}
+
+{% endblock content %}

@@ -49,6 +49,22 @@ class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, DetailView):
     model = QuestionSet
     template_name = 'question_worksheet.html'
 
+class UtilityListingView(TemplateView):
+    template_name = 'utility.html'
+    def get_context_data(self, **kwargs):
+        context = super(UtilityListingView, self).get_context_data(**kwargs)
+        worksheets = QuestionSet.objects.all()
+        # q = [i.get_ordered_question_list() for i in worksheets]
+        context['questions'] = []
+        for sheet in worksheets:
+            for q in sheet.get_ordered_question_list():
+
+                if q.display_image != '':
+                    context['questions'].append(q)
+                    # print q#'%s, %s, %s, %s, %s, %s,' % (q.id, sheet.section, sheet, q.display_order, q.display_text, q.display_image)
+        
+        return context
+
 
 class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, CreateView):
     model = QuestionResponse

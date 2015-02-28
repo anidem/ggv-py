@@ -78,11 +78,11 @@ def slug_names(path='.'):
         
         # print f, f2
         # local('cp %s %s'%(unicode(f), f2))
-
-        os.rename(
-            os.path.join(pdir, f),
-            os.path.join(pdir, slugify(unicode(f.replace('(Web)',''), errors='replace')))
-        )
+        if f != '.DS_Store':
+            os.rename(
+                os.path.join(pdir, f),
+                os.path.join(pdir, slugify(unicode(f.replace('(Web)',''), errors='replace')))
+            )
     # files = [fstr for fstr in os.listdir(pdir) if fstr != '.DS_Store']
 
 

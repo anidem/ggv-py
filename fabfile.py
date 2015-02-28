@@ -70,6 +70,10 @@ def slug_names(path='.'):
     # files = [fstr for fstr in os.listdir(pdir) if fstr != '.DS_Store']
     files = os.listdir(pdir)
     for f in files:
+        froot = f[:-4]
+        fext = f[-4:] # get the three letter extension with the '.'
+        j = slugify(unicode(froot, errors='replace'))
+        j = j + fext
         # f1 = os.path.join(pdir, f)
         # f2 = os.path.join(pdir, slugify(unicode(f, errors='replace')))
         # f2 = f2.replace('-web', '')
@@ -81,8 +85,23 @@ def slug_names(path='.'):
         if f != '.DS_Store':
             os.rename(
                 os.path.join(pdir, f),
-                os.path.join(pdir, slugify(unicode(f.replace('(Web)',''), errors='replace')))
+                os.path.join(pdir, j)
             )
+
     # files = [fstr for fstr in os.listdir(pdir) if fstr != '.DS_Store']
+
+def slug_dir_names(path='.'):
+    pdir = os.path.abspath(path) 
+    if not confirm('Preparing to slug directories in %s. Continue?' % pdir):
+        return
+    files = os.listdir(pdir)
+    for f in files:
+        j = slugify(unicode(f.replace('(Web)',''), errors='replace'))
+        
+        if f != '.DS_Store':
+            os.rename(
+                os.path.join(pdir, f),
+                os.path.join(pdir, j)
+            )
 
 

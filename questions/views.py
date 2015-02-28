@@ -1,5 +1,5 @@
 # questions/views.py
-import os, json, sys
+import os, json, sys, csv
 from collections import OrderedDict
 
 from django.views.generic import DetailView, UpdateView, TemplateView, CreateView, FormView, RedirectView
@@ -49,21 +49,18 @@ class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, DetailView):
     model = QuestionSet
     template_name = 'question_worksheet.html'
 
-class UtilityListingView(TemplateView):
-    template_name = 'utility.html'
-    def get_context_data(self, **kwargs):
-        context = super(UtilityListingView, self).get_context_data(**kwargs)
-        worksheets = QuestionSet.objects.all()
-        # q = [i.get_ordered_question_list() for i in worksheets]
-        context['questions'] = []
-        for sheet in worksheets:
-            for q in sheet.get_ordered_question_list():
-
-                if q.display_image != '':
-                    context['questions'].append(q)
-                    # print q#'%s, %s, %s, %s, %s, %s,' % (q.id, sheet.section, sheet, q.display_order, q.display_text, q.display_image)
+def csvutil(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
+    writer = csv.writer(response)
+    writer.writerow(['question id', 'lesson', 'sheet', 'order', 'text', 'image'])
+    worksheets = QuestionSet.objects.all()
+    for sheet in worksheets:
+        for q in sheet.get_ordered_question_list():
+            if q.display_image != '':
+                writer.writerow([q.id, sheet.lesson, sheet, q.display_order, q.display_order, q.display_image])
         
-        return context
+    return response
 
 
 class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, CreateView):

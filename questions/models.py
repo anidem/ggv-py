@@ -115,9 +115,19 @@ class QuestionSet(AbstractActivity):
         )
         return questions
 
+    def get_num_questions(self):
+        return len(self.get_ordered_question_list())
+
+    def get_next_question(self, user):
+        questions = self.get_ordered_question_list()
+        index = 1
+        for i in questions:
+            if not i.user_response_object(user):
+                return index
+            index = index + 1
+
     def get_user_responses(self, user, questions, course):
         report = []
-        # bookmarks = self.bookmarks.filter(creator=user).get()
         for i in questions:
             bookmark = i.bookmarks.filter(creator=user).filter(course_context=course)
             bk = None
@@ -312,3 +322,10 @@ class QuestionResponse(TimeStampedModel):
     # Fix this to construct arguments relative to question sequence object
     def get_absolute_url(self):
         return reverse('home')
+
+class UserWorksheetStatus(TimeStampedModel):
+    user = models.ForeignKey(User, related_name='completed_worksheets')
+    completed_worksheet = models.ForeignKey(QuestionSet)
+
+
+

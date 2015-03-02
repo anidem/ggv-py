@@ -3,21 +3,18 @@ from django.contrib import admin
 
 from filebrowser.sites import site
 
+from utils.wsutil import csvutil, worksheetvalidator
 from core.views import IndexView, HomeView, BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import CourseView
 from lessons.views import LessonView
 from questions.views import (
-    WorksheetHomeView, 
-    QuestionResponseView, 
-    OptionQuestionUpdateView, 
-    TextQuestionUpdateView, 
-    OptionQuestionView, 
-    TextQuestionView, 
+    WorksheetHomeView, WorksheetUpdateView, QuestionResponseView, 
+    OptionQuestionView, OptionQuestionUpdateView, 
+    TextQuestionView, TextQuestionUpdateView, 
     QuestionAssetHandlerView, 
-    UserReportView, 
-    CourseWorksheetReport, 
-    csvutil)
+    UserReportView, FullReportView
+    )
 from slidestacks.views import SlideView, SlideAssetHandlerView
 
 import core.signals
@@ -26,6 +23,8 @@ urlpatterns = patterns('',
 
 # Utility - NON Production use only!
     url(r'^ggv/utility/$', csvutil, name='util'),
+    url(r'^ggv/utility/validator/$', worksheetvalidator.as_view(), name='worksheet_utility'),
+
 # GGV
     url(r'^ggv/(?P<crs_slug>[-\w]+)/$', CourseView.as_view(), name='course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)$', LessonView.as_view(), name='lesson'),
@@ -37,8 +36,10 @@ urlpatterns = patterns('',
     
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', QuestionResponseView.as_view(), name='question_response'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/report/$', UserReportView.as_view(), name='worksheet_user_report'),
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/fullreport/$', CourseWorksheetReport.as_view(), name='worksheet_report'),    
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<i>\d+)/$', WorksheetHomeView.as_view(), name='worksheet'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/fullreport/$', FullReportView.as_view(), name='worksheet_report'),    
+    
+    url(r'^ggv/worksheet/(?P<pk>\d+)/$', WorksheetHomeView.as_view(), name='worksheet'),
+    url(r'^ggv/worksheet/edit/(?P<pk>\d+)/$', WorksheetUpdateView.as_view(), name='worksheet_update'),
     
     url(r'^ggv/(?P<crs_slug>[-\w]+)/questions/textquestions/(?P<pk>\d+)/$', TextQuestionView.as_view(), name='text_question'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/questions/textquestions/edit/(?P<pk>\d+)/$', TextQuestionUpdateView.as_view(), name='text_question_update'),

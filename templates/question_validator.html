@@ -1,0 +1,15 @@
+<!-- question_validator.html -->
+
+{% extends "base.html" %}
+
+{% block content %}
+{{ worksheets | length }} Worksheets
+{{ failures | length }} Failures
+{% for i in failures %}
+    <p>
+        <a href="{% url 'lesson' "sample-course" i.lesson.id %}"> {{ i.lesson }} </a>
+        <a href="{% url 'question_response' "sample-course" i.id 1 %}">{{ i }}</a>
+    </p>
+{% endfor %}
+
+{% endblock content %}

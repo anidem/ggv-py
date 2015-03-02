@@ -1,5 +1,5 @@
 # questions/views.py
-import os, json, sys, csv
+import os, json, sys
 from collections import OrderedDict
 
 from django.views.generic import DetailView, UpdateView, TemplateView, CreateView, FormView, RedirectView
@@ -14,7 +14,7 @@ from django.contrib import messages
 from django.conf import settings
 from django.utils.text import slugify
 
-from braces.views import CsrfExemptMixin, LoginRequiredMixin
+from braces.views import CsrfExemptMixin, LoginRequiredMixin, StaffuserRequiredMixin
 from filebrowser.sites import site
 from filebrowser.base import FileListing
 from sendfile import sendfile
@@ -24,8 +24,9 @@ from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import PresetBookmarkForm
 from notes.models import UserNote
 from notes.forms import UserNoteForm
+from lessons.models import Lesson
 
-from .models import TextQuestion, OptionQuestion, QuestionResponse, QuestionSet, Option
+from .models import TextQuestion, OptionQuestion, QuestionResponse, QuestionSet, Option, UserWorksheetStatus
 from .forms import QuestionResponseForm, OptionQuestionUpdateForm, TextQuestionUpdateForm, OptionFormset
 
 def filter_filelisting_images(item):
@@ -49,18 +50,12 @@ class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, DetailView):
     model = QuestionSet
     template_name = 'question_worksheet.html'
 
-def csvutil(request):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
-    writer = csv.writer(response)
-    writer.writerow(['question id', 'lesson', 'sheet', 'order', 'text', 'image'])
-    worksheets = QuestionSet.objects.all()
-    for sheet in worksheets:
-        for q in sheet.get_ordered_question_list():
-            if q.display_image != '':
-                writer.writerow([q.id, sheet.lesson, sheet, q.display_order, q.display_order, q.display_image])
-        
-    return response
+class WorksheetUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, UpdateView):
+    model = QuestionSet
+    template_name = 'question_worksheet_update.html'
+
+    def get_success_url(self):
+        return reverse_lazy('worksheet', args=[self.get_object().id])
 
 
 class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, CreateView):
@@ -69,25 +64,32 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
     form_class = QuestionResponseForm
     worksheet = None
     lesson = None
+    user_completed = None
     access_object = 'activity'
 
     def dispatch(self, *args, **kwargs):
         try:
             self.worksheet = get_object_or_404(QuestionSet, pk=self.kwargs['i'])
             self.lesson = self.worksheet.lesson
+
         except Exception as e:
             pass        
         
         return super(QuestionResponseView, self).dispatch(*args, **kwargs)
 
+    def get(self, request, *args, **kwargs):
+        
+        if not self.worksheet.get_next_question(self.request.user):
+            completed = request.user.completed_worksheets.filter(completed_worksheet=self.worksheet)
 
-    def get_success_url(self):
-        next_item = int(self.kwargs['j']) + 1
-        course = self.kwargs['crs_slug']
-        return reverse_lazy('question_response', args=[course, self.worksheet.id, next_item])
+            if not completed:
+                UserWorksheetStatus(user=self.request.user, completed_worksheet=self.worksheet).save()
+                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))
+            
+            self.user_completed = True
+        return super(QuestionResponseView, self).get(request, *args, **kwargs)
 
     def get_initial(self):
-        
         sequence_items = self.worksheet.get_ordered_question_list()
         if len(sequence_items) > 0:
             item = sequence_items[int(self.kwargs['j'])-1]
@@ -98,6 +100,11 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         self.initial['user'] = self.request.user
 
         return self.initial
+
+    def get_success_url(self):
+        next_item = int(self.kwargs['j']) + 1
+        course = self.kwargs['crs_slug']
+        return reverse_lazy('question_response', args=[course, self.worksheet.id, next_item])
 
     def get_context_data(self, **kwargs):
         context = super(QuestionResponseView, self).get_context_data(**kwargs)
@@ -162,6 +169,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             context['previous_position'] = question_index-1
         if question_index+1 <= len(list(tally)): 
             context['next_position'] = question_index+1
+        context['user_completed'] = self.user_completed
         context['question_list'] = tally
         context['worksheet'] = self.worksheet
         context['instructor'] = self.request.user.has_perm('courses.edit_course')
@@ -230,7 +238,6 @@ class OptionQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateVie
         context['optionsform'] =  OptionFormset(instance=self.get_object())
         
         context['filelisting'] = FileListing('img', filter_func=filter_filelisting_images, sorting_by='date', sorting_order='desc').files_listing_filtered()
-        
 
         return context
 
@@ -245,12 +252,12 @@ class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
 
         return context
 
-class CourseWorksheetReport(LoginRequiredMixin, CourseContextMixin, DetailView):
+class FullReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = QuestionSet
     template_name = 'question_worksheet_report.html'
     
     def get_context_data(self, **kwargs):
-        context = super(CourseWorksheetReport, self).get_context_data(**kwargs)
+        context = super(FullReportView, self).get_context_data(**kwargs)
         worksheet = self.get_object()
         context['reports'] = worksheet.get_all_responses(context['course'])     
 

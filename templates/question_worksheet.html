@@ -4,10 +4,14 @@
 
 
 {% block content %}
-	<h1>{{ object }}<br>
-		<small>{{ object.instructions }}</small>
-	</h1>
-	<h2><a href="/ggv/worksheet/{{ object.id }}/1/">Begin</a></h2>
-    <h2>Messages</h2>
+	<h1>{{ object.lesson }} <small>{{ object }}</small></h1>
+    <div>
+        <p>Instructions: {{ object.instructions }}</p>
+        <p>Lesson: {{ object.lesson }}</p>
+        <p>Section: {{ object.section }}</p>
+        {% if object.get_ordered_question_list %} 
+        <p>View in worksheet: <a href="{% url 'question_response' "sample-course" object.id 1 %}">View</a></p>
+        {% endif %}
+    </div>
 {% endblock content %}     
 

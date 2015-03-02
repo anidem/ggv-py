@@ -15,7 +15,12 @@ class AccessRequiredMixin(object):
         Permission checks here rely on session variables user_courses and user_lessons
         to make checks without hitting database.
         """
+        if self.request.user.is_staff:
+            course_access = True
+            return super(AccessRequiredMixin, self).dispatch(*args, **kwargs)
+
         course_access = self.kwargs['crs_slug'] in self.request.session['user_courses']
+        
         if not course_access:
             raise PermissionDenied  # early exit -- user accessing non assigned course      
         if self.access_object == 'lesson':

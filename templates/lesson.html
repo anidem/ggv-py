@@ -48,7 +48,7 @@
                             {{ forloop.counter }}.<a class="media-heading" href="{% url 'slideview' course.slug i.act.id %}">{{ i.act.title }}</a>
                         {% else %}
                             <i class="fa fa-pencil-square-o fa-2x"></i>
-                            {{ forloop.counter }}.<a class="media-heading" href="{% url 'question_response' course.slug i.act.id 1 %}">{{ i.act.title }}</a>
+                            {{ forloop.counter }}.<a class="media-heading" href="{% url 'question_response' course.slug i.act.id 1 %}">{{ i.act.title }}</a> <a href="{% url 'worksheet_update' i.act.id %}">edit</a>
                         {% endif %}
                       </h4>
                     </div>

@@ -27,30 +27,30 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
 
         acts = []
 
-        for i in Lesson.objects.activities(id=lesson.id):
-            try:
-                bookmark = i.bookmarks.filter(creator=self.request.user).filter(course_context=context['course']).get()
-                bookmarkform = BookmarkForm(instance=bookmark)
+        for i in lesson.activities():
+            # try:
+            #     bookmark = i.bookmarks.filter(creator=self.request.user).filter(course_context=context['course']).get()
+            #     bookmarkform = BookmarkForm(instance=bookmark)
 
-            except:
-                bookmark = None
-                initial_bookmark_data = {}
-                initial_bookmark_data['content_type'] = ContentType.objects.get_for_model(i).id
-                initial_bookmark_data['object_id'] = i.id
-                initial_bookmark_data['creator'] = self.request.user
-                initial_bookmark_data['course_context'] = context['course']                
-                bookmarkform = BookmarkForm(initial=initial_bookmark_data)
+            # except:
+            #     bookmark = None
+            #     initial_bookmark_data = {}
+            #     initial_bookmark_data['content_type'] = ContentType.objects.get_for_model(i).id
+            #     initial_bookmark_data['object_id'] = i.id
+            #     initial_bookmark_data['creator'] = self.request.user
+            #     initial_bookmark_data['course_context'] = context['course']                
+            #     bookmarkform = BookmarkForm(initial=initial_bookmark_data)
 
             a = {}
             a['act'] = i
             a['note'] = None
-            a['bookmarkform'] = bookmarkform
-            a['bookmark'] = bookmark
+            a['bookmarkform'] = None #bookmarkform
+            a['bookmark'] =  None #bookmark
             a['date'] = None
 
             acts.append(a)
 
-
         context['acts'] = acts 
         context['sections'] = lesson.sections.all()
+
         return context

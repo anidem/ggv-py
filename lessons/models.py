@@ -5,25 +5,6 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 
-class LessonManager(models.Manager):
-
-    def activities(self, **kwargs):
-        lesson_obj = Lesson.objects.get(pk=kwargs['id'])
-        questions = lesson_obj.worksheets.all()
-        slidestacks = lesson_obj.slidestacks.all()
-
-        activity_set = list(
-            chain(questions.filter(section__isnull=False), slidestacks.filter(section__isnull=False)))
-
-        activity_set = sorted(
-            activity_set, key=attrgetter('section.display_order', 'display_order'))
-        orphans = list(chain(questions.filter(section__isnull=True),
-                       slidestacks.filter(section__isnull=True)))
-        activity_set += sorted(orphans, key=attrgetter('display_order'))
-
-        return activity_set        
-
-
 class Lesson(models.Model):
     LESSON_SUBJECTS = (
         ('math', 'math'),
@@ -38,13 +19,26 @@ class Lesson(models.Model):
     language = models.CharField(max_length=32, default='eng', choices=(('eng', 'English'), ('span', 'Spanish')))
     icon_class = models.CharField(max_length=32, default='university', blank=True)
 
-    objects = LessonManager()
-
     def check_membership(self, user_session):
         """
         Utilizes session variable set at user login
         """
         return self.id in user_session['user_lessons']
+
+    def activities(self):
+        questions = self.worksheets.all()
+        slidestacks = self.slidestacks.all()
+
+        activity_set = list(
+            chain(questions.filter(section__isnull=False), slidestacks.filter(section__isnull=False)))
+
+        activity_set = sorted(
+            activity_set, key=attrgetter('section.display_order', 'display_order'))
+        orphans = list(chain(questions.filter(section__isnull=True),
+                       slidestacks.filter(section__isnull=True)))
+        activity_set += sorted(orphans, key=attrgetter('display_order'))
+
+        return activity_set        
 
     def __unicode__(self):
         return self.title

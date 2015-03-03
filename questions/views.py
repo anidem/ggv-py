@@ -64,7 +64,8 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
     form_class = QuestionResponseForm
     worksheet = None
     lesson = None
-    user_completed = None
+    next_question = None
+    completion_status = None
     access_object = 'activity'
 
     def dispatch(self, *args, **kwargs):
@@ -78,26 +79,26 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         return super(QuestionResponseView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        
-        if not self.worksheet.get_next_question(self.request.user):
-            completed = request.user.completed_worksheets.filter(completed_worksheet=self.worksheet)
-
-            if not completed:
+        self.next_question = self.worksheet.get_next_question(self.request.user)
+        if not self.next_question:
+            completion_status = request.user.completed_worksheets.filter(completed_worksheet=self.worksheet)
+            if not completion_status:
                 UserWorksheetStatus(user=self.request.user, completed_worksheet=self.worksheet).save()
                 return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))
             
-            self.user_completed = True
+            self.completion_status = True
+        
+        elif str(self.next_question['index']) != self.kwargs['j']:
+            return HttpResponseRedirect(reverse('question_response', args=(self.kwargs['crs_slug'], self.worksheet.id, self.next_question['index'])))
+
         return super(QuestionResponseView, self).get(request, *args, **kwargs)
 
     def get_initial(self):
-        sequence_items = self.worksheet.get_ordered_question_list()
-        if len(sequence_items) > 0:
-            item = sequence_items[int(self.kwargs['j'])-1]
-        else:
-            item = None
-
-        self.initial['question'] = item
-        self.initial['user'] = self.request.user
+        try:
+            self.initial['question'] = self.next_question['question']
+            self.initial['user'] = self.request.user
+        except:
+            self.template_name = '404.html'        
 
         return self.initial
 
@@ -108,11 +109,8 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
 
     def get_context_data(self, **kwargs):
         context = super(QuestionResponseView, self).get_context_data(**kwargs)
-        # if not self.sequence.lesson.check_membership(self.request.session):
-        #     self.template_name = 'access_error.html'
-        #     return context
-
         current_question = self.initial['question']
+        
         if not current_question:
             self.template_name = '404.html'
             return context
@@ -169,7 +167,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             context['previous_position'] = question_index-1
         if question_index+1 <= len(list(tally)): 
             context['next_position'] = question_index+1
-        context['user_completed'] = self.user_completed
+        context['user_completed'] = self.completion_status
         context['question_list'] = tally
         context['worksheet'] = self.worksheet
         context['instructor'] = self.request.user.has_perm('courses.edit_course')

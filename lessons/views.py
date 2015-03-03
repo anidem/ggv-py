@@ -8,6 +8,7 @@ from braces.views import LoginRequiredMixin, CsrfExemptMixin
 
 from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import BookmarkForm
+from core.models import Bookmark
 from courses.models import Course, CourseLesson
 from notes.models import UserNote
 from notes.forms import UserNoteForm
@@ -26,26 +27,27 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         lesson = self.get_object()
 
         acts = []
+        bookmarks = Bookmark.objects.filter(creator=self.request.user).filter(course_context=context['course'])
 
         for i in lesson.activities():
-            # try:
-            #     bookmark = i.bookmarks.filter(creator=self.request.user).filter(course_context=context['course']).get()
-            #     bookmarkform = BookmarkForm(instance=bookmark)
+            try:
+                bookmark = bookmarks.filter(content_type=ContentType.objects.get_for_model(i).id).get(object_id=i.id)
+                bookmarkform = BookmarkForm(instance=bookmark)
 
-            # except:
-            #     bookmark = None
-            #     initial_bookmark_data = {}
-            #     initial_bookmark_data['content_type'] = ContentType.objects.get_for_model(i).id
-            #     initial_bookmark_data['object_id'] = i.id
-            #     initial_bookmark_data['creator'] = self.request.user
-            #     initial_bookmark_data['course_context'] = context['course']                
-            #     bookmarkform = BookmarkForm(initial=initial_bookmark_data)
+            except:
+                bookmark = None
+                initial_bookmark_data = {}
+                initial_bookmark_data['content_type'] = ContentType.objects.get_for_model(i).id
+                initial_bookmark_data['object_id'] = i.id
+                initial_bookmark_data['creator'] = self.request.user
+                initial_bookmark_data['course_context'] = context['course']                
+                bookmarkform = BookmarkForm(initial=initial_bookmark_data)
 
             a = {}
             a['act'] = i
             a['note'] = None
-            a['bookmarkform'] = None #bookmarkform
-            a['bookmark'] =  None #bookmark
+            a['bookmarkform'] = bookmarkform
+            a['bookmark'] =  bookmark
             a['date'] = None
 
             acts.append(a)

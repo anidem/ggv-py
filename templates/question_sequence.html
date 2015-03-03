@@ -56,7 +56,7 @@
                             <a href="{% url 'question_response' course.slug worksheet.id previous_position %}" class="btn">Previous</a>
                         {% endif %}
                         
-                        <input id="chk_response_btn" type="submit" value="Save?" class="btn btn-default">
+                        <input id="chk_response_btn" type="submit" value="Submit Answer" class="btn btn-default">
                         
                         {% if next_position %} 
                             <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Next</a> 

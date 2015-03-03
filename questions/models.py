@@ -123,8 +123,9 @@ class QuestionSet(AbstractActivity):
         index = 1
         for i in questions:
             if not i.user_response_object(user):
-                return index
+                return {'index': index, 'question': i}
             index = index + 1
+        return {'index': None, 'question': None}
 
     def get_user_responses(self, user, questions, course):
         report = []

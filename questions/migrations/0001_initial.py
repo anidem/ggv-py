@@ -2,9 +2,9 @@
 from __future__ import unicode_literals
 
 from django.db import models, migrations
+import model_utils.fields
 import django.utils.timezone
 from django.conf import settings
-import model_utils.fields
 
 
 class Migration(migrations.Migration):
@@ -61,17 +61,6 @@ class Migration(migrations.Migration):
             bases=(models.Model,),
         ),
         migrations.CreateModel(
-            name='QuestionSequenceItem',
-            fields=[
-                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
-                ('object_id', models.PositiveIntegerField()),
-                ('content_type', models.ForeignKey(to='contenttypes.ContentType')),
-            ],
-            options={
-            },
-            bases=(models.Model,),
-        ),
-        migrations.CreateModel(
             name='QuestionSet',
             fields=[
                 ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
@@ -97,6 +86,7 @@ class Migration(migrations.Migration):
                 ('display_image', models.FileField(null=True, upload_to=b'img', blank=True)),
                 ('input_size', models.CharField(default=b'1', max_length=64, choices=[(b'1', b'short answer: (1 row 50 cols)'), (b'5', b'sentence: (5 rows 50 cols'), (b'15', b'paragraph(s): (15 rows 50 cols)')])),
                 ('correct', models.TextField(blank=True)),
+                ('question_set', models.ForeignKey(related_name='text_questions', to='questions.QuestionSet')),
             ],
             options={
                 'ordering': ['display_order'],
@@ -104,10 +94,24 @@ class Migration(migrations.Migration):
             },
             bases=(models.Model,),
         ),
+        migrations.CreateModel(
+            name='UserWorksheetStatus',
+            fields=[
+                ('id', models.AutoField(verbose_name='ID', serialize=False, auto_created=True, primary_key=True)),
+                ('created', model_utils.fields.AutoCreatedField(default=django.utils.timezone.now, verbose_name='created', editable=False)),
+                ('modified', model_utils.fields.AutoLastModifiedField(default=django.utils.timezone.now, verbose_name='modified', editable=False)),
+                ('completed_worksheet', models.ForeignKey(to='questions.QuestionSet')),
+                ('user', models.ForeignKey(related_name='completed_worksheets', to=settings.AUTH_USER_MODEL)),
+            ],
+            options={
+                'abstract': False,
+            },
+            bases=(models.Model,),
+        ),
         migrations.AddField(
-            model_name='questionsequenceitem',
-            name='question_sequence',
-            field=models.ForeignKey(related_name='sequence_items', to='questions.QuestionSet'),
+            model_name='optionquestion',
+            name='question_set',
+            field=models.ForeignKey(related_name='option_questions', to='questions.QuestionSet'),
             preserve_default=True,
         ),
         migrations.AddField(

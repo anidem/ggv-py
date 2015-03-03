@@ -12,6 +12,7 @@ class Migration(migrations.Migration):
     dependencies = [
         migrations.swappable_dependency(settings.AUTH_USER_MODEL),
         ('contenttypes', '0001_initial'),
+        ('courses', '0001_initial'),
     ]
 
     operations = [
@@ -24,6 +25,7 @@ class Migration(migrations.Migration):
                 ('text', models.TextField()),
                 ('object_id', models.PositiveIntegerField()),
                 ('content_type', models.ForeignKey(related_name='content', to='contenttypes.ContentType')),
+                ('course_context', models.ForeignKey(blank=True, to='courses.Course', null=True)),
                 ('creator', models.ForeignKey(related_name='user', to=settings.AUTH_USER_MODEL)),
             ],
             options={

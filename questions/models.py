@@ -106,6 +106,13 @@ class QuestionSet(AbstractActivity):
         """
         return self.lesson in user_session['user_lessons']
 
+    def get_question_at_index(self, index):
+        try:
+            question = self.get_ordered_question_list()[index]
+            return {'index': index, 'question': question}
+        except:
+            return None
+
     def get_ordered_question_list(self):
         option_questions = self.option_questions.all()
         text_questions = self.text_questions.all()
@@ -129,12 +136,30 @@ class QuestionSet(AbstractActivity):
 
     def get_user_responses(self, user, questions, course):
         report = []
+        bookmarks = Bookmark.objects.filter(creator=user).filter(course_context=course)
         for i in questions:
-            bookmark = i.bookmarks.filter(creator=user).filter(course_context=course)
+            bookmark = bookmarks.filter(content_type=ContentType.objects.get_for_model(i).id).filter(object_id=i.id)
+            response = None
             bk = None
             if bookmark:
                 bk = bookmark[0]
-            response = (bk, i, i.user_response_object(user))
+            
+            respobj = i.user_response_object(user)
+            if respobj:
+                resp = respobj.response.replace('"', '')
+                
+
+                if ContentType.objects.get_for_model(i).name == 'option question':
+                    score = i.correct_answer() == int(resp)
+                    try:
+                        resp = Option.objects.get(pk=int(resp)).display_text
+                    except:
+                        resp = None
+                else:
+                    score = i.correct_answer() == resp
+
+                response = (bk, i, resp, score)# str(i.correct_answer())
+            
             report.append(response)
         return report
 
@@ -215,7 +240,7 @@ class TextQuestion(AbstractQuestion):
         Returns a QuestionResponse object related to user.
         """
         try:
-            return self.responses.all().get(user=user)
+            return self.responses.get(user=user)
         except:
             return None
 
@@ -270,6 +295,8 @@ class OptionQuestion(AbstractQuestion):
         Returns a QuestionResponse object related to user.
         """
         try:
+            # optresponse = self.responses.get(user=user).response.replace('"','')
+            # return Option.objects.get(pk=int(optresponse)).display_text
             return self.responses.get(user=user)
         except:
             return None
@@ -313,8 +340,6 @@ class QuestionResponse(TimeStampedModel):
             return json.loads(self.response)
         except:
             return None
-
-
 
     def save(self, *args, **kwargs):
         self.response = json.dumps(self.response)

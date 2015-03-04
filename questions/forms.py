@@ -32,12 +32,12 @@ class QuestionResponseForm(ModelForm):
             self.initial['response'] = response
 
             # Set user feedback info (correct or incorrect response)
-            if question.check_answer(response):
-                self.fields[
-                    'response'].help_text = 'success'
-            else:
-                self.fields[
-                    'response'].help_text = 'danger'
+            # if question.check_answer(response):
+            #     self.fields[
+            #         'response'].help_text = 'success'
+            # else:
+            #     self.fields[
+            #         'response'].help_text = 'danger'
 
         except:
             pass

@@ -52,7 +52,10 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
 
             acts.append(a)
 
+            
+
         context['acts'] = acts 
         context['sections'] = lesson.sections.all()
+        context['is_staff'] = self.request.user.is_staff
 
         return context

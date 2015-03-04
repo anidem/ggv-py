@@ -32,7 +32,6 @@ class SlideView(LoginRequiredMixin, AccessRequiredMixin, RedirectView):
 
     def get(self, request, *args, **kwargs):
         if self.lesson.id not in self.request.session['user_lessons']:
-            print 'NO ACCESS!'
             raise PermissionDenied  # return a forbidden response   
             return request 
      
@@ -40,7 +39,6 @@ class SlideView(LoginRequiredMixin, AccessRequiredMixin, RedirectView):
             os.path.join(settings.STACKS_ROOT, self.slide.asset),
             'html5.html'
         )
-        print abs_filename
 
         ActivityLog(user=self.request.user, action='access', message=self.slide.id).save()
         return sendfile(request, abs_filename)

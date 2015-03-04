@@ -72,6 +72,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         try:
             self.worksheet = get_object_or_404(QuestionSet, pk=self.kwargs['i'])
             self.lesson = self.worksheet.lesson
+            self.completion_status = self.request.user.completed_worksheets.filter(completed_worksheet=self.worksheet)
 
         except Exception as e:
             pass        
@@ -79,26 +80,34 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         return super(QuestionResponseView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        self.next_question = self.worksheet.get_next_question(self.request.user)
-        if not self.next_question:
-            completion_status = request.user.completed_worksheets.filter(completed_worksheet=self.worksheet)
-            if not completion_status:
-                UserWorksheetStatus(user=self.request.user, completed_worksheet=self.worksheet).save()
-                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))
-            
-            self.completion_status = True
         
-        elif str(self.next_question['index']) != self.kwargs['j']:
+        if self.completion_status.count():
+            self.next_question = self.worksheet.get_question_at_index(int(self.kwargs['j'])-1)
+            
+            if not self.next_question:
+                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))   
+ 
+            return super(QuestionResponseView, self).get(request, *args, **kwargs)
+        
+        self.next_question = self.worksheet.get_next_question(self.request.user)
+        if not self.next_question['question']:
+            if not self.completion_status:
+                UserWorksheetStatus(user=self.request.user, completed_worksheet=self.worksheet).save()
+                self.completion_status = True
+                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))   
+        
+        if str(self.next_question['index']) != self.kwargs['j']:
             return HttpResponseRedirect(reverse('question_response', args=(self.kwargs['crs_slug'], self.worksheet.id, self.next_question['index'])))
 
         return super(QuestionResponseView, self).get(request, *args, **kwargs)
 
     def get_initial(self):
         try:
-            self.initial['question'] = self.next_question['question']
             self.initial['user'] = self.request.user
+            self.initial['question'] = self.next_question['question']
         except:
-            self.template_name = '404.html'        
+            self.next_question = self.worksheet.get_next_question(self.request.user)
+            self.initial['question'] = self.next_question['question']
 
         return self.initial
 
@@ -246,6 +255,7 @@ class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(UserReportView, self).get_context_data(**kwargs)
         worksheet = self.get_object()
+        context['worksheet'] = worksheet
         context['report'] =  worksheet.get_user_responses(self.request.user, worksheet.get_ordered_question_list(), context['course'])       
 
         return context
@@ -257,6 +267,7 @@ class FullReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(FullReportView, self).get_context_data(**kwargs)
         worksheet = self.get_object()
+        context['worksheet'] = worksheet
         context['reports'] = worksheet.get_all_responses(context['course'])     
 
         return context

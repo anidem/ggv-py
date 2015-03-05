@@ -11,47 +11,45 @@
     <div class="row"> 
         <div class="col-md-1 text-left">Question number</div>
         <div class="col-md-5 text-center">Question </div>
-        <div class="col-md-3 text-center">Response</div>
-        <div class="col-md-3 text-center">Correct</div>
+        <div class="col-md-5 text-center">Response</div>
+        <div class="col-md-1 text-center">Correct</div>
     </div>
     {% for h,i,j,k in report %}
-    <div class="row">
-        <div class="col-md-1 text-left">
-            {{ forloop.counter }}. {% if h %} <i class="fa fa-flag fa-1x flagger bkset"></i>{% endif %}
-        </div>
-        <a href="{% url 'question_response' course.slug object.id forloop.counter %}">
-            <div class="col-md-5 text-left">{{ i.display_text | safe }} </div>
-            <div class="col-md-3 text-center">{{ j }}</div>
-            <div class="col-md-3 text-center">
-                {%if k %}
-                    <i class="btn btn-xs btn-success fa fa-check"></i>
-                {%else%}
-                    <i class="btn btn-xs btn-warning fa fa-check"></i>
-                {% endif %}
-            </div>
-        </a>
-    </div>
+        {% if j %}
+            <a href="{% url 'question_response' course.slug object.id forloop.counter %}" class="static">
+                <div class="row  hoverpad {% cycle 'row1' 'row2' %}">
+                    
+                    <div class="col-md-1"> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</div>
+                    <div class="col-md-5 text-left"> {{ i.display_text | safe }} </div>
+                    <div class="col-md-5 text-right">{{ j }}</div>
+                    <div class="col-md-1 text-left">
+                        {%if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
+                        {%else%}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
+                        {% endif %}
+                    </div>
+                </div>
+                </a>
+        {% endif %}
     {% endfor %}
 
     {% for report in reports %}
         <h3>{{ report.0 }}</h3>
         {% for h, i, j, k in report.1 %}
-            <div class="row">
-        <div class="col-md-1 text-left">
-            {{ forloop.counter }}. {% if h %} <i class="fa fa-flag fa-1x flagger bkset"></i>{% endif %}
-        </div>
-        <a href="{% url 'question_response' course.slug object.id forloop.counter %}">
-            <div class="col-md-5 text-left">{{ i.display_text | safe }} </div>
-            <div class="col-md-3 text-center">{{ j }}</div>
-            <div class="col-md-3 text-center">
-                {%if k %}
-                    <i class="btn btn-xs btn-success fa fa-check"></i>
-                {%else%}
-                    <i class="btn btn-xs btn-warning fa fa-check"></i>
-                {% endif %}
-            </div>
-        </a>
-            </div>
+            {% if j %}
+                <a href="{% url 'question_response' course.slug object.id forloop.counter %}" class="static">
+                <div class="row  hoverpad {% cycle 'row1' 'row2' %}">
+                    
+                    <div class="col-md-1"> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</div>
+                    <div class="col-md-5 text-left"> {{ i.display_text | safe }} </div>
+                    <div class="col-md-5 text-right">{{ j }}</div>
+                    <div class="col-md-1 text-left">
+                        {%if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
+                        {%else%}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
+                        {% endif %}
+                    </div>
+                </div>
+                </a>
+            {% endif %}
         {% endfor %}
     {% endfor %}
 {% endblock content %}

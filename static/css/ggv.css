@@ -138,6 +138,26 @@ form ul {
   color: orange
 }
 
+/* Row color cycle*/
+.row1 {
+  background-color: white;
+}
+
+.row2 {
+  background-color: #f8f8f8;
+}
+
+.hoverpad {
+    padding: 5px 0 5px 0;
+
+}
+
+.hoverpad:hover {
+  padding: 10px 0 10px 0;
+  font-size: 1.2em;
+  background-color: #e8e8e8;
+}
+
 
 
   /* No colors */

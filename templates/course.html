@@ -4,26 +4,21 @@
 {% load guardian_tags %}
 
 
-{% block page_crumb %} 
-  <li><a>{{ object }}</a></li>
-  <li>
-    <a href="#">
-
-    </a>
-  </li>
-
+{% block page_crumb %}
+    <li><a>{{ object }}</a></li>
+    <li><a href="#"></a></li>
 {% endblock page_crumb %}
 
-{% block local_nav %} 
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Courses <b class="caret"></b></a>
-  <ul class="dropdown-menu">
-    {% for i in courses %}<li><a href="{{ i.get_absolute_url }}">{{ i.title }}</a></li> {% endfor %}
-  </ul>
-</li>
+{% block local_nav %}
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Courses <b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        {% for i in courses %}<li><a href="{{ i.get_absolute_url }}">{{ i.title }}</a></li> {% endfor %}
+      </ul>
+    </li>
 {% endblock local_nav %}
 
-{% block page_header %} 
+{% block page_header %}
 <div class="col-md-12 center-block">
       <div class="btn-group btn-toggle">
         {% if eng_lessons and span_lessons %}
@@ -33,11 +28,11 @@
       </div>
     <script>
       $('.btn-toggle').click(function() {
-          $(this).find('.btn').toggleClass('active'); 
+          $(this).find('.btn').toggleClass('active');
           $(this).find('.btn').toggleClass('btn-success');
-          $(this).find('.btn').toggleClass('btn-default'); 
+          $(this).find('.btn').toggleClass('btn-default');
           $('.eng').toggleClass('collapse')
-          $('.span').toggleClass('collapse')            
+          $('.span').toggleClass('collapse')
       });
   </script>
       <h1></h1>
@@ -56,7 +51,7 @@
 	{% endfor %}
   </div>
 
-  <div class="row icon span {% if eng_lessons %}collapse{% endif %}"> 
+  <div class="row icon span {% if eng_lessons %}collapse{% endif %}">
   {% for i in span_lessons %}
     <div class="col-md-3 icon-{{ i.lesson.subject }}">
       <a class="static" href="{{ i.get_absolute_url }}">
@@ -71,7 +66,7 @@
 
 <h4>Instructors </h4>
 <div class="panel-group" id="accordion">
-{% for i in instructors %}      
+{% for i in instructors %}
     <div class="panel panel-info">
         <div class="panel-heading">
             <a data-toggle="collapse" data-parent="#accordion" href="#{{ i.username }}-data">

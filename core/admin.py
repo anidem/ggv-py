@@ -1,20 +1,19 @@
 # core/admin.py
-
 from django.db import models
 from django.contrib import admin
 from django import forms
 from django.utils.safestring import mark_safe
 from django.core.urlresolvers import reverse
-from django.contrib.contenttypes.admin import GenericInlineModelAdmin
 
 from guardian.admin import GuardedModelAdmin
 
-from courses.models import Course, CourseLesson, CoursePermission
+from courses.models import Course, CourseLesson
 from lessons.models import Lesson, Section
 from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option
 from slidestacks.models import SlideStack
 from notes.models import UserNote
 from core.models import ActivityLog
+
 
 class ExtraMedia:
     js = [
@@ -74,8 +73,10 @@ class QuestionOptionInlineAdmin(admin.TabularInline):
 class WorksheetInlineAdmin(admin.TabularInline):
     model = QuestionSet
 
+
 class SlideStackInlineAdmin(admin.TabularInline):
     model = SlideStack
+
 
 class SlideStackAdmin(admin.ModelAdmin):
     model = SlideStack
@@ -92,9 +93,11 @@ class QuestionSetAdmin(admin.ModelAdmin):
 #         QuestionSetInlineAdmin, QuestionSetInlineShortAnswerAdmin,
 #     ]
 
+
 class OptionQuestionAdmin(admin.ModelAdmin):
     list_display = ('display_text', 'display_order')
-    inlines = [ QuestionOptionInlineAdmin ]
+    inlines = [QuestionOptionInlineAdmin]
+
 
 class TextQuestionAdmin(admin.ModelAdmin):
     list_display = ('display_text', 'correct', 'display_order')
@@ -104,6 +107,7 @@ class CourseAdmin(GuardedModelAdmin):
     model = Course
     list_display = ('title', 'slug', 'access_code', 'lesson_list')
 
+
 class LessonAdmin(GuardedModelAdmin):
     list_display = ('title', 'subject', 'icon_class', 'language')
     list_editable = ('subject', 'icon_class', 'language')
@@ -111,12 +115,12 @@ class LessonAdmin(GuardedModelAdmin):
         WorksheetInlineAdmin, SlideStackInlineAdmin,
     ]
 
+
 class SectionAdmin(GuardedModelAdmin):
     list_display = ('lesson', 'title', 'display_order')
 
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
 admin.site.register(CourseLesson)
-admin.site.register(CoursePermission)
 admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)
 admin.site.register(Section, SectionAdmin, Media=ExtraMedia)
 admin.site.register(SlideStack, SlideStackAdmin)
@@ -128,3 +132,5 @@ admin.site.register(ActivityLog)
 # admin.site.register(ShortAnswerQuestion, ShortAnswerQuestionAdmin, Media=ExtraMedia)
 # admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin, Media=ExtraMedia)
 admin.site.register(UserNote)
+
+

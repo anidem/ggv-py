@@ -1,0 +1,14 @@
+<!-- slidestack_view.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+    <h1>{{ object|safe }}</h1>
+    {% if edit_url %}<p><a href="{{ edit_url }}"> edit </a> </p>{% endif %}
+    
+    <p> Lesson: {{  object.lesson }} </p>
+    <p> Asset: {{  object.asset }} </p>
+
+
+{% endblock content %}

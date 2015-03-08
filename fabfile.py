@@ -62,11 +62,12 @@ def readfiles(dirpath):
             local(
                 'csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","IMAGE","SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","option 4" %s | csvjson -i 4 > ../jsondir/%s' % (f, j))
 
+
 # Creates a slugified copy of files in the directory specified by path. IS NOT recursive.
 def slug_names(path='.'):
-    pdir = os.path.abspath(path) 
-    if not confirm('Preparing to slug files in %s. Continue?' % pdir):
-        return
+    pdir = os.path.abspath(path)
+    # if not confirm('Preparing to slug files in %s. Continue?' % pdir):
+    #     return
     # files = [fstr for fstr in os.listdir(pdir) if fstr != '.DS_Store']
     files = os.listdir(pdir)
     for f in files:
@@ -79,7 +80,7 @@ def slug_names(path='.'):
         # f2 = f2.replace('-web', '')
         # f2 = os.path.join(pdir, f2)
         # shutil.copytree(f1, f2)
-        
+
         # print f, f2
         # local('cp %s %s'%(unicode(f), f2))
         if f != '.DS_Store':
@@ -90,14 +91,33 @@ def slug_names(path='.'):
 
     # files = [fstr for fstr in os.listdir(pdir) if fstr != '.DS_Store']
 
+def listnames(path='.'):
+    pdir = os.path.abspath(path)
+    files = os.listdir(pdir)
+    for f in files:
+        print f
+
+def readir():
+    dirs = ['1-images-spanish-math', '2-images-spanish-language','3-images-spanish-social','4-images-spanish-science']
+
+    for i in dirs:
+        dir = '/Users/rmedina/Desktop/imgslugspan/'+i
+        f = [j for j in os.listdir(dir) if j != '.DS_Store' and j != 'Icon\r']
+        for x in f:
+            sub = dir+'/'+x
+            listnames(path=sub)
+            # print 'slugging: ', sub
+            # slug_names(path=sub)
+
+
 def slug_dir_names(path='.'):
-    pdir = os.path.abspath(path) 
+    pdir = os.path.abspath(path)
     if not confirm('Preparing to slug directories in %s. Continue?' % pdir):
         return
     files = os.listdir(pdir)
     for f in files:
         j = slugify(unicode(f.replace('(Web)',''), errors='replace'))
-        
+
         if f != '.DS_Store':
             os.rename(
                 os.path.join(pdir, f),

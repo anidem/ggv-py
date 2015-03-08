@@ -1,12 +1,8 @@
 # core/mixins.py
-from django.shortcuts import render, redirect
 from django.core.exceptions import PermissionDenied
-from django.http import JsonResponse
 
-from django.contrib import messages
-from guardian.shortcuts import ObjectPermissionChecker
+from courses.models import Course
 
-from courses.models import Course, CoursePermission
 
 class AccessRequiredMixin(object):
 
@@ -19,17 +15,21 @@ class AccessRequiredMixin(object):
             course_access = True
             return super(AccessRequiredMixin, self).dispatch(*args, **kwargs)
 
-        course_access = self.kwargs['crs_slug'] in self.request.session['user_courses']
-        
-        if not course_access:
-            raise PermissionDenied  # early exit -- user accessing non assigned course      
-        if self.access_object == 'lesson':
-            course_access = self.get_object().id in self.request.session['user_lessons']
-        elif self.access_object == 'activity':
-            course_access = self.lesson.id in self.request.session['user_lessons']
+        course_access = self.kwargs[
+            'crs_slug'] in self.request.session['user_courses']
 
         if not course_access:
-            raise PermissionDenied         
+            # early exit -- user accessing non assigned course
+            raise PermissionDenied
+        if self.access_object == 'lesson':
+            course_access = self.get_object().id in self.request.session[
+                'user_lessons']
+        elif self.access_object == 'activity':
+            course_access = self.lesson.id in self.request.session[
+                'user_lessons']
+
+        if not course_access:
+            raise PermissionDenied
 
         return super(AccessRequiredMixin, self).dispatch(*args, **kwargs)
 

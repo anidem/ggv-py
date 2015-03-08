@@ -2,7 +2,6 @@ from django.db import models
 from itertools import chain
 from operator import attrgetter
 from django.core.urlresolvers import reverse
-from django.contrib.auth.models import User
 
 
 class Lesson(models.Model):
@@ -16,8 +15,10 @@ class Lesson(models.Model):
 
     title = models.CharField(max_length=256, default='Subject')
     subject = models.CharField(max_length=32, choices=LESSON_SUBJECTS)
-    language = models.CharField(max_length=32, default='eng', choices=(('eng', 'English'), ('span', 'Spanish')))
-    icon_class = models.CharField(max_length=32, default='university', blank=True)
+    language = models.CharField(
+        max_length=32, default='eng', choices=(('eng', 'English'), ('span', 'Spanish')))
+    icon_class = models.CharField(
+        max_length=32, default='university', blank=True)
 
     def check_membership(self, user_session):
         """
@@ -35,10 +36,10 @@ class Lesson(models.Model):
         activity_set = sorted(
             activity_set, key=attrgetter('section.display_order', 'display_order'))
         orphans = list(chain(questions.filter(section__isnull=True),
-                       slidestacks.filter(section__isnull=True)))
+                             slidestacks.filter(section__isnull=True)))
         activity_set += sorted(orphans, key=attrgetter('display_order'))
 
-        return activity_set        
+        return activity_set
 
     def __unicode__(self):
         return self.title

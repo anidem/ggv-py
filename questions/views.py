@@ -1,32 +1,23 @@
 # questions/views.py
-import os, json, sys
+import os
 from collections import OrderedDict
 
-from django.views.generic import DetailView, UpdateView, TemplateView, CreateView, FormView, RedirectView
-from django.forms.formsets import formset_factory
-from django.forms.models import modelform_factory
-from django import forms
-from django.shortcuts import render_to_response, render, redirect, get_object_or_404
-from django.http import HttpResponseRedirect, HttpResponse
+from django.views.generic import DetailView, UpdateView, CreateView, RedirectView
+from django.shortcuts import get_object_or_404
+from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.contenttypes.models import ContentType
-from django.contrib import messages
 from django.conf import settings
-from django.utils.text import slugify
 
 from braces.views import CsrfExemptMixin, LoginRequiredMixin, StaffuserRequiredMixin
-from filebrowser.sites import site
 from filebrowser.base import FileListing
 from sendfile import sendfile
 
-from core.models import Bookmark
 from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import PresetBookmarkForm
-from notes.models import UserNote
 from notes.forms import UserNoteForm
-from lessons.models import Lesson
 
-from .models import TextQuestion, OptionQuestion, QuestionResponse, QuestionSet, Option, UserWorksheetStatus
+from .models import TextQuestion, OptionQuestion, QuestionResponse, QuestionSet, UserWorksheetStatus
 from .forms import QuestionResponseForm, OptionQuestionUpdateForm, TextQuestionUpdateForm, OptionFormset
 
 def filter_filelisting_images(item):
@@ -52,7 +43,7 @@ class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, DetailView):
 
 class WorksheetUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, UpdateView):
     model = QuestionSet
-    template_name = 'question_worksheet_update.html'
+    template_name = 'activity_update.html'
 
     def get_success_url(self):
         return reverse_lazy('worksheet', args=[self.get_object().id])

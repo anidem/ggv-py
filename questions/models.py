@@ -1,5 +1,4 @@
 from django.db import models
-from django.db.models import Count
 from itertools import chain
 from operator import attrgetter
 from django.core.urlresolvers import reverse
@@ -7,90 +6,13 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django import forms
-from operator import itemgetter
 import json
 
 from model_utils.models import TimeStampedModel
-from filebrowser.fields import FileBrowseField
 
 from lessons.models import Lesson, AbstractActivity
 from notes.models import UserNote
 from core.models import Bookmark
-
-class QuestionManager(models.Manager):
-
-    def worksheet_report(self, **kwargs):
-        report = []
-
-        try:
-            user = kwargs.pop('user')
-            questions = self.questions(id=kwargs.pop('worksheet').id)
-        except:
-            return report
-
-        for q in questions:
-            obj = {}
-            obj['question'] = q
-            try:
-                obj['response'] = q.responses.get(user=user)
-                obj['correct']  = (obj['response'].response in q.get_correct_answer())
-            except:
-                obj['response'] = None
-                obj['correct'] = None                
-
-            report.append(obj)
-        
-        return report
-
-    def user_worksheet(self, **kwargs):
-        user_id = kwargs.pop('user')
-        worksheet_id = kwargs.pop('id')
-        user = User.objects.get(pk=user_id)
-        sheet = QuestionSet.objects.get(pk=worksheet_id)
-
-        questions = self.questions(id=worksheet_id)
-        # response object is {QUESTION} {RESPONSE} {OPTION_LIST [OPTIONS]}
-
-        question_response_list = []
-        for q in questions:
-            response_obj = dict()
-            # Record question
-            response_obj['question_obj'] = q
-            response_obj['question_id'] = q.id
-            response_obj['question_text'] = q.text
-            response_obj[
-                'question_type'] = q.get_question_content_type().id
-
-            # Record previous response if it exists
-            response_obj['response'] = None
-            response_obj['correct'] = False
-
-            try:
-                response_obj['response'] = q.responses.get(user=user)
-                if response_obj['response'].response in q.correct_answer:
-                    response_obj['correct'] = True
-                    
-            except:
-                pass
-
-            # Record question options if they exist
-            option_obj_list = []
-            for opt in q.get_options():
-                option_obj = []
-                option_obj.append(opt.text)
-                option_obj.append(opt.text)
-                if response_obj['response']:
-                    if opt.text == response_obj['response'].response:
-                        # option_obj['response'] = response_obj['response']
-                        response_obj['correct'] = opt.is_correct
-                    
-                option_obj_list.append(option_obj)
-            
-            response_obj['options'] = option_obj_list
-
-            question_response_list.append(response_obj)
-        return question_response_list
-
 
 class QuestionSet(AbstractActivity):
     lesson = models.ForeignKey(
@@ -136,18 +58,19 @@ class QuestionSet(AbstractActivity):
 
     def get_user_responses(self, user, questions, course):
         report = []
-        bookmarks = Bookmark.objects.filter(creator=user).filter(course_context=course)
+        bookmarks = Bookmark.objects.filter(
+            creator=user).filter(course_context=course)
         for i in questions:
-            bookmark = bookmarks.filter(content_type=ContentType.objects.get_for_model(i).id).filter(object_id=i.id)
+            bookmark = bookmarks.filter(
+                content_type=ContentType.objects.get_for_model(i).id).filter(object_id=i.id)
             response = None
             bk = None
             if bookmark:
                 bk = bookmark[0]
-            
+
             respobj = i.user_response_object(user)
             if respobj:
                 resp = respobj.response.replace('"', '')
-                
 
                 if ContentType.objects.get_for_model(i).name == 'option question':
                     score = i.correct_answer() == int(resp)
@@ -158,8 +81,8 @@ class QuestionSet(AbstractActivity):
                 else:
                     score = i.correct_answer() == resp
 
-                response = (bk, i, resp, score)# str(i.correct_answer())
-            
+                response = (bk, i, resp, score)  # str(i.correct_answer())
+
             report.append(response)
         return report
 
@@ -178,6 +101,7 @@ class QuestionSet(AbstractActivity):
     def __unicode__(self):
         return self.title
 
+
 class AbstractQuestion(models.Model):
 
     """
@@ -187,12 +111,12 @@ class AbstractQuestion(models.Model):
     display_order = models.IntegerField(default=0)
     display_image = models.FileField(null=True, blank=True, upload_to='img')
 
-
     def get_sequence_url(self, course):
         try:
-            position = self.question_set.get_ordered_question_list().index(self)
-            return reverse('question_response', args=[course.slug, self.question_set.id, position+1])      
-        except Exception as inst:
+            position = self.question_set.get_ordered_question_list().index(
+                self)
+            return reverse('question_response', args=[course.slug, self.question_set.id, position + 1])
+        except Exception:
             return None
 
     def __unicode__(self):
@@ -208,7 +132,8 @@ class TextQuestion(AbstractQuestion):
     """
     A question type that accepts text input.
     """
-    question_set = models.ForeignKey(QuestionSet, related_name='text_questions')
+    question_set = models.ForeignKey(
+        QuestionSet, related_name='text_questions')
     input_size = models.CharField(max_length=64, choices=[
         ('1', 'short answer: (1 row 50 cols)'),
         ('5', 'sentence: (5 rows 50 cols'),
@@ -217,6 +142,9 @@ class TextQuestion(AbstractQuestion):
     responses = GenericRelation('QuestionResponse')
     notes = GenericRelation(UserNote)
     bookmarks = GenericRelation(Bookmark)
+
+    def get_question_type(self):
+        return 'text'
 
     def get_input_widget(self):
         widget_attrs = {
@@ -235,7 +163,7 @@ class TextQuestion(AbstractQuestion):
     def check_answer(self, json_str):
         return json_str == self.correct
 
-    def user_response_object(self, user):        
+    def user_response_object(self, user):
         """
         Returns a QuestionResponse object related to user.
         """
@@ -251,7 +179,6 @@ class TextQuestion(AbstractQuestion):
         return reverse('text_question', args=[self.id])
 
 
-
 class OptionQuestion(AbstractQuestion):
 
     """
@@ -259,11 +186,15 @@ class OptionQuestion(AbstractQuestion):
     """
     input_select = models.CharField(max_length=64, choices=[(
         'radio', 'single responses'), ('checkbox', 'multiple responses')], default='radio')
-    
-    question_set = models.ForeignKey(QuestionSet, related_name='option_questions')
+
+    question_set = models.ForeignKey(
+        QuestionSet, related_name='option_questions')
     responses = GenericRelation('QuestionResponse')
     notes = GenericRelation(UserNote)
     bookmarks = GenericRelation(Bookmark)
+
+    def get_question_type(self):
+        return 'option'
 
     def get_input_widget(self):
         if self.input_select == 'checkbox':
@@ -307,6 +238,7 @@ class OptionQuestion(AbstractQuestion):
     def get_absolute_url(self):
         return reverse('option_question', args=[self.id])
 
+
 class Option(models.Model):
 
     """
@@ -325,9 +257,10 @@ class Option(models.Model):
 
 
 class QuestionResponse(TimeStampedModel):
+
     """
     Generic question response container.
-    Designed to reference objects derived from AbstractQuestion (e.g., OptionQuestion, TextQuestion) 
+    Designed to reference objects derived from AbstractQuestion (e.g., OptionQuestion, TextQuestion)
     """
     user = models.ForeignKey(User, related_name='question_responses')
     response = models.TextField()
@@ -349,9 +282,7 @@ class QuestionResponse(TimeStampedModel):
     def get_absolute_url(self):
         return reverse('home')
 
+
 class UserWorksheetStatus(TimeStampedModel):
     user = models.ForeignKey(User, related_name='completed_worksheets')
     completed_worksheet = models.ForeignKey(QuestionSet)
-
-
-

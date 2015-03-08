@@ -1,14 +1,12 @@
 # core/views.py
-from django.core.urlresolvers import reverse
-from django.views.generic import View, TemplateView, CreateView, ListView, UpdateView
+from django.views.generic import TemplateView, CreateView, UpdateView
 
 from braces.views import CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, LoginRequiredMixin
-from guardian.shortcuts import get_objects_for_user
 
 from courses.models import Course
 
 from .models import Bookmark
-from .forms import BookmarkForm, PresetBookmarkForm
+from .forms import BookmarkForm
 from .mixins import CourseContextMixin
 
 
@@ -21,11 +19,14 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        context['courses'] = [Course.objects.get(slug=i) for i in self.request.session['user_courses']]
+        context['courses'] = [
+            Course.objects.get(slug=i) for i in self.request.session['user_courses']]
         return context
+
 
 class ActivityLogView(TemplateView):
     pass
+
 
 class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, CreateView):
     model = Bookmark
@@ -42,6 +43,7 @@ class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             data = bookmarkform.errors
             return self.render_json_response(data)
 
+
 class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, UpdateView):
     model = Bookmark
 
@@ -51,7 +53,7 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             updated_bk = self.get_object()
             updated_bk.mark_type = bookmarkform.cleaned_data['mark_type']
             updated_bk.save()
-            
+
             data = {}
             data['mark_type'] = updated_bk.mark_type
             data['bookmark_id'] = updated_bk.id
@@ -74,8 +76,3 @@ class BookmarkAjaxDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
         else:
             data = bookmarkform.errors
             return self.render_json_response(data)
-
-
-
-
-

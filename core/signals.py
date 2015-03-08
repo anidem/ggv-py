@@ -1,12 +1,6 @@
 # core/signals.py
-from django.contrib.auth import logout
 from django.contrib.auth.signals import user_logged_in, user_logged_out
-from django.db.models.signals import post_save, post_delete
-from django.contrib.sessions.models import Session
 from django.dispatch import receiver
-from datetime import datetime
-from django.utils import timezone
-
 
 from guardian.shortcuts import get_objects_for_user
 
@@ -26,7 +20,8 @@ def init_session(sender, **kwargs):
         user = kwargs['user']
         rem_addr = request.META['REMOTE_ADDR']
 
-        course_permissions = get_objects_for_user(user, ['access', 'instructor', 'manage'], Course, any_perm=True)
+        course_permissions = get_objects_for_user(
+            user, ['access', 'instructor', 'manage'], Course, any_perm=True)
         lesson_permissions = set()
         for i in course_permissions:
             for j in i.lesson_list():

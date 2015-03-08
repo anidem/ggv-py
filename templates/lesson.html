@@ -46,6 +46,7 @@
                         {% if i.act.activity_type = 'slidestack' %}
                             <i class="fa fa-desktop fa-2x"></i>
                             {{ forloop.counter }}.<a class="media-heading" href="{% url 'slideview' course.slug i.act.id %}">{{ i.act.title }}</a>
+                            {% if is_staff %}<a href="{% url 'slide_update' i.act.id %}" class="btn btn-xs btn-success">edit</a>{% endif %}
                         {% else %}
                             <i class="fa fa-pencil-square-o fa-2x"></i>
                             {{ forloop.counter }}.<a class="media-heading" href="{% url 'question_response' course.slug i.act.id 1 %}">{{ i.act.title }}</a> 

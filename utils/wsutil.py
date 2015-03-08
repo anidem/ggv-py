@@ -33,13 +33,13 @@ def csvutil(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="somefilename.csv"'
     writer = csv.writer(response)
-    writer.writerow(['question id', 'lesson', 'sheet', 'order', 'text', 'image'])
+    writer.writerow(['question id', 'lesson', 'sheet', 'order', 'type', 'image'])
     worksheets = QuestionSet.objects.all()
     for sheet in worksheets:
         for q in sheet.get_ordered_question_list():
             if q.display_image != '':
-                writer.writerow([q.id, sheet.lesson, sheet, q.display_order, q.display_order, q.display_image])
-        
+                writer.writerow([q.id, sheet.lesson, sheet, q.display_order, q.get_question_type(), q.display_image])
+
     return response
 
 def imgmapset():
@@ -71,7 +71,7 @@ def imgmap():
         json_file = open('%s/%s' % (json_dir, f))
         json_data = json_file.read()
         data = json.loads(json_data) # deserialises it
-        
+
         WID = None
         ws = None
         questions = None
@@ -82,11 +82,11 @@ def imgmap():
                 # print 'READING DB worksheet: ', ws.id
 
                 questions = ws.get_ordered_question_list()
-            
+
             try:
                 display_order = i.get('QUESTION DISPLAY ORDER')
                 display_image = slugify(i.get('IMAGE'))
-           
+
                 if display_image:
                     for q in questions:
                         if str(q.display_order) == display_order:
@@ -118,7 +118,7 @@ def slug_files(path):#filter(os.path.isdir, os.listdir(os.getcwd()))
         os.rename(
             os.path.join(input_dir, i),
             os.path.join(
-                input_dir, 
+                input_dir,
                 slugify(
                     unicode(i.replace('(Web)',''), errors='replace')
                 )
@@ -137,7 +137,7 @@ def slug_curr_dir():#filter(os.path.isdir, os.listdir(os.getcwd()))
         os.rename(
             os.path.join(input_dir, i),
             os.path.join(
-                input_dir, 
+                input_dir,
                 slugify(
                     unicode(i.replace('(Web)',''), errors='replace')
                 )
@@ -158,7 +158,7 @@ def import_json_questions(json_dir=None):
         json_file = open('%s/%s' % (json_dir, f))
         json_data = json_file.read()
         data = json.loads(json_data) # deserialises it
-        
+
         WID = None
         worksheet_obj = None
 
@@ -166,7 +166,7 @@ def import_json_questions(json_dir=None):
         if data[0].get('WID') != '':
                 WID = data[0].get('WID')
                 print 'processing worksheet id: ', WID
-                try:                    
+                try:
                     worksheet_obj = QuestionSet.objects.get(pk=idmap[WID])
                 except:
                     lesson = Lesson.objects.get(pk=9)
@@ -182,7 +182,7 @@ def import_json_questions(json_dir=None):
                     imgpath = 'img/' + slugify(i.get('IMAGE')) + '.png'
                 else:
                     imgpath = ''
-                    
+
                 if i.get('SELECT TYPE') == 'text':
                     question = TextQuestion()
                     question.display_text = i.get('QUESTION')
@@ -229,12 +229,12 @@ def import_json_questions(json_dir=None):
                 print '%s (%s)' % (e.message, type(e))
                 # print e.message
                 continue
-            
+
 
 
             # seqitem = QuestionSequenceItem(content_object=question, question_sequence=seq)
             # seqitem.save()
-            
+
             # print question
             print 'updated %s with %s' % (worksheet_obj, question)
         json_file.close()

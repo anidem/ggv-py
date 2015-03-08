@@ -23,8 +23,8 @@
                     <div class="col-md-5 text-left"> {{ i.display_text | safe }} </div>
                     <div class="col-md-5 text-right">{{ j }}</div>
                     <div class="col-md-1 text-left">
-                        {%if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
-                        {%else%}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
+                        {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
+                        {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
                         {% endif %}
                     </div>
                 </div>
@@ -36,6 +36,7 @@
         <h3>{{ report.0 }}</h3>
         {% for h, i, j, k in report.1 %}
             {% if j %}
+            
                 <a href="{% url 'question_response' course.slug object.id forloop.counter %}" class="static">
                 <div class="row  hoverpad {% cycle 'row1' 'row2' %}">
                     
@@ -43,8 +44,8 @@
                     <div class="col-md-5 text-left"> {{ i.display_text | safe }} </div>
                     <div class="col-md-5 text-right">{{ j }}</div>
                     <div class="col-md-1 text-left">
-                        {%if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
-                        {%else%}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
+                        {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
+                        {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
                         {% endif %}
                     </div>
                 </div>
@@ -53,3 +54,4 @@
         {% endfor %}
     {% endfor %}
 {% endblock content %}
+

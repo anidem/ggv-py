@@ -7,7 +7,7 @@
     <li><a href="{{ course.get_absolute_url }}">{{ course }} <i class="fa fa-caret-right"></i></a></li>
     <li><a href="{% url 'lesson' course.slug worksheet.lesson.id %}">{{ worksheet.lesson }} <i class="fa fa-caret-right"></i></a></li>
     <li><a>{{ worksheet }}</a></li>
-    <li>                
+    <li>
         <a class="dropdown" id="dLabel" data-target="#" href="#" data-toggle="dropdown" aria-haspopup="true" role="" aria-expanded="false">
         Progress
         <span class="caret"></span>
@@ -24,12 +24,12 @@
                         <span class="badge">{{ forloop.counter }}</span>
                     {% else %}
                         <span>{{ forloop.counter }}</span>
-                    {% endif %}                                                  
+                    {% endif %}
                 </a>
 
             </div>
-        {% endfor %}                  
-        </div>     
+        {% endfor %}
+        </div>
     </li>
 {% endblock page_crumb %}
 
@@ -43,7 +43,7 @@
                 <div class="lead">
                     {{ question_position }}/{{ question_list|length }}.
                     {% if edit_url %}<a href="{{ edit_url }}" class="btn btn-xs btn-success">edit</a>{% endif %}
-                    
+
                     <i class="fa fa-flag flagger {% if bookmark %}bkset{% endif %}" data-target="{{ bookmark.id }}" data-form="#flag_form"></i>
 
                     <!-- <button class="btn btn-xs btn-primary" data-toggle="popover" data-placement="right" data-content="help">progress</button> -->
@@ -52,46 +52,46 @@
                 <div class="lead">{{ question | safe }} </div>
                 <form id="response_form" action="" method="post" >{% csrf_token %}
                     {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
-                    {{ form.response.errors }}                    
-                    <p>{{ form.response }}</p>            
+                    {{ form.response.errors }}
+                    <p>{{ form.response }}</p>
                     <p>
-                        {%if user_completed and previous_position %} 
+                        {%if user_completed and previous_position %}
                             <a href="{% url 'question_response' course.slug worksheet.id previous_position %}" class="btn">Previous</a>
                         {% endif %}
-                        
+
                         <input id="chk_response_btn" type="submit" value="Submit Answer" class="btn btn-default">
-                        
-                        {% if user_completed and next_position %} 
-                            <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Next</a> 
+
+                        {% if user_completed and next_position %}
+                            <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Next</a>
                         {% endif %}
                     </p>
                 </form>
             </div>
             {%if question.display_image %}
             <div class="col-md-8">
-                
-                    <div><img width="100%" src="{{ question.display_image.url }}"></div>
-                
+
+                    <div><img src="{{ question.display_image.url }}"></div>
+
             </div>
             {% endif %}
 
         </div>
         <div class="row">
             <div class="col-md-12">
-                <legend>Messages 
+                <legend>Messages
                 {% if instructor %}<a data-toggle="collapse" href="#add_note_panel" aria-controls="add_note_panel"><small>+</small></a>{% endif %}
                 </legend>
-                
-                {% if instructor %}                
+
+                {% if instructor %}
                     <div id="add_note_panel" class="panel-collapse collapse">
                             <form id="noteform" action="" method="post">{% csrf_token %}
                                 {{ noteform|crispy }}
                                 <p><input id="note_submit_btn" type="submit" class="btn btn-default" value="Add Note"/></p>
-                            </form>        
+                            </form>
                     </div>
                 {% endif %}
 
-                <dl id="notes">      
+                <dl id="notes">
                 {% for i in note_list  %}
                     <dt><small>{{ i.creator }}</small><small style="float: right">{{ i.modified|date:"M j Y" }}</small></dt>
                     <dd class="well">{{ i.text }}</dd>
@@ -99,10 +99,10 @@
                 </dl>
 
 
-            </div>      
-      
+            </div>
+
         </div>
-    </div> 
+    </div>
 {% endblock content %}
 
 {% block local_js %}

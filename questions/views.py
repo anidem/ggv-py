@@ -65,28 +65,28 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             self.lesson = self.worksheet.lesson
             self.completion_status = self.request.user.completed_worksheets.filter(completed_worksheet=self.worksheet)
 
-        except Exception as e:
-            pass        
-        
+        except Exception:
+            pass
+
         return super(QuestionResponseView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        
-        if self.completion_status.count():
+
+        if self.request.user.is_staff or self.completion_status.count():
             self.next_question = self.worksheet.get_question_at_index(int(self.kwargs['j'])-1)
-            
+
             if not self.next_question:
-                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))   
- 
+                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))
+
             return super(QuestionResponseView, self).get(request, *args, **kwargs)
-        
+
         self.next_question = self.worksheet.get_next_question(self.request.user)
         if not self.next_question['question']:
             if not self.completion_status:
                 UserWorksheetStatus(user=self.request.user, completed_worksheet=self.worksheet).save()
                 self.completion_status = True
-                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))   
-        
+                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))
+
         if str(self.next_question['index']) != self.kwargs['j']:
             return HttpResponseRedirect(reverse('question_response', args=(self.kwargs['crs_slug'], self.worksheet.id, self.next_question['index'])))
 
@@ -110,12 +110,12 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
     def get_context_data(self, **kwargs):
         context = super(QuestionResponseView, self).get_context_data(**kwargs)
         current_question = self.initial['question']
-        
+
         if not current_question:
             self.template_name = '404.html'
             return context
 
-        
+
         # Tally -- move this to object manager...
         tally = OrderedDict()
         for i in self.worksheet.get_ordered_question_list():
@@ -155,23 +155,23 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             initial_bookmark_data['object_id'] = current_question.id
             initial_bookmark_data['creator'] = self.request.user
             initial_bookmark_data['course_context'] = context['course']
-            
+
             context['bookmarkform'] = PresetBookmarkForm(initial=initial_bookmark_data)
-            context['bookmark'] = bookmark        
-        
+            context['bookmark'] = bookmark
+
         context['noteform'] = UserNoteForm(initial=initial_note_data)
         context['note_list'] = current_question.notes.all().filter(course_context=context['course']).order_by('-created')
         context['question'] = current_question
         context['question_position'] = question_index
-        if question_index-1 > 0: 
+        if question_index-1 > 0:
             context['previous_position'] = question_index-1
-        if question_index+1 <= len(list(tally)): 
+        if question_index+1 <= len(list(tally)):
             context['next_position'] = question_index+1
         context['user_completed'] = self.completion_status
         context['question_list'] = tally
         context['worksheet'] = self.worksheet
         context['instructor'] = self.request.user.has_perm('courses.edit_course')
-        
+
         return context
 
 
@@ -197,7 +197,7 @@ class TextQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateView)
 class OptionQuestionView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = OptionQuestion
     template_name = 'question_view.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super(OptionQuestionView, self).get_context_data(**kwargs)
         context['options'] = self.get_object().options_list()
@@ -217,7 +217,7 @@ class OptionQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateVie
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form(self.get_form_class())
-        optionsform = OptionFormset(self.request.POST, instance=self.get_object())   
+        optionsform = OptionFormset(self.request.POST, instance=self.get_object())
         if form.is_valid() and optionsform.is_valid():
             return self.form_valid(form, optionsform)
         else:
@@ -234,7 +234,7 @@ class OptionQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateVie
     def get_context_data(self, **kwargs):
         context = super(OptionQuestionUpdateView, self).get_context_data(**kwargs)
         context['optionsform'] =  OptionFormset(instance=self.get_object())
-        
+
         context['filelisting'] = FileListing('img', filter_func=filter_filelisting_images, sorting_by='date', sorting_order='desc').files_listing_filtered()
 
         return context
@@ -242,24 +242,24 @@ class OptionQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateVie
 class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = QuestionSet
     template_name = 'question_worksheet_report.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super(UserReportView, self).get_context_data(**kwargs)
         worksheet = self.get_object()
         context['worksheet'] = worksheet
-        context['report'] =  worksheet.get_user_responses(self.request.user, worksheet.get_ordered_question_list(), context['course'])       
+        context['report'] =  worksheet.get_user_responses(self.request.user, worksheet.get_ordered_question_list(), context['course'])
 
         return context
 
 class FullReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = QuestionSet
     template_name = 'question_worksheet_report.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super(FullReportView, self).get_context_data(**kwargs)
         worksheet = self.get_object()
         context['worksheet'] = worksheet
-        context['reports'] = worksheet.get_all_responses(context['course'])     
+        context['reports'] = worksheet.get_all_responses(context['course'])
 
         return context
 

@@ -52,7 +52,10 @@
                 <div class="lead">{{ question | safe }} </div>
                 <form id="response_form" action="" method="post" >{% csrf_token %}
                     {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
-                    {{ form.response.errors }}
+
+                    <p class="label label-danger">{% for e in form.response.errors  %}An answer is required.{% endfor %}</p>
+                    <p></p>
+
                     <p>{{ form.response }}</p>
                     <p>
                         {%if user_completed and previous_position %}
@@ -61,7 +64,7 @@
 
                         <input id="chk_response_btn" type="submit" value="Submit Answer" class="btn btn-default">
 
-                        {% if user_completed and next_position %}
+                        {% if user_completed and next_position or user.is_staff%}
                             <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Next</a>
                         {% endif %}
                     </p>
@@ -70,7 +73,7 @@
             {%if question.display_image %}
             <div class="col-md-8">
 
-                    <div><img src="{{ question.display_image.url }}"></div>
+                    <div><img class="fit" src="{{ question.display_image.url }}"></div>
 
             </div>
             {% endif %}
@@ -109,5 +112,16 @@
     <script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>
     <script>tinymce.init({selector:'textarea.editor'});</script>
     <script src="{% static 'js/questions.js'%}"></script>
+
+    <script type="text/javascript" language="JavaScript">
+        function set_body_height() {
+            var wh = $(window).height();
+            $('body').attr('style', 'height:' + wh + 'px;');
+        }
+        $(document).ready(function() {
+            set_body_height();
+            $(window).bind('resize', function() { set_body_height(); });
+        });
+    </script>
 
 {% endblock local_js %}

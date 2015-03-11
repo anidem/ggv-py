@@ -100,6 +100,16 @@ form ul {
   list-style-type: none
 }
 
+.fit {
+  max-width: 100%;
+  max-height: 100%;
+}
+.center {
+  display: block;
+  margin: auto;
+}
+
+
 .pagination a {
   color: #fff;
 }
@@ -110,7 +120,7 @@ form ul {
 }
 
 .lesson_list {
-  
+
 }
 
 .inline_adjust {
@@ -171,9 +181,9 @@ form ul {
     margin-bottom: 10px;
     left: 0;
     width: 10%;
-    overflow-y: scroll; 
+    overflow-y: scroll;
   }
-  
+
   .rightscroll {
     position: fixed;
     top: 50px;

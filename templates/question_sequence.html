@@ -58,7 +58,7 @@
 
                     <p>{{ form.response }}</p>
                     <p>
-                        {%if user_completed and previous_position or user.is_staff %}
+                        {%if user_completed and previous_position %}
                             <a href="{% url 'question_response' course.slug worksheet.id previous_position %}" class="btn">Previous</a>
                         {% endif %}
 

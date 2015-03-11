@@ -167,7 +167,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             context['previous_position'] = question_index-1
         if question_index+1 <= len(list(tally)):
             context['next_position'] = question_index+1
-        context['user_completed'] = self.completion_status or self.user.is_staff
+        context['user_completed'] = self.completion_status or self.request.user.is_staff
         context['question_list'] = tally
         context['worksheet'] = self.worksheet
         context['instructor'] = self.request.user.has_perm('courses.edit_course')

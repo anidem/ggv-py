@@ -64,7 +64,7 @@
 
                         <input id="chk_response_btn" type="submit" value="Submit Answer" class="btn btn-default">
 
-                        {% if user_completed and next_position or user.is_staff %}
+                        {% if user_completed and next_position  %}
                             <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Next</a>
                         {% endif %}
                     </p>

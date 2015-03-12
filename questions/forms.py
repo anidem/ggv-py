@@ -95,7 +95,7 @@ class OptionUpdateForm(ModelForm):
             'display_order': forms.NumberInput(attrs={'min': -99, 'max': 99})
         }
 
-OptionFormset = inlineformset_factory(OptionQuestion, Option, extra=1, form=OptionUpdateForm)
+OptionFormset = inlineformset_factory(OptionQuestion, Option, extra=4, form=OptionUpdateForm)
 
 class TextQuestionUpdateForm(ModelForm):
     class Meta:

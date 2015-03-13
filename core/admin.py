@@ -96,6 +96,7 @@ class QuestionSetAdmin(admin.ModelAdmin):
 
 class OptionQuestionAdmin(admin.ModelAdmin):
     list_display = ('display_text', 'display_order')
+    list_filter = ('question_set', 'question_set__lesson')
     inlines = [QuestionOptionInlineAdmin]
 
 

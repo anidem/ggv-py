@@ -2,6 +2,7 @@
 from django.views.generic import DetailView
 from django.contrib.contenttypes.models import ContentType
 
+
 from braces.views import LoginRequiredMixin
 
 from core.mixins import CourseContextMixin, AccessRequiredMixin
@@ -20,32 +21,17 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         lesson = self.get_object()
 
         activity_list = []
-        bookmarks = Bookmark.objects.filter(creator=self.request.user).filter(
-            course_context=context['course'])
-        print bookmarks.count()
+        bookmarks = Bookmark.objects.filter(creator=self.request.user).filter(course_context=context['course'])
+        # print bookmarks.count()
+
+
 
         for i in lesson.activities():
-            bookmark = i.bookmarks.filter(creator=self.request.user).filter(course_context=context['course'])
-            if bookmark:
-                bookmarkform = BookmarkForm(instance=bookmark[0])
-            else:
-                bookmark = None
-                initial_bookmark_data = {}
-                initial_bookmark_data[
-                    'content_type'] = ContentType.objects.get_for_model(i).id
-                initial_bookmark_data['object_id'] = i.id
-                initial_bookmark_data['creator'] = self.request.user
-                initial_bookmark_data['course_context'] = context['course']
-                bookmarkform = BookmarkForm(initial=initial_bookmark_data)
-
-            # try:
-            #     bookmark = bookmarks.filter(
-            #         content_type=ContentType.objects.get_for_model(i).id).get(object_id=i.id)
-            #     bookmarkform = BookmarkForm(instance=bookmark)
-
-            #     print 'Bookmarks: ', bookmark.count()
-
-            # except:
+            # bookmark = i.bookmarks.filter(creator=self.request.user).filter(course_context=context['course'])
+            # print bookmark.count()
+            # if bookmark:
+            #     bookmarkform = BookmarkForm(instance=bookmark[0])
+            # else:
             #     bookmark = None
             #     initial_bookmark_data = {}
             #     initial_bookmark_data[
@@ -54,6 +40,22 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
             #     initial_bookmark_data['creator'] = self.request.user
             #     initial_bookmark_data['course_context'] = context['course']
             #     bookmarkform = BookmarkForm(initial=initial_bookmark_data)
+
+            activity_type=ContentType.objects.get_for_model(i)
+            try:
+                bookmark = bookmarks.filter(content_type=activity_type.id).get(object_id=i.id)
+                bookmarkform = BookmarkForm(instance=bookmark)
+
+                print 'Bookmarks: ', bookmark
+
+            except:
+                bookmark = None
+                initial_bookmark_data = {}
+                initial_bookmark_data['content_type'] = activity_type.id
+                initial_bookmark_data['object_id'] = i.id
+                initial_bookmark_data['creator'] = self.request.user
+                initial_bookmark_data['course_context'] = context['course']
+                bookmarkform = BookmarkForm(initial=initial_bookmark_data)
 
             a = {}
             a['act'] = i

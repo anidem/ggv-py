@@ -121,6 +121,8 @@ class LessonAdmin(GuardedModelAdmin):
 
 class SectionAdmin(GuardedModelAdmin):
     list_display = ('lesson', 'title', 'display_order')
+    list_editable = ('lesson', 'title', 'display_order')
+    list_filter = ('lesson', )
 
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
 admin.site.register(CourseLesson)

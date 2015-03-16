@@ -56,7 +56,22 @@
                     <p class="label label-danger">{% for e in form.response.errors  %}An answer is required.{% endfor %}</p>
                     <p></p>
 
-                    <p>{{ form.response }}</p>
+                    {% for field in form.response %}
+                    <p>
+                        {% if not field.choice_label %}
+
+                            <label for="{{ field.id_for_label }}">{{ field }}</label>
+
+                        {% else %}
+
+                            <label for="{{ field.id_for_label }}">
+                                {{ field.tag }} {{ field.choice_label | safe }}
+                            </label>
+
+                        {% endif %}
+                    </p>
+                    {% endfor %}
+                    <p></p>
                     <p>
                         {%if user_completed and previous_position %}
                             <a href="{% url 'question_response' course.slug worksheet.id previous_position %}" class="btn">Previous</a>

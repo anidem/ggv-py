@@ -120,7 +120,7 @@ class LessonAdmin(GuardedModelAdmin):
 
 
 class SectionAdmin(GuardedModelAdmin):
-    list_display = ('lesson', 'title', 'display_order')
+    list_display = ('id', 'lesson', 'title', 'display_order')
     list_editable = ('lesson', 'title', 'display_order')
     list_filter = ('lesson', )
 

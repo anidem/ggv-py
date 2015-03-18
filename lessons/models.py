@@ -30,12 +30,14 @@ class Lesson(models.Model):
         questions = self.worksheets.all()
         slidestacks = self.slidestacks.all()
 
-        activity_set = list(chain(questions, slidestacks))
+        activity_set = list(chain(
+            questions.filter(section__isnull=False),
+            slidestacks.filter(section__isnull=False)))
         activity_set = sorted(
             activity_set, key=attrgetter('section.display_order', 'display_order'))
-        # orphans = list(chain(questions.filter(section__isnull=True),
-        #                      slidestacks.filter(section__isnull=True)))
-        # activity_set += sorted(orphans, key=attrgetter('display_order'))
+        orphans = list(chain(questions.filter(section__isnull=True),
+                             slidestacks.filter(section__isnull=True)))
+        activity_set += sorted(orphans, key=attrgetter('display_order'))
 
         return activity_set
 

@@ -11,15 +11,14 @@
             <div class="col-md-6">
                 <legend>Question</legend>
                 {% for field in form %}
-                    <div class="fieldWrapper">                     
+                    <div class="fieldWrapper">
                         {{ field.errors }}
                         {{ field.label_tag }}<br>
                         {{ field }}
                     </div>
                 {% endfor %}
-                <a href="/ggvadmin/filebrowser/browse">Browse on server.</a>      
             </div>
-                
+
             {% if  optionsform %}
             <div class="col-md-6">
                 <fieldset>

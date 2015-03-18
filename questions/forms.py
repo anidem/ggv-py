@@ -83,7 +83,6 @@ class OptionQuestionUpdateForm(ModelForm):
         widgets = {
             'display_text': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'class': 'editor'}),
             'display_order': forms.NumberInput(attrs={'min': -99, 'max': 99}),
-            'display_image': FileInput(),
         }
 
 class OptionUpdateForm(ModelForm):

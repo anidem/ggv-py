@@ -95,14 +95,14 @@ class QuestionSetAdmin(admin.ModelAdmin):
 
 
 class OptionQuestionAdmin(admin.ModelAdmin):
-    list_display = ('display_text', 'display_order', 'display_image')
+    list_display = ('display_text', 'display_order', 'display_image', 'display_pdf')
     list_filter = ('question_set', 'question_set__lesson')
     list_editable = ('display_order', 'display_image',)
     inlines = [QuestionOptionInlineAdmin]
 
 
 class TextQuestionAdmin(admin.ModelAdmin):
-    list_display = ('display_text', 'correct', 'display_order', 'display_image')
+    list_display = ('display_text', 'correct', 'display_order', 'display_image', 'display_pdf')
     list_filter = ('question_set', 'question_set__lesson')
     list_editable = ('display_order', 'display_image',)
 

@@ -79,7 +79,7 @@ class QuestionResponseForm(ModelForm):
 class OptionQuestionUpdateForm(ModelForm):
     class Meta:
         model = OptionQuestion
-        fields = ['question_set', 'display_text', 'display_order', 'input_select', 'display_image']
+        fields = ['question_set', 'display_text', 'display_order', 'input_select', 'display_image', 'display_pdf']
         widgets = {
             'display_text': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'class': 'editor'}),
             'display_order': forms.NumberInput(attrs={'min': -99, 'max': 99}),
@@ -99,7 +99,7 @@ OptionFormset = inlineformset_factory(OptionQuestion, Option, extra=4, form=Opti
 class TextQuestionUpdateForm(ModelForm):
     class Meta:
         model = TextQuestion
-        fields = ['question_set', 'display_text', 'display_order', 'correct', 'input_size', 'display_image']
+        fields = ['question_set', 'display_text', 'display_order', 'correct', 'input_size', 'display_image', 'display_pdf']
         widgets = {
             'display_text': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'class': 'editor'}),
             'display_order': forms.NumberInput(attrs={'min': -99, 'max': 99}),

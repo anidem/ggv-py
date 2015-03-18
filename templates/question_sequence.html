@@ -48,6 +48,7 @@
 
                     <!-- <button class="btn btn-xs btn-primary" data-toggle="popover" data-placement="right" data-content="help">progress</button> -->
 
+
                 </div>
                 <div class="lead">{{ question | safe }} </div>
                 <form id="response_form" action="" method="post" >{% csrf_token %}
@@ -90,6 +91,12 @@
 
                     <div><img class="fit" src="{{ question.display_image.url }}"></div>
 
+            </div>
+            {% endif %}
+
+            {% if worksheet.display_pdf %}
+            <div class="col-md-8">
+                <object width="100%" height="600px" data="{{ worksheet.display_pdf.url }}"></object>
             </div>
             {% endif %}
 

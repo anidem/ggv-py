@@ -22,6 +22,7 @@ class QuestionSet(AbstractActivity):
         max_length=48, default='worksheet', null=True)
     notes = GenericRelation(UserNote)
     bookmarks = GenericRelation(Bookmark)
+    display_pdf = models.FileField(null=True, blank=True, upload_to='pdf')
 
     def check_membership(self, user_session):
         """
@@ -111,6 +112,7 @@ class AbstractQuestion(models.Model):
     display_text = models.TextField()
     display_order = models.IntegerField(default=0)
     display_image = models.FileField(null=True, blank=True, upload_to='img')
+    display_pdf = models.FileField(null=True, blank=True, upload_to='pdf')
 
     def get_sequence_url(self, course):
         try:

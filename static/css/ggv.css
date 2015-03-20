@@ -237,3 +237,11 @@ form ul {
  position: static;
 }
 
+.radical {
+    letter-spacing: 0.08em;
+}
+.radicaldigit {
+    border-top: solid 1px;
+    padding-top: 2px;
+}
+

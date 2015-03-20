@@ -86,8 +86,9 @@ class SlideStackAdmin(admin.ModelAdmin):
 
 
 class QuestionSetAdmin(admin.ModelAdmin):
-    list_display = ('title', 'lesson', 'section', 'display_order')
+    list_display = ('id', 'title', 'lesson', 'section', 'display_order')
     list_filter = ('lesson', 'section',)
+    list_editable = ('title', 'lesson', 'section', 'display_order',)
 
 #     inlines = [
 #         QuestionSetInlineAdmin, QuestionSetInlineShortAnswerAdmin,

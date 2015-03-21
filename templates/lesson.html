@@ -35,7 +35,7 @@
 
 {% block content %}
 
-<div class="col-md-12 lesson_list">
+<div class="col-md-12 lesson_list" data-course="{{ course.id }}" data-user="{{ user }}">
     	{% for i in acts %}
         {% ifchanged i.act.section %}<h3 id="{{ i.act.section|title }}" class="">{{ i.act.section|title }}</h3>{% endifchanged %}
         <div class="block row">
@@ -56,44 +56,41 @@
                       </h4>
                     </div>
 
-                    <div class="col-md-1">
-                      {% comment %}<a href="#" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <i class="fa fa-calendar-o"></i> date</a>
-                      {% endcomment %}
-                    </div>
+                    <div class="col-md-1"></div>
 
                     <div class="col-md-1">
                       <a id="{{i.act.id}}_bkbtn" href="#{{i.act.id}}_add_bookmark" class="btn btn-xs" data-toggle="collapse" aria-expanded="false">
                         <i class="fa fa-star fa-2x flagger {% if i.bookmark %}bkset{% endif %}"></i>
                         <span>{{ i.bookmark.mark_type }}</span>
                       </a>
-                      {% comment %}
+
                       <div id="{{i.act.id}}_add_bookmark" class="panel-collapse collapse">
                         <form id="{{i.act.id}}_flag_form" action="" method="post" class="bookmarkform" data-panel="#{{i.act.id}}_add_bookmark" data-update="#{{i.act.id}}_bkbtn" data-target="{{ i.bookmark.id }}">{% csrf_token %}
-                            {{ i.bookmarkform|crispy }}
+                            <div id="div_id_mark_type" class="form-group">
+                                <div class="controls ">
+                                    <label class="radio"><input type="radio" checked="checked" name="mark_type" id="id_mark_type_1" value="remember">Remember</label>
+                                    <label class="radio"><input type="radio" name="mark_type" id="id_mark_type_2" value="todo">Todo</label>
+                                    <label class="radio"><input type="radio" name="mark_type" id="id_mark_type_3" value="started">Started</label>
+                                    <label class="radio"><input type="radio" name="mark_type" id="id_mark_type_4" value="completed">Completed</label>
+                                    <label class="radio"><input type="radio" name="mark_type" id="id_mark_type_5" value="question">Question</label>
+                                    <label class="radio"><input type="radio" name="mark_type" id="id_mark_type_6" value="none">None</label>
+                                </div>
+
+                            </div>
+                            <input id="id_creator" name="creator" type="hidden" value="1">
+                            <input id="id_content_type" name="content_type" type="hidden" value="12">
+                            <input id="id_object_id" name="object_id" type="hidden" value="684">
+                            <input id="id_course_context" name="course_context" type="hidden" value="1">
+
                         </form>
                       </div>
-                      {% end comment %}
+
                     </div>
 
                 </div>
-
-                {% comment %}
-                <div class="block-body well row" style="margin: 10px 40px 10px 40px">
-                    <div class="col-md-12">
-                    Cras sit amet nibh libero, in gravida nulla.
-                    </div>
-                </div>
-                {% endcomment %}
-                {% comment %}
-                <div class="block-footer row">
-                    <div class="col-md-12" style="text-align: right">
-                        <a href="#"> activity </a> last opened
-                    </div>
-                 </div>
-                 {% endcomment %}
             </div>
         </div>
-                    <hr>
+        <hr>
 
     	{% empty %}
     		<h2>There are no activities assigned to this lesson.</h2>

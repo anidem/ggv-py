@@ -30,15 +30,19 @@ jQuery(function($) {
             success : function(json) {
                 flagbtn = $( flagger.attr('data-update') );
                 flagpnl = $( flagger.attr('data-panel') );
+                flagged = flagbtn.find('i.flagger');
                 if(json.bookmark_id) {
                     flagger.attr('data-target', json.bookmark_id);
-                    flagbtn.find('i.flagger').addClass('bkset');
+                    flagged.removeClass('fa-star-o');
+                    flagged.addClass('fa-star');
+                    // flagger.addClass('bkset');
                     flagbtn.find('span').html(json.mark_type);
 
                 }
                 if(json.deleted) {
                     flagger.attr('data-target', '');
-                    flagbtn.find('i.flagger').removeClass('bkset');
+                    flagged.removeClass('fa-star');
+                    flagged.addClass('fa-star-o');
                     flagbtn.find('span').html('');
                 }
                 flagpnl.collapse('hide');

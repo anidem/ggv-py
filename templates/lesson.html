@@ -37,19 +37,19 @@
 
 <div class="col-md-12 lesson_list" data-course="{{ course.id }}" data-user="{{ user }}">
     	{% for i in acts %}
-        {% ifchanged i.act.section %}<h3 id="{{ i.act.section|title }}" class="">{{ i.act.section|title }}</h3>{% endifchanged %}
+        {% ifchanged i.act.section %}<h2 id="{{ i.act.section|title }}" class="section_heading">{{ i.act.section|title }}</h2>{% endifchanged %}
         <div class="block row">
             <div class="block col-md-12">
                 <div class="block-heading row">
                     <div class="col-md-10" style="clear: both">
                       <h4>
                         {% if i.act.activity_type = 'slidestack' %}
-                            <i class="fa fa-desktop fa-2x"></i>
-                            {{ forloop.counter }}.<a class="media-heading" href="{% url 'slideview' course.slug i.act.id %}">{{ i.act.title }}</a>
+                            <i class="fa fa-desktop fa-2x icon-slidestack"></i>
+                            {{ forloop.counter }}.<a class="btn btn-lg media-heading" href="{% url 'slideview' course.slug i.act.id %}">{{ i.act.title }}</a>
                             {% if is_staff %}<a href="{% url 'slide_update' i.act.id %}" class="btn btn-xs btn-success">edit</a>{% endif %}
                         {% else %}
-                            <i class="fa fa-pencil-square-o fa-2x"></i>
-                            {{ forloop.counter }}.<a class="media-heading" href="{% url 'question_response' course.slug i.act.id 1 %}">{{ i.act.title }}</a>
+                            <i class="fa fa-pencil-square-o fa-2x icon-worksheet"></i>
+                            {{ forloop.counter }}.<a class="btn btn-lg media-heading" href="{% url 'question_response' course.slug i.act.id 1 %}">{{ i.act.title }}</a>
                             {% if is_staff %}<a href="{% url 'worksheet_update' i.act.id %}" class="btn btn-xs btn-success">edit</a>{% endif %}
 
                         {% endif %}
@@ -60,7 +60,7 @@
 
                     <div class="col-md-1">
                       <a id="{{i.act.id}}_bkbtn" href="#{{i.act.id}}_add_bookmark" class="btn btn-xs" data-toggle="collapse" aria-expanded="false">
-                        <i class="fa fa-star fa-2x flagger {% if i.bookmark %}bkset{% endif %}"></i>
+                        <i class="flagger fa fa-2x {% if i.bookmark %}fa-star{% else %}fa-star-o{% endif %}"></i>
                         <span>{{ i.bookmark.mark_type }}</span>
                       </a>
 
@@ -68,12 +68,13 @@
                         <form id="{{i.act.id}}_flag_form" action="" method="post" class="bookmarkform" data-panel="#{{i.act.id}}_add_bookmark" data-update="#{{i.act.id}}_bkbtn" data-target="{{ i.bookmark.id }}">{% csrf_token %}
                             <div id="div_id_mark_type" class="form-group">
                                 <div class="controls ">
-                                    <label class="radio"><input type="radio" checked="checked" name="mark_type" id="id_mark_type_1" value="remember">Remember</label>
-                                    <label class="radio"><input type="radio" name="mark_type" id="id_mark_type_2" value="todo">Todo</label>
-                                    <label class="radio"><input type="radio" name="mark_type" id="id_mark_type_3" value="started">Started</label>
-                                    <label class="radio"><input type="radio" name="mark_type" id="id_mark_type_4" value="completed">Completed</label>
-                                    <label class="radio"><input type="radio" name="mark_type" id="id_mark_type_5" value="question">Question</label>
-                                    <label class="radio"><input type="radio" name="mark_type" id="id_mark_type_6" value="none">None</label>
+
+                                    <label class="radio"><input type="radio" {% if i.bookmark.mark_type == "remember" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_1" value="remember">Remember</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark.mark_type == "todo" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_2" value="todo">Todo</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark.mark_type == "started" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_3" value="started">Started</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark.mark_type == "completed" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_4" value="completed">Completed</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark.mark_type == "question" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_5" value="question">Question</label>
+                                    <label class="radio"><input type="radio" {% if not i.bookmark %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_6" value="none">Clear</label>
                                 </div>
                             </div>
                             <input id="id_creator" name="creator" type="hidden" value="{{ user.id }}">

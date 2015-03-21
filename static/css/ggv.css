@@ -123,6 +123,10 @@ form ul {
 
 }
 
+.section_heading{ background-color:  #F8F8F8; }
+
+.media-heading { color: black;}
+
 .inline_adjust {
   padding-top: 55px;
 }
@@ -143,11 +147,13 @@ form ul {
 .icon-socialstudies i { color: #66A3E0; }
 .icon-socialstudies .icon-title { font-family: 'Josefin Sans', sans-serif; }
 
-.icon-slidestack { color: #007A00;}
+.icon-slidestack { color: #66A3E0;}
+.icon-worksheet { color: orange;}
 
 /* Bookmarks */
+.flagger {color: #419641;}
 .bkset {
-  color: orange
+  color: #419641
 }
 
 /* Row color cycle*/

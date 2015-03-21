@@ -26,8 +26,12 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         for i in lesson.activities():
             activity_type=ContentType.objects.get_for_model(i).id
             bookmark = None
+            bookmark_label = ''
+            bookmark_id = ''
             try:
                 bookmark = bookmarks.filter(content_type=activity_type).get(object_id=i.id)
+                bookmark_label = bookmark.mark_type
+                bookmark_id = bookmark.id
                 # bookmarkform = BookmarkForm(instance=bookmark)
 
             except:
@@ -46,6 +50,8 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
             a['note'] = None
             # a['bookmarkform'] = bookmarkform
             a['bookmark'] = bookmark
+            a['bookmark_id'] = bookmark_id
+            a['bookmark_label'] = bookmark_label
             a['date'] = None
 
             activity_list.append(a)

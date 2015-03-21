@@ -75,12 +75,11 @@
                                     <label class="radio"><input type="radio" name="mark_type" id="id_mark_type_5" value="question">Question</label>
                                     <label class="radio"><input type="radio" name="mark_type" id="id_mark_type_6" value="none">None</label>
                                 </div>
-
                             </div>
-                            <input id="id_creator" name="creator" type="hidden" value="1">
-                            <input id="id_content_type" name="content_type" type="hidden" value="12">
-                            <input id="id_object_id" name="object_id" type="hidden" value="684">
-                            <input id="id_course_context" name="course_context" type="hidden" value="1">
+                            <input id="id_creator" name="creator" type="hidden" value="{{ user.id }}">
+                            <input id="id_content_type" name="content_type" type="hidden" value="{{ i.act_type_id }}">
+                            <input id="id_object_id" name="object_id" type="hidden" value="{{i.act.id}}">
+                            <input id="id_course_context" name="course_context" type="hidden" value="{{ course.id }}">
 
                         </form>
                       </div>

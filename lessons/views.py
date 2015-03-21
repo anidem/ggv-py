@@ -17,33 +17,34 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
     access_object = 'lesson'
 
     def get_context_data(self, **kwargs):
-        print 'begin context'
         context = super(LessonView, self).get_context_data(**kwargs)
         lesson = self.get_object()
 
         activity_list = []
         bookmarks = Bookmark.objects.filter(creator=self.request.user).filter(course_context=context['course'])
 
-
         for i in lesson.activities():
-            activity_type=ContentType.objects.get_for_model(i)
+            activity_type=ContentType.objects.get_for_model(i).id
+            bookmark = None
             try:
-                bookmark = bookmarks.filter(content_type=activity_type.id).get(object_id=i.id)
-                bookmarkform = BookmarkForm(instance=bookmark)
+                bookmark = bookmarks.filter(content_type=activity_type).get(object_id=i.id)
+                # bookmarkform = BookmarkForm(instance=bookmark)
 
             except:
-                bookmark = None
-                initial_bookmark_data = {}
-                initial_bookmark_data['content_type'] = activity_type.id
-                initial_bookmark_data['object_id'] = i.id
-                initial_bookmark_data['creator'] = self.request.user
-                initial_bookmark_data['course_context'] = context['course']
-                bookmarkform = BookmarkForm(initial=initial_bookmark_data)
+                pass
+                # bookmark = None
+                # initial_bookmark_data = {}
+                # initial_bookmark_data['content_type'] = activity_type.id
+                # initial_bookmark_data['object_id'] = i.id
+                # initial_bookmark_data['creator'] = self.request.user
+                # initial_bookmark_data['course_context'] = context['course']
+                # bookmarkform = BookmarkForm(initial=initial_bookmark_data)
 
             a = {}
             a['act'] = i
+            a['act_type_id'] = activity_type
             a['note'] = None
-            a['bookmarkform'] = bookmarkform
+            # a['bookmarkform'] = bookmarkform
             a['bookmark'] = bookmark
             a['date'] = None
 
@@ -52,6 +53,5 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         context['acts'] = activity_list
         context['sections'] = lesson.sections.all()
         context['is_staff'] = self.request.user.is_staff
-        print 'done context'
 
         return context

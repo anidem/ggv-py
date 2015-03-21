@@ -18,9 +18,10 @@ from sendfile import sendfile
 from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import PresetBookmarkForm
 from notes.forms import UserNoteForm
+from lessons.models import Section
 
 from .models import TextQuestion, OptionQuestion, QuestionResponse, QuestionSet, UserWorksheetStatus
-from .forms import QuestionResponseForm, OptionQuestionUpdateForm, TextQuestionUpdateForm, OptionFormset
+from .forms import QuestionResponseForm, OptionQuestionUpdateForm, TextQuestionUpdateForm, OptionFormset, QuestionSetUpdateForm
 
 
 def filter_filelisting_images(item):
@@ -49,9 +50,16 @@ class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, DetailView):
 class WorksheetUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, UpdateView):
     model = QuestionSet
     template_name = 'activity_update.html'
+    form_class = QuestionSetUpdateForm
 
     def get_success_url(self):
         return reverse_lazy('worksheet', args=[self.get_object().id])
+
+    def get_context_data(self, **kwargs):
+        context = super(WorksheetUpdateView, self).get_context_data(**kwargs)
+        section_filter = forms.ModelChoiceField(queryset=Section.objects.filter(lesson=self.get_object().lesson))
+        context['form'].fields['section'] = section_filter
+        return context
 
 
 class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, CreateView):

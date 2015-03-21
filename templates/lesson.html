@@ -8,20 +8,20 @@
   <li><a>{{ object.title }}</a></li>
 {% endblock page_crumb %}
 
-{% block local_nav %} 
+{% block local_nav %}
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Activities <b class="caret"></b></a>
   <ul class="dropdown-menu">
     {% for i in acts %}
       <li>
         {% if i.act.activity_type = 'slidestack' %}
-            
+
             <a href="{% url 'slideview' course.slug i.act.id %}"><i class="fa fa-desktop"></i> {{ i.act.title }}</a>
         {% else %}
-            
+
             <a href="{% url 'question_response' course.slug i.act.id 1 %}"><i class="fa fa-pencil-square-o"></i> {{ i.act.title }}</a>
         {% endif %}
-      </li> 
+      </li>
     {% endfor %}
   </ul>
 </li>
@@ -49,7 +49,7 @@
                             {% if is_staff %}<a href="{% url 'slide_update' i.act.id %}" class="btn btn-xs btn-success">edit</a>{% endif %}
                         {% else %}
                             <i class="fa fa-pencil-square-o fa-2x"></i>
-                            {{ forloop.counter }}.<a class="media-heading" href="{% url 'question_response' course.slug i.act.id 1 %}">{{ i.act.title }}</a> 
+                            {{ forloop.counter }}.<a class="media-heading" href="{% url 'question_response' course.slug i.act.id 1 %}">{{ i.act.title }}</a>
                             {% if is_staff %}<a href="{% url 'worksheet_update' i.act.id %}" class="btn btn-xs btn-success">edit</a>{% endif %}
 
                         {% endif %}
@@ -59,12 +59,12 @@
                     <div class="col-md-1">
                       {% comment %}<a href="#" class="btn btn-xs dropdown-toggle" data-toggle="dropdown" aria-expanded="false"> <i class="fa fa-calendar-o"></i> date</a>
                       {% endcomment %}
-                    </div> 
-                    
+                    </div>
+
                     <div class="col-md-1">
-                      
+                    {% comment %}
                       <a id="{{i.act.id}}_bkbtn" href="#{{i.act.id}}_add_bookmark" class="btn btn-xs" data-toggle="collapse" aria-expanded="false">
-                        <i class="fa fa-star fa-2x flagger {% if i.bookmark %}bkset{% endif %}"></i> 
+                        <i class="fa fa-star fa-2x flagger {% if i.bookmark %}bkset{% endif %}"></i>
                         <span>{{ i.bookmark.mark_type }}</span>
                       </a>
 
@@ -73,7 +73,7 @@
                             {{ i.bookmarkform|crispy }}
                         </form>
                       </div>
-
+                    {% endcomment %}
                     </div>
 
                 </div>
@@ -81,7 +81,7 @@
                 {% comment %}
                 <div class="block-body well row" style="margin: 10px 40px 10px 40px">
                     <div class="col-md-12">
-                    Cras sit amet nibh libero, in gravida nulla. 
+                    Cras sit amet nibh libero, in gravida nulla.
                     </div>
                 </div>
                 {% endcomment %}

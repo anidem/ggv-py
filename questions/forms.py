@@ -3,7 +3,7 @@ from django.contrib.contenttypes.models import ContentType
 from django import forms
 from django.forms import ModelForm
 from django.forms.models import inlineformset_factory
-from .models import QuestionResponse, OptionQuestion, TextQuestion, Option
+from .models import QuestionResponse, OptionQuestion, TextQuestion, Option, QuestionSet
 
 from filebrowser.widgets import FileInput, ClearableFileInput
 
@@ -30,14 +30,6 @@ class QuestionResponseForm(ModelForm):
         try:
             response = question.user_response_object(user).json_response()
             self.initial['response'] = response
-
-            # Set user feedback info (correct or incorrect response)
-            # if question.check_answer(response):
-            #     self.fields[
-            #         'response'].help_text = 'success'
-            # else:
-            #     self.fields[
-            #         'response'].help_text = 'danger'
 
         except:
             pass
@@ -75,6 +67,11 @@ class QuestionResponseForm(ModelForm):
             'content_type': forms.HiddenInput(),
             'object_id': forms.HiddenInput()
         }
+
+class QuestionSetUpdateForm(ModelForm):
+    class Meta:
+        model = QuestionSet
+        fields = ['title', 'lesson', 'section', 'display_order', 'display_pdf']
 
 class OptionQuestionUpdateForm(ModelForm):
     class Meta:

@@ -17,6 +17,7 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
     access_object = 'lesson'
 
     def get_context_data(self, **kwargs):
+        print 'begin context'
         context = super(LessonView, self).get_context_data(**kwargs)
         lesson = self.get_object()
 
@@ -51,5 +52,6 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         context['acts'] = activity_list
         context['sections'] = lesson.sections.all()
         context['is_staff'] = self.request.user.is_staff
+        print 'done context'
 
         return context

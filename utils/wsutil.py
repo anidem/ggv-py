@@ -195,7 +195,7 @@ def import_json_questions(json_dir=None):
                 #     imgpath = 'img/' + slugify(i.get('IMAGE')) + '.png'
                 # else:
                 #     imgpath = ''
-
+                imgpath = i.get('IMAGE')
                 if i.get('SELECT TYPE') == 'text':
                     question = TextQuestion()
                     question.display_text = i.get('QUESTION')

@@ -66,12 +66,13 @@
                         <i class="fa fa-star fa-2x flagger {% if i.bookmark %}bkset{% endif %}"></i>
                         <span>{{ i.bookmark.mark_type }}</span>
                       </a>
+                      {% comment %}
                       <div id="{{i.act.id}}_add_bookmark" class="panel-collapse collapse">
                         <form id="{{i.act.id}}_flag_form" action="" method="post" class="bookmarkform" data-panel="#{{i.act.id}}_add_bookmark" data-update="#{{i.act.id}}_bkbtn" data-target="{{ i.bookmark.id }}">{% csrf_token %}
                             {{ i.bookmarkform|crispy }}
                         </form>
                       </div>
-
+                      {% end comment %}
                     </div>
 
                 </div>

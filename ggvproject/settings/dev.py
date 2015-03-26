@@ -45,7 +45,7 @@ STACKS_DATA_DIR = 'data'
 
 PDF_ROOT = '/Library/WebServer/Documents/media/private/pdf'
 
-SENDFILE_BACKEND = 'sendfile.backends.development'
+SENDFILE_BACKEND = 'sendfile.backends.development' #sendfile.backends.xsendfile
 
 # SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
 # SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY'] # This is the Client ID (not a key)

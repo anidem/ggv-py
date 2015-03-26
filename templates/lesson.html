@@ -40,9 +40,11 @@
         {% ifchanged i.act.section %}
             <h2 id="{{ i.act.section|title }}" class="section_heading">
                 {{ i.act.section|title }}
+                {% comment %}
                 {% if is_staff %}
                     <a href="{% url 'section_update' course.slug i.act.section.id %}" class="btn btn-xs btn-success">edit</a>
                 {% endif %}
+                {% endcomment %}
             </h2>
         {% endifchanged %}
         <div class="block row">

@@ -37,7 +37,14 @@
 
 <div class="col-md-12 lesson_list" data-course="{{ course.id }}" data-user="{{ user }}">
     	{% for i in acts %}
-        {% ifchanged i.act.section %}<h2 id="{{ i.act.section|title }}" class="section_heading">{{ i.act.section|title }}</h2>{% endifchanged %}
+        {% ifchanged i.act.section %}
+            <h2 id="{{ i.act.section|title }}" class="section_heading">
+                {{ i.act.section|title }}
+                {% if is_staff %}
+                    <a href="{% url 'section_update' course.slug i.act.section.id %}" class="btn btn-xs btn-success">edit</a>
+                {% endif %}
+            </h2>
+        {% endifchanged %}
         <div class="block row">
             <div class="block col-md-12">
                 <div class="block-heading row">
@@ -65,10 +72,10 @@
                       </a>
 
                       <div id="{{i.act.id}}_add_bookmark" class="panel-collapse collapse">
+
                         <form id="{{i.act.id}}_flag_form" action="" method="post" class="bookmarkform" data-panel="#{{i.act.id}}_add_bookmark" data-update="#{{i.act.id}}_bkbtn" data-target="{{ i.bookmark_id }}">{% csrf_token %}
                             <div id="div_id_mark_type" class="form-group">
                                 <div class="controls ">
-
                                     <label class="radio"><input type="radio" {% if i.bookmark_label == "remember" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_1" value="remember">Remember</label>
                                     <label class="radio"><input type="radio" {% if i.bookmark_label == "todo" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_2" value="todo">Todo</label>
                                     <label class="radio"><input type="radio" {% if i.bookmark_label == "started" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_3" value="started">Started</label>
@@ -83,6 +90,7 @@
                             <input id="id_course_context" name="course_context" type="hidden" value="{{ course.id }}">
 
                         </form>
+
                       </div>
 
                     </div>

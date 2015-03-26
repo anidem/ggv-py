@@ -1,14 +1,16 @@
 # lessons/views.py
-from django.views.generic import DetailView
+from django import forms
+from django.views.generic import DetailView, UpdateView
 from django.contrib.contenttypes.models import ContentType
+from django.core.urlresolvers import reverse_lazy
 
 
-from braces.views import LoginRequiredMixin
+
+from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 
 from core.mixins import CourseContextMixin, AccessRequiredMixin
-from core.forms import BookmarkForm
 from core.models import Bookmark
-from .models import Lesson
+from .models import Lesson, Section
 
 
 class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, DetailView):
@@ -61,3 +63,17 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         context['is_staff'] = self.request.user.is_staff
 
         return context
+
+class SectionUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, CourseContextMixin, UpdateView):
+    model = Section
+    template_name = 'activity_update.html'
+    # form_class = QuestionSetUpdateForm
+
+    def get_success_url(self):
+        return reverse_lazy('lesson', args=[self.context['course'], self.get_object().lesson.id])
+
+    def get_context_data(self, **kwargs):
+        context = super(SectionUpdateView, self).get_context_data(**kwargs)
+        return context
+
+

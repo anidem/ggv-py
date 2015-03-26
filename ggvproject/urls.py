@@ -7,7 +7,7 @@ from utils.wsutil import csvutil, csvutilslides, worksheetvalidator
 from core.views import IndexView, HomeView, BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import CourseView
-from lessons.views import LessonView
+from lessons.views import LessonView, SectionUpdateView
 from questions.views import (
     WorksheetHomeView, WorksheetUpdateView, QuestionResponseView,
     OptionQuestionView, OptionQuestionUpdateView,
@@ -16,8 +16,6 @@ from questions.views import (
     UserReportView, FullReportView
     )
 from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView
-
-import core.signals
 
 urlpatterns = patterns('',
 
@@ -44,6 +42,9 @@ urlpatterns = patterns('',
 
     url(r'^ggv/worksheet/(?P<pk>\d+)/$', WorksheetHomeView.as_view(), name='worksheet'),
     url(r'^ggv/worksheet/edit/(?P<pk>\d+)/$', WorksheetUpdateView.as_view(), name='worksheet_update'),
+
+    # url(r'^ggv/section/(?P<pk>\d+)/$', SectionView.as_view(), name='worksheet'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/section/edit/(?P<pk>\d+)/$', SectionUpdateView.as_view(), name='section_update'),
 
     url(r'^ggv/(?P<crs_slug>[-\w]+)/questions/textquestions/(?P<pk>\d+)/$', TextQuestionView.as_view(), name='text_question'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/questions/textquestions/edit/(?P<pk>\d+)/$', TextQuestionUpdateView.as_view(), name='text_question_update'),

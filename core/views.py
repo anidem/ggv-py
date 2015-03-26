@@ -8,7 +8,7 @@ from courses.models import Course
 from .models import Bookmark
 from .forms import BookmarkForm
 from .mixins import CourseContextMixin
-
+from .signals import *
 
 class IndexView(TemplateView):
     template_name = 'index.html'

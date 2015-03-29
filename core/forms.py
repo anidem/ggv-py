@@ -9,9 +9,10 @@ from .models import Bookmark
 class GgvUserCreateForm(forms.ModelForm):
     course = forms.ModelChoiceField(queryset=Course.objects.all(), widget=forms.HiddenInput())
     language = forms.ChoiceField(
-        choices=(('english', 'English'), ('spanish', 'Spanish')))
+        choices=(('english', 'English'), ('spanish', 'Spanish')),
+        label='Preferred language:')
     perms = forms.ChoiceField(widget=forms.RadioSelect(),
-                              choices=(('access', 'Student Access'), ('instructor', 'Instructor Access')))
+                              choices=(('access', 'Student Access'), ('instructor', 'Instructor Access')), label="Select access level:")
     username = forms.EmailField(
         widget=forms.EmailInput(), label='Please enter a complete gmail address.')
 

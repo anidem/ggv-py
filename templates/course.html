@@ -26,6 +26,7 @@
           <button class="btn btn-xs btn-default">Español</button>
         {% endif %}
       </div>
+      {% if user.is_staff %}<a class="btn btn-primary btn-xs" href="{% url 'create_user' course.slug %}">Add User</a>{% endif %}
     <script>
       $('.btn-toggle').click(function() {
           $(this).find('.btn').toggleClass('active');

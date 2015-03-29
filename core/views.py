@@ -65,8 +65,12 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         context = super(CreateGgvUserView, self).get_context_data(**kwargs)
-        context['students'] = self.course.student_list()
+        student_list = self.course.student_list()
+        context['students'] = student_list
         context['instructors'] = self.course.instructor_list()
+        # context['unregistered'] = User.objects.filter().filter(social_auth__user__isnull=True)
+        # context['deactivated'] = User.objects.filter(social_auth__user__isnull=True)
+
         return context
 
 

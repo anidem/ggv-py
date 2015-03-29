@@ -1,0 +1,134 @@
+User Hierarchy:
+a. GGV System Admin
+	- django.superuser
+	- django.staff
+	- privileges: has global privilege
+	
+b. GGV Administrator
+	- django.staff (can login to admin site if needed)
+	- privileges: most but not all -- will be assigned to special GGV Staff django group.
+	- roles:
+		* create/edit/delete/ ggv courses
+		* manage course resources (access to lessons)
+		* manage user quotas for courses
+		* create/edit/delete ggv course managers
+
+c. GGV Course Manager
+	- a ggv course admin is a user account manually created by a GGV Admin. This account is assigned to one or more GGV courses
+	- no django privileges are given
+	- roles:
+		* create/edit/delete users (students and instructors) for course(s) which they are assigned (by GGV Admin).
+		* can view course user quotas
+		
+	- extra: this account level can also be an instructor
+
+d. GGV Course Instructor
+	- a ggv course instructor is a user account manually created by a GGV Course Manager.
+	- no django privileges are given
+	- roles:
+		* view worksheet reports/scores for all students
+		* can create/edit/delete worksheet messages
+
+e. GGV Student
+	- a student in a ggv course. This account is created by a GGV Course Manager.
+	- no django privileges are given
+	- roles:
+		* read/respond to worksheet questions
+		* view their own worksheet report/scores
+		* view worksheet messages
+
+Additional User Profile:
+-- activation hash: is null if they have successfully activated (user.is_active=True) their account.
+-- preferred language: english or spanish (used to determine with lesson set to default to)
+
+	 
+
+User Management:
+-- Creating a GGV Course Manager
+
+-- Creating a GGV Course Instructor
+
+-- Creating a GGV Student
+
+-- User Creation/Activation
+
+
+User creation/activation:
+NOTE: This may be a headache at first but users must validate both the email address we use on the ggv site and that they control access to the gmail account (e.g. knowing their password, etc). This validation step assures the system that email address is valid and has been entered correctly by course managers. This step only occurs once.
+
+General procedure:
+1. Create user account with specifying gmail address, first and last name. The account is assigned to one or more courses. The account is assigned a user access level (Course Manager, Instructor, Student). After the account is created: 
+	a. the system automatically sets it as NON ACTIVE (user cannot login)
+	b. the system generates an unique ACTIVATION CODE associated with the new account.
+	c. the activation code is appended to an ACTIVATION URL.
+
+	
+2. Send an validation email to the email address associated with the new account. This email:
+	a. contains the ACTIVATION URL containing the new account ACTIVATION CODE
+	b. tells the user that the GGV site cannot be accessed until they have successfully accessed the ACTIVATION URL (they have navigated to the url in their browser)
+
+3. When the user visits the ACTIVATION URL sent to them in the validation email, the system:
+	a. requires that the user login (with their gmail account credentials)
+	b. checks that the activation code is valid and matches the gmail account used to login.
+	c. 
+		(b) is success:
+			* user account is set as ACTIVE (user.is_active=True)
+			* activation code is cleared (they are now activated)
+			* new user should be logged in and ready to use ggv as their assignments permit
+		(b) is failure:
+			* user is presented a message that their gmail address is not registered with the site or the activation is code is invalid.
+Examples: 
+-- GGV admin creates a Course Admin account for Cisco. For example, Cisco would be a Course Admin for a Project Destiny course -- pd1.
+1.  The GGV admin creates the ggv account using Cisco's gmail address as well other info as follows:
+	* email address = ciscosemail@gmail.com
+	* First and last = Cisco Kid
+	* course = pd1
+	* access level = course manager
+	* activation status = OFF
+	* activation url = URL + ACTIVATION CODE
+	
+2. After creating (and saving) cisco's account, the ggv admin will be presented with a summary of the account info which will include a freshly generated activation url. The ggv admin can manually email this url to cisco or click the email button to have the system send a preformed email message with the necessary info.
+
+-- Cisco creates a student account.
+1. Cisco (who as activated is own account) logs in to ggv
+2. Chooses manage the course -- pd1
+3. Views a list of users, each with activation status (no or yes), access level
+4. Chooses to add a new user to pd1 -- Tow Jams
+5. enters towjams@gmail.com as the email address, assigns Tow as a student, and course to pd1: 
+6. saves the user after which the following is presented:
+	* email address = towjams@gmail.com
+	* First and last = Tow Jams
+	* course = pd1
+	* access level = student
+	* activation status = OFF
+	* activation url = URL + ACTIVATION CODE
+
+7. cisco is now presented with an 'Send Activation Email' button. he clicks it and an email is sent to towjams@gmail.com with the activation url.
+
+========================================================================================
+Development Notes:
+-- Decided that a separate activation table be created:
+class UserActivation
+	email
+	course
+	access_level
+	activation_code
+
+Login Scenario:
+* User authenticates (triggered by login required)
+* in backend create user...
+	if request is activation url: 
+		""" User has logged in and is accessing activation view """
+		user_activation = validate activation code and authenticated email
+		if user_activation is valid:
+			CREATE USER in django with user_activation object.
+			return True
+	raise AuthForbidden
+	return None	
+	
+		
+User accesses ggv home
+* user authenticates with google
+
+User accesses ggv/activation link
+* user

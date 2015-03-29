@@ -1,7 +1,27 @@
 # core/forms.py
 from django import forms
+from django.contrib.auth.models import User
 
+from courses.models import Course
 from .models import Bookmark
+
+
+class GgvUserCreateForm(forms.ModelForm):
+    course = forms.ModelChoiceField(queryset=Course.objects.all(), widget=forms.HiddenInput())
+    language = forms.ChoiceField(
+        choices=(('english', 'English'), ('spanish', 'Spanish')))
+    perms = forms.ChoiceField(widget=forms.RadioSelect(),
+                              choices=(('access', 'Student Access'), ('instructor', 'Instructor Access')))
+    username = forms.EmailField(
+        widget=forms.EmailInput(), label='Please enter a complete gmail address.')
+
+    class Meta:
+        model = User
+        fields = ['username', 'first_name', 'last_name',
+                  'language', 'perms', 'course', 'is_active', ]
+        widgets = {
+            'is_active': forms.HiddenInput(),
+        }
 
 
 class BookmarkForm(forms.ModelForm):

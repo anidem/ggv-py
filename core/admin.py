@@ -12,7 +12,7 @@ from lessons.models import Lesson, Section
 from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option
 from slidestacks.models import SlideStack
 from notes.models import UserNote
-from core.models import ActivityLog
+from core.models import ActivityLog, GGVUser
 
 
 class ExtraMedia:
@@ -135,6 +135,7 @@ admin.site.register(OptionQuestion, OptionQuestionAdmin, Media=ExtraMedia)
 admin.site.register(TextQuestion, TextQuestionAdmin, Media=ExtraMedia)
 admin.site.register(QuestionResponse)
 admin.site.register(ActivityLog)
+admin.site.register(GGVUser)
 # admin.site.register(ShortAnswerQuestion, ShortAnswerQuestionAdmin, Media=ExtraMedia)
 # admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin, Media=ExtraMedia)
 admin.site.register(UserNote)

@@ -1,14 +1,18 @@
 # core/views.py
-from django.views.generic import TemplateView, CreateView, UpdateView
+from django.views.generic import TemplateView, CreateView, UpdateView, ListView, DetailView
+from django.core.urlresolvers import reverse, reverse_lazy
+from django.contrib.auth.models import User
 
 from braces.views import CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, LoginRequiredMixin
+from guardian.shortcuts import assign_perm
 
 from courses.models import Course
 
-from .models import Bookmark
-from .forms import BookmarkForm
+from .models import Bookmark, GGVUser
+from .forms import BookmarkForm, GgvUserCreateForm
 from .mixins import CourseContextMixin
 from .signals import *
+
 
 class IndexView(TemplateView):
     template_name = 'index.html'
@@ -22,6 +26,66 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context['courses'] = [
             Course.objects.get(slug=i) for i in self.request.session['user_courses']]
         return context
+
+
+class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
+    model = User
+    template_name = 'user_create.html'
+    success_url = reverse_lazy('view_user')
+    form_class = GgvUserCreateForm
+    course = None
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.course = Course.objects.get(slug=kwargs['crs_slug'])
+        except:
+            self.course = None
+
+        return super(CreateGgvUserView, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('create_user', args=[self.kwargs['crs_slug']])
+
+    def get_initial(self):
+        # initial = self.initial.copy()
+        self.initial = {
+            'course': self.course, 'language': 'english', 'is_active': False, 'perms': 'access'}
+        return self.initial
+
+    def form_valid(self, form):
+        self.object = form.save()
+        language = form.cleaned_data['language']
+        course = form.cleaned_data['course']
+        perms = form.cleaned_data['perms']
+        ggvuser = GGVUser(user=self.object, language_pref=language)
+        ggvuser.save()
+        assign_perm(perms, self.object, course)
+
+        return super(CreateGgvUserView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateGgvUserView, self).get_context_data(**kwargs)
+        context['students'] = self.course.student_list()
+        context['instructors'] = self.course.instructor_list()
+        return context
+
+
+class ListGgvUserView(LoginRequiredMixin, CourseContextMixin, ListView):
+    model = User
+    template_name = 'user_view.html'
+
+
+class GgvUserView(LoginRequiredMixin, DetailView):
+    model = User
+    template_name = 'user_view.html'
+
+
+class ActivateView(LoginRequiredMixin, TemplateView):
+    template_name = 'activate.html'
+
+
+class AccessForbiddenView(TemplateView):
+    template_name = 'access_forbidden.html'
 
 
 class ActivityLogView(TemplateView):

@@ -1,4 +1,7 @@
 # courses/models.py
+
+import operator
+
 from django.db import models
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
@@ -11,7 +14,7 @@ from lessons.models import Lesson
 class Course(models.Model):
 
     """
-    Courses are synomous with a testing site. 
+    Courses are synomous with a testing site.
     A course contains one or more lessons and has zero or more designated instuctors and zero or more students.
     """
     title = models.CharField(max_length=256)
@@ -28,6 +31,15 @@ class Course(models.Model):
     def member_list(self):
         members = get_users_with_perms(self, attach_perms=True)
         return members
+
+    def student_list(self):
+        return [user for user, perms in self.member_list().items() if 'access' in perms]
+
+    def instructor_list(self):
+        return [user for user, perms in self.member_list().items() if 'instructor' in perms]
+
+    def manager_list(self):
+        return [user for user, perms in self.member_list().items() if 'manager' in perms]
 
     def lesson_list(self):
         return self.crs_lessons.all()
@@ -50,7 +62,7 @@ class Course(models.Model):
 
 class CourseLesson(models.Model):
 
-    """ 
+    """
         This class is used rather than a ManyToManyField in Course.
         Although it is nearly identical in function it is defined here to be more explicit
     """

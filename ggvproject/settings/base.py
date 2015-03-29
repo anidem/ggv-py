@@ -15,7 +15,7 @@ STATICFILES_DIRS = (
 
 # heroku uses dj_static to serve static files.
 # It does not require absolute path -- this is relative to development dir?
-STATIC_ROOT = 'staticfiles'
+
 
 STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
@@ -26,6 +26,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     'django.core.context_processors.request',
     'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
+
+    'social.apps.django_app.context_processors.backends',
+    'social.apps.django_app.context_processors.login_redirect',
 )
 
 TEMPLATE_DIRS = [PROJECT_DIR.child('templates')]
@@ -55,7 +58,7 @@ INSTALLED_APPS = (
     'crispy_forms',
     'django_wysiwyg',
     'guardian',
-
+    'social.apps.django_app.default',
 )
 
 
@@ -66,6 +69,8 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
 )
 
 ROOT_URLCONF = 'ggvproject.urls'
@@ -90,11 +95,12 @@ GRAPPELLI_ADMIN_TITLE = 'GGV Admin'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-LOGIN_URL = '/login'
+# LOGIN_URL = '/login'
 
-LOGIN_REDIRECT_URL = '/home'
+# LOGIN_REDIRECT_URL = '/home'
 
 AUTHENTICATION_BACKENDS = (
+    'social.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
     'guardian.backends.ObjectPermissionBackend',
 )

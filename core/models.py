@@ -21,6 +21,10 @@ BOOKMARK_TYPES = (
     ('none', 'None'),
 )
 
+class GGVUser(models.Model):
+    user = models.OneToOneField(User)
+    language_pref = models.CharField(max_length=32, default='english')
+
 
 class ActivityLog(models.Model):
 
@@ -41,3 +45,6 @@ class Bookmark(models.Model):
 
     def __unicode__(self):
         return self.mark_type
+
+
+

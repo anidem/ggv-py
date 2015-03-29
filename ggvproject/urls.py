@@ -4,7 +4,12 @@ from django.contrib import admin
 from filebrowser.sites import site
 
 from utils.wsutil import csvutil, csvutilslides, worksheetvalidator
-from core.views import IndexView, HomeView, BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView
+from core.views import (
+    IndexView, HomeView,
+    BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
+    AccessForbiddenView, ActivateView,
+    CreateGgvUserView, ListGgvUserView, GgvUserView
+    )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import CourseView
 from lessons.views import LessonView, SectionUpdateView
@@ -18,6 +23,10 @@ from questions.views import (
 from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView
 
 urlpatterns = patterns('',
+
+    url('', include('social.apps.django_app.urls', namespace='social')),
+    url('', include('django.contrib.auth.urls', namespace='auth')),
+    # url('', include('social.apps.django_app.urls', namespace='disconnect_individual')),
 
 # Utility - NON Production use only!
     url(r'^ggv/utility/$', csvutil, name='util'),
@@ -66,15 +75,30 @@ urlpatterns = patterns('',
     url(r'^ggv/bookmark/update/(?P<pk>\d+)/$', BookmarkAjaxUpdateView.as_view(), name='update_bookmark'),
     url(r'^ggv/bookmark/delete/(?P<pk>\d+)/$', BookmarkAjaxDeleteView.as_view(), name='delete_bookmark'),
 
+# Users
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/user/add/$', CreateGgvUserView.as_view(), name='create_user'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/user/list/$', ListGgvUserView.as_view(), name='list_users'),
+    url(r'^ggv/user/(?P<pk>[-\d]+)/$', GgvUserView.as_view(), name='view_user'),
+
+
+
 # Login urls
-    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+
+    # url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
 
+    # url(r'^activate/$', ActivateView.as_view(), name='activate'),
+    url(r'^activate/(?P<backend>[^/]+)/$', ActivateView.as_view(), name='activate'),
+
+    url(r'^access-forbidden/$', AccessForbiddenView.as_view(), name='access_forbidden'),
+
 # Administration pages
+
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^ggvadmin/filebrowser/', include(site.urls)),
     url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
     url(r'^ggvadmin/',  include(admin.site.urls)),  # admin site
+
 
 
     url(r'^home/$', HomeView.as_view(), name='ggvhome'),

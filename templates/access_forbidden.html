@@ -1,0 +1,16 @@
+<!-- access_forbidden.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+<div class="row">
+    <div class="col-md-12">
+        {% for i in messages %}
+            <p>{{ i }}</p>
+        {% endfor %}
+        Sorry, you do not have required permissions to view this site. If you feel you have reached this page in error, please contact us.
+    </div>
+</div>
+
+{% endblock content %}

@@ -37,6 +37,9 @@ EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_PORT = 587
 
+STATIC_ROOT = '/Library/WebServer/Documents/static'
+STATIC_URL = 'http://localhost/static/'
+
 MEDIA_ROOT = '/Library/WebServer/Documents/media'
 MEDIA_URL = 'http://localhost/media/private/'
 
@@ -47,5 +50,28 @@ PDF_ROOT = '/Library/WebServer/Documents/media/private/pdf'
 
 SENDFILE_BACKEND = 'sendfile.backends.development' #sendfile.backends.xsendfile
 
-# SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
-# SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY'] # This is the Client ID (not a key)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY'] # This is the Client ID (not a key)
+
+SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = []
+SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
+FIELDS_STORED_IN_SESSION = ['hash',]
+
+SOCIAL_AUTH_LOGIN_ERROR_URL = '/access-forbidden/'
+
+SOCIAL_AUTH_PIPELINE = (
+    'social.pipeline.social_auth.social_details',
+    'social.pipeline.social_auth.social_uid',
+
+    'core.utils.ggv_auth_allowed',
+    'core.utils.ggv_social_user',
+
+    'social.pipeline.user.get_username',
+    'social.pipeline.social_auth.associate_user',
+    'social.pipeline.social_auth.load_extra_data',
+    'social.pipeline.user.user_details',
+)
+
+LOGIN_URL ='/login/google-oauth2'
+LOGIN_REDIRECT_URL = '/ggvadmin'
+

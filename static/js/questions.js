@@ -9,7 +9,7 @@ jQuery(function($) {
             dataType : "json",
 
             // handle a successful response
-            success : function(json) {   
+            success : function(json) {
                 $('#notes').append('<dt><small>' + json.creator + '</small><small style="float: right"> ' + json.modified + '</small></dt><dd class="well"> ' + json.text + '</dd>');
                 $('#noteform').trigger("reset");
             },
@@ -18,19 +18,19 @@ jQuery(function($) {
             error : function(xhr, errmsg, err) {
                 console.log(xhr.status + ": " + err ); // provide a bit more info about the error to the console
             }
-        });        
+        });
 	});
 
     $( ".flagger" ).click(function( event ) {
-        var flagger = $(this)
+        var flagger = $(this);
         form = $( flagger.attr('data-form') );
         bkmark = flagger.attr('data-target');
         flagger.toggleClass('bkset');
-        
+
         if (flagger.hasClass('bkset'))
-            action_handler = "/ggv/bookmark/add/"
+            action_handler = "/ggv/bookmark/add/";
         else
-            action_handler = "/ggv/bookmark/delete/" + bkmark + "/"
+            action_handler = "/ggv/bookmark/delete/" + bkmark + "/";
 
         $.ajax({
             url : action_handler,
@@ -40,7 +40,7 @@ jQuery(function($) {
 
             // handle a successful response
             success : function(json) {
-                if(json.bookmark_id) { 
+                if(json.bookmark_id) {
                     flagger.attr('data-target', json.bookmark_id);
                 }
                 if(json.deleted) {
@@ -53,7 +53,7 @@ jQuery(function($) {
             error : function(xhr, errmsg, err) {
                 console.log(xhr.status + ": " + err ); // provide a bit more info about the error to the console
             }
-        });  
+        });
 
     });
 

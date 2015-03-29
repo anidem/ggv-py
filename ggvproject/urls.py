@@ -103,6 +103,6 @@ urlpatterns = patterns('',
 
 
     url(r'^home/$', HomeView.as_view(), name='ggvhome'),
-    url(r'^', IndexView.as_view(), name='splash'),
+    url(r'^/', IndexView.as_view(), name='splash'),
 )
 

@@ -24,6 +24,7 @@ from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoVi
 
 urlpatterns = patterns('',
 
+
     url('', include('social.apps.django_app.urls', namespace='social')),
     url('', include('django.contrib.auth.urls', namespace='auth')),
     # url('', include('social.apps.django_app.urls', namespace='disconnect_individual')),
@@ -88,7 +89,7 @@ urlpatterns = patterns('',
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
 
     # url(r'^activate/$', ActivateView.as_view(), name='activate'),
-    url(r'^activate/(?P<backend>[^/]+)/$', ActivateView.as_view(), name='activate'),
+    # url(r'^activate/(?P<backend>[^/]+)/$', ActivateView.as_view(), name='activate'),
 
     url(r'^access-forbidden/$', AccessForbiddenView.as_view(), name='access_forbidden'),
 
@@ -102,6 +103,6 @@ urlpatterns = patterns('',
 
 
     url(r'^home/$', HomeView.as_view(), name='ggvhome'),
-    url(r'^$', IndexView.as_view(), name='splash'),
+    url(r'^', IndexView.as_view(), name='splash'),
 )
 

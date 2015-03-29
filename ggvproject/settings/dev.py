@@ -72,6 +72,6 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.user.user_details',
 )
 
-LOGIN_URL ='/login/google-oauth2'
-LOGIN_REDIRECT_URL = '/ggvadmin'
+LOGIN_URL ='/login/google-oauth2/'
+LOGIN_REDIRECT_URL = '/home'
 

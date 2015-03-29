@@ -49,7 +49,7 @@
   <!-- Latest compiled and minified JavaScript -->
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
-  <!-- Math Fonts -- MathJax -->
+  <!-- Math Fonts MathJax -->
   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
 
   {% block local_head %} {% endblock local_head %}
@@ -82,7 +82,7 @@
             {% if user.is_authenticated %}
               <a href="{% url 'logout' %}">Logout {{ user }}</a>
             {% else %}
-              <a href="{% url 'login' %}">Signin</a>
+              <a href="{% url 'social' %}">Signin</a>
             {% endif %}
             </li>
             <!-- End login/logout button -->

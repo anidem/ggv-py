@@ -24,19 +24,10 @@ class slide_view(LoginRequiredMixin, AccessRequiredMixin, DetailView):
     access_object = 'activity'
 
     def dispatch(self, *args, **kwargs):
-        try:
-            slide = self.get_object()
-            self.lesson = self.slide.lesson
-
-            # if self.lesson.id not in self.request.session['user_lessons']:
-            #     raise PermissionDenied  # return a forbidden response
-            #     return self.request
-        except:
-            raise PermissionDenied  # return a forbidden response
-            return self.request
-
+        self.slide = self.get_object()
+        self.lesson = self.slide.lesson
         ActivityLog(
-            user=self.request.user, action='access', message=slide.id).save()
+            user=self.request.user, action='access', message=self.slide.id).save()
 
         return super(slide_view, self).dispatch(*args, **kwargs)
 

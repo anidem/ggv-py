@@ -20,13 +20,15 @@ class slide_view(LoginRequiredMixin, AccessRequiredMixin, DetailView):
 
     model = SlideStack
     template_name = 'slidestack_view.html'
+    lesson = None
     access_object = 'activity'
 
     def dispatch(self, *args, **kwargs):
         try:
             slide = self.get_object()
-            lesson = slide.lesson
-            if lesson.id not in self.request.session['user_lessons']:
+            self.lesson = self.slide.lesson
+
+            if self.lesson.id not in self.request.session['user_lessons']:
                 raise PermissionDenied  # return a forbidden response
                 return self.request
         except:

@@ -41,7 +41,6 @@ class SlideView(LoginRequiredMixin, AccessRequiredMixin, RedirectView):
 
         ActivityLog(
             user=self.request.user, action='access', message=self.slide.id).save()
-
         return sendfile(request, abs_filename)
 
 
@@ -55,6 +54,7 @@ class SlideAssetHandlerView(LoginRequiredMixin, RedirectView):
             os.path.join(settings.STACKS_ROOT, slide.asset),
             os.path.join(settings.STACKS_DATA_DIR, asset)
         )
+
         return sendfile(request, abs_filename)
 
 

@@ -1,8 +1,9 @@
 # slidestacks/views.py
 import os
-from django.views.generic import DetailView, UpdateView, RedirectView
+from django.views.generic import DetailView, UpdateView, RedirectView, TemplateView, View
 from django.core.exceptions import PermissionDenied
 from django.core.urlresolvers import reverse_lazy
+from django.shortcuts import redirect
 from django.conf import settings
 
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
@@ -10,8 +11,31 @@ from sendfile import sendfile
 
 from core.mixins import AccessRequiredMixin
 from core.models import ActivityLog
+
 from .models import SlideStack
 
+
+class slide_view(LoginRequiredMixin, AccessRequiredMixin, DetailView):
+    """ IFrame version until SlideView is debugged. """
+
+    model = SlideStack
+    template_name = 'slidestack_view.html'
+
+    def dispatch(self, *args, **kwargs):
+        try:
+            slide = self.get_object()
+            lesson = slide.lesson
+            if lesson.id not in self.request.session['user_lessons']:
+                raise PermissionDenied  # return a forbidden response
+                return self.request
+        except:
+            raise PermissionDenied  # return a forbidden response
+            return self.request
+
+        ActivityLog(
+            user=self.request.user, action='access', message=slide.id).save()
+
+        return super(slide_view, self).dispatch(*args, **kwargs)
 
 class SlideView(LoginRequiredMixin, AccessRequiredMixin, RedirectView):
     slide = None
@@ -35,9 +59,7 @@ class SlideView(LoginRequiredMixin, AccessRequiredMixin, RedirectView):
             return request
 
         abs_filename = os.path.join(
-            os.path.join(settings.STACKS_ROOT, self.slide.asset),
-            'html5.html'
-        )
+            os.path.join(settings.STACKS_ROOT, self.slide.asset),'html5.html')
 
         ActivityLog(
             user=self.request.user, action='access', message=self.slide.id).save()

@@ -15,8 +15,9 @@
     {% for i in acts %}
       <li>
         {% if i.act.activity_type = 'slidestack' %}
-
-            <a href="{% url 'slideview' course.slug i.act.id %}"><i class="fa fa-desktop icon-slidestack"></i> {{ i.act.title }}</a>
+            <a href="/stacks/{{i.act.asset}}"><i class="fa fa-desktop icon-slidestack"></i> {{ i.act.title }}</a>
+            {% comment %}
+            <a href="{% url 'slideview' course.slug i.act.id %}"><i class="fa fa-desktop icon-slidestack"></i> {{ i.act.title }}</a>{% endcomment %}
         {% else %}
 
             <a href="{% url 'question_response' course.slug i.act.id 1 %}"><i class="fa fa-pencil-square-o"></i> {{ i.act.title }}</a>
@@ -55,6 +56,7 @@
                         {% if i.act.activity_type = 'slidestack' %}
                             <i class="fa fa-desktop fa-2x icon-slidestack"></i>
                             {{ forloop.counter }}.<a class="btn btn-lg media-heading" href="{% url 'slideview' course.slug i.act.id %}">{{ i.act.title }}</a>
+
                             {% if is_staff %}<a href="{% url 'slide_update' i.act.id %}" class="btn btn-xs btn-success">edit</a>{% endif %}
                         {% else %}
                             <i class="fa fa-pencil-square-o fa-2x icon-worksheet"></i>

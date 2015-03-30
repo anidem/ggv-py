@@ -20,7 +20,7 @@ from questions.views import (
     QuestionAssetHandlerView,
     UserReportView, FullReportView
     )
-from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView
+from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView, slide_view
 
 urlpatterns = patterns('',
 
@@ -43,7 +43,8 @@ urlpatterns = patterns('',
     url(r'^ggv/slidestack/(?P<pk>\d+)/$', SlideStackInfoView.as_view(), name='slide_info_view'),
     url(r'^ggv/slidestack/edit/(?P<pk>\d+)/$', SlideStackUpdateView.as_view(), name='slide_update'),
 
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<slideroot>[-\w]+)/$', SlideView.as_view(), name='slideview'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<pk>[-\w]+)/$', slide_view.as_view(), name='slideview'),
+    # url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<slideroot>[-\w]+)/$', 'slidestacks.views.slide_view', name='slideview'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<slideroot>[-\w]+)/data/(?P<asset>.+)/$', SlideAssetHandlerView.as_view(), name='slide_asset'),
 
     # url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<i>\d+)/$', QuestionResponseView.as_view(), name='question_response'),

@@ -20,6 +20,7 @@ class slide_view(LoginRequiredMixin, AccessRequiredMixin, DetailView):
 
     model = SlideStack
     template_name = 'slidestack_view.html'
+    access_object = 'activity'
 
     def dispatch(self, *args, **kwargs):
         try:

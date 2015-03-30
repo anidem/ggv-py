@@ -28,9 +28,9 @@ class slide_view(LoginRequiredMixin, AccessRequiredMixin, DetailView):
             slide = self.get_object()
             self.lesson = self.slide.lesson
 
-            if self.lesson.id not in self.request.session['user_lessons']:
-                raise PermissionDenied  # return a forbidden response
-                return self.request
+            # if self.lesson.id not in self.request.session['user_lessons']:
+            #     raise PermissionDenied  # return a forbidden response
+            #     return self.request
         except:
             raise PermissionDenied  # return a forbidden response
             return self.request

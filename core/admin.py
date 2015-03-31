@@ -127,6 +127,7 @@ class SectionAdmin(GuardedModelAdmin):
 
 class ActivityLogAdmin(admin.ModelAdmin):
     list_display = ('timestamp', 'user', 'action', 'message')
+    list_filter = ('timestamp', 'user', 'action' )
 
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
 admin.site.register(CourseLesson)

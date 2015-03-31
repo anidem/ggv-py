@@ -38,7 +38,7 @@ EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_PORT = 587
 
 STATIC_ROOT = '/Library/WebServer/Documents/static'
-STATIC_URL = 'http://localhost/static/'
+# STATIC_URL = 'http://localhost/static/'
 
 MEDIA_ROOT = '/Library/WebServer/Documents/media'
 MEDIA_URL = 'http://localhost/media/private/'

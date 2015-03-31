@@ -24,8 +24,6 @@ from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoVi
 
 urlpatterns = patterns('',
 
-    url(r'^ggvadmin/',  include(admin.site.urls)),  # admin site
-
     url('', include('social.apps.django_app.urls', namespace='social')),
     url('', include('django.contrib.auth.urls', namespace='auth')),
     # url('', include('social.apps.django_app.urls', namespace='disconnect_individual')),
@@ -100,7 +98,7 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^ggvadmin/filebrowser/', include(site.urls)),
     url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
-    url(r'^ggvadmin/',  include(admin.site.urls)),  # admin site
+    url(r'^ggvadmin/',  include('admin.site.urls')),  # admin site
 
 
 

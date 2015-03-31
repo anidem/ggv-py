@@ -125,6 +125,9 @@ class SectionAdmin(GuardedModelAdmin):
     list_editable = ('lesson', 'title', 'display_order')
     list_filter = ('lesson', )
 
+class ActivityLogAdmin(admin.ModelAdmin):
+    list_display = ('timestamp', 'user', 'action', 'message')
+
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
 admin.site.register(CourseLesson)
 admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)
@@ -134,7 +137,7 @@ admin.site.register(QuestionSet, QuestionSetAdmin, Media=ExtraMedia)
 admin.site.register(OptionQuestion, OptionQuestionAdmin, Media=ExtraMedia)
 admin.site.register(TextQuestion, TextQuestionAdmin, Media=ExtraMedia)
 admin.site.register(QuestionResponse)
-admin.site.register(ActivityLog)
+admin.site.register(ActivityLog, ActivityLogAdmin)
 admin.site.register(GGVUser)
 # admin.site.register(ShortAnswerQuestion, ShortAnswerQuestionAdmin, Media=ExtraMedia)
 # admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin, Media=ExtraMedia)

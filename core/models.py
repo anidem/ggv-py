@@ -9,7 +9,9 @@ from courses.models import Course
 ACTIONS = (
     ('login', 'login'),
     ('logout', 'logout'),
-    ('access', 'access'),
+    ('access-question-text', 'access text question'),
+    ('access-question-option', 'access multiple choice'),
+    ('access-presentation', 'access presentation'),
 )
 
 BOOKMARK_TYPES = (

@@ -27,7 +27,7 @@ class slide_view(LoginRequiredMixin, AccessRequiredMixin, DetailView):
         self.slide = self.get_object()
         self.lesson = self.slide.lesson
         ActivityLog(
-            user=self.request.user, action='access', message=self.slide.id).save()
+            user=self.request.user, action='access-presentation', message=self.slide.id).save()
 
         return super(slide_view, self).dispatch(*args, **kwargs)
 

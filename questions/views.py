@@ -15,6 +15,7 @@ from braces.views import CsrfExemptMixin, LoginRequiredMixin, StaffuserRequiredM
 from filebrowser.base import FileListing
 from sendfile import sendfile
 
+from core.models import ActivityLog
 from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import PresetBookmarkForm
 from notes.forms import UserNoteForm
@@ -199,6 +200,9 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         context['instructor'] = self.request.user.has_perm(
             'courses.edit_course')
 
+        actionstr = 'access-question-' + current_question.get_question_type()
+        ActivityLog(
+            user=self.request.user, action=actionstr, message=current_question.id).save()
         return context
 
 

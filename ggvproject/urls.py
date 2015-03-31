@@ -85,7 +85,7 @@ urlpatterns = patterns('',
 
 # Login urls
 
-    url(r'^login/$', 'django.contrib.auth.views.login', name='login'),
+    url(r'^login/$', include('social.apps.django_app.urls')),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
 
     # url(r'^activate/$', ActivateView.as_view(), name='activate'),

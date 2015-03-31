@@ -24,6 +24,7 @@ from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoVi
 
 urlpatterns = patterns('',
 
+    url(r'^ggvadmin/',  include(admin.site.urls)),  # admin site
 
     url('', include('social.apps.django_app.urls', namespace='social')),
     url('', include('django.contrib.auth.urls', namespace='auth')),

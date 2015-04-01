@@ -38,7 +38,7 @@ class Course(models.Model):
         return [user for user, perms in self.member_list().items() if 'instructor' in perms]
 
     def manager_list(self):
-        return [user for user, perms in self.member_list().items() if 'manager' in perms]
+        return [user for user, perms in self.member_list().items() if 'manage' in perms]
 
     def deactivated_list(self):
         return [user for user, perms in self.member_list().items() if not perms and user.last_login]

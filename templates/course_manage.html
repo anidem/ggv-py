@@ -20,7 +20,7 @@
 
 {% block page_header %}
 <div class="col-md-12 center-block">
-    {% if user.is_manager %}<a class="btn btn-primary btn-xs" href="{% url 'create_user' course.slug %}">Add User</a>{% endif %}
+    {% if is_manager %}<a class="btn btn-primary btn-xs" href="{% url 'create_user' course.slug %}">Add User</a>{% endif %}
 </div>
 {% endblock page_header %}
 

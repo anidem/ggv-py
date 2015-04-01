@@ -52,7 +52,7 @@ class RestrictedAccessZoneMixin(object):
             return super(RestrictedAccessZoneMixin, self).dispatch(*args, **kwargs)
 
         perms = get_perms(self.request.user, self.get_object())
-        if 'manager' in perms:
+        if 'manage' in perms:
             return super(RestrictedAccessZoneMixin, self).dispatch(*args, **kwargs)
 
         if 'instructor' in perms:
@@ -76,6 +76,7 @@ class PrivelegedAccessMixin(object):
         context = super(PrivelegedAccessMixin, self).get_context_data(**kwargs)
         course = self.get_object()
         user = self.request.user
+
         context['is_manager'] = user in course.manager_list() or user.is_staff
         context[
             'is_instructor'] = user in course.instructor_list() or user.is_staff

@@ -29,8 +29,7 @@ class Course(models.Model):
         )
 
     def member_list(self):
-        members = get_users_with_perms(self, attach_perms=True)
-        return members
+        return get_users_with_perms(self, attach_perms=True)
 
     def student_list(self):
         return [user for user, perms in self.member_list().items() if 'access' in perms]
@@ -41,11 +40,20 @@ class Course(models.Model):
     def manager_list(self):
         return [user for user, perms in self.member_list().items() if 'manager' in perms]
 
+    def deactivated_list(self):
+        return [user for user, perms in self.member_list().items() if not perms and user.last_login]
+
+    def unvalidated_list(self):
+        return [user for user, perms in self.member_list().items() if not perms and not user.last_login]
+
     def lesson_list(self):
         return self.crs_lessons.all()
 
     def get_user_role(self, user):
         return get_perms(user, self)
+
+    def get_edit_privilege(self, user):
+        return 'instructor' in self.get_user_role(user)
 
     def check_membership(self, user_session):
         """

@@ -35,6 +35,12 @@ class ActivityLog(models.Model):
     message = models.CharField(max_length=64, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    def __unicode__(self):
+        return self.timestamp, self.user, self.action, self.action
+
+    class Meta:
+            ordering = ['user', '-timestamp']
+
 
 class Bookmark(models.Model):
     mark_type = models.CharField(

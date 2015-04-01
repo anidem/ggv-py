@@ -20,13 +20,12 @@
 
 {% block page_header %}
 <div class="col-md-12 center-block">
-      <div class="btn-group btn-toggle">
-        {% if eng_lessons and span_lessons %}
-          <button class="btn btn-xs btn-success active">English</button>
-          <button class="btn btn-xs btn-default">Español</button>
-        {% endif %}
-      </div>
-      {% if user.is_staff %}<a class="btn btn-primary btn-xs" href="{% url 'create_user' course.slug %}">Add User</a>{% endif %}
+    <div class="btn-group btn-toggle">
+    {% if eng_lessons and span_lessons %}
+      <button class="btn btn-xs btn-success active">English</button>
+      <button class="btn btn-xs btn-default">Español</button>
+    {% endif %}
+    </div>
     <script>
       $('.btn-toggle').click(function() {
           $(this).find('.btn').toggleClass('active');
@@ -35,7 +34,10 @@
           $('.eng').toggleClass('collapse')
           $('.span').toggleClass('collapse')
       });
-  </script>
+    </script>
+
+    {% if is_instructor or is_manager %}<a class="btn btn-primary btn-xs" href="{% url 'manage_course' course.slug %}">User Report</a>{% endif %}
+
       <h1></h1>
 </div>
 {% endblock page_header %}
@@ -63,42 +65,42 @@
   {% endfor %}
   </div>
 
+    <h4>Instructors </h4>
+    <div class="panel-group" id="accordion">
+    {% for i in instructors %}
+        <div class="panel panel-info">
+            <div class="panel-heading">
+                <a data-toggle="collapse" data-parent="#accordion" href="#{{ i.id }}-data">
+                    <p class="panel-title">{{ i.first_name }} {{ i.last_name }}{% if i == request.user %}<small> (this is you) </small> {% endif %}</p>
+                </a>
+            </div>
+            <div id="{{ i.id }}-data" class="panel-collapse collapse">
+              <div class="panel-body"></div>
+            </div>
+        </div>
+    {% empty %}
+        <p>No instructors are assigned to this lesson.</p>
+    {% endfor %}
+    </div>
 
-
-<h4>Instructors </h4>
-<div class="panel-group" id="accordion">
-{% for i in instructors %}
+{% if is_instructor or is_manager %}
+    <h4>{{ students|length}} Students </h4>
+    <div class="panel-group" id="accordion">
+    {% for i in students %}
     <div class="panel panel-info">
         <div class="panel-heading">
-            <a data-toggle="collapse" data-parent="#accordion" href="#{{ i.username }}-data">
-                <p class="panel-title">{{ i.first_name }} {{ i.last_name }}</p>
+            <a data-toggle="collapse" data-parent="#accordion" href="#{{ i.id }}-data">
+                <p class="panel-title">{{ i.first_name }} {{ i.last_name }} ({{ i.username }})</p>
             </a>
         </div>
-        <div id="{{ i.username }}-data" class="panel-collapse collapse">
+        <div id="{{ i.id }}-data" class="panel-collapse collapse">
           <div class="panel-body"></div>
         </div>
     </div>
-{% empty %}
-    <p>No instructors are assigned to this lesson.</p>
-{% endfor %}
-</div>
-
-<h4>{{ students|length}} Students </h4>
-<div class="panel-group" id="accordion">
-{% for i in students %}
-<div class="panel panel-info">
-    <div class="panel-heading">
-        <a data-toggle="collapse" data-parent="#accordion" href="#{{ i.username }}-data">
-            <p class="panel-title">{{ i.first_name }} {{ i.last_name }} ({{ i.username }})</p>
-        </a>
+    {% empty %}
+        <p>No students are assigned this lesson.</p>
+    {% endfor %}
     </div>
-    <div id="{{ i.username }}-data" class="panel-collapse collapse">
-      <div class="panel-body"></div>
-    </div>
-</div>
-{% empty %}
-    <p>No students are assigned this lesson.</p>
-{% endfor %}
-</div>
+{% endif %}
 
 {% endblock content %}

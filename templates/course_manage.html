@@ -1,0 +1,110 @@
+<!-- course_manage.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load guardian_tags %}
+
+
+{% block page_crumb %}
+    <li><a href="{% url 'course' object.slug %}">{{ object }}</a></li>
+    <li><a href="#">Manage</a></li>
+{% endblock page_crumb %}
+
+{% block local_nav %}
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Courses <b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        {% for i in courses %}<li><a href="{{ i.get_absolute_url }}">{{ i.title }}</a></li> {% endfor %}
+      </ul>
+    </li>
+{% endblock local_nav %}
+
+{% block page_header %}
+<div class="col-md-12 center-block">
+    {% if user.is_manager %}<a class="btn btn-primary btn-xs" href="{% url 'create_user' course.slug %}">Add User</a>{% endif %}
+</div>
+{% endblock page_header %}
+
+{% block content %}
+    <div class="panel panel-success">
+        <div class="panel-heading">{{ students|length}} Students</div>
+        <!-- <div class="panel-body"></div> -->
+        <table class="table">
+        <thead>
+          <tr>
+            <th>Last Login</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Username</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for i in students %}
+        <tr>
+            <th scope="row">{{ i.last_login }}</th>
+            <td>{{ i.first_name }}</td>
+            <td>{{ i.last_name }}</td>
+            <td>{{ i.username }}</td>
+            <td><a href="{% url 'manage_user' course.slug i.id %}">more</a> </td>
+        </tr>
+        {% empty %}
+            <div class="panel-body">No students are assigned to this course.</div>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+
+    <div class="panel panel-danger">
+        <div class="panel-heading">{{ deactivated|length}} Deactivated</div>
+        <!-- <div class="panel-body"></div> -->
+        <table class="table">
+        <thead>
+          <tr>
+            <th>Last Login</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Username</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for i in deactivated %}
+        <tr>
+            <th scope="row">{{ i.last_login }}</th>
+            <td>{{ i.first_name }}</td>
+            <td>{{ i.last_name }}</td>
+            <td>{{ i.username }}</td>
+        </tr>
+        {% empty %}
+            <div class="panel-body">No students have been deactivated.</div>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+
+    <div class="panel panel-warning">
+        <div class="panel-heading">{{ unvalidated|length}} Unvalidated</div>
+        <div class="panel-body">These users have been granted access but have not logged in.</div>
+        <table class="table">
+        <thead>
+          <tr>
+            <th>Last Login</th>
+            <th>First Name</th>
+            <th>Last Name</th>
+            <th>Username</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for i in unvalidated %}
+        <tr>
+            <td>{{ i.last_login }}</td>
+            <td>{{ i.first_name }}</td>
+            <td>{{ i.last_name }}</td>
+            <td>{{ i.username }}</td>
+        </tr>
+        {% empty %}
+            <div class="panel-body">All members have validated their accounts.</div>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+
+{% endblock content %}

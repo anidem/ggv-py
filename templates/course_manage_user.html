@@ -1,0 +1,54 @@
+<!-- course_manage_user.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load guardian_tags %}
+
+
+{% block page_crumb %}
+    <li><a href="{% url 'course' object.slug %}">{{ object }}</a></li>
+    <li><a href="#">Managing {{ student_user }}</a></li>
+{% endblock page_crumb %}
+
+{% block local_nav %}
+    <li class="dropdown">
+      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Courses <b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        {% for i in courses %}<li><a href="{{ i.get_absolute_url }}">{{ i.title }}</a></li> {% endfor %}
+      </ul>
+    </li>
+{% endblock local_nav %}
+
+{% block page_header %}
+<div class="col-md-12 center-block">
+    {% if user.is_manager %}<a class="btn btn-primary btn-xs" href="{% url 'create_user' course.slug %}">Add User</a>{% endif %}
+</div>
+{% endblock page_header %}
+
+{% block content %}
+    <div class="panel panel-success">
+        <div class="panel-heading">{{ student_user }} </div>
+        <!-- <div class="panel-body"></div> -->
+        <table class="table">
+        <thead>
+          <tr>
+            <th>Time</th>
+            <th>Action</th>
+            <th>Message</th>
+
+          </tr>
+        </thead>
+        <tbody>
+        {% for i in activity_log %}
+        <tr>
+            <th scope="row">{{ i.timestamp }}</th>
+            <td>{{ i.action }}</td>
+            <td>{{ i.message }}</td>
+        </tr>
+        {% empty %}
+            <div class="panel-body">No students are assigned to this course.</div>
+        {% endfor %}
+        </tbody>
+        </table>
+    </div>
+
+{% endblock content %}

@@ -79,6 +79,7 @@ class SlideStackInlineAdmin(admin.TabularInline):
 
 class LessonInlineAdmin(admin.TabularInline):
     model = CourseLesson
+    extra = 8
 
 
 class SlideStackAdmin(admin.ModelAdmin):

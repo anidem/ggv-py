@@ -77,6 +77,9 @@ class WorksheetInlineAdmin(admin.TabularInline):
 class SlideStackInlineAdmin(admin.TabularInline):
     model = SlideStack
 
+class LessonInlineAdmin(admin.TabularInline):
+    model = CourseLesson
+
 
 class SlideStackAdmin(admin.ModelAdmin):
     model = SlideStack
@@ -110,6 +113,14 @@ class TextQuestionAdmin(admin.ModelAdmin):
 class CourseAdmin(GuardedModelAdmin):
     model = Course
     list_display = ('title', 'slug', 'access_code', 'lesson_list')
+    inlines = [
+        LessonInlineAdmin,
+    ]
+
+class CourseLessonAdmin(admin.ModelAdmin):
+    list_display = ('course', 'lesson')
+    list_fileter = ('course')
+
 
 
 class LessonAdmin(GuardedModelAdmin):
@@ -130,7 +141,7 @@ class ActivityLogAdmin(admin.ModelAdmin):
     list_filter = ('timestamp', 'user', 'action' )
 
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
-admin.site.register(CourseLesson)
+admin.site.register(CourseLesson, CourseLessonAdmin)
 admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)
 admin.site.register(Section, SectionAdmin, Media=ExtraMedia)
 admin.site.register(SlideStack, SlideStackAdmin)

@@ -104,7 +104,7 @@ class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
         if bookmarkform.is_valid():
             new_bookmark = bookmarkform.save()
             data = {}
-            data['mark_type'] = new_bookmark.mark_type
+            data['mark_type'] = new_bookmark.get_mark_type_display()
             data['bookmark_id'] = new_bookmark.id
             return self.render_json_response(data)
         else:
@@ -123,7 +123,7 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             updated_bk.save()
 
             data = {}
-            data['mark_type'] = updated_bk.mark_type
+            data['mark_type'] = updated_bk.get_mark_type_display()
             data['bookmark_id'] = updated_bk.id
             return self.render_json_response(data)
         else:

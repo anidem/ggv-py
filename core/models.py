@@ -16,7 +16,7 @@ ACTIONS = (
 
 BOOKMARK_TYPES = (
     ('remember', 'Remember'),
-    ('todo', 'Todo'),
+    ('todo', 'To do'),
     ('started', 'Started'),
     ('completed', 'Completed'),
     ('question', 'Question'),
@@ -26,7 +26,10 @@ BOOKMARK_TYPES = (
 class GGVUser(models.Model):
     user = models.OneToOneField(User)
     language_pref = models.CharField(max_length=32, default='english')
+    clean_logout = models.BooleanField(default=True)
 
+    def __unicode__(self):
+        return self.user.username
 
 class ActivityLog(models.Model):
 
@@ -36,7 +39,7 @@ class ActivityLog(models.Model):
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return self.timestamp, self.user, self.action, self.action
+        return self.user.username
 
     class Meta:
             ordering = ['user', '-timestamp']

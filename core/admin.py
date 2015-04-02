@@ -12,7 +12,7 @@ from lessons.models import Lesson, Section
 from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option
 from slidestacks.models import SlideStack
 from notes.models import UserNote
-from core.models import ActivityLog, GGVUser
+from core.models import ActivityLog, GGVUser, Bookmark
 
 
 class ExtraMedia:
@@ -120,7 +120,7 @@ class CourseAdmin(GuardedModelAdmin):
 
 class CourseLessonAdmin(admin.ModelAdmin):
     list_display = ('course', 'lesson')
-    list_fileter = ('course')
+    list_filter = ('course',)
 
 
 
@@ -152,6 +152,7 @@ admin.site.register(TextQuestion, TextQuestionAdmin, Media=ExtraMedia)
 admin.site.register(QuestionResponse)
 admin.site.register(ActivityLog, ActivityLogAdmin)
 admin.site.register(GGVUser)
+admin.site.register(Bookmark)
 # admin.site.register(ShortAnswerQuestion, ShortAnswerQuestionAdmin, Media=ExtraMedia)
 # admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin, Media=ExtraMedia)
 admin.site.register(UserNote)

@@ -13,13 +13,14 @@ class GgvUserCreateForm(forms.ModelForm):
         label='Preferred language:')
     perms = forms.ChoiceField(widget=forms.RadioSelect(),
                               choices=(('access', 'Student Access'), ('instructor', 'Instructor Access')), label="Select access level:")
+    clean_logout = forms.BooleanField(label="Clean logout (uncheck to prevent complete google sign out):")
     username = forms.EmailField(
         widget=forms.EmailInput(), label='Please enter a complete gmail address.')
 
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name',
-                  'language', 'perms', 'course', 'is_active', ]
+                  'language', 'perms', 'course', 'is_active', 'clean_logout' ]
         widgets = {
             'is_active': forms.HiddenInput(),
         }

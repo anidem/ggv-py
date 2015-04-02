@@ -43,6 +43,7 @@ def close_session(sender, **kwargs):
     """
     try:
         user = kwargs['user']
+
         ActivityLog(
             user=user, action='logout', message='user logged out').save()
 

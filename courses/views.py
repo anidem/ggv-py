@@ -27,7 +27,7 @@ class CourseView(LoginRequiredMixin, AccessRequiredMixin, PrivelegedAccessMixin,
         context['courses'] = [
             Course.objects.get(slug=i) for i in self.request.session['user_courses']]
         context['instructors'] = course.instructor_list()
-        context['students'] = course.student_list()
+        context['students'] = course.student_list(extra_details=True)
         return context
 
 class CourseManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):

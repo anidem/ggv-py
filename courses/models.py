@@ -10,7 +10,6 @@ from guardian.shortcuts import get_users_with_perms, get_perms
 
 from lessons.models import Lesson
 
-
 class Course(models.Model):
 
     """
@@ -31,7 +30,9 @@ class Course(models.Model):
     def member_list(self):
         return get_users_with_perms(self, attach_perms=True)
 
-    def student_list(self):
+    def student_list(self, extra_details=None):
+        # if extra_details:
+        #     return [{user: ActivityLog.objects.filter(user=user)} for user, perms in self.member_list().items() if 'access' in perms]
         return [user for user, perms in self.member_list().items() if 'access' in perms]
 
     def instructor_list(self):
@@ -41,10 +42,10 @@ class Course(models.Model):
         return [user for user, perms in self.member_list().items() if 'manage' in perms]
 
     def deactivated_list(self):
-        return [user for user, perms in self.member_list().items() if not perms and user.last_login]
+        return [user for user, perms in self.member_list().items() if not perms and user.social_auth.all()]
 
     def unvalidated_list(self):
-        return [user for user, perms in self.member_list().items() if not perms and not user.last_login]
+        return [user for user, perms in self.member_list().items() if not perms and not user.social_auth.all()]
 
     def lesson_list(self):
         return self.crs_lessons.all()

@@ -1,8 +1,17 @@
 # utils.py
+from django.contrib.auth import logout
 from django.contrib.auth.models import User
+from django.shortcuts import redirect
+
 
 from social.exceptions import AuthForbidden
 
+
+
+def logout_clean(request):
+    # Pending implementation.
+    logout(request)
+    redirect('https://accounts.google.com/logout')
 
 def auth_allowed(response, details, *args, **kwargs):
     """

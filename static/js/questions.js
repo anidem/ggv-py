@@ -23,6 +23,7 @@ jQuery(function($) {
 
     $( ".flagger" ).click(function( event ) {
         var flagger = $(this);
+
         form = $( flagger.attr('data-form') );
         bkmark = flagger.attr('data-target');
         flagger.toggleClass('bkset');
@@ -40,13 +41,13 @@ jQuery(function($) {
 
             // handle a successful response
             success : function(json) {
-                if(json.bookmark_id) {
+                if(json.bookmark_id) { // new bookmark added.
                     flagger.attr('data-target', json.bookmark_id);
                 }
-                if(json.deleted) {
+                if(json.deleted) { // the bookmark was removed.
                     flagger.attr('data-target', '');
                 }
-                console.log(json);
+
             },
 
             // handle a non-successful response

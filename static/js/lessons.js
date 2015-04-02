@@ -30,12 +30,11 @@ jQuery(function($) {
             success : function(json) {
                 flagbtn = $( flagger.attr('data-update') );
                 flagpnl = $( flagger.attr('data-panel') );
-                flagged = flagbtn.find('i.flagger');
+                flagged = flagbtn.find('i.bookmarker');
                 if(json.bookmark_id) {
                     flagger.attr('data-target', json.bookmark_id);
                     flagged.removeClass('fa-star-o');
                     flagged.addClass('fa-star');
-                    // flagger.addClass('bkset');
                     flagbtn.find('span').html(json.mark_type);
 
                 }

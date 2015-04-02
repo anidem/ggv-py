@@ -45,8 +45,7 @@
                 <div class="lead">
                     {{ question_position }}/{{ question_list|length }}.
                     {% if edit_url %}<a href="{{ edit_url }}" class="btn btn-xs btn-success">edit</a>{% endif %}
-
-                    {% comment %}<i class="fa fa-flag flagger {% if bookmark %}bkset{% endif %}" data-target="{{ bookmark.id }}" data-form="#flag_form"></i>{% endcomment %}
+                    <i class="fa fa-flag flagger {% if bookmark %}bkset{% endif %}" data-target="{{ bookmark.id }}" data-form="#flag_form"></i>
 
                     <!-- <button class="btn btn-xs btn-primary" data-toggle="popover" data-placement="right" data-content="help">progress</button> -->
 
@@ -106,17 +105,17 @@
         <div class="row">
             <div class="col-md-12">
                 <legend>Messages
-                {% if instructor %}<a data-toggle="collapse" href="#add_note_panel" aria-controls="add_note_panel"><small>+</small></a>{% endif %}
+                <a data-toggle="collapse" href="#add_note_panel" aria-controls="add_note_panel"><small>+</small></a>
                 </legend>
 
-                {% if instructor %}
+
                     <div id="add_note_panel" class="panel-collapse collapse">
                             <form id="noteform" action="" method="post">{% csrf_token %}
                                 {{ noteform|crispy }}
                                 <p><input id="note_submit_btn" type="submit" class="btn btn-default" value="Add Note"/></p>
                             </form>
                     </div>
-                {% endif %}
+
 
                 <dl id="notes">
                 {% for i in note_list  %}

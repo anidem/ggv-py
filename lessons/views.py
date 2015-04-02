@@ -32,7 +32,7 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
             bookmark_id = ''
             try:
                 bookmark = bookmarks.filter(content_type=activity_type).get(object_id=i.id)
-                bookmark_label = bookmark.mark_type
+                bookmark_label = bookmark.get_mark_type_display()
                 bookmark_id = bookmark.id
                 # bookmarkform = BookmarkForm(instance=bookmark)
 

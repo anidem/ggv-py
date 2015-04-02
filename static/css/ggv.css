@@ -151,9 +151,11 @@ form ul {
 .icon-worksheet { color: orange;}
 
 /* Bookmarks */
-.flagger {color: #419641;}
+.bookmarker {color: #419641;}
+
+.flagger { cursor: pointer;}
 .bkset {
-  color: #419641
+  color: orange;
 }
 
 /* Row color cycle*/

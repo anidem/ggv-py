@@ -22,8 +22,13 @@
 <div class="col-md-12 center-block">
     <div class="btn-group btn-toggle">
     {% if eng_lessons and span_lessons %}
-      <button class="btn btn-xs btn-success active">English</button>
-      <button class="btn btn-xs btn-default">Español</button>
+        {% if user.ggvuser.language_pref == 'spanish' %}
+            <button class="btn btn-xs btn-default">English</button>
+            <button class="btn btn-xs btn-success active">Español</button>
+        {% else %}
+            <button class="btn btn-xs btn-success active">English</button>
+            <button class="btn btn-xs btn-default">Español</button>
+        {% endif %}
     {% endif %}
     </div>
     <script>
@@ -43,7 +48,7 @@
 {% endblock page_header %}
 
 {% block content %}
-  <div class="row icon eng">
+  <div class="row icon eng {% if user.ggvuser.language_pref == 'spanish' %}collapse{% endif %}">
 	{% for i in eng_lessons %}
 		<div class="col-md-3 icon-{{ i.lesson.subject }}">
 			<a class="static" href="{{ i.get_absolute_url }}">
@@ -54,7 +59,7 @@
 	{% endfor %}
   </div>
 
-  <div class="row icon span {% if eng_lessons %}collapse{% endif %}">
+  <div class="row icon span {% if user.ggvuser.language_pref != 'spanish' %}collapse{% endif %}">
   {% for i in span_lessons %}
     <div class="col-md-3 icon-{{ i.lesson.subject }}">
       <a class="static" href="{{ i.get_absolute_url }}">

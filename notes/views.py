@@ -1,4 +1,5 @@
 # notes/views.py
+import datetime
 from django.views.generic import CreateView, ListView, UpdateView
 
 from braces.views import CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, LoginRequiredMixin
@@ -23,7 +24,7 @@ class NoteCreateView(LoginRequiredMixin, CsrfExemptMixin, JSONResponseMixin, Aja
         if noteform.is_valid():
             newnote = noteform.save()
             data = {}
-            data['modified'] = newnote.modified
+            data['modified'] = newnote.modified.strftime("%b %d %Y %H")
             data['text'] = newnote.text
             data['creator'] = newnote.creator.username
             return self.render_json_response(data)

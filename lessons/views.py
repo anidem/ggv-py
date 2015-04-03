@@ -1,6 +1,6 @@
 # lessons/views.py
 from django import forms
-from django.views.generic import DetailView, UpdateView
+from django.views.generic import DetailView, UpdateView, ListView
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse_lazy
 
@@ -11,6 +11,7 @@ from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.models import Bookmark
 from .models import Lesson, Section
+from questions.models import Option
 
 
 class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, DetailView):
@@ -75,5 +76,32 @@ class SectionUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, CourseContex
     def get_context_data(self, **kwargs):
         context = super(SectionUpdateView, self).get_context_data(**kwargs)
         return context
+
+class WorksheetKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
+    model = Lesson
+    template_name = 'question_worksheet_key.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(WorksheetKeyView, self).get_context_data(**kwargs)
+        key = []
+        worksheets = self.get_object().worksheets.all()
+        for i in worksheets:
+            k_items = []
+            for question in i.get_ordered_question_list():
+                try:
+                    if(question.get_question_type() == 'option'):
+                        answer = Option.objects.get(question.correct_answer()).display_text
+                    else:
+                        answer = question.correct_answer()
+                    k_items.append((question.display_text, answer))
+                except:
+                    pass
+
+            key.append((i, k_items))
+
+        context['worksheets'] = key
+        return context
+
+
 
 

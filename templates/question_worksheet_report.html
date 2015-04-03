@@ -8,7 +8,7 @@
 {% endblock page_crumb %}
 
 {% block content %}
-    <div class="row"> 
+    <div class="row">
         <div class="col-md-1 text-left">Question number</div>
         <div class="col-md-5 text-center">Question </div>
         <div class="col-md-5 text-center">Response</div>
@@ -18,10 +18,10 @@
         {% if j %}
             <a href="{% url 'question_response' course.slug object.id forloop.counter %}" class="static">
                 <div class="row  hoverpad {% cycle 'row1' 'row2' %}">
-                    
+
                     <div class="col-md-1"> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</div>
                     <div class="col-md-5 text-left"> {{ i.display_text | safe }} </div>
-                    <div class="col-md-5 text-right">{{ j }}</div>
+                    <div class="col-md-5 text-right">{{ j | safe }}</div>
                     <div class="col-md-1 text-left">
                         {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
                         {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
@@ -36,10 +36,10 @@
         <h3>{{ report.0 }}</h3>
         {% for h, i, j, k in report.1 %}
             {% if j %}
-            
+
                 <a href="{% url 'question_response' course.slug object.id forloop.counter %}" class="static">
                 <div class="row  hoverpad {% cycle 'row1' 'row2' %}">
-                    
+
                     <div class="col-md-1"> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</div>
                     <div class="col-md-5 text-left"> {{ i.display_text | safe }} </div>
                     <div class="col-md-5 text-right">{{ j }}</div>

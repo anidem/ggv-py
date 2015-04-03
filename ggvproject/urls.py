@@ -12,7 +12,7 @@ from core.views import (
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import CourseView, CourseManageView, UserManageView
-from lessons.views import LessonView, SectionUpdateView
+from lessons.views import LessonView, SectionUpdateView, WorksheetKeyView
 from questions.views import (
     WorksheetHomeView, WorksheetUpdateView, QuestionResponseView,
     OptionQuestionView, OptionQuestionUpdateView,
@@ -36,8 +36,9 @@ urlpatterns = patterns('',
 # GGV
     url(r'^ggv/(?P<crs_slug>[-\w]+)/$', CourseView.as_view(), name='course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/$', CourseManageView.as_view(), name='manage_course'),
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/user/(?P<user>\d+)$', UserManageView.as_view(), name='manage_user'),
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)$', LessonView.as_view(), name='lesson'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/user/(?P<user>\d+)/$', UserManageView.as_view(), name='manage_user'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/key/$', WorksheetKeyView.as_view(), name='lesson_key'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/$', LessonView.as_view(), name='lesson'),
 
 
 # GGV lesson activities

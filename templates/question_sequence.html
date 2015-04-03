@@ -79,7 +79,11 @@
                             <a href="{% url 'question_response' course.slug worksheet.id previous_position %}" class="btn">Previous</a>
                         {% endif %}
 
-                        <input id="chk_response_btn" type="submit" value="Submit Answer" class="btn btn-default">
+                        {% if form.response %}
+                            <input id="chk_response_btn" type="submit" value="Submit Answer" class="btn btn-default">
+                        {% elif next_position and not user_completed %}
+                            <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Continue</a>
+                        {% endif %}
 
                         {% if user_completed and next_position  %}
                             <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Next</a>

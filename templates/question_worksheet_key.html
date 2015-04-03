@@ -1,0 +1,35 @@
+<!-- question_worksheet_key.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+    <div class="col-md-12">{{ object }}</div>
+
+    <div class="col-md-6 col-md-offset-3">
+    <table class="table">
+        <tbody>
+        {% for i in worksheets %}
+            <thead>
+              <tr><th>{{ i.0 }}</th><th></th></tr>
+              <tr>
+                <th>Question</th>
+                <th>Answer</th>
+              </tr>
+            </thead>
+
+            {% for j in i.1 %}
+                <tr>
+                    <td>{{ j.0|safe }}</td>
+                    <td>{{ j.1|safe }}</td>
+                </tr>
+            {% endfor %}
+        {% endfor %}
+        </tbody>
+    </table>
+
+
+
+
+    </div>
+
+{% endblock content %}

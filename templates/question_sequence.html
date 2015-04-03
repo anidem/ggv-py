@@ -89,10 +89,14 @@
             </div>
             {%if question.display_image %}
             <div class="col-md-8">
-
                     <div><img class="fit" src="{{ question.display_image.url }}"></div>
-
             </div>
+            {% endif %}
+            {%if question.display_pdf %}
+            <div class="col-md-8">
+                <object width="100%" height="600px" data="{{ question.display_pdf.url }}"></object>
+            </div>
+
             {% endif %}
 
             {% if worksheet.display_pdf %}

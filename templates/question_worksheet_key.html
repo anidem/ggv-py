@@ -5,20 +5,22 @@
 {% block content %}
     <div class="col-md-12">{{ object }}</div>
 
-    <div class="col-md-6 col-md-offset-3">
+    <div class="col-md-10 col-md-offset-1">
     <table class="table">
         <tbody>
         {% for i in worksheets %}
             <thead>
               <tr><th>{{ i.0 }}</th><th></th></tr>
               <tr>
-                <th>Question</th>
-                <th>Answer</th>
+                <th width="5px"><small><em>#</em></small></th>
+                <th><small><em>Question</em></small></th>
+                <th><small><em>Answer</em></small></th>
               </tr>
             </thead>
 
             {% for j in i.1 %}
                 <tr>
+                    <td width="5px">{{ forloop.counter }}</td>
                     <td>{{ j.0|safe }}</td>
                     <td>{{ j.1|safe }}</td>
                 </tr>

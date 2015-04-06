@@ -30,6 +30,8 @@
                 </div>
                 </a>
         {% endif %}
+    {% empty %}
+        <div class="row">This worksheet has no responses or does not require responses.</div>
     {% endfor %}
 
     {% for report in reports %}
@@ -52,6 +54,8 @@
                 </a>
             {% endif %}
         {% endfor %}
+    {% empty %}
+        <div class="row">This worksheet has no responses or does not require responses.</div>
     {% endfor %}
 {% endblock content %}
 

@@ -56,7 +56,7 @@ class QuestionSet(AbstractActivity):
             if not i.user_response_object(user):
                 return {'index': index, 'question': i}
             index = index + 1
-        return {'index': None, 'question': None}
+        return None
 
     def get_user_responses(self, user, questions, course):
         report = []
@@ -113,6 +113,7 @@ class AbstractQuestion(models.Model):
     display_order = models.IntegerField(default=0)
     display_image = models.FileField(null=True, blank=True, upload_to='img')
     display_pdf = models.FileField(null=True, blank=True, upload_to='pdf')
+    response_required = models.BooleanField(default=True)
 
     def get_sequence_url(self, course):
         try:
@@ -128,6 +129,9 @@ class AbstractQuestion(models.Model):
     class Meta:
         abstract = True
         ordering = ['display_order']
+
+# class NoResponseQuestion(AbstractQuestion):
+
 
 
 class TextQuestion(AbstractQuestion):
@@ -287,5 +291,8 @@ class QuestionResponse(TimeStampedModel):
 
 
 class UserWorksheetStatus(TimeStampedModel):
+    """
+    Maintains record of completed worksheets by user.
+    """
     user = models.ForeignKey(User, related_name='completed_worksheets')
     completed_worksheet = models.ForeignKey(QuestionSet)

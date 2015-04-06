@@ -13,6 +13,8 @@ from django import forms
 
 from braces.views import CsrfExemptMixin, LoginRequiredMixin, StaffuserRequiredMixin
 from filebrowser.base import FileListing
+from guardian.shortcuts import get_perms
+
 from sendfile import sendfile
 
 from core.models import ActivityLog
@@ -20,6 +22,7 @@ from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import PresetBookmarkForm
 from notes.forms import UserNoteForm
 from lessons.models import Section
+from courses.models import Course
 
 from .models import TextQuestion, OptionQuestion, QuestionResponse, QuestionSet, UserWorksheetStatus
 from .forms import QuestionResponseForm, OptionQuestionUpdateForm, TextQuestionUpdateForm, OptionFormset, QuestionSetUpdateForm
@@ -58,7 +61,8 @@ class WorksheetUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, UpdateView
 
     def get_context_data(self, **kwargs):
         context = super(WorksheetUpdateView, self).get_context_data(**kwargs)
-        section_filter = forms.ModelChoiceField(queryset=Section.objects.filter(lesson=self.get_object().lesson))
+        section_filter = forms.ModelChoiceField(
+            queryset=Section.objects.filter(lesson=self.get_object().lesson))
         context['form'].fields['section'] = section_filter
         return context
 
@@ -74,38 +78,50 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
     access_object = 'activity'
 
     def dispatch(self, *args, **kwargs):
-        try:
-            self.worksheet = get_object_or_404(
-                QuestionSet, pk=self.kwargs['i'])
-            self.lesson = self.worksheet.lesson
-            self.completion_status = self.request.user.completed_worksheets.filter(
-                completed_worksheet=self.worksheet)
-
-        except Exception:
-            pass
+        self.worksheet = get_object_or_404(
+            QuestionSet, pk=self.kwargs['i'])
+        self.next_question = self.worksheet.get_question_at_index(
+            int(self.kwargs['j']) - 1)
+        self.lesson = self.worksheet.lesson
+        self.completion_status = self.request.user.completed_worksheets.filter(
+            completed_worksheet=self.worksheet)
 
         return super(QuestionResponseView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
+        course = Course.objects.get(slug=self.kwargs['crs_slug'])
+        is_instructor = 'instructor' in get_perms(self.request.user, course)
 
-        if self.request.user.is_staff or self.completion_status.count():
-            self.next_question = self.worksheet.get_question_at_index(
-                int(self.kwargs['j']) - 1)
-
+        """ User has completed or is staff. No viewing restrictions enforced. """
+        if self.request.user.is_staff or is_instructor or self.completion_status.count():
             if not self.next_question:
-                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))
+                """ No more questions. Send user to worksheet report. """
+                return HttpResponseRedirect(reverse(
+                    'worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))
 
             return super(QuestionResponseView, self).get(request, *args, **kwargs)
 
-        self.next_question = self.worksheet.get_next_question(
-            self.request.user)
-        if not self.next_question['question']:
+        """ User is not staff but viewing restrictions enforced if response not required. """
+        if self.next_question and not self.next_question['question'].response_required:
+            return super(QuestionResponseView, self).get(request, *args, **kwargs)
+
+        """ Viewing restrictions enforced. """
+        self.next_question = self.worksheet.get_next_question(self.request.user)
+
+        """ If user's response queue is empty, user has completed worksheet, write completion status.
+            Send user to worksheet report.
+        """
+        if not self.next_question:
             if not self.completion_status:
                 UserWorksheetStatus(
                     user=self.request.user, completed_worksheet=self.worksheet).save()
                 self.completion_status = True
                 return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))
 
+        """
+        Request parameter <j> is potentially overidden by next unanswered question
+        in user's response queue.
+        """
         if str(self.next_question['index']) != self.kwargs['j']:
             return HttpResponseRedirect(reverse('question_response', args=(self.kwargs['crs_slug'], self.worksheet.id, self.next_question['index'])))
 
@@ -197,8 +213,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             'user_completed'] = self.completion_status or self.request.user.is_staff
         context['question_list'] = tally
         context['worksheet'] = self.worksheet
-        context['instructor'] = self.request.user.has_perm(
-            'courses.edit_course')
+        context['instructor'] = self.request.user in context['course'].instructor_list() or self.request.user.is_staff
 
         actionstr = 'access-question-' + current_question.get_question_type()
         ActivityLog(
@@ -230,12 +245,14 @@ class TextQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateView)
     def get_context_data(self, **kwargs):
         context = super(
             TextQuestionUpdateView, self).get_context_data(**kwargs)
-        lesson_filter = forms.ModelChoiceField(queryset= QuestionSet.objects.filter(lesson=self.get_object().question_set.lesson))
+        lesson_filter = forms.ModelChoiceField(
+            queryset=QuestionSet.objects.filter(lesson=self.get_object().question_set.lesson))
         context['form'].fields['question_set'] = lesson_filter
         context['filelisting'] = FileListing(
             'img', filter_func=filter_filelisting_images, sorting_by='date', sorting_order='desc').files_listing_filtered()
 
         return context
+
 
 class OptionQuestionView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = OptionQuestion
@@ -281,7 +298,8 @@ class OptionQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateVie
         context = super(
             OptionQuestionUpdateView, self).get_context_data(**kwargs)
         context['optionsform'] = OptionFormset(instance=self.get_object())
-        lesson_filter = forms.ModelChoiceField(queryset= QuestionSet.objects.filter(lesson=self.get_object().question_set.lesson))
+        lesson_filter = forms.ModelChoiceField(
+            queryset=QuestionSet.objects.filter(lesson=self.get_object().question_set.lesson))
         context['form'].fields['question_set'] = lesson_filter
         context['filelisting'] = FileListing(
             'img', filter_func=filter_filelisting_images, sorting_by='date', sorting_order='desc').files_listing_filtered()

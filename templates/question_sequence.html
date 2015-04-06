@@ -13,7 +13,7 @@
         <span class="caret"></span>
         </a>
         <div class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-            {% if edit_url %}<a href="{% url 'worksheet_report' course.slug worksheet.id %}" class="btn btn-xs btn-success">Full Report</a>{% endif %}
+            {% if instructor %}<a href="{% url 'worksheet_report' course.slug worksheet.id %}" class="btn btn-xs btn-success">Full Report</a>{% endif %}
             {% if user_completed %}<a href="{% url 'worksheet_user_report' course.slug worksheet.id %}"  class="btn btn-xs btn-success">Report</a> {% endif %}
             <h5 class=""></h5>
         {% for k, v in question_list.items %}

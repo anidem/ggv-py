@@ -62,6 +62,7 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         context['acts'] = activity_list
         context['sections'] = lesson.sections.all()
         context['is_staff'] = self.request.user.is_staff
+        context['instructor'] = self.request.user in context['course'].instructor_list() or self.request.user.is_staff
 
         return context
 
@@ -89,8 +90,8 @@ class WorksheetKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
             k_items = []
             for question in i.get_ordered_question_list():
                 try:
-                    if(question.get_question_type() == 'option'):
-                        answer = Option.objects.get(question.correct_answer()).display_text
+                    if question.get_question_type() == 'option':
+                        answer = Option.objects.get(pk=question.correct_answer()).display_text
                     else:
                         answer = question.correct_answer()
                     k_items.append((question.display_text, answer))

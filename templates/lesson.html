@@ -33,7 +33,7 @@
   </ul>
 </li>
 
-{% if is_staff %}
+{% if instructor %}
 <li class="dropdown">
     <a href="{% url 'lesson_key' course.slug object.id %}">Worksheet key</a>
 </li>

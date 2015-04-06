@@ -66,7 +66,7 @@ class RestrictedAccessZoneMixin(object):
 class PrivelegedAccessMixin(object):
 
     """
-    Intended to context variables indicating elevated privileges to view requested content.
+    Intended to set context variables indicating elevated privileges to view requested content.
     This mixin sets manager and/or instructor variables if such permissions are assigned to
     the user for a course.
     Expected object type: Course

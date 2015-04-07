@@ -63,29 +63,29 @@ class QuestionSet(AbstractActivity):
         bookmarks = Bookmark.objects.filter(
             creator=user).filter(course_context=course)
         for i in questions:
+            question_type = ContentType.objects.get_for_model(i)
             bookmark = bookmarks.filter(
-                content_type=ContentType.objects.get_for_model(i).id).filter(object_id=i.id)
-            response = None
+                content_type=question_type.id).filter(object_id=i.id)
             bk = None
             if bookmark:
                 bk = bookmark[0]
-
+            response = None
             respobj = i.user_response_object(user)
-            if respobj:
+            if respobj: # This is not handling checkbox responses!
                 resp = respobj.response.replace('"', '')
 
-                if ContentType.objects.get_for_model(i).name == 'option question':
-                    score = i.correct_answer() == int(resp)
+                if question_type.name == 'option question':
+                    r = int(resp)
+                    score = r in i.correct_answer()
                     try:
-                        resp = Option.objects.get(pk=int(resp)).display_text
+                        resp = Option.objects.get(pk=r).display_text
                     except:
                         resp = None
                 else:
                     score = i.correct_answer() == resp
 
                 response = (bk, i, resp, score)  # str(i.correct_answer())
-
-            report.append(response)
+                report.append(response)
         return report
 
     def get_all_responses(self, course):
@@ -218,7 +218,7 @@ class OptionQuestion(AbstractQuestion):
         if self.input_select == 'checkbox':
             return [i.id for i in self.options.filter(correct=True)]
         else:
-            return self.options.get(correct=True).id
+            return [i.id for i in self.options.filter(correct=True)]
 
     def check_answer(self, json_str):
         # Need to process option responses as lists. json used to coerce

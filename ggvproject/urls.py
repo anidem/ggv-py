@@ -12,13 +12,14 @@ from core.views import (
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import CourseView, CourseManageView, UserManageView
-from lessons.views import LessonView, SectionUpdateView, WorksheetKeyView
+from lessons.views import LessonView, SectionUpdateView
 from questions.views import (
     WorksheetHomeView, WorksheetUpdateView, QuestionResponseView,
     OptionQuestionView, OptionQuestionUpdateView,
     TextQuestionView, TextQuestionUpdateView,
     QuestionAssetHandlerView,
-    UserReportView, FullReportView
+    UserReportView, FullReportView,
+    LessonKeyView, WorksheetKeyView
     )
 from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView, slide_view
 
@@ -37,8 +38,8 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/$', CourseView.as_view(), name='course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/$', CourseManageView.as_view(), name='manage_course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/user/(?P<user>\d+)/$', UserManageView.as_view(), name='manage_user'),
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/key/$', WorksheetKeyView.as_view(), name='lesson_key'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/$', LessonView.as_view(), name='lesson'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/key/$', LessonKeyView.as_view(), name='lesson_key'),
 
 
 # GGV lesson activities
@@ -54,6 +55,7 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', QuestionResponseView.as_view(), name='question_response'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/report/$', UserReportView.as_view(), name='worksheet_user_report'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/fullreport/$', FullReportView.as_view(), name='worksheet_report'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/key/$', WorksheetKeyView.as_view(), name='worksheet_key'),
 
     url(r'^ggv/worksheet/(?P<pk>\d+)/$', WorksheetHomeView.as_view(), name='worksheet'),
     url(r'^ggv/worksheet/edit/(?P<pk>\d+)/$', WorksheetUpdateView.as_view(), name='worksheet_update'),

@@ -8,54 +8,82 @@
 {% endblock page_crumb %}
 
 {% block content %}
-    <div class="row">
-        <div class="col-md-1 text-left">Question number</div>
-        <div class="col-md-5 text-center">Question </div>
-        <div class="col-md-5 text-center">Response</div>
-        <div class="col-md-1 text-center">Correct</div>
-    </div>
-    {% for h,i,j,k in report %}
-        {% if j %}
-            <a href="{% url 'question_response' course.slug object.id forloop.counter %}" class="static">
-                <div class="row  hoverpad {% cycle 'row1' 'row2' %}">
+<div class="col-md-12">
+    <span class="label label-xs label-success pull-right"><i class="fa fa-check"></i> = correct</span>
+    <span class="label label-xs label-warning pull-right"><i class="fa fa-check"></i> = incorrect</span>
+    <h3>{{ worksheet }}</h3>
+</div>
+<div class="col-md-10 col-md-offset-1">
+{% if not reports %}
 
-                    <div class="col-md-1"> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</div>
-                    <div class="col-md-5 text-left"> {{ i.display_text | safe }} </div>
-                    <div class="col-md-5 text-right">{{ j | safe }}</div>
-                    <div class="col-md-1 text-left">
-                        {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
-                        {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
-                        {% endif %}
-                    </div>
-                </div>
-                </a>
-        {% endif %}
-    {% empty %}
-        <div class="row">This worksheet has no responses or does not require responses.</div>
-    {% endfor %}
+    <table class="table">
+        <tbody>
+            <thead>
+              {% if report %}<tr>
+                <th><small><em>#</em></small></th>
+                <th><small><em>Question</em></small></th>
+                <th><small><em>Response</em></small></th>
+                <th><small><em>Correct</em></small></th>
+              </tr>
+              {% endif %}
+            </thead>
+            {% for h,i,j,k in report %}
 
+                    {% if j %}
+                    <tr class="hoverpad {% cycle 'row1' 'row2' %}">
+                        <td> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</td>
+                        <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">{{ i.display_text | safe }}</a></td>
+                        <td>{{ j | safe }}</td>
+                        <td>
+                            {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
+                            {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endif %}
+            {% empty %}
+                <tr>This worksheet has no responses or does not require responses.</tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endif %}
+{% if reports %}
     {% for report in reports %}
-        <h3>{{ report.0 }}</h3>
-        {% for h, i, j, k in report.1 %}
-            {% if j %}
+        <table class="table">
+            <tbody>
+                <thead>
+                  <h4>{{ report.0 }}</h4>
+                  {% if report.1 %}
+                  <tr>
+                    <th><small><em>#</em></small></th>
+                    <th><small><em>Question</em></small></th>
+                    <th><small><em>Response</em></small></th>
+                    <th><small><em>Correct</em></small></th>
+                  </tr>
+                  {% endif %}
+                </thead>
+                {% for h,i,j,k in report.1 %}
 
-                <a href="{% url 'question_response' course.slug object.id forloop.counter %}" class="static">
-                <div class="row  hoverpad {% cycle 'row1' 'row2' %}">
-
-                    <div class="col-md-1"> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</div>
-                    <div class="col-md-5 text-left"> {{ i.display_text | safe }} </div>
-                    <div class="col-md-5 text-right">{{ j }}</div>
-                    <div class="col-md-1 text-left">
-                        {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
-                        {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
+                        {% if j %}
+                        <tr class=" {% cycle 'row1' 'row2' %}">
+                            <td> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</td>
+                            <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">{{ i.display_text | safe }}</a></td>
+                            <td>{{ j | safe }}</td>
+                            <td>
+                                {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
+                                {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
+                                {% endif %}
+                            </td>
+                        </tr>
                         {% endif %}
-                    </div>
-                </div>
-                </a>
-            {% endif %}
-        {% endfor %}
+
+                {% endfor %}
+            </tbody>
+        </table>
     {% empty %}
         <div class="row">This worksheet has no responses or does not require responses.</div>
     {% endfor %}
+{% endif %}
+</div>
 {% endblock content %}
 

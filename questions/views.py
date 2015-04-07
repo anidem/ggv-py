@@ -21,10 +21,10 @@ from core.models import ActivityLog
 from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import PresetBookmarkForm
 from notes.forms import UserNoteForm
-from lessons.models import Section
+from lessons.models import Lesson, Section
 from courses.models import Course
 
-from .models import TextQuestion, OptionQuestion, QuestionResponse, QuestionSet, UserWorksheetStatus
+from .models import TextQuestion, OptionQuestion, QuestionResponse, QuestionSet, UserWorksheetStatus, Option
 from .forms import QuestionResponseForm, OptionQuestionUpdateForm, TextQuestionUpdateForm, OptionFormset, QuestionSetUpdateForm
 
 
@@ -332,3 +332,61 @@ class FullReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         context['reports'] = worksheet.get_all_responses(context['course'])
 
         return context
+
+class LessonKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
+    model = Lesson
+    template_name = 'question_worksheet_key.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(LessonKeyView, self).get_context_data(**kwargs)
+        key = []
+        worksheets = self.get_object().worksheets.all()
+        for i in worksheets:
+            k_items = []
+            for question in i.get_ordered_question_list():
+                try:
+                    if question.get_question_type() == 'option':
+                        corrects = question.correct_answer()
+                        answer = ''
+                        for x in corrects:
+                            answer += Option.objects.get(pk=x).display_text
+                    else:
+                        answer = question.correct_answer()
+                    k_items.append((question.display_text, answer))
+                except Exception as e:
+                    print e
+
+            key.append((i, k_items))
+
+        context['worksheets'] = key
+        return context
+
+class WorksheetKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
+    model = QuestionSet
+    template_name = 'question_worksheet_key.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(WorksheetKeyView, self).get_context_data(**kwargs)
+        key = []
+
+        k_items = []
+        for question in self.get_object().get_ordered_question_list():
+            try:
+                if question.get_question_type() == 'option':
+                    corrects = question.correct_answer()
+                    answer = ''
+                    for x in corrects:
+                        answer += Option.objects.get(pk=x).display_text
+                else:
+                    answer = question.correct_answer()
+                k_items.append((question.display_text, answer))
+            except Exception as e:
+                print e
+
+        key.append((self.get_object(), k_items))
+
+        context['worksheets'] = key
+        return context
+
+
+

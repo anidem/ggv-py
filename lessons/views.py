@@ -39,13 +39,6 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
 
             except:
                 pass
-                # bookmark = None
-                # initial_bookmark_data = {}
-                # initial_bookmark_data['content_type'] = activity_type.id
-                # initial_bookmark_data['object_id'] = i.id
-                # initial_bookmark_data['creator'] = self.request.user
-                # initial_bookmark_data['course_context'] = context['course']
-                # bookmarkform = BookmarkForm(initial=initial_bookmark_data)
 
             a = {}
             a['act'] = i
@@ -78,30 +71,8 @@ class SectionUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, CourseContex
         context = super(SectionUpdateView, self).get_context_data(**kwargs)
         return context
 
-class WorksheetKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
-    model = Lesson
-    template_name = 'question_worksheet_key.html'
 
-    def get_context_data(self, **kwargs):
-        context = super(WorksheetKeyView, self).get_context_data(**kwargs)
-        key = []
-        worksheets = self.get_object().worksheets.all()
-        for i in worksheets:
-            k_items = []
-            for question in i.get_ordered_question_list():
-                try:
-                    if question.get_question_type() == 'option':
-                        answer = Option.objects.get(pk=question.correct_answer()).display_text
-                    else:
-                        answer = question.correct_answer()
-                    k_items.append((question.display_text, answer))
-                except:
-                    pass
 
-            key.append((i, k_items))
-
-        context['worksheets'] = key
-        return context
 
 
 

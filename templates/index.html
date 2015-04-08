@@ -1,16 +1,69 @@
-{% extends "base.html" %}
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+  <!-- Default font -->
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
+
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale = 1.0, minimum-scale = 1.0, maximum-scale = 1.0, user-scalable = no, width = device-width" />
+
+  <title> GGV </title>
+
+  <!-- Bootstrap -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+  <!-- Font Awesome for icons -->
+  <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+</head>
+
+<body>
+    <!-- Begin page content -->
+    <div class="container-fluid">
+        <div class="row center-block" style="padding-top: 100px">
+            <div class="col-md-6 col-md-offset-3 text-center">
+                <p class="text-center"><a href="http://www.gedgonevirtual.com"><img src="{% static 'img/logo_laptop_black.png' %}"></a></p>
+                <p class="lead">Welcome to the GED Gone Virtual interactive curriculum for the GED exam preparation.</p>
+
+                <p class="lead center-block">If you have an account, let's get started!</p>
+                <div class="btn-group btn-group-justified center-block" style=" padding-bottom: 50px">
+                <h1><a href="{% url 'ggvhome' %}" class="btn btn-lg btn-success" role="button">Get Started <i class="fa fa-arrow-circle-right fa-2"></i></a></h1>
+                </div>
+
+                <p class="lead">Please visit <a href="http://www.gedgonevirtual.com" target="_blank" class="label label-default" role="button">GED Gone Virtual</a> to learn more about the curriculum and setting up accounts for your testing center or organization.</p>
 
 
-{% block page_header %}<h1>Lessons @ gedgonevirtual</h1>{% endblock page_header %}
+            </div>
+        </div>
+    </div>
+    <!-- End page content -->
 
 
+    <!-- Footer -->
+<!--     <div class="navbar navbar-default navbar-fixed-bottom" style="border: none">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <p class="text-muted" style="text-align: center; "><small>gedgonevirtual.com</small></p>
+        </div>
+      </div>
+    </div> -->
 
 
-{% block content %}
-  <p class="lead">Welcome to version <em>dos</em> of the GED Gone Virtual interactive curriculum for GED exam preparation (<b>g2v</b> for short). </p>
-  <div class="btn-group btn-group-justified center-block" style="width: 100px">
-    <a href="{% url 'ggvhome' %}" class="btn btn-success" role="button">Get Started</a>
-  </div>
-
-{% endblock content %}
-
+</body>
+</html>

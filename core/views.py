@@ -1,6 +1,7 @@
 # core/views.py
 from django.views.generic import TemplateView, CreateView, UpdateView, ListView, DetailView
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.shortcuts import redirect
 from django.contrib.auth.models import User
 
 from braces.views import CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, LoginRequiredMixin
@@ -21,10 +22,22 @@ class IndexView(TemplateView):
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'ggvhome.html'
 
+    def get(self, request, *args, **kwargs):
+        try:
+            courses = self.request.session['user_courses']
+            if len(courses) == 1:
+                return redirect('course', crs_slug=courses[0])
+        except:
+            courses = None
+
+        return super(HomeView, self).get(request, *args, **kwargs)
+
+
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         context['courses'] = [
             Course.objects.get(slug=i) for i in self.request.session['user_courses']]
+
         return context
 
 

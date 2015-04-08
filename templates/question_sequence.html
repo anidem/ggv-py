@@ -46,6 +46,34 @@
                     {{ question_position }}/{{ question_list|length }}.
                     {% if edit_url %}<a href="{{ edit_url }}" class="btn btn-xs btn-success">edit</a>{% endif %}
                     <i class="fa fa-flag flagger {% if bookmark %}bkset{% endif %}" data-target="{{ bookmark.id }}" data-form="#flag_form"></i>
+{% if calculator %}
+<!-- Modal trigger -->
+<a type="button" class="pull-right" data-toggle="modal" data-target="#myModal">
+  <i class="fa fa-calculator"></i>
+</a>
+<!-- Modal Content -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
+      </div>
+      <div class="modal-body">
+        <p><object width="100%" height="480px" data="http://localhost/media/private/img/eng/ti-30xs-calculator-english.pdf"></object></p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endif %}
+
+
+
+
+
 
                     <!-- <button class="btn btn-xs btn-primary" data-toggle="popover" data-placement="right" data-content="help">progress</button> -->
 

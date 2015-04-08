@@ -214,6 +214,8 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         context['question_list'] = tally
         context['worksheet'] = self.worksheet
         context['instructor'] = self.request.user in context['course'].instructor_list() or self.request.user.is_staff
+        context['calculator'] = self.worksheet.lesson.id == 1 # English math lesson id
+
 
         actionstr = 'access-question-' + current_question.get_question_type()
         ActivityLog(

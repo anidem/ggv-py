@@ -13,6 +13,42 @@ idmap = {u'0': u'2', u'': u'2', u'1269': u'614', u'812': u'470', u'815': u'471',
 # json_dir = os.path.abspath('/Users/rmedina/Desktop/ggvworksheet-conversion/worksheet-downloads/worksheets-social/csvdir/SOCIAL\ \(ENG\)\ QUESTIONS\ INPUT')
 
 
+def convert_text_to_option(source_pk=None):
+    try:
+        s = TextQuestion.objects.get(pk=source_pk)
+        t = OptionQuestion()
+        t.display_text = s.display_text
+        t.question_set = s.question_set
+        t.display_order = s.display_order
+        t.display_image = s.display_image
+        t.display_pdf = s.display_pdf
+        t.response_required = s.response_required
+        t.save()
+
+        s.delete()
+        return t
+    except Exception as e:
+        print e
+        return
+
+def convert_option_to_text(source_pk=None):
+    try:
+        s = OptionQuestion.objects.get(pk=source_pk)
+        t = TextQuestion()
+        t.display_text = s.display_text
+        t.question_set = s.question_set
+        t.display_order = s.display_order
+        t.display_image = s.display_image
+        t.display_pdf = s.display_pdf
+        t.response_required = s.response_required
+        t.save()
+        s.delete()
+        return t
+    except Exception as e:
+        print e
+        return
+
+
 class worksheetvalidator(TemplateView):
     template_name = 'question_validator.html'
     def get_context_data(self, **kwargs):

@@ -269,6 +269,7 @@ class OptionQuestionView(LoginRequiredMixin, CourseContextMixin, DetailView):
         return context
 
 
+
 class OptionQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateView):
     model = OptionQuestion
     template_name = 'question_update.html'

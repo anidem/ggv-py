@@ -293,7 +293,7 @@ def import_json_questions(json_dir=None):
     return
 
 def json_repair_questions(json_dir=None):
-    worksheet_repairs=[782, 783, 785, 786,787,788,789,790,791,792]
+    worksheet_repairs=[782, 783, 785, 786, 787, 788, 789, 790, 791, 792]
     optsmap ={'A': '1', 'B': '2', 'C': '3', 'D': '4' }
     files = []
     # json_dir = os.path.abspath('/Users/rmedina/Desktop/ggvworksheet-conversion/worksheet-downloads/worksheets-math/jsondir')
@@ -344,6 +344,8 @@ def json_repair_questions(json_dir=None):
                 # imgpath = i.get('IMAGE')
                 if imgmaprep[WID]:
                     imgpath = imgmaprep[WID]
+                else:
+                    imgpath = None
 
                 if i.get('SELECT TYPE') == 'text':
                     question = TextQuestion()
@@ -352,7 +354,7 @@ def json_repair_questions(json_dir=None):
                     question.correct = i.get('CORRECT ANSWER')
                     question.display_image = imgpath
                     question.question_set = worksheet_obj
-                    question.save()
+                    # question.save()
                 else:
                     question = OptionQuestion()
                     question.display_text = i.get('QUESTION')

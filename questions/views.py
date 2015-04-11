@@ -255,6 +255,8 @@ class TextQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateView)
 
         return context
 
+class TextQuestionDeleteView(LoginRequiredMixin, CourseContextMixin, DetailView):
+    pass
 
 class OptionQuestionView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = OptionQuestion

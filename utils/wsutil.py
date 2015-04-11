@@ -26,6 +26,7 @@ def convert_text_to_option(source_pk=None):
         t.save()
 
         s.delete()
+
         return t
     except Exception as e:
         print e
@@ -290,3 +291,123 @@ def import_json_questions(json_dir=None):
 
 
     return
+
+def json_repair_questions(json_dir=None):
+    worksheet_repairs=[782, 783, 785, 786,787,788,789,790,791,792]
+    optsmap ={'A': '1', 'B': '2', 'C': '3', 'D': '4' }
+    files = []
+    # json_dir = os.path.abspath('/Users/rmedina/Desktop/ggvworksheet-conversion/worksheet-downloads/worksheets-math/jsondir')
+    imgmaprep = {
+        '782': 'img/span/5-span-commas/span-comma-rule-2-1-32.png',
+        '783': 'img/span/5-span-commas/span-comma-rule-3-1-28.png',
+        '785': 'img/span/5-span-commas/span-comma-rule-4-1-32.png',
+        '786': 'img/span/5-span-commas/span-comma-rules-denver-1-54.png',
+        '787': '',
+        '788': '',
+        '789': '',
+        '790': '',
+        '791': '',
+        '792': '',
+    }
+
+
+    for fstr in os.listdir(json_dir):
+        if fstr != '.DS_Store':
+            files.append(fstr)
+
+    for f in files:
+        print f
+        json_file = open('%s/%s' % (json_dir, f))
+        json_data = json_file.read()
+        data = json.loads(json_data) # deserialises it
+
+        WID = None
+        worksheet_obj = None
+
+        # Get the worksheet id once per file.
+        if data[0].get('WID') != '':
+                WID = data[0].get('WID')
+                print 'processing worksheet id: ', WID
+                try:
+                    worksheet_obj = QuestionSet.objects.get(pk=WID)
+                except:
+                    print 'Worksheet does not exist: ', worksheet_obj
+                    raise Exception
+
+        # Iterate over each question --> i = json question object
+        for i in data:
+            try:
+                # if i.get('IMAGE') != '':
+                #     imgpath = 'img/' + slugify(i.get('IMAGE')) + '.png'
+                # else:
+                #     imgpath = ''
+                # imgpath = i.get('IMAGE')
+                if imgmaprep[WID]:
+                    imgpath = imgmaprep[WID]
+
+                if i.get('SELECT TYPE') == 'text':
+                    question = TextQuestion()
+                    question.display_text = i.get('QUESTION')
+                    question.display_order = i.get('QUESTION DISPLAY ORDER')
+                    question.correct = i.get('CORRECT ANSWER')
+                    question.display_image = imgpath
+                    question.question_set = worksheet_obj
+                    question.save()
+                else:
+                    question = OptionQuestion()
+                    question.display_text = i.get('QUESTION')
+                    question.display_order = i.get('QUESTION DISPLAY ORDER')
+                    question.display_image = imgpath
+                    question.input_select = i.get('SELECT TYPE')
+                    question.question_set = worksheet_obj
+                    # question.save()
+                    corstr =  i.get('CORRECT ANSWER')
+                    corlist = corstr.split(',')
+
+                    opts = dict((k, v) for k, v in sorted(i.items()) if k.startswith('option'))
+                    for k, v in opts.items():
+                        try:
+                            order = k[7:] # get the number portion of the key: e.g.,option 1 --> 1
+                            opt = Option()
+                            opt.display_text = v
+                            opt.display_order = order
+                            for c in corlist:
+                                try:
+                                    opt.correct = order == optsmap[c]
+                                except:
+                                    opt.correct = order == c
+
+                            opt.question = question
+                            # opt.save()
+                        except Exception as e:
+                            print '%s (%s)' % (e.message, type(e))
+                            print 'VALUE=*%s*'% (v)
+                            print 'WID:', WID
+
+
+            except ValueError:
+                print '[%s] not saved'% i.get('QUESTION')
+                continue
+            except KeyError as e:
+                print '%s (%s)' % (e.message, type(e))
+                # print e.message
+                continue
+
+
+
+            # seqitem = QuestionSequenceItem(content_object=question, question_sequence=seq)
+            # seqitem.save()
+
+            # print question
+            print 'updated %s with %s' % (worksheet_obj, question)
+        json_file.close()
+
+
+    return
+
+
+
+
+
+
+

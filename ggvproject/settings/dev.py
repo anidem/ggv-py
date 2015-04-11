@@ -41,7 +41,7 @@ STATIC_ROOT = '/Library/WebServer/Documents/static'
 # STATIC_URL = 'http://localhost/static/'
 
 MEDIA_ROOT = '/Library/WebServer/Documents/media'
-MEDIA_URL = 'http://localhost/media/private/'
+MEDIA_URL = 'http://localhost/media/'
 
 STACKS_ROOT = '/Library/WebServer/Documents/media/private/stacks'
 STACKS_DATA_DIR = 'data'

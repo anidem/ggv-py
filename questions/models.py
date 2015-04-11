@@ -113,6 +113,7 @@ class AbstractQuestion(models.Model):
     display_order = models.IntegerField(default=0)
     display_image = models.FileField(null=True, blank=True, upload_to='img')
     display_pdf = models.FileField(null=True, blank=True, upload_to='pdf')
+    display_key_file = models.FileField(null=True, blank=True, upload_to='pdf')
     response_required = models.BooleanField(default=True)
 
     def get_sequence_url(self, course):

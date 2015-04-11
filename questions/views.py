@@ -350,19 +350,21 @@ class LessonKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
             k_items = []
             for question in i.get_ordered_question_list():
                 try:
-                    if question.get_question_type() == 'option':
+                    if question.display_key_file:
+                        answer = '<a href="' + question.display_key_file.url + '">key</a>'
+                    elif question.get_question_type() == 'option':
                         corrects = question.correct_answer()
                         answer = ''
                         for x in corrects:
                             answer += Option.objects.get(pk=x).display_text
                     else:
                         answer = question.correct_answer()
-                    k_items.append((question.display_text, answer))
+
+                    if answer:
+                        k_items.append((question.display_text, answer))
                 except Exception as e:
                     print e
-
             key.append((i, k_items))
-
         context['worksheets'] = key
         return context
 
@@ -377,14 +379,18 @@ class WorksheetKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
         k_items = []
         for question in self.get_object().get_ordered_question_list():
             try:
-                if question.get_question_type() == 'option':
+                if question.display_key_file:
+                    answer = '<a href="' + question.display_key_file.url + '">key</a>'
+                elif question.get_question_type() == 'option':
                     corrects = question.correct_answer()
                     answer = ''
                     for x in corrects:
                         answer += Option.objects.get(pk=x).display_text
                 else:
                     answer = question.correct_answer()
-                k_items.append((question.display_text, answer))
+
+                if answer:
+                    k_items.append((question.display_text, answer))
             except Exception as e:
                 print e
 

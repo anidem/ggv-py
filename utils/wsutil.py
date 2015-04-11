@@ -354,7 +354,7 @@ def json_repair_questions(json_dir=None):
                     question.correct = i.get('CORRECT ANSWER')
                     question.display_image = imgpath
                     question.question_set = worksheet_obj
-                    # question.save()
+                    question.save()
                 else:
                     question = OptionQuestion()
                     question.display_text = i.get('QUESTION')
@@ -362,7 +362,7 @@ def json_repair_questions(json_dir=None):
                     question.display_image = imgpath
                     question.input_select = i.get('SELECT TYPE')
                     question.question_set = worksheet_obj
-                    # question.save()
+                    question.save()
                     corstr =  i.get('CORRECT ANSWER')
                     corlist = corstr.split(',')
 
@@ -380,12 +380,14 @@ def json_repair_questions(json_dir=None):
                                     opt.correct = order == c
 
                             opt.question = question
-                            # opt.save()
+                            opt.save()
                         except Exception as e:
                             print '%s (%s)' % (e.message, type(e))
                             print 'VALUE=*%s*'% (v)
                             print 'WID:', WID
 
+                question.question_set = worksheet_obj
+                question.save()
 
             except ValueError:
                 print '[%s] not saved'% i.get('QUESTION')

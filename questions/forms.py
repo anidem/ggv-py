@@ -7,6 +7,7 @@ from .models import QuestionResponse, OptionQuestion, TextQuestion, Option, Ques
 
 from filebrowser.widgets import FileInput, ClearableFileInput
 
+
 class QuestionResponseForm(ModelForm):
 
     def __init__(self, *args, **kwargs):
@@ -68,38 +69,63 @@ class QuestionResponseForm(ModelForm):
             'object_id': forms.HiddenInput()
         }
 
+
 class QuestionSetUpdateForm(ModelForm):
+
     class Meta:
         model = QuestionSet
-        fields = ['title', 'lesson', 'section', 'display_order', 'display_pdf', ]
+        fields = ['title', 'lesson', 'section',
+                  'display_order', 'display_pdf', ]
+
 
 class OptionQuestionUpdateForm(ModelForm):
+
     class Meta:
         model = OptionQuestion
-        fields = ['question_set', 'display_text', 'display_order', 'input_select', 'display_image', 'display_pdf', 'response_required', 'display_key_file']
+        fields = ['question_set', 'display_text', 'response_required', 'display_order', 'input_select',
+                  'display_image', 'display_pdf', 'display_key_file']
         widgets = {
             'display_text': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'class': 'editor'}),
             'display_order': forms.NumberInput(attrs={'min': -99, 'max': 99}),
         }
+        labels = {
+            'input_select': 'Response type:',
+            'display_image': 'Display an image <i class="fa fa-file-image-o fa-2x"></i>',
+            'display_pdf': 'Display a PDF file <i class="fa fa-file-pdf-o fa-2x"></i>',
+            'response_required': 'Users must respond? (Turn this off to only display content.) ',
+            'display_key_file': 'Add answer key as PDF? <i class="fa fa-key fa-2x"></i> + <i class="fa fa-file-pdf-o fa-2x"></i>'
+        }
+
 
 class OptionUpdateForm(ModelForm):
+
     class Meta:
         model = Option
         fields = ['display_order', 'display_text', 'correct']
         widgets = {
-            'display_text': forms.TextInput(attrs={'size': 40 }),
+            'display_text': forms.TextInput(attrs={'size': 40}),
             'display_order': forms.NumberInput(attrs={'min': -99, 'max': 99})
         }
 
-OptionFormset = inlineformset_factory(OptionQuestion, Option, extra=4, form=OptionUpdateForm)
+OptionFormset = inlineformset_factory(
+    OptionQuestion, Option, extra=4, form=OptionUpdateForm)
+
 
 class TextQuestionUpdateForm(ModelForm):
+
     class Meta:
         model = TextQuestion
-        fields = ['question_set', 'display_text', 'display_order', 'correct', 'input_size', 'display_image', 'display_pdf', 'response_required', 'display_key_file']
+        fields = ['question_set', 'display_text', 'response_required', 'display_order', 'correct', 'input_size',
+                  'display_image', 'display_pdf', 'response_required', 'display_key_file']
         widgets = {
             'display_text': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'class': 'editor'}),
             'display_order': forms.NumberInput(attrs={'min': -99, 'max': 99}),
             'correct': forms.Textarea(attrs={'rows': 1, 'cols': 70})
         }
-
+        labels = {
+            'input_size': 'Size of text input area:',
+            'display_image': 'Display an image <i class="fa fa-file-image-o fa-2x"></i>',
+            'display_pdf': 'Display a PDF file <i class="fa fa-file-pdf-o fa-2x"></i>',
+            'response_required': 'Users must respond? (Turn this off to only display content.) ',
+            'display_key_file': 'Add answer key as PDF? <i class="fa fa-key fa-2x"></i> + <i class="fa fa-file-pdf-o fa-2x"></i>'
+        }

@@ -1,6 +1,8 @@
 <!-- question_update.html -->
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load crispy_forms_tags %}
+
 {% load fb_versions %}
 
 {% block content %}
@@ -9,26 +11,21 @@
     <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
         <div class="row">
             <div class="col-md-6">
-                <legend>Question</legend>
-                {% for field in form %}
-                    <div class="fieldWrapper">
-                        {{ field.errors }}
-                        {{ field.label_tag }}<br>
-                        {{ field }}
-                    </div>
-                {% endfor %}
+                <legend>{{object.get_question_type|title}} Question </legend>
+                {{ form|crispy}}
             </div>
 
             {% if  optionsform %}
             <div class="col-md-6">
                 <fieldset>
-                    <legend>Options</legend>
-                    <table>
+                    <legend>Multiple Choice Options</legend>
+                    <table class="table">
+                        <tbody>
                         <tr>
-                            <td>Order</td>
-                            <td>Option Text</td>
-                            <td>Correct?</td>
-                            <td>Delete?</td>
+                            <th>Order</th>
+                            <th>Option Text</th>
+                            <th>Correct?</th>
+                            <th>Delete?</th>
                         </tr>
                     {{ optionsform.management_form }}
                     {% for opt in optionsform %}
@@ -39,6 +36,7 @@
                             <td> {{ opt.DELETE }} </td>
                         </tr>
                     {% endfor %}
+                    </tbody>
                     </table>
                 </fieldset>
             </div>

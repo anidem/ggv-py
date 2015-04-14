@@ -81,7 +81,7 @@
             <li>
             {% if user.is_authenticated %}
                 {% if user.ggvuser.clean_logout %}
-                    <a href="{% url 'logout'  %}">Logout {{ user }}</a>
+                    <a href="{% url 'logout_clean'  %}">Full Logout {{ user }}</a>
                 {% else %}
                     <a href="{% url 'logout' %}">Logout {{ user }}</a>
                 {% endif %}

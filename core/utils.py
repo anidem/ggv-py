@@ -3,15 +3,18 @@ from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 
-
 from social.exceptions import AuthForbidden
+
+from .models import ActivityLog
 
 
 
 def logout_clean(request):
-    # Pending implementation.
+    ActivityLog(user=request.user, action='logout', message='user logged out').save()
     logout(request)
-    redirect('https://accounts.google.com/logout')
+
+    return redirect('https://accounts.google.com/Logout?&continue=https://www.google.com')
+
 
 def auth_allowed(response, details, *args, **kwargs):
     """

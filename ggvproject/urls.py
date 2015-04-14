@@ -93,6 +93,7 @@ urlpatterns = patterns('',
 
     url(r'^login/$', include('social.apps.django_app.urls')),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
+    url(r'^clean-logout/$', 'core.utils.logout_clean', name='logout_clean'),
 
     # url(r'^activate/$', ActivateView.as_view(), name='activate'),
     # url(r'^activate/(?P<backend>[^/]+)/$', ActivateView.as_view(), name='activate'),

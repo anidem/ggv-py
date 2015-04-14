@@ -141,6 +141,11 @@ class ActivityLogAdmin(admin.ModelAdmin):
     list_display = ('timestamp', 'user', 'action', 'message')
     list_filter = ('timestamp', 'user', 'action' )
 
+class GGVUserAdmin(admin.ModelAdmin):
+    list_display = ('user', 'language_pref', 'clean_logout')
+    list_editable = ('user', 'language_pref', 'clean_logout')
+
+
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
 admin.site.register(CourseLesson, CourseLessonAdmin)
 admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)
@@ -151,7 +156,7 @@ admin.site.register(OptionQuestion, OptionQuestionAdmin, Media=ExtraMedia)
 admin.site.register(TextQuestion, TextQuestionAdmin, Media=ExtraMedia)
 admin.site.register(QuestionResponse)
 admin.site.register(ActivityLog, ActivityLogAdmin)
-admin.site.register(GGVUser)
+admin.site.register(GGVUser, GGVUserAdmin)
 admin.site.register(Bookmark)
 # admin.site.register(ShortAnswerQuestion, ShortAnswerQuestionAdmin, Media=ExtraMedia)
 # admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin, Media=ExtraMedia)

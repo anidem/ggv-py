@@ -1,6 +1,7 @@
 # core/signals.py
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.dispatch import receiver
+from django.shortcuts import redirect
 
 from guardian.shortcuts import get_objects_for_user
 
@@ -43,7 +44,6 @@ def close_session(sender, **kwargs):
     """
     try:
         user = kwargs['user']
-
         ActivityLog(
             user=user, action='logout', message='user logged out').save()
 

@@ -25,7 +25,7 @@ BOOKMARK_TYPES = (
 
 class GGVUser(models.Model):
     user = models.OneToOneField(User)
-    language_pref = models.CharField(max_length=32, default='english')
+    language_pref = models.CharField(max_length=32, default='english', choices=(('english', 'english'),('spanish', 'spanish')))
     clean_logout = models.BooleanField(default=True)
 
     def __unicode__(self):

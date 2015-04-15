@@ -226,7 +226,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             context['formula'] = '/media/pdf/eng-formula-page.pdf'
         elif self.worksheet.lesson.id == 5:  # Spanish math lesson
             context['calculator'] = '/media/pdf/eng/ti-30xs-calculator-english.pdf'
-            context['formula'] = '/media/pdf/span-formula-page.pdf.pdf'
+            context['formula'] = '/media/pdf/span-formula-page.pdf'
 
         actionstr = 'access-question-' + current_question.get_question_type()
         ActivityLog(

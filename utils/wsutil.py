@@ -30,7 +30,7 @@ def convert_text_to_option(source_pk=None):
         return t
     except Exception as e:
         print e
-        return
+        return None
 
 def convert_option_to_text(source_pk=None):
     try:

@@ -174,12 +174,15 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
 
         question_index = self.worksheet.get_ordered_question_list().index(
             current_question) + 1
+
+        """ 2015-04-14 -- disabling messages in question display until further notice
         initial_note_data = {}
         initial_note_data['content_type'] = ContentType.objects.get_for_model(
             current_question).id
         initial_note_data['object_id'] = current_question.id
         initial_note_data['creator'] = self.request.user
         initial_note_data['course_context'] = context['course']
+        """
 
         try:
             bookmark = current_question.bookmarks.filter(
@@ -200,9 +203,12 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
                 initial=initial_bookmark_data)
             context['bookmark'] = bookmark
 
+        """
         context['noteform'] = UserNoteForm(initial=initial_note_data)
         context['note_list'] = current_question.notes.all().filter(
             course_context=context['course']).order_by('-created')
+        """
+
         context['question'] = current_question
         context['question_position'] = question_index
         if question_index - 1 > 0:
@@ -214,8 +220,13 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         context['question_list'] = tally
         context['worksheet'] = self.worksheet
         context['instructor'] = self.request.user in context['course'].instructor_list() or self.request.user.is_staff
-        context['calculator'] = self.worksheet.lesson.id == 1 # English math lesson id
 
+        if self.worksheet.lesson.id == 1:   # English math lesson.
+            context['calculator'] = '/media/img/eng/ti-30xs-calculator-english.pdf'
+            context['formula'] = '/media/pdf/eng-formula-page.pdf'
+        elif self.worksheet.lesson.id == 5:  # Spanish math lesson
+            context['calculator'] = '/media/pdf/eng/ti-30xs-calculator-english.pdf'
+            context['formula'] = '/media/pdf/span-formula-page.pdf.pdf'
 
         actionstr = 'access-question-' + current_question.get_question_type()
         ActivityLog(

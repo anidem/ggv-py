@@ -27,11 +27,11 @@
                     <h6></h6>
                     {% if calculator %}
                     <!-- Modal trigger -->
-                    <a type="button" class="pull-right" data-toggle="modal" data-target="#myModal">
+                    <a type="button" class="pull-right" data-toggle="modal" data-target="#calculator">
                       <i class="fa fa-calculator"></i>
                     </a>
                     <!-- Modal Content -->
-                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="calculator" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                           <div class="modal-header">
@@ -51,11 +51,11 @@
 
                     {% if formula %}
                     <!-- Modal trigger -->
-                    <a type="button" class="pull-right" data-toggle="modal" data-target="#myModal">
+                    <a type="button" class="pull-right" data-toggle="modal" data-target="#formula_display">
                       <i class="fa fa-book"></i>
                     </a>
                     <!-- Modal Content -->
-                    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="formula_display" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                           <div class="modal-header">
@@ -169,7 +169,7 @@
     <!-- END TWO PANEL CONTENT -->
 
     <!-- BOTTOM ROW -->
-    {% comment message_block %}
+    {% comment %}
         <div class="row">
             <div class="col-md-12">
                 <legend>Messages
@@ -190,7 +190,7 @@
             </div>
         </div>
     </div>
-    {% endcomment message_block %}
+    {% endcomment %}
     <!-- END BOTTOM ROW -->
 <!-- THE END -->
 {% endblock content %}

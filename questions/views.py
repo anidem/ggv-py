@@ -333,14 +333,12 @@ class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         worksheet = self.get_object()
         context['worksheet'] = worksheet
         context['numquestions'] = worksheet.get_num_questions()
-        context['report'] = worksheet.get_user_responses(
+        report = worksheet.get_user_responses(
             self.request.user, worksheet.get_ordered_question_list(), context['course'])
-        correct = 0
-        for h, i, j, k in context['report']:
-            if k:
-                correct = correct + 1
-        context['correct'] = correct
-        context['grade'] = correct/context['numquestions']
+        context['report'] = report['report']
+
+        context['correct'] = report['correct']
+        context['grade'] = report['grade']
         return context
 
 
@@ -357,6 +355,7 @@ class FullReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         # context['grade'] = correct/context['numquestions']
         print context['reports'][4]
         return context
+
 
 class LessonKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = Lesson

@@ -62,6 +62,7 @@ class QuestionSet(AbstractActivity):
         report = []
         bookmarks = Bookmark.objects.filter(
             creator=user).filter(course_context=course)
+        numcorrect = 0
         for i in questions:
             question_type = ContentType.objects.get_for_model(i)
             bookmark = bookmarks.filter(
@@ -71,7 +72,7 @@ class QuestionSet(AbstractActivity):
                 bk = bookmark[0]
             response = None
             respobj = i.user_response_object(user)
-            if respobj: # This is not handling checkbox responses!
+            if respobj:  # This is not handling checkbox responses!
                 resp = respobj.response.replace('"', '')
 
                 if question_type.name == 'option question':
@@ -84,23 +85,28 @@ class QuestionSet(AbstractActivity):
                 else:
                     score = i.correct_answer() == resp
 
+                if score:
+                    numcorrect = numcorrect + 1
+
                 response = (bk, i, resp, score)  # str(i.correct_answer())
                 report.append(response)
-        return report
+
+        grade = float(numcorrect)/len(questions)*100
+
+        return {'report': report, 'correct': numcorrect, 'grade': grade}
 
     def get_all_responses(self, course):
         members = course.member_list()
         questions = self.get_ordered_question_list()
         report = []
         for i in members:
-            responses = self.get_user_responses(i, questions, course)
-            correct = 0
-            for a, b, c, d in responses:
-                if d:
-                    correct = correct + 1
-            grade = float(correct)/self.get_num_questions()*100
-            user_report = (i, responses, correct, grade)
-            report.append(user_report)
+            user_report = self.get_user_responses(i, questions, course)
+            responses = user_report['report']
+            correct = user_report['correct']
+            grade = user_report['grade']
+
+            report.append((i, responses, correct, grade))
+
         return report
 
     def get_absolute_url(self):

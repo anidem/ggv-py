@@ -19,9 +19,8 @@
     <table class="table">
         <tbody>
             <thead>
-
               {% if report %}<tr>
-              <h4> {{correct}}/{{numquestions}}</h4>
+              <h4 class="pull-right"><b>{{ grade|floatformat:"0" }}%</b> <span class="small">({{correct}}/{{numquestions}})</span></h4>
                 <th><small><em>#</em></small></th>
                 <th><small><em>Question</em></small></th>
                 <th><small><em>Response</em></small></th>
@@ -49,9 +48,11 @@
         </tbody>
     </table>
 {% endif %}
+
 {% if reports %}
     {% for report in reports %}
-    <h4>{{ report.0 }} {{report.2}}/{{numquestions}} <b>{{ report.3 }}</b>%</h4>
+    <h4 class="">{{ report.0 }}  </h4>
+    <div><span class="label label-lg label-default">{{ report.3|floatformat:"0" }}</b>%</span> <span class="small"> ({{report.2}}/{{numquestions}})</span></div>
         <table class="table">
             <tbody>
                 <thead>

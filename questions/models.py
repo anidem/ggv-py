@@ -93,7 +93,13 @@ class QuestionSet(AbstractActivity):
         questions = self.get_ordered_question_list()
         report = []
         for i in members:
-            user_report = (i, self.get_user_responses(i, questions, course))
+            responses = self.get_user_responses(i, questions, course)
+            correct = 0
+            for a, b, c, d in responses:
+                if d:
+                    correct = correct + 1
+            grade = float(correct)/self.get_num_questions()*100
+            user_report = (i, responses, correct, grade)
             report.append(user_report)
         return report
 

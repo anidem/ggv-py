@@ -19,7 +19,9 @@
     <table class="table">
         <tbody>
             <thead>
+
               {% if report %}<tr>
+              <h4> {{correct}}/{{numquestions}}</h4>
                 <th><small><em>#</em></small></th>
                 <th><small><em>Question</em></small></th>
                 <th><small><em>Response</em></small></th>
@@ -49,10 +51,11 @@
 {% endif %}
 {% if reports %}
     {% for report in reports %}
+    <h4>{{ report.0 }} {{report.2}}/{{numquestions}} <b>{{ report.3 }}</b>%</h4>
         <table class="table">
             <tbody>
                 <thead>
-                  <h4>{{ report.0 }}</h4>
+
                   {% if report.1 %}
                   <tr>
                     <th><small><em>#</em></small></th>

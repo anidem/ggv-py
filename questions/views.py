@@ -101,9 +101,10 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
 
             return super(QuestionResponseView, self).get(request, *args, **kwargs)
 
-        """ User is not staff but viewing restrictions enforced if response not required. """
-        if self.next_question and not self.next_question['question'].response_required:
-            return super(QuestionResponseView, self).get(request, *args, **kwargs)
+        """ User is not staff but viewing restrictions are not enforced if response not required. """
+        if self.next_question:
+            if not self.next_question['question'].response_required:
+                return super(QuestionResponseView, self).get(request, *args, **kwargs)
 
         """ Viewing restrictions enforced. """
         self.next_question = self.worksheet.get_next_question(self.request.user)
@@ -151,7 +152,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             self.template_name = '404.html'
             return context
 
-        # Tally -- move this to object manager...
+        # Tally
         tally = OrderedDict()
         for i in self.worksheet.get_ordered_question_list():
 
@@ -331,9 +332,15 @@ class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         context = super(UserReportView, self).get_context_data(**kwargs)
         worksheet = self.get_object()
         context['worksheet'] = worksheet
+        context['numquestions'] = worksheet.get_num_questions()
         context['report'] = worksheet.get_user_responses(
             self.request.user, worksheet.get_ordered_question_list(), context['course'])
-
+        correct = 0
+        for h, i, j, k in context['report']:
+            if k:
+                correct = correct + 1
+        context['correct'] = correct
+        context['grade'] = correct/context['numquestions']
         return context
 
 
@@ -345,8 +352,10 @@ class FullReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         context = super(FullReportView, self).get_context_data(**kwargs)
         worksheet = self.get_object()
         context['worksheet'] = worksheet
+        context['numquestions'] = worksheet.get_num_questions()
         context['reports'] = worksheet.get_all_responses(context['course'])
-
+        # context['grade'] = correct/context['numquestions']
+        print context['reports'][4]
         return context
 
 class LessonKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):

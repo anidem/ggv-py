@@ -27,7 +27,7 @@
                     <h6></h6>
                     {% if calculator %}
                     <!-- Modal trigger -->
-                    <a type="button" class="pull-right" data-toggle="modal" data-target="#calculator">
+                    <a type="button" style="padding: 0 5px 0 5px" class="pull-right" data-toggle="modal" data-target="#calculator">
                       <i class="fa fa-calculator"></i>
                     </a>
                     <!-- Modal Content -->
@@ -51,8 +51,8 @@
 
                     {% if formula %}
                     <!-- Modal trigger -->
-                    <a type="button" class="pull-right" data-toggle="modal" data-target="#formula_display">
-                      <i class="fa fa-book"></i>
+                    <a type="button" style="padding: 0 5px 0 5px" class="pull-right" data-toggle="modal" data-target="#formula_display">
+                       <i class="fa fa-book"></i>
                     </a>
                     <!-- Modal Content -->
                     <div class="modal fade" id="formula_display" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -109,8 +109,11 @@
 
 
             <!-- Question content -->
-                <div class="lead clearfix">{{ question | safe }} </div>
+            <p class="clearfix"></p>
+                <div class="lead">{{ question | safe }} </div>
+
                 <form id="response_form" action="" method="post" >{% csrf_token %}
+                    {% if question.response_required %}
                     {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
 
                     <p class="label label-danger">{% for e in form.response.errors  %}An answer is required.{% endfor %}</p>
@@ -127,13 +130,13 @@
                         {% endif %}
                     </p>
                     {% endfor %}
+                    {% endif %}
                     <p></p>
                     <p>
                         {%if user_completed and previous_position %}
                             <a href="{% url 'question_response' course.slug worksheet.id previous_position %}" class="btn">Previous</a>
                         {% endif %}
-
-                        {% if form.response %}
+                        {% if form.response and question.response_required %}
                             <input id="chk_response_btn" type="submit" value="Submit Answer" class="btn btn-default">
                         {% elif next_position and not user_completed %}
                             <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Continue</a>
@@ -144,6 +147,7 @@
                         {% endif %}
                     </p>
                 </form>
+
             </div>
 
         <!-- RIGHT panel: Question media (images, pdfs) -->

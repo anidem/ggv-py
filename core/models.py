@@ -15,24 +15,26 @@ ACTIONS = (
 )
 
 BOOKMARK_TYPES = (
-    ('remember', 'Remember'),
-    ('todo', 'To do'),
-    ('started', 'Started'),
+    ('remember', 'Review'),
+    ('todo', 'Need to Finish'),
+    ('started', 'Start'),
     ('completed', 'Completed'),
     ('question', 'Question'),
     ('none', 'None'),
 )
 
+
 class GGVUser(models.Model):
     user = models.OneToOneField(User)
-    language_pref = models.CharField(max_length=32, default='english', choices=(('english', 'english'),('spanish', 'spanish')))
+    language_pref = models.CharField(max_length=32, default='english', choices=(
+        ('english', 'english'), ('spanish', 'spanish')))
     clean_logout = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.user.username
 
-class ActivityLog(models.Model):
 
+class ActivityLog(models.Model):
     user = models.ForeignKey(User)
     action = models.CharField(max_length=32, choices=ACTIONS)
     message = models.CharField(max_length=64, null=True, blank=True)
@@ -42,12 +44,12 @@ class ActivityLog(models.Model):
         return self.user.username
 
     class Meta:
-            ordering = ['user', '-timestamp']
+        ordering = ['user', '-timestamp']
 
 
 class Bookmark(models.Model):
     mark_type = models.CharField(
-    max_length=32, choices=BOOKMARK_TYPES, default='marked')
+        max_length=32, choices=BOOKMARK_TYPES, default='marked')
     creator = models.ForeignKey(User, related_name="bookmarker")
     content_type = models.ForeignKey(ContentType, related_name="bookmarks")
     object_id = models.PositiveIntegerField()
@@ -56,6 +58,3 @@ class Bookmark(models.Model):
 
     def __unicode__(self):
         return self.mark_type
-
-
-

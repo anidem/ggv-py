@@ -24,9 +24,7 @@ def convert_text_to_option(source_pk=None):
         t.display_pdf = s.display_pdf
         t.response_required = s.response_required
         t.save()
-
         s.delete()
-
         return t
     except Exception as e:
         print e

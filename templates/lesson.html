@@ -47,12 +47,12 @@
         {% ifchanged i.act.section %}
             <h2 id="{{ i.act.section|title }}" class="section_heading">
                 {{ i.act.section|title }}
-                {% comment %}
+
                 {% if is_staff %}
                     <a href="{% url 'section_update' course.slug i.act.section.id %}" class="btn btn-xs btn-success">edit</a>
 
                 {% endif %}
-                {% endcomment %}
+
             </h2>
         {% endifchanged %}
         <div class="block row">
@@ -88,11 +88,11 @@
                         <form id="{{i.act.id}}_flag_form" action="" method="post" class="bookmarkform" data-panel="#{{i.act.id}}_add_bookmark" data-update="#{{i.act.id}}_bkbtn" data-target="{{ i.bookmark_id }}">{% csrf_token %}
                             <div id="div_id_mark_type" class="form-group">
                                 <div class="controls ">
-                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "remember" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_1" value="remember">Remember</label>
-                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "todo" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_2" value="todo">To do</label>
-                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "started" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_3" value="started">Started</label>
-                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "completed" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_4" value="completed">Completed</label>
-                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "question" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_5" value="question">Question</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "Started" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_3" value="started">Start</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "Review" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_1" value="remember">Review</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "Need to Finish" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_2" value="todo">Need To Finish</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "Completed" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_4" value="completed">Completed</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "Question" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_5" value="question">Question</label>
                                     <label class="radio"><input type="radio" {% if not i.bookmark_label %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_6" value="none">Clear</label>
                                 </div>
                             </div>

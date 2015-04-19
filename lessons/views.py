@@ -62,10 +62,9 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
 class SectionUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, CourseContextMixin, UpdateView):
     model = Section
     template_name = 'activity_update.html'
-    # form_class = QuestionSetUpdateForm
 
     def get_success_url(self):
-        return reverse_lazy('lesson', args=[self.context['course'], self.get_object().lesson.id])
+        return reverse_lazy('lesson', args=[self.kwargs['crs_slug'], self.get_object().lesson.id])
 
     def get_context_data(self, **kwargs):
         context = super(SectionUpdateView, self).get_context_data(**kwargs)

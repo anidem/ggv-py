@@ -78,27 +78,30 @@ class QuestionSet(AbstractActivity):
 
                 if question_type.name == 'option question':
                     if i.input_select == 'checkbox': # dealing with a list of responses/answers
-                        r = {int(x) for x in resp} # create response list as a set
-                        a = {int(x) for x in i.correct_answer()} # retrieve the answer list as a set
-
-                        score = True
-                        if a - r: # find diff between sets. if not empty (diffs exist) score is false
-                            score = False
-
                         try:
-                            # Build a string out of the response list
+                            r = {int(x) for x in resp} # create response list as a set
+                            a = {int(x) for x in i.correct_answer()} # retrieve the answer list as a set
+
+                            score = True
+                            if a - r: # find diff between sets. if not empty (diffs exist) score is false
+                                score = False
+
+                                # Build a string out of the response list
                             respstr = [str('(%s)')%Option.objects.get(pk=x).display_text for x in list(r)]
                             resp = ', '.join(respstr)
                         except:
-                            resp = None
+                            score = False
+                            resp = 'This question may have been modified. Please re-answer or report problem to instructor.'
 
                     else:
-                        r = int(resp)
-                        score = r in i.correct_answer()
                         try:
+                            r = int(resp)
+                            score = r in i.correct_answer()
                             resp = Option.objects.get(pk=r).display_text
                         except:
-                            resp = None
+                            score = False
+                            resp = 'This question may have been modified. Please re-answer or report problem to instructor.'
+
                 else:
                     score = i.correct_answer() == resp
 

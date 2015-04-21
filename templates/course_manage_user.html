@@ -34,15 +34,18 @@
             <th>Time</th>
             <th>Action</th>
             <th>Message</th>
+            <th>More Detail</th>
 
           </tr>
         </thead>
         <tbody>
         {% for i in activity_log %}
+        {% ifchanged i.day %}<tr><td><h2>{{ i.day }}</h2></td></tr> {% endifchanged %}
         <tr>
             <th scope="row">{{ i.timestamp }}</th>
             <td>{{ i.action }}</td>
-            <td>{{ i.message }}</td>
+            <td><a href="{{ i.message|urlize }}">{{ i.message }}</a></td>
+            <td>{{ i.message_detail }}</td>
         </tr>
         {% empty %}
             <div class="panel-body">No students are assigned to this course.</div>

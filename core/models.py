@@ -12,6 +12,8 @@ ACTIONS = (
     ('access-question-text', 'access text question'),
     ('access-question-option', 'access multiple choice'),
     ('access-presentation', 'access presentation'),
+    ('access-worksheet', 'access worksheet'),
+    ('completed-worksheet', 'completed worksheet'),
 )
 
 BOOKMARK_TYPES = (
@@ -37,7 +39,8 @@ class GGVUser(models.Model):
 class ActivityLog(models.Model):
     user = models.ForeignKey(User)
     action = models.CharField(max_length=32, choices=ACTIONS)
-    message = models.CharField(max_length=64, null=True, blank=True)
+    message = models.CharField(max_length=512, null=True, blank=True)
+    message_detail = models.CharField(max_length=512, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):

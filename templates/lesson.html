@@ -67,7 +67,7 @@
                             {% if is_staff %}<a href="{% url 'slide_update' i.act.id %}" class="btn btn-xs btn-success">edit</a>{% endif %}
                         {% else %}
                             <i class="fa fa-pencil-square-o fa-2x icon-worksheet"></i>
-                            {{ forloop.counter }}.<a class="btn btn-lg media-heading" href="{% url 'question_response' course.slug i.act.id 1 %}">{{ i.act.title }}</a>
+                            {{ forloop.counter }}.<a class="btn btn-lg media-heading" href="{% url 'worksheet_launch' course.slug i.act.id %}">{{ i.act.title }}</a>
                             {% if is_staff %}<a href="{% url 'worksheet_update' i.act.id %}" class="btn btn-xs btn-success">edit</a>{% endif %}
                             {% if instructor %}<a href="{% url 'worksheet_key' course.slug i.act.id %}"><i class="fa fa-key fa-2"></i></a>{% endif %}
 

@@ -80,7 +80,7 @@
                         </a>
                         {% endif %}
 
-                        <a href="{% url 'worksheet_user_report' course.slug worksheet.id %}"  class="btn btn-xs btn-primary">
+                        <a href="{% url 'worksheet_user_report' course.slug worksheet.id user.id %}"  class="btn btn-xs btn-primary">
                             <i class="fa fa-check"></i> <i class="fa fa-th-list"></i>
                         </a>
 

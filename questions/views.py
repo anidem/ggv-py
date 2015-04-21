@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User
 from django.conf import settings
 from django import forms
 
@@ -46,10 +47,9 @@ class QuestionAssetHandlerView(LoginRequiredMixin, RedirectView):
         return sendfile(request, abs_filename)
 
 
-class WorksheetHomeView(LoginRequiredMixin, CsrfExemptMixin, DetailView):
+class WorksheetHomeView(LoginRequiredMixin, StaffuserRequiredMixin, DetailView):
     model = QuestionSet
     template_name = 'question_worksheet.html'
-
 
 class WorksheetUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, UpdateView):
     model = QuestionSet
@@ -65,6 +65,17 @@ class WorksheetUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, UpdateView
             queryset=Section.objects.filter(lesson=self.get_object().lesson))
         context['form'].fields['section'] = section_filter
         return context
+
+class WorksheetLaunchView(LoginRequiredMixin, DetailView):
+    model = QuestionSet
+    template_name = 'question_worksheet.html'
+
+    def get(self, request, *args, **kwargs):
+        msg_detail = self.get_object().lesson.title
+        ActivityLog(
+            user=self.request.user, action='access-worksheet', message=self.request.path, message_detail=msg_detail).save()
+        return HttpResponseRedirect(reverse('question_response', args=(self.kwargs['crs_slug'], self.get_object().id, 1)))
+
 
 
 class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, CreateView):
@@ -97,7 +108,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             if not self.next_question:
                 """ No more questions. Send user to worksheet report. """
                 return HttpResponseRedirect(reverse(
-                    'worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))
+                    'worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id, self.request.user.id)))
 
             return super(QuestionResponseView, self).get(request, *args, **kwargs)
 
@@ -117,7 +128,10 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
                 UserWorksheetStatus(
                     user=self.request.user, completed_worksheet=self.worksheet).save()
                 self.completion_status = True
-                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id,)))
+                logpath = reverse('worksheet_report', args=(self.kwargs['crs_slug'], self.worksheet.id,))
+                msg_detail = self.worksheet.lesson.title
+                ActivityLog(user=self.request.user, action='completed-worksheet', message=logpath, message_detail=msg_detail).save()
+                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id, self.request.user.id)))
 
         """
         Request parameter <j> is potentially overidden by next unanswered question
@@ -229,9 +243,9 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             context['calculator'] = '/media/pdf/eng/ti-30xs-calculator-english.pdf'
             context['formula'] = '/media/pdf/span-formula-page.pdf'
 
-        actionstr = 'access-question-' + current_question.get_question_type()
-        ActivityLog(
-            user=self.request.user, action=actionstr, message=current_question.id).save()
+        # actionstr = 'access-question-' + current_question.get_question_type()
+        # ActivityLog(
+        #     user=self.request.user, action=actionstr, message=self.request.path).save()
         return context
 
 
@@ -330,11 +344,16 @@ class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
 
     def get_context_data(self, **kwargs):
         context = super(UserReportView, self).get_context_data(**kwargs)
+        # if not self.request.user.has_perm('instructor') and self.request.user.id not self.kwargs['user']:
+        #     raise PermissionDeniedError
+
+        user = User.objects.get(pk=self.kwargs['user'])
         worksheet = self.get_object()
         context['worksheet'] = worksheet
         context['numquestions'] = worksheet.get_num_questions()
+
         report = worksheet.get_user_responses(
-            self.request.user, worksheet.get_ordered_question_list(), context['course'])
+           user, worksheet.get_ordered_question_list(), context['course'])
         context['report'] = report['report']
 
         context['correct'] = report['correct']
@@ -353,7 +372,7 @@ class FullReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         context['numquestions'] = worksheet.get_num_questions()
         context['reports'] = worksheet.get_all_responses(context['course'])
         # context['grade'] = correct/context['numquestions']
-        print context['reports'][4]
+        # print context['reports'][4]
         return context
 
 

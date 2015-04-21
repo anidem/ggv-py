@@ -14,7 +14,7 @@ from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import CourseView, CourseManageView, UserManageView
 from lessons.views import LessonView, SectionUpdateView
 from questions.views import (
-    WorksheetHomeView, WorksheetUpdateView, QuestionResponseView,
+    WorksheetHomeView, WorksheetUpdateView, WorksheetLaunchView, QuestionResponseView,
     OptionQuestionView, OptionQuestionUpdateView,
     TextQuestionView, TextQuestionUpdateView,
     QuestionAssetHandlerView,
@@ -52,8 +52,9 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<slideroot>[-\w]+)/data/(?P<asset>.+)/$', SlideAssetHandlerView.as_view(), name='slide_asset'),
 
     # url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<i>\d+)/$', QuestionResponseView.as_view(), name='question_response'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/$', WorksheetLaunchView.as_view(), name='worksheet_launch'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', QuestionResponseView.as_view(), name='question_response'),
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/report/$', UserReportView.as_view(), name='worksheet_user_report'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/report/(?P<user>\d+)/$', UserReportView.as_view(), name='worksheet_user_report'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/fullreport/$', FullReportView.as_view(), name='worksheet_report'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/key/$', WorksheetKeyView.as_view(), name='worksheet_key'),
 

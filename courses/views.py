@@ -56,7 +56,7 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
         user = User.objects.get(pk=self.kwargs['user'])
 
         context['student_user'] = user
-        context['activity_log'] = ActivityLog.objects.filter(user=user)
+        context['activity_log'] = ActivityLog.objects.filter(user=user).extra({'day': 'date(timestamp)'})
 
         return context
 

@@ -73,15 +73,32 @@ class QuestionSet(AbstractActivity):
             response = None
             respobj = i.user_response_object(user)
             if respobj:  # This is not handling checkbox responses!
-                resp = respobj.response.replace('"', '')
+                # resp = respobj.response.replace('"', '')
+                resp = json.loads(respobj.response)
 
                 if question_type.name == 'option question':
-                    r = int(resp)
-                    score = r in i.correct_answer()
-                    try:
-                        resp = Option.objects.get(pk=r).display_text
-                    except:
-                        resp = None
+                    if i.input_select == 'checkbox': # dealing with a list of responses/answers
+                        r = {int(x) for x in resp} # create response list as a set
+                        a = {int(x) for x in i.correct_answer()} # retrieve the answer list as a set
+
+                        score = True
+                        if a - r: # find diff between sets. if not empty (diffs exist) score is false
+                            score = False
+
+                        try:
+                            # Build a string out of the response list
+                            respstr = [str('(%s)')%Option.objects.get(pk=x).display_text for x in list(r)]
+                            resp = ', '.join(respstr)
+                        except:
+                            resp = None
+
+                    else:
+                        r = int(resp)
+                        score = r in i.correct_answer()
+                        try:
+                            resp = Option.objects.get(pk=r).display_text
+                        except:
+                            resp = None
                 else:
                     score = i.correct_answer() == resp
 
@@ -249,6 +266,7 @@ class OptionQuestion(AbstractQuestion):
             # optresponse = self.responses.get(user=user).response.replace('"','')
             # return Option.objects.get(pk=int(optresponse)).display_text
             return self.responses.get(user=user)
+
         except:
             return None
 

@@ -39,7 +39,8 @@
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
                           </div>
                           <div class="modal-body">
-                            <p><object width="100%" height="480px" data="{{ calculator }}"></object></p>
+                            <iframe src = "{% static 'js/ViewerJS/' %}#{{calculator}}" width='100%' height='450' allowfullscreen webkitallowfullscreen></iframe>
+
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
@@ -63,7 +64,7 @@
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
                           </div>
                           <div class="modal-body">
-                            <p><object width="100%" height="480px" data="{{ formula }}"></object></p>
+                            <iframe src = "{% static 'js/ViewerJS/' %}#{{calculator}}" width='100%' height='450' allowfullscreen webkitallowfullscreen></iframe>
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
@@ -159,13 +160,13 @@
 
             {%if question.display_pdf %}
                 <div class="col-md-8">
-                    <object width="100%" height="600px" data="{{ question.display_pdf.url }}"></object>
+                    <iframe src = "{% static 'js/ViewerJS/' %}#{{ question.display_pdf.url }}" width='100%' height='450' allowfullscreen webkitallowfullscreen></iframe>
                 </div>
             {% endif %}
 
             {% if worksheet.display_pdf %}
                 <div class="col-md-8">
-                    <object width="100%" height="600px" data="{{ worksheet.display_pdf.url }}"></object>
+                    <iframe src = "{% static 'js/ViewerJS/' %}#{{ worksheet.display_pdf.url }}" width='100%' height='768' allowfullscreen webkitallowfullscreen></iframe>
                 </div>
             {% endif %}
 

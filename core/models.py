@@ -37,14 +37,14 @@ class GGVUser(models.Model):
 
 
 class ActivityLog(models.Model):
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, related_name='activitylog')
     action = models.CharField(max_length=32, choices=ACTIONS)
     message = models.CharField(max_length=512, null=True, blank=True)
     message_detail = models.CharField(max_length=512, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
     def __unicode__(self):
-        return self.user.username
+        return self.timestamp.strftime('%b %d, %Y %-I:%M %p')
 
     class Meta:
         ordering = ['user', '-timestamp']
@@ -52,7 +52,7 @@ class ActivityLog(models.Model):
 
 class Bookmark(models.Model):
     mark_type = models.CharField(
-        max_length=32, choices=BOOKMARK_TYPES, default='marked')
+        max_length=32, choices=BOOKMARK_TYPES, default='none')
     creator = models.ForeignKey(User, related_name="bookmarker")
     content_type = models.ForeignKey(ContentType, related_name="bookmarks")
     object_id = models.PositiveIntegerField()

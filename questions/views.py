@@ -2,7 +2,7 @@
 import os
 from collections import OrderedDict
 
-from django.views.generic import DetailView, UpdateView, CreateView, RedirectView
+from django.views.generic import DetailView, UpdateView, CreateView, RedirectView, TemplateView
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -36,6 +36,8 @@ def filter_filelisting_images(item):
     except:
         return False
 
+class TestDocView(TemplateView):
+    template_name = 'test.html'
 
 class QuestionAssetHandlerView(LoginRequiredMixin, RedirectView):
 

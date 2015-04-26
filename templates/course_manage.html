@@ -19,40 +19,41 @@
 {% endblock local_nav %}
 
 {% block page_header %}
+
 <div class="col-md-12 center-block">
     {% if is_manager %}<a class="btn btn-primary btn-xs" href="{% url 'create_user' course.slug %}">Add User</a>{% endif %}
 </div>
+
 {% endblock page_header %}
 
 {% block content %}
-    <div class="panel panel-success">
-        <div class="panel-heading">{{ students|length}} Students</div>
-        <!-- <div class="panel-body"></div> -->
-        <table class="table">
-        <thead>
-          <tr>
-            <th>Last Login</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
-          </tr>
-        </thead>
-        <tbody>
+
+<div class="col-md-12 panel panel-success">
+    <div class="row panel-heading">{{ students|length}} Students</div>
+    <div id="container_0" class="row">
+        <div id="sorts" class="item col-md-12">
+            <div class="col-md-2"><button class="btn btn-sm btn-primary" data-sort-by="original-order">reset</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="login">login</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="recent">recent</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname">firstname</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="lastname">lastname</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="username">username</button></div>
+        </div>
         {% for i in students %}
-        <tr>
-            <th scope="row">{{ i.last_login }}</th>
-            <td>{{ i.first_name }}</td>
-            <td>{{ i.last_name }}</td>
-            <td>{{ i.username }}</td>
-            <td><a href="{% url 'manage_user' course.slug i.id %}">more</a> </td>
-        </tr>
+        <div class="item col-md-12">
+            <div class="col-md-2"><a href="{% url 'manage_user' course.slug i.id %}">detail</a> </div>
+            <div class="col-md-2 login">{{ i.last_login }}</div>
+            <div class="col-md-2 recent">{{ i.activitylog.all|first }}</div>
+            <div class="col-md-2 firstname">{{ i.first_name }}</div>
+            <div class="col-md-2 lastname">{{ i.last_name }}</div>
+            <div class="col-md-2 username">{{ i.username }}</div>
+        </div>
         {% empty %}
             <div class="panel-body">No students are assigned to this course.</div>
         {% endfor %}
-        </tbody>
-        </table>
     </div>
-
+</div>
+<div class="col-md-12">
     <div class="panel panel-danger">
         <div class="panel-heading">{{ deactivated|length}} Deactivated</div>
         <!-- <div class="panel-body"></div> -->
@@ -79,7 +80,8 @@
         </tbody>
         </table>
     </div>
-
+</div>
+<div class="col-md-12">
     <div class="panel panel-warning">
         <div class="panel-heading">{{ unvalidated|length}} Unvalidated</div>
         <div class="panel-body">These users have been granted access but have not logged in.</div>
@@ -106,5 +108,12 @@
         </tbody>
         </table>
     </div>
-
+</div>
 {% endblock content %}
+
+{% block local_js %}
+    <script src="{% static 'js/isotope.pkgd.min.js'%}"></script>
+
+    <script src="{% static 'js/base.js'%}"></script>
+{% endblock local_js %}
+

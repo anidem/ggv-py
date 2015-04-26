@@ -19,7 +19,7 @@ from questions.views import (
     TextQuestionView, TextQuestionUpdateView,
     QuestionAssetHandlerView,
     UserReportView, FullReportView,
-    LessonKeyView, WorksheetKeyView
+    LessonKeyView, WorksheetKeyView, TestDocView
     )
 from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView, slide_view
 
@@ -28,7 +28,7 @@ urlpatterns = patterns('',
     url('', include('social.apps.django_app.urls', namespace='social')),
     url('', include('django.contrib.auth.urls', namespace='auth')),
     # url('', include('social.apps.django_app.urls', namespace='disconnect_individual')),
-
+    url(r'^ggv/test/$', TestDocView.as_view(), name='util'),
 # Utility - NON Production use only!
     url(r'^ggv/utility/$', csvutil, name='util'),
     url(r'^ggv/slideutility/$', csvutilslides, name='slideutil'),

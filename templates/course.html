@@ -31,15 +31,7 @@
         {% endif %}
     {% endif %}
     </div>
-    <script>
-      $('.btn-toggle').click(function() {
-          $(this).find('.btn').toggleClass('active');
-          $(this).find('.btn').toggleClass('btn-success');
-          $(this).find('.btn').toggleClass('btn-default');
-          $('.eng').toggleClass('collapse')
-          $('.span').toggleClass('collapse')
-      });
-    </script>
+
 
     {% if is_instructor or is_manager %}<a class="btn btn-primary btn-xs" href="{% url 'manage_course' course.slug %}">User Report</a>{% endif %}
 
@@ -109,3 +101,16 @@
 {% endif %}
 
 {% endblock content %}
+{% block local_js %}
+    <script>
+      $('.btn-toggle').click(function() {
+          $(this).find('.btn').toggleClass('active');
+          $(this).find('.btn').toggleClass('btn-success');
+          $(this).find('.btn').toggleClass('btn-default');
+          $('.eng').toggleClass('collapse')
+          $('.span').toggleClass('collapse')
+      });
+    </script>
+
+{% endblock local_js %}
+

@@ -22,7 +22,7 @@
                 <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
               </div>
               <div class="modal-body">
-                <iframe src = "{% static 'js/ViewerJS' %}#/static/img/test.pdf" width='100%' height='450' allowfullscreen webkitallowfullscreen></iframe>
+                {# <iframe src = "{% static 'js/ViewerJS' %}#/static/img/test.pdf" width='100%' height='450' allowfullscreen webkitallowfullscreen></iframe> #}
               </div>
               <div class="modal-footer">
               </div>
@@ -34,7 +34,23 @@
 
 </div>
 <div class="col-md-8">
-    <iframe src = "http://192.168.1.112/static/js/ViewerJS/#/static/img/test.pdf" width='100%' height='600' frameBorder="0" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>
+<script type="text/javascript" src='http://www.scribd.com/javascripts/scribd_api.js'></script>
+
+<div id='embedded_doc'><a href='http://www.scribd.com'>Scribd</a></div>
+
+<script type='text/javascript'>
+  var scribd_doc = scribd.Document.getDocFromUrl('http://www.ggvinteractive.com/media/pdf/2_Jardin_Lombrices.pdf', 'pub-62946802257968168855893558');
+
+  var onDocReady = function(e){
+  // scribd_doc.api.setPage(3);
+  }
+
+  scribd_doc.addParam('jsapi_version', 2);
+  scribd_doc.addEventListener('docReady', onDocReady);
+  scribd_doc.write('embedded_doc');
+</script>
+
+    {# <iframe src = "http://192.168.1.112/static/js/ViewerJS/#/static/img/test.pdf" width='100%' height='600' frameBorder="0" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe> #}
 </div>
 
 {% endblock content %}

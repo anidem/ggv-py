@@ -154,20 +154,20 @@
         <!-- RIGHT panel: Question media (images, pdfs) -->
             {%if question.display_image %}
                 <div class="col-md-8">
-                        <div><img class="fit" src="{{ question.display_image.url }}"></div>
+                    <div><img class="fit" src="{{ question.display_image.url }}"></div>
                 </div>
             {% endif %}
 
             {%if question.display_pdf %}
                 <div class="col-md-8">
                     <div><a href="{{ question.display_pdf.url }}" target="_blank">print</a></div>
-                    <iframe src = "{% static 'js/ViewerJS/' %}#{{ question.display_pdf.url }}" width='100%' height='450' allowfullscreen webkitallowfullscreen></iframe>
+                    <iframe src = "{% static 'js/ViewerJS/' %}#{{ question.display_pdf.url }}" width='100%' height='600' allowfullscreen webkitallowfullscreen></iframe>
                 </div>
             {% endif %}
 
             {% if worksheet.display_pdf %}
                 <div class="col-md-8">
-                    <iframe src = "{% static 'js/ViewerJS/' %}#{{ worksheet.display_pdf.url }}" width='100%' height='768' allowfullscreen webkitallowfullscreen></iframe>
+                    <iframe src = "{% static 'js/ViewerJS/' %}#{{ worksheet.display_pdf.url }}" width='100%' height='600' allowfullscreen webkitallowfullscreen></iframe>
                 </div>
             {% endif %}
 

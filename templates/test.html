@@ -33,20 +33,28 @@
 
 
 </div>
-<div class="col-md-8">
+<div id="embedded_doc" class="col-md-8">
 <script type="text/javascript" src='http://www.scribd.com/javascripts/scribd_api.js'></script>
 
-<div id='embedded_doc'><a href='http://www.scribd.com'>Scribd</a></div>
+{# <div id='embedded_doc'><a href='http://www.scribd.com'>Scribd</a></div> #}
 
 <script type='text/javascript'>
-  var scribd_doc = scribd.Document.getDocFromUrl('http://www.ggvinteractive.com/media/pdf/2_Jardin_Lombrices.pdf', 'pub-62946802257968168855893558');
+  var scribd_doc = scribd.Document.getDocFromUrl('http://www.ggvinteractive.com/media/pdf/ciencia-seccion-03-apuntes.pdf', 'pub-62946802257968168855893558');
 
   var onDocReady = function(e){
   // scribd_doc.api.setPage(3);
+    scribd_doc.api.setZoom(2);
   }
 
-  scribd_doc.addParam('jsapi_version', 2);
   scribd_doc.addEventListener('docReady', onDocReady);
+  scribd_doc.addParam('jsapi_version', 2);
+
+  scribd_doc.addParam('height', 600);
+  scribd_doc.addParam('width', 800);
+  scribd_doc.addParam('extension', 'pdf');
+  scribd_doc.addParam('mode', 'slideshow');
+  scribd_doc.addParam('public', false);
+
   scribd_doc.write('embedded_doc');
 </script>
 

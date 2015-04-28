@@ -37,7 +37,7 @@ def filter_filelisting_images(item):
         return False
 
 class TestDocView(TemplateView):
-    template_name = 'test.html'
+    template_name = 'test-frame.html'
 
 class QuestionAssetHandlerView(LoginRequiredMixin, RedirectView):
 

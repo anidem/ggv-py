@@ -30,27 +30,33 @@
 
 <div class="col-md-12 panel panel-success">
     <div class="row panel-heading">{{ students|length}} Students</div>
-    <div id="container_0" class="row">
-        <div id="sorts" class="item col-md-12">
-            <div class="col-md-2"><button class="btn btn-sm btn-primary" data-sort-by="original-order">reset</button></div>
-            <div class="col-md-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="login">login</button></div>
-            <div class="col-md-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="recent">recent</button></div>
-            <div class="col-md-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname">firstname</button></div>
-            <div class="col-md-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="lastname">lastname</button></div>
-            <div class="col-md-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="username">username</button></div>
+
+    <div class="row">
+        <div id="sorts" class="col-xs-12">
+            <div class="col-xs-2"><button class="btn btn-sm btn-primary" data-sort-by="original-order">reset</button></div>
+            <div class="col-xs-2">
+                <button class="btn btn-block btn-sm btn-primary" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button>
+            </div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="recent" data-order="asc"> <i class="fa fa-sort"></i> most recent activity</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> firstname</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> lastname</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+            <div class="col=md-12"><hr></div>
         </div>
-        {% for i in students %}
-        <div class="item col-md-12">
-            <div class="col-md-2"><a href="{% url 'manage_user' course.slug i.id %}">detail</a> </div>
-            <div class="col-md-2 login">{{ i.last_login }}</div>
-            <div class="col-md-2 recent">{{ i.activitylog.all|first }}</div>
-            <div class="col-md-2 firstname">{{ i.first_name }}</div>
-            <div class="col-md-2 lastname">{{ i.last_name }}</div>
-            <div class="col-md-2 username">{{ i.username }}</div>
+        <div id="container_0" class="col-xs-12">
+            {% for i in students %}
+            <div  class="item col-xs-12">
+                <div class="col-xs-2"><a href="{% url 'manage_user' course.slug i.id %}">detail</a> </div>
+                <div class="col-xs-2 login">{{ i.last_login }}</div>
+                <div class="col-xs-2 recent">{{ i.activitylog.all.0.timestamp }}</div>
+                <div class="col-xs-2 firstname">{{ i.first_name }}</div>
+                <div class="col-xs-2 lastname">{{ i.last_name }}</div>
+                <div class="col-xs-2 username">{{ i.username }}</div>
+            </div>
+            {% empty %}
+                <div class="panel-body">No students are assigned to this course.</div>
+            {% endfor %}
         </div>
-        {% empty %}
-            <div class="panel-body">No students are assigned to this course.</div>
-        {% endfor %}
     </div>
 </div>
 <div class="col-md-12">

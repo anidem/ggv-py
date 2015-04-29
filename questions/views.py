@@ -74,8 +74,9 @@ class WorksheetLaunchView(LoginRequiredMixin, DetailView):
 
     def get(self, request, *args, **kwargs):
         msg_detail = self.get_object().lesson.title
+        msg = '<a href="%s">%s</a>' % (self.request.path, self.get_object().title)
         ActivityLog(
-            user=self.request.user, action='access-worksheet', message=self.request.path, message_detail=msg_detail).save()
+            user=self.request.user, action='access-worksheet', message=msg, message_detail=msg_detail).save()
         return HttpResponseRedirect(reverse('question_response', args=(self.kwargs['crs_slug'], self.get_object().id, 1)))
 
 

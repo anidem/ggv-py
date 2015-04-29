@@ -27,8 +27,11 @@ class slide_view(LoginRequiredMixin, AccessRequiredMixin, DetailView):
     def dispatch(self, *args, **kwargs):
         self.slide = self.get_object()
         self.lesson = self.slide.lesson
+        msg_detail = self.lesson.title
+        msg = '<a href="%s">%s</a>' % (self.request.path, self.slide.title)
+
         ActivityLog(
-            user=self.request.user, action='access-presentation', message=self.request.path, message_detail=self.lesson.title).save()
+            user=self.request.user, action='access-presentation', message=msg, message_detail=msg_detail).save()
 
         return super(slide_view, self).dispatch(*args, **kwargs)
 

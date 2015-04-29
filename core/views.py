@@ -25,6 +25,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         try:
             courses = self.request.session['user_courses']
+
             if len(courses) == 1:
                 return redirect('course', crs_slug=courses[0])
         except:

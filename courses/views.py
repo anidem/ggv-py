@@ -1,4 +1,4 @@
-from operator import itemgetter, attrgetter
+from operator import attrgetter
 from django.views.generic import DetailView
 from django.contrib.auth.models import User
 
@@ -31,6 +31,7 @@ class CourseView(LoginRequiredMixin, AccessRequiredMixin, PrivelegedAccessMixin,
         context['students'] = course.student_list(extra_details=True)
         return context
 
+
 class CourseManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
     model = Course
     template_name = 'course_manage.html'
@@ -41,10 +42,12 @@ class CourseManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
         context = super(CourseManageView, self).get_context_data(**kwargs)
         course = self.get_object()
         context['instructors'] = course.instructor_list()
-        context['students'] = sorted(course.student_list(), key=attrgetter('last_login'), reverse=True)
+        context['students'] = sorted(
+            course.student_list(), key=attrgetter('last_login'), reverse=True)
         context['deactivated'] = course.deactivated_list()
         context['unvalidated'] = course.unvalidated_list()
         return context
+
 
 class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
     model = Course
@@ -57,8 +60,7 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
         user = User.objects.get(pk=self.kwargs['user'])
 
         context['student_user'] = user
-        context['activity_log'] = ActivityLog.objects.filter(user=user).extra({'day': 'date(timestamp)'})
+        context['activity_log'] = ActivityLog.objects.filter(
+            user=user).extra({'day': 'date(timestamp)'})
 
         return context
-
-

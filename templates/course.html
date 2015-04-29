@@ -10,12 +10,9 @@
 {% endblock page_crumb %}
 
 {% block local_nav %}
-    <li class="dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Courses <b class="caret"></b></a>
-      <ul class="dropdown-menu">
-        {% for i in courses %}<li><a href="{{ i.get_absolute_url }}">{{ i.title }}</a></li> {% endfor %}
-      </ul>
-    </li>
+    {% if is_instructor or is_manager %}
+        <li><a href="{% url 'manage_course' course.slug %}"><button class="btn btn-xs btn-primary">User Manager</button></a></li>
+    {% endif %}
 {% endblock local_nav %}
 
 {% block page_header %}
@@ -23,84 +20,100 @@
     <div class="btn-group btn-toggle">
     {% if eng_lessons and span_lessons %}
         {% if user.ggvuser.language_pref == 'spanish' %}
-            <button class="btn btn-xs btn-default">English</button>
-            <button class="btn btn-xs btn-success active">Español</button>
+            <button class="btn btn-md btn-default">English</button>
+            <button class="btn btn-md btn-success active">Español</button>
         {% else %}
-            <button class="btn btn-xs btn-success active">English</button>
-            <button class="btn btn-xs btn-default">Español</button>
+            <button class="btn btn-md btn-success active">English</button>
+            <button class="btn btn-md btn-default">Español</button>
         {% endif %}
     {% endif %}
     </div>
 
 
-    {% if is_instructor or is_manager %}<a class="btn btn-primary btn-xs" href="{% url 'manage_course' course.slug %}">User Report</a>{% endif %}
+
 
       <h1></h1>
 </div>
 {% endblock page_header %}
 
 {% block content %}
-  <div class="row icon eng {% if user.ggvuser.language_pref == 'spanish' %}collapse{% endif %}">
-	{% for i in eng_lessons %}
-		<div class="col-md-3 icon-{{ i.lesson.subject }}">
-			<a class="static" href="{{ i.get_absolute_url }}">
-				<i class="fa fa-{{ i.lesson.icon_class }} fa-5x"></i>
-        <p class="icon-title">{{ i.lesson.title }}</p>
-			</a>
-		</div>
-	{% endfor %}
-  </div>
-
-  <div class="row icon span {% if user.ggvuser.language_pref != 'spanish' %}collapse{% endif %}">
-  {% for i in span_lessons %}
-    <div class="col-md-3 icon-{{ i.lesson.subject }}">
-      <a class="static" href="{{ i.get_absolute_url }}">
-        <i class="fa fa-{{ i.lesson.icon_class }} fa-5x"></i>
-        <p class="icon-title">{{ i.lesson.title }}</p>
-      </a>
+    <div class="row icon eng {% if user.ggvuser.language_pref == 'spanish' %}collapse{% endif %}">
+        {% for i in eng_lessons %}
+        	<div class="col-md-3 icon-{{ i.lesson.subject }}">
+        		<a class="static" href="{{ i.get_absolute_url }}">
+        			<i class="fa fa-{{ i.lesson.icon_class }} fa-5x"></i>
+            <p class="icon-title">{{ i.lesson.title }}</p>
+        		</a>
+        	</div>
+        {% endfor %}
     </div>
-  {% endfor %}
-  </div>
 
-    <h4>Instructors </h4>
-    <div class="panel-group" id="accordion">
-    {% for i in instructors %}
-        <div class="panel panel-info">
-            <div class="panel-heading">
-                <a data-toggle="collapse" data-parent="#accordion" href="#{{ i.id }}-data">
-                    <p class="panel-title">{{ i.first_name }} {{ i.last_name }}{% if i == request.user %}<small> (this is you) </small> {% endif %}</p>
-                </a>
-            </div>
-            <div id="{{ i.id }}-data" class="panel-collapse collapse">
-              <div class="panel-body"></div>
-            </div>
+    <div class="row icon span {% if user.ggvuser.language_pref != 'spanish' %}collapse{% endif %}">
+        {% for i in span_lessons %}
+        <div class="col-md-3 icon-{{ i.lesson.subject }}">
+          <a class="static" href="{{ i.get_absolute_url }}">
+            <i class="fa fa-{{ i.lesson.icon_class }} fa-5x"></i>
+            <p class="icon-title">{{ i.lesson.title }}</p>
+          </a>
         </div>
-    {% empty %}
-        <p>No instructors are assigned to this lesson.</p>
-    {% endfor %}
+        {% endfor %}
     </div>
 
 {% if is_instructor or is_manager %}
-    <h4>{{ students|length}} Students </h4>
-    <div class="panel-group" id="accordion">
-    {% for i in students %}
-    <div class="panel panel-info">
-        <div class="panel-heading">
-            <a data-toggle="collapse" data-parent="#accordion" href="#{{ i.id }}-data">
-                <p class="panel-title">{{ i.first_name }} {{ i.last_name }} ({{ i.username }})</p>
-            </a>
-        </div>
-        <div id="{{ i.id }}-data" class="panel-collapse collapse">
-          <div class="panel-body"></div>
+    {% comment %}
+    <div class="row">
+        <h4>Notifications:</h4>
+        <div class="col-md-12 well">
+
+            {% for i in notifications %}
+                <div></div>
+            {% endfor %}
+
+
         </div>
     </div>
-    {% empty %}
-        <p>No students are assigned this lesson.</p>
-    {% endfor %}
+    {% endcomment %}
+
+    <div class="row">
+        <h4>Roster: ({{ students|length}} students) </h4>
+        <div class="col-md-12">
+            {% for i in students %}
+            <div class="">
+                <div class="">
+                    <p class="">
+                        {% comment %}
+                        <a href="{% url 'manage_user' course.slug i.id %}" class="static"><button class="btn btn-xs">Progress Report</button></a>
+                        {% endcomment %}
+                        <a href="{% url 'manage_user' course.slug i.id %}" class="static"><button class="btn btn-xs">Activity Log</button></a>
+                        {{ i.first_name }} {{ i.last_name }} ({{ i.username }})
+                    </p>
+                </div>
+                <div id="{{ i.id }}-data" class="panel-collapse collapse">
+                  <div class=""></div>
+                </div>
+            </div>
+            {% empty %}
+                <p>No students are assigned this lesson.</p>
+            {% endfor %}
+        </div>
     </div>
 {% endif %}
 
+    <div class="row">
+        <h4>Instructor{{ instructors|length|pluralize }}: </h4>
+        <div class="col-md-12">
+        {% for i in instructors %}
+            <span><em>{{ i.first_name }} {{ i.last_name }}{% if i == request.user %}<small> (this is you) </small> {% endif %}, </em></span>
+        {% empty %}
+            <p>No instructors are assigned to this lesson.</p>
+        {% endfor %}
+        </div>
+    </div>
+
 {% endblock content %}
+
+
+
 {% block local_js %}
     <script>
       $('.btn-toggle').click(function() {

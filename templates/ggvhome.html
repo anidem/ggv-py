@@ -11,15 +11,16 @@
 	</ul>
 {% endif %}
 
+    <div class="col-md-12"><h3 class="lead">Your courses:</h3></div>
 {% for i in courses %}
 	<a href="{{ i.get_absolute_url }}" class="">
-		<div class="col-md-4 col-md-offset-1 thumbnail" style="text-align: center">
-			<h2>{{ i.title }}</h2>
+		<div class="hoverpad col-md-10 col-md-offset-1">
+			<p class="lead"><i class="fa fa-home"></i> {{ i.title }} {{i.get_user_role}}</p>
 			<div class="center-block" style=""></div>
 		</div>
 	</a>
 {% empty %}
-    
+
     <h3>Hi, you don't appear to have any courses.</h3>
 
 {% endfor %}

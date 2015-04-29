@@ -21,37 +21,37 @@
 {% block page_header %}
 
 <div class="col-md-12 center-block">
-    {% if is_manager %}<a class="btn btn-primary btn-xs" href="{% url 'create_user' course.slug %}">Add User</a>{% endif %}
+    {% if is_manager %}<a class="btn btn-success btn-lg" href="{% url 'create_user' course.slug %}">Add User</a>{% endif %}
 </div>
 
 {% endblock page_header %}
 
 {% block content %}
 
-<div class="col-md-12 panel panel-success">
-    <div class="row panel-heading">{{ students|length}} Students</div>
+<div class="col-md-12">
+    <div class="row"><div class="col-md-12"><h2 class="lead">{{ students|length}} Students</h2></div></div>
 
     <div class="row">
         <div id="sorts" class="col-xs-12">
-            <div class="col-xs-2"><button class="btn btn-sm btn-primary" data-sort-by="original-order">reset</button></div>
+            <div class="col-xs-1"><button class="btn btn-sm" data-sort-by="original-order">reset</button></div>
             <div class="col-xs-2">
                 <button class="btn btn-block btn-sm btn-primary" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button>
             </div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="recent" data-order="asc"> <i class="fa fa-sort"></i> most recent activity</button></div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> firstname</button></div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> lastname</button></div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="recent" data-order="asc"> <i class="fa fa-sort"></i> most recent activity</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> firstname</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> lastname</button></div>
+            <div class="col-xs-3"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
             <div class="col=md-12"><hr></div>
         </div>
         <div id="container_0" class="col-xs-12">
             {% for i in students %}
-            <div  class="item col-xs-12">
-                <div class="col-xs-2"><a href="{% url 'manage_user' course.slug i.id %}">detail</a> </div>
-                <div class="col-xs-2 login">{{ i.last_login }}</div>
-                <div class="col-xs-2 recent">{{ i.activitylog.all.0.timestamp }}</div>
+            <div  class="item hoverpad col-xs-12">
+                <div class="col-xs-1"><a href="{% url 'manage_user' course.slug i.id %}">detail</a> </div>
+                <div class="col-xs-2 login" data-login-value="{{ i.last_login|date:'U' }}">{{ i.last_login|date:"M d h:i A" }}</div>
+                <div class="col-xs-2 recent" data-activity-value="{{ i.activitylog.all.0.timestamp|date:'U' }}">{{ i.activitylog.all.0.action }}</div>
                 <div class="col-xs-2 firstname">{{ i.first_name }}</div>
                 <div class="col-xs-2 lastname">{{ i.last_name }}</div>
-                <div class="col-xs-2 username">{{ i.username }}</div>
+                <div class="col-xs-3 username"><span class="small">{{ i.username }}</span></div>
             </div>
             {% empty %}
                 <div class="panel-body">No students are assigned to this course.</div>
@@ -59,6 +59,7 @@
         </div>
     </div>
 </div>
+
 <div class="col-md-12">
     <div class="panel panel-danger">
         <div class="panel-heading">{{ deactivated|length}} Deactivated</div>
@@ -120,6 +121,46 @@
 {% block local_js %}
     <script src="{% static 'js/isotope.pkgd.min.js'%}"></script>
 
-    <script src="{% static 'js/base.js'%}"></script>
+    <script type="text/javascript">
+        jQuery(function($) {
+            var $container = $('#container_0').isotope({
+                getSortData: {
+                    login: '[data-login-value] parseInt',
+                    recent: '[data-activity-value] parseInt',
+                    firstname: '.firstname',
+                    lastname: '.lastname',
+                    username: '.username'
+                },
+                sortBy: '.firstname'
+            });
+
+            // sort items on button click
+            $('#sorts').on( 'click', 'button', function() {
+                var sortByValue = $(this).attr('data-sort-by');
+                var order = "";
+                if ($(this).attr("data-order")==="asc") {
+                    order = true;
+                    $(this).attr("data-order", "");
+
+                } else {
+                    order = false;
+                    $(this).attr("data-order", "asc");
+                }
+                $('.btn-primary').removeClass('btn-primary');
+                $(this).addClass("btn-primary");
+                $container.isotope({
+                    sortBy: sortByValue,
+                    sortAscending: order
+                });
+            });
+
+            $(document).ready(function() {
+
+            });
+        });
+    </script>
+
+
+
 {% endblock local_js %}
 

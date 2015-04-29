@@ -1,4 +1,6 @@
 # core/models.py
+import json
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -61,3 +63,16 @@ class Bookmark(models.Model):
 
     def __unicode__(self):
         return self.mark_type
+
+
+class Notification(models.Model):
+    user_to_notify = models.ForeignKey(User)
+    event = models.CharField(max_length=512)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    read_status = models.BooleanField(default=False)
+
+    def get_event_dict(self):
+        return json.loads(self.event)
+
+    def __unicode__(self):
+        return self.event

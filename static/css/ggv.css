@@ -173,12 +173,9 @@ form ul {
 }
 
 .hoverpad:hover {
-  padding: 10px 0 10px 0;
   font-size: 1.2em;
   background-color: #e8e8e8;
 }
-
-
 
   /* No colors */
 /*.icon i { color: #A0A0A0; }*/

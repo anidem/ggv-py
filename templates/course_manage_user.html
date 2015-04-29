@@ -6,16 +6,12 @@
 
 {% block page_crumb %}
     <li><a href="{% url 'course' object.slug %}">{{ object }}</a></li>
-    <li><a href="#">Managing {{ student_user }}</a></li>
+    {% if is_instructor or is_manager %}
+        <li><a href="{% url 'manage_course' course.slug %}"><i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-primary">User Manager</button></a></li>
+    {% endif %}
 {% endblock page_crumb %}
 
 {% block local_nav %}
-    <li class="dropdown">
-      <a href="#" class="dropdown-toggle" data-toggle="dropdown">Courses <b class="caret"></b></a>
-      <ul class="dropdown-menu">
-        {% for i in courses %}<li><a href="{{ i.get_absolute_url }}">{{ i.title }}</a></li> {% endfor %}
-      </ul>
-    </li>
 {% endblock local_nav %}
 
 {% block page_header %}
@@ -25,8 +21,8 @@
 {% endblock page_header %}
 
 {% block content %}
-    <div class="panel panel-success">
-        <div class="panel-heading">{{ student_user.first_name }} {{ student_user.last_name }} ({{ student_user }}) </div>
+    <div class="">
+        <div class="lead">{{ student_user.first_name }} {{ student_user.last_name }} ({{ student_user }}) </div>
         <!-- <div class="panel-body"></div> -->
         <table class="table">
         <thead>

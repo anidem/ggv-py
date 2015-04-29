@@ -6,13 +6,14 @@
 
 {% block page_crumb %}
     <li><a>{{ object }}</a></li>
-    <li><a href="#"></a></li>
+    {% if is_instructor or is_manager %}
+        <li><a href="{% url 'manage_course' course.slug %}"><button class="btn btn-xs btn-primary">User Manager </button> <i class="fa fa-caret-right"></i></a></li>
+    {% endif %}
+
 {% endblock page_crumb %}
 
 {% block local_nav %}
-    {% if is_instructor or is_manager %}
-        <li><a href="{% url 'manage_course' course.slug %}"><button class="btn btn-xs btn-primary">User Manager</button></a></li>
-    {% endif %}
+
 {% endblock local_nav %}
 
 {% block page_header %}
@@ -75,7 +76,7 @@
     {% endcomment %}
 
     <div class="row">
-        <h4>Roster: ({{ students|length}} students) </h4>
+        <h4>Roster: ({{ students|length}} active students) </h4>
         <div class="col-md-12">
             {% for i in students %}
             <div class="">

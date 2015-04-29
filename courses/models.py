@@ -1,6 +1,6 @@
 # courses/models.py
 
-import operator
+from operator import attrgetter
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -9,6 +9,7 @@ from django.contrib.auth.models import User
 from guardian.shortcuts import get_users_with_perms, get_perms
 
 from lessons.models import Lesson
+
 
 class Course(models.Model):
 
@@ -30,10 +31,12 @@ class Course(models.Model):
     def member_list(self):
         return get_users_with_perms(self, attach_perms=True)
 
-    def student_list(self, extra_details=None):
+    def student_list(self, extra_details=None, sort_by='first_name', reverse_sort=False):
         # if extra_details:
-        #     return [{user: ActivityLog.objects.filter(user=user)} for user, perms in self.member_list().items() if 'access' in perms]
-        return [user for user, perms in self.member_list().items() if 'access' in perms]
+        # return [{user: ActivityLog.objects.filter(user=user)} for user, perms
+        # in self.member_list().items() if 'access' in perms]
+        students = [user for user, perms in self.member_list().items() if 'access' in perms]
+        return sorted(students, key=attrgetter(sort_by), reverse=reverse_sort)
 
     def instructor_list(self):
         return [user for user, perms in self.member_list().items() if 'instructor' in perms]

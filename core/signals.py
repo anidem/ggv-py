@@ -1,4 +1,4 @@
-# core/signals.py
+ # core/signals.py
 from django.contrib.auth.signals import user_logged_in, user_logged_out
 from django.dispatch import receiver
 from django.shortcuts import redirect
@@ -23,7 +23,6 @@ def init_session(sender, **kwargs):
 
         course_permissions = get_objects_for_user(
             user, ['access', 'instructor', 'manage'], Course, any_perm=True).order_by('title')
-        print course_permissions
 
         lesson_permissions = set()
         for i in course_permissions:

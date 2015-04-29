@@ -42,8 +42,7 @@ class CourseManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
         context = super(CourseManageView, self).get_context_data(**kwargs)
         course = self.get_object()
         context['instructors'] = course.instructor_list()
-        context['students'] = sorted(
-            course.student_list(), key=attrgetter('last_login'), reverse=True)
+        context['students'] = course.student_list()
         context['deactivated'] = course.deactivated_list()
         context['unvalidated'] = course.unvalidated_list()
         return context

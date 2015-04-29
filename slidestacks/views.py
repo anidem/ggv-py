@@ -16,6 +16,7 @@ from .models import SlideStack
 
 
 class slide_view(LoginRequiredMixin, AccessRequiredMixin, DetailView):
+
     """ IFrame version until SlideView is debugged. """
 
     model = SlideStack
@@ -27,9 +28,10 @@ class slide_view(LoginRequiredMixin, AccessRequiredMixin, DetailView):
         self.slide = self.get_object()
         self.lesson = self.slide.lesson
         ActivityLog(
-            user=self.request.user, action='access-presentation', message=self.request.path).save()
+            user=self.request.user, action='access-presentation', message=self.request.path, message_detail=self.lesson.title).save()
 
         return super(slide_view, self).dispatch(*args, **kwargs)
+
 
 class SlideView(LoginRequiredMixin, AccessRequiredMixin, RedirectView):
     slide = None
@@ -53,7 +55,7 @@ class SlideView(LoginRequiredMixin, AccessRequiredMixin, RedirectView):
             return request
 
         abs_filename = os.path.join(
-            os.path.join(settings.STACKS_ROOT, self.slide.asset),'html5.html')
+            os.path.join(settings.STACKS_ROOT, self.slide.asset), 'html5.html')
 
         ActivityLog(
             user=self.request.user, action='access', message=self.slide.id).save()

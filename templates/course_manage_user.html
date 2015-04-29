@@ -40,7 +40,13 @@
         <tr>
             <th scope="row">{{ i.timestamp }}</th>
             <td>{{ i.action }}</td>
-            <td><a href="{{ i.message|urlize }}">{{ i.message }}</a></td>
+            <td>
+                {% if i.action != 'login' %}
+                    {{ i.message|safe }}
+                {% else %}
+                    {{ i.message }}
+                {% endif %}
+            </td>
             <td>{{ i.message_detail }}</td>
         </tr>
         {% empty %}

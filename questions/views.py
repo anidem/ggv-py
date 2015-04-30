@@ -36,8 +36,10 @@ def filter_filelisting_images(item):
     except:
         return False
 
+
 class TestDocView(TemplateView):
     template_name = 'test-frame.html'
+
 
 class QuestionAssetHandlerView(LoginRequiredMixin, RedirectView):
 
@@ -52,6 +54,7 @@ class QuestionAssetHandlerView(LoginRequiredMixin, RedirectView):
 class WorksheetHomeView(LoginRequiredMixin, StaffuserRequiredMixin, DetailView):
     model = QuestionSet
     template_name = 'question_worksheet.html'
+
 
 class WorksheetUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, UpdateView):
     model = QuestionSet
@@ -68,17 +71,18 @@ class WorksheetUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, UpdateView
         context['form'].fields['section'] = section_filter
         return context
 
+
 class WorksheetLaunchView(LoginRequiredMixin, DetailView):
     model = QuestionSet
     template_name = 'question_worksheet.html'
 
     def get(self, request, *args, **kwargs):
         msg_detail = self.get_object().lesson.title
-        msg = '<a href="%s">%s</a>' % (self.request.path, self.get_object().title)
+        msg = '<a href="%s">%s</a>' % (self.request.path,
+                                       self.get_object().title)
         ActivityLog(
             user=self.request.user, action='access-worksheet', message=msg, message_detail=msg_detail).save()
         return HttpResponseRedirect(reverse('question_response', args=(self.kwargs['crs_slug'], self.get_object().id, 1)))
-
 
 
 class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, CreateView):
@@ -121,7 +125,8 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
                 return super(QuestionResponseView, self).get(request, *args, **kwargs)
 
         """ Viewing restrictions enforced. """
-        self.next_question = self.worksheet.get_next_question(self.request.user)
+        self.next_question = self.worksheet.get_next_question(
+            self.request.user)
 
         """ If user's response queue is empty, user has completed worksheet, write completion status.
             Send user to worksheet report.
@@ -131,9 +136,11 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
                 UserWorksheetStatus(
                     user=self.request.user, completed_worksheet=self.worksheet).save()
                 self.completion_status = True
-                logpath = reverse('worksheet_report', args=(self.kwargs['crs_slug'], self.worksheet.id,))
+                logpath = reverse(
+                    'worksheet_report', args=(self.kwargs['crs_slug'], self.worksheet.id,))
                 msg_detail = self.worksheet.lesson.title
-                ActivityLog(user=self.request.user, action='completed-worksheet', message=logpath, message_detail=msg_detail).save()
+                ActivityLog(user=self.request.user, action='completed-worksheet',
+                            message=logpath, message_detail=msg_detail).save()
                 return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id, self.request.user.id)))
 
         """
@@ -237,18 +244,22 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             'user_completed'] = self.completion_status or self.request.user.is_staff
         context['question_list'] = tally
         context['worksheet'] = self.worksheet
-        context['instructor'] = self.request.user in context['course'].instructor_list() or self.request.user.is_staff
+        context['instructor'] = self.request.user in context[
+            'course'].instructor_list() or self.request.user.is_staff
 
         if self.worksheet.lesson.id == 1:   # English math lesson.
-            context['calculator'] = '/media/img/eng/ti-30xs-calculator-english.pdf'
+            context[
+                'calculator'] = '/media/img/eng/ti-30xs-calculator-english.pdf'
             context['formula'] = '/media/pdf/eng-formula-page.pdf'
         elif self.worksheet.lesson.id == 5:  # Spanish math lesson
-            context['calculator'] = '/media/img/eng/ti-30xs-calculator-english.pdf'
+            context[
+                'calculator'] = '/media/img/eng/ti-30xs-calculator-english.pdf'
             context['formula'] = '/media/pdf/span-formula-page.pdf'
 
         # actionstr = 'access-question-' + current_question.get_question_type()
         # ActivityLog(
-        #     user=self.request.user, action=actionstr, message=self.request.path).save()
+        # user=self.request.user, action=actionstr,
+        # message=self.request.path).save()
         return context
 
 
@@ -284,8 +295,10 @@ class TextQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateView)
 
         return context
 
+
 class TextQuestionDeleteView(LoginRequiredMixin, CourseContextMixin, DetailView):
     pass
+
 
 class OptionQuestionView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = OptionQuestion
@@ -298,7 +311,6 @@ class OptionQuestionView(LoginRequiredMixin, CourseContextMixin, DetailView):
         context['sequence_url'] = self.get_object().get_sequence_url(
             context['course'])
         return context
-
 
 
 class OptionQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateView):
@@ -356,7 +368,7 @@ class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         context['numquestions'] = worksheet.get_num_questions()
 
         report = worksheet.get_user_responses(
-           user, worksheet.get_ordered_question_list(), context['course'])
+            user, worksheet.get_ordered_question_list(), context['course'])
         context['report'] = report['report']
 
         context['correct'] = report['correct']
@@ -392,7 +404,8 @@ class LessonKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
             for question in i.get_ordered_question_list():
                 try:
                     if question.display_key_file:
-                        answer = '<a href="' + question.display_key_file.url + '">key</a>'
+                        answer = '<a href="' + \
+                            question.display_key_file.url + '">key</a>'
                     elif question.get_question_type() == 'option':
                         corrects = question.correct_answer()
                         answer = ''
@@ -409,6 +422,7 @@ class LessonKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
         context['worksheets'] = key
         return context
 
+
 class WorksheetKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = QuestionSet
     template_name = 'question_worksheet_key.html'
@@ -421,7 +435,8 @@ class WorksheetKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
         for question in self.get_object().get_ordered_question_list():
             try:
                 if question.display_key_file:
-                    answer = '<a href="' + question.display_key_file.url + '">key</a>'
+                    answer = '<a href="' + \
+                        question.display_key_file.url + '">key</a>'
                 elif question.get_question_type() == 'option':
                     corrects = question.correct_answer()
                     answer = ''
@@ -439,6 +454,3 @@ class WorksheetKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
 
         context['worksheets'] = key
         return context
-
-
-

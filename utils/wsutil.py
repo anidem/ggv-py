@@ -217,8 +217,8 @@ def import_json_questions(json_dir=None):
                 try:
                     worksheet_obj = QuestionSet.objects.get(pk=idmap[WID])
                 except:
-                    lesson = Lesson.objects.get(pk=9)
-                    section = Section.objects.get(pk=1)
+                    lesson = Lesson.objects.get(pk=1)
+                    section = Section.objects.get(pk=21)
                     worksheet_obj =  QuestionSet(lesson=lesson, section=section,title=WID, instructions='Add instructions here.', display_order=0, activity_type='worksheet')
                     worksheet_obj.save()
                     print 'Worksheet does not exist: Worksheet ADDED: ', worksheet_obj
@@ -226,11 +226,12 @@ def import_json_questions(json_dir=None):
         # Iterate over each question --> i = json question object
         for i in data:
             try:
-                # if i.get('IMAGE') != '':
-                #     imgpath = 'img/' + slugify(i.get('IMAGE')) + '.png'
-                # else:
-                #     imgpath = ''
-                imgpath = i.get('IMAGE')
+                if i.get('IMAGE') != '':
+                    imgpath = 'img/' + i.get('IMAGE')
+                    # imgpath = 'img/' + slugify(i.get('IMAGE')) + '.png'
+                else:
+                    imgpath = ''
+                # imgpath = i.get('IMAGE')
                 if i.get('SELECT TYPE') == 'text':
                     question = TextQuestion()
                     question.display_text = i.get('QUESTION')

@@ -72,7 +72,7 @@ class QuestionSet(AbstractActivity):
                 bk = bookmark[0]
             response = None
             respobj = i.user_response_object(user)
-            if respobj:  # This is not handling checkbox responses!
+            if respobj:
                 # resp = respobj.response.replace('"', '')
                 resp = json.loads(respobj.response)
 
@@ -103,7 +103,11 @@ class QuestionSet(AbstractActivity):
                             resp = 'This question may have been modified. Please re-answer or report problem to instructor.'
 
                 else:
-                    score = i.correct_answer() == resp
+                    # Check if text question has correct answer specified. count it if null.
+                    if not i.correct:
+                        score = True
+                    else:
+                        score = i.correct_answer() == resp
 
                 if score:
                     numcorrect = numcorrect + 1

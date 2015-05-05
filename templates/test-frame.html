@@ -21,8 +21,8 @@
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                 <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
               </div>
-              <div class="modal-body">
-                <iframe src = "{% static 'js/ViewerJS' %}#/static/img/test.pdf" width='100%' height='450' allowfullscreen webkitallowfullscreen></iframe>
+              <div id="" class="modal-body divToScroll" width='800' height='450' >
+                <iframe src = "http://www.ggvinteractive.com/media/pdf/7_Trail_of_Tears.pdf" width='800' height='100%' allowfullscreen webkitallowfullscreen  ></iframe>
               </div>
               <div class="modal-footer">
               </div>
@@ -33,8 +33,10 @@
 
 
 </div>
-<div id="" class="col-md-8" style="-webkit-overflow-scrolling:touch; overflow:auto;">
-    <iframe src = "http://192.168.1.105/static/img/test.pdf" width='100%' height='2200' frameBorder="0" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe>
+<div id="" class="col-md-8" class="">
+    <a href="http://192.168.1.109/static/img/test.pdf">docview</a>
+    <embed src = "http://192.168.1.109/static/img/test.pdf"></embed>
+    {# <iframe src = "http://192.168.1.109/static/img/test.pdf" frameBorder="0" allowfullscreen webkitallowfullscreen mozallowfullscreen oallowfullscreen msallowfullscreen></iframe> #}
 </div>
 
 {% endblock content %}

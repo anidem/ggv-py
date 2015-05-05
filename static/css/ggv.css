@@ -1,4 +1,12 @@
 /* ggv.css */
+
+.divToScroll{
+    height: 2200px;
+    overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
+}
+
 html,
 body {
   padding-right: 15px;

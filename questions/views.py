@@ -138,7 +138,6 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
                 self.completion_status = True
                 logpath = reverse(
                     'worksheet_report', args=(self.kwargs['crs_slug'], self.worksheet.id,))
-
                 msg = '<a href="%s">%s</a>' % (logpath, self.worksheet.title)
                 msg_detail = self.worksheet.lesson.title
                 ActivityLog(user=self.request.user, action='completed-worksheet',

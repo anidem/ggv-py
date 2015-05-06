@@ -3,6 +3,12 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
+{% block page_crumb %}
+    <li><a href="{% url 'course' course.slug %}">{{ course }} <i class="fa fa-caret-right"></i></a></li>
+    <li><a href="{% url 'manage_course' course.slug %}">Roster Manager <i class="fa fa-caret-right"></i></a></li>
+    <li><a href=""  class="btn btn-md"><strong>Add a User</strong></a></li>
+{% endblock page_crumb %}
+
 {% block content %}
 <div class="col-md-6">
     <h2 class="lead">Add a new user to  {{ course }}</h2>

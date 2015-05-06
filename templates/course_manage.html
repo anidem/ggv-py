@@ -5,12 +5,12 @@
 
 
 {% block page_crumb %}
-    <li><a href="{% url 'course' object.slug %}">{{ object }}</a></li>
-    {% if is_manager %}<li><a href="{% url 'create_user' course.slug %}"><button class="btn btn-success btn-xs"><i class="fa fa-plus"></i> Add User </button> <i class="fa fa-caret-right"></i></a></li>{% endif %}
+    <li><a href="{% url 'course' object.slug %}">{{ object }} <i class="fa fa-caret-right"></i></a></li>
+    <li><a href="" class="btn btn-md"><strong>Roster Manager</strong></a></li>
 {% endblock page_crumb %}
 
 {% block local_nav %}
-
+{% if is_manager %}<li><a href="{% url 'create_user' course.slug %}"><button class="btn btn-success btn-xs"><i class="fa fa-plus"></i> Add User </button> </a></li>{% endif %}
 {% endblock local_nav %}
 
 {% block page_header %}

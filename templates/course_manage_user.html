@@ -5,9 +5,10 @@
 
 
 {% block page_crumb %}
-    <li><a href="{% url 'course' object.slug %}">{{ object }}</a></li>
+    <li><a href="{% url 'course' object.slug %}">{{ object }} <i class="fa fa-caret-right"></i></a></li>
     {% if is_instructor or is_manager %}
-        <li><a href="{% url 'manage_course' course.slug %}"><i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-primary">User Manager</button></a></li>
+        <li><a href="{% url 'manage_course' course.slug %}">Roster Manager <i class="fa fa-caret-right"></i></a></li>
+        <li><a href="" class="btn btn-md"><strong>User Activity Detail</strong></a></li>
     {% endif %}
 {% endblock page_crumb %}
 
@@ -28,17 +29,16 @@
         <thead>
           <tr>
             <th>Time</th>
-            <th>Action</th>
-            <th>Message</th>
-            <th>More Detail</th>
-
+            <th>Assignment</th>
+            <th>Content Area</th>
+            <th>Subject</th>
           </tr>
         </thead>
         <tbody>
         {% for i in activity_log %}
         {% ifchanged i.day %}<tr><td><h2>{{ i.day }}</h2></td></tr> {% endifchanged %}
         <tr>
-            <th scope="row">{{ i.timestamp }}</th>
+            <th scope="row">{{ i.timestamp|time }}</th>
             <td>{{ i.action }}</td>
             <td>
                 {% if i.action != 'login' %}

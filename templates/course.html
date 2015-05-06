@@ -5,19 +5,18 @@
 
 
 {% block page_crumb %}
-    <li><a>{{ object }}</a></li>
-    {% if is_instructor or is_manager %}
-        <li><a href="{% url 'manage_course' course.slug %}"><button class="btn btn-xs btn-primary">User Manager </button> <i class="fa fa-caret-right"></i></a></li>
-    {% endif %}
-
+    <li><a href="" class="lead">{{ object }}</a></li>
 {% endblock page_crumb %}
 
 {% block local_nav %}
-
+    {% if is_instructor or is_manager %}
+        <li><a href="{% url 'manage_course' course.slug %}"><button class="btn btn-xs btn-success">Roster Manager</button></a></li>
+    {% endif %}
 {% endblock local_nav %}
 
 {% block page_header %}
 <div class="col-md-12 center-block">
+    <h1></h1>
     <div class="btn-group btn-toggle">
     {% if eng_lessons and span_lessons %}
         {% if user.ggvuser.language_pref == 'spanish' %}
@@ -29,11 +28,7 @@
         {% endif %}
     {% endif %}
     </div>
-
-
-
-
-      <h1></h1>
+    <h1></h1>
 </div>
 {% endblock page_header %}
 

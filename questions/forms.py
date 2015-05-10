@@ -1,11 +1,14 @@
 # forms.py
 from django.contrib.contenttypes.models import ContentType
+from django.conf import settings
 from django import forms
 from django.forms import ModelForm
 from django.forms.models import inlineformset_factory
 from .models import QuestionResponse, OptionQuestion, TextQuestion, Option, QuestionSet
 
 from filebrowser.widgets import FileInput, ClearableFileInput
+
+import os
 
 
 class QuestionResponseForm(ModelForm):
@@ -79,6 +82,17 @@ class QuestionSetUpdateForm(ModelForm):
 
 
 class OptionQuestionUpdateForm(ModelForm):
+
+    def save(self):
+        super(OptionQuestionUpdateForm, self).save()
+        try:
+            pdfroot = settings.MEDIA_ROOT + '/'
+            opts = pdfroot + self.instance.display_pdf.name + ' --dest-dir ' + pdfroot + 'pdf/'
+            cmd = 'pdf2htmlEX ' + opts
+            os.system(cmd)
+        except:
+            pass
+        return self.instance
 
     class Meta:
         model = OptionQuestion

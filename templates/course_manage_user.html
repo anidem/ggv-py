@@ -31,8 +31,8 @@
             <th>Time</th>
             <th>Assignment</th>
             <th>Content Area</th>
-            <th>Score</th>
             <th>Subject</th>
+            <th>Score</th>
           </tr>
         </thead>
         <tbody>
@@ -51,8 +51,9 @@
                     {{ i.activity.message }}
                 {% endif %}
             </td>
-            <td>{% if i.score %} <strong>{{ i.score|floatformat:"0" }}%</strong> {% endif %}</td>
+
             <td>{{ i.activity.message_detail }}</td>
+            <td>{% if i.score %} <strong>{{ i.score|floatformat:"0" }}%</strong> {% endif %}</td>
         </tr>
         {% empty %}
             <div class="panel-body">No students are assigned to this course.</div>

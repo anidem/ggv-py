@@ -176,12 +176,12 @@ form ul {
 }
 
 .hoverpad {
-    padding: 5px 0 5px 0;
+    /*padding: 5px 0 5px 0;*/
 
 }
 
 .hoverpad:hover {
-  font-size: 1.2em;
+  /*font-size: 1.2em;*/
   background-color: #e8e8e8;
 }
 

@@ -9,10 +9,6 @@ DEBUG = True
 
 TEMPLATE_DEBUG = True
 
-# (deployment) Where <collectstatic> will put files for production.
-# static_root is the absolute path to the directory where static files will be served in production.
-###STATIC_ROOT = '/staticfiles/'
-
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -28,7 +24,7 @@ DATABASES = {
 ALLOWED_HOSTS = []
 
 # INSTALLED_APPS += (
-#     'debug_toolbar', # This breaks the pres player -- conflicts with prototype.
+# 'debug_toolbar', # This breaks the pres player -- conflicts with prototype.
 # )
 
 EMAIL_USE_TLS = True
@@ -38,24 +34,27 @@ EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_PORT = 587
 
 STATIC_ROOT = '/Library/WebServer/Documents/static'
-# STATIC_URL = 'http://localhost/static/'
+STATIC_URL = 'http://ggv2.developers.com/static/'
 
 MEDIA_ROOT = '/Library/WebServer/Documents/media'
-MEDIA_URL = 'http://localhost/media/'
+MEDIA_URL = 'http://ggv2.developers.com/media/'
 
-STACKS_ROOT = '/Library/WebServer/Documents/media/private/stacks'
+STACKS_ROOT = '/Library/WebServer/Documents/stacks'
 STACKS_DATA_DIR = 'data'
 
-PDF_ROOT = '/Library/WebServer/Documents/media/private/pdf'
+PDF_ROOT = '/Library/WebServer/Documents/media/pdf'
 
-SENDFILE_BACKEND = 'sendfile.backends.development' #sendfile.backends.xsendfile
+# sendfile.backends.xsendfile
+SENDFILE_BACKEND = 'sendfile.backends.development'
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ['SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ['SOCIAL_AUTH_GOOGLE_OAUTH2_KEY'] # This is the Client ID (not a key)
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ[
+    'SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET']
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ[
+    'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']  # This is the Client ID (not a key)
 
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = []
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
-FIELDS_STORED_IN_SESSION = ['hash',]
+FIELDS_STORED_IN_SESSION = ['hash', ]
 
 SOCIAL_AUTH_LOGIN_ERROR_URL = '/access-forbidden/'
 
@@ -73,9 +72,7 @@ SOCIAL_AUTH_PIPELINE = (
 )
 
 
-
-LOGIN_URL ='/login/google-oauth2/'
+LOGIN_URL = '/login/google-oauth2/'
 LOGIN_REDIRECT_URL = '/home'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-

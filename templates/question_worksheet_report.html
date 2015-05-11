@@ -20,7 +20,8 @@
         <tbody>
             <thead>
               {% if report %}<tr>
-              <h4 class="pull-right"><b>{{ grade|floatformat:"0" }}%</b> <span class="small">({{correct}}/{{numquestions}})</span></h4>
+              <h2>{{ student.first_name }} {{ student.last_name }}</h2>
+              <h2 class=""><b>{{ grade|floatformat:"0" }}%</b> <span class="small">({{correct}}/{{numquestions}})</span></h2>
                 <th><small><em>#</em></small></th>
                 <th><small><em>Question</em></small></th>
                 <th><small><em>Response</em></small></th>

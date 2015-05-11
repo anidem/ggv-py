@@ -374,6 +374,7 @@ class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
 
         context['correct'] = report['correct']
         context['grade'] = report['grade']
+        context['student'] = user
         return context
 
 

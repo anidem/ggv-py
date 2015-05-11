@@ -42,10 +42,10 @@
             <th scope="row">{{ i.activity.timestamp|time }}</th>
             <td>{{ i.activity.action }}</td>
             <td>
-                {% if i.activity.action == 'completed-worksheet' or i.activity.action == 'access-worksheet' %}
+                {% if i.activity.action == 'completed-worksheet' %}
                     <a href="{{ i.report_url }}"> {{i.worksheet }}</a>
                     {% comment %} {{ i.activity.message|safe }} {% endcomment %}
-                {% elif i.activity.action == 'access-presentation' %}
+                {% elif i.activity.action == 'access-presentation'  or i.activity.action == 'access-worksheet' %}
                     {{ i.activity.message|safe }}
                 {% else %}
                     {{ i.activity.message }}

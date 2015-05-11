@@ -77,6 +77,7 @@ class WorksheetInlineAdmin(admin.TabularInline):
 class SlideStackInlineAdmin(admin.TabularInline):
     model = SlideStack
 
+
 class LessonInlineAdmin(admin.TabularInline):
     model = CourseLesson
     extra = 8
@@ -100,16 +101,19 @@ class QuestionSetAdmin(admin.ModelAdmin):
 
 
 class OptionQuestionAdmin(admin.ModelAdmin):
-    list_display = ('display_text', 'display_order', 'display_image', 'display_pdf', 'response_required')
+    list_display = ('display_text', 'display_order',
+                    'display_image', 'display_pdf', 'response_required')
     list_filter = ('question_set', 'question_set__lesson')
     list_editable = ('display_order', 'display_image', 'response_required')
     inlines = [QuestionOptionInlineAdmin]
 
 
 class TextQuestionAdmin(admin.ModelAdmin):
-    list_display = ('display_text', 'correct', 'display_order', 'display_image', 'display_pdf', 'response_required')
+    list_display = ('display_text', 'correct', 'display_order',
+                    'display_image', 'display_pdf', 'response_required')
     list_filter = ('question_set', 'question_set__lesson')
     list_editable = ('display_order', 'display_image', 'response_required')
+
 
 class CourseAdmin(GuardedModelAdmin):
     model = Course
@@ -118,10 +122,10 @@ class CourseAdmin(GuardedModelAdmin):
         LessonInlineAdmin,
     ]
 
+
 class CourseLessonAdmin(admin.ModelAdmin):
     list_display = ('course', 'lesson')
     list_filter = ('course',)
-
 
 
 class LessonAdmin(GuardedModelAdmin):
@@ -137,9 +141,11 @@ class SectionAdmin(GuardedModelAdmin):
     list_editable = ('lesson', 'title', 'display_order')
     list_filter = ('lesson', )
 
+
 class ActivityLogAdmin(admin.ModelAdmin):
     list_display = ('timestamp', 'user', 'action', 'message')
-    list_filter = ('timestamp', 'user', 'action' )
+    list_filter = ('timestamp', 'user', 'action')
+
 
 class GGVUserAdmin(admin.ModelAdmin):
     list_display = ('user', 'language_pref', 'clean_logout')
@@ -158,8 +164,4 @@ admin.site.register(QuestionResponse)
 admin.site.register(ActivityLog, ActivityLogAdmin)
 admin.site.register(GGVUser, GGVUserAdmin)
 admin.site.register(Bookmark)
-# admin.site.register(ShortAnswerQuestion, ShortAnswerQuestionAdmin, Media=ExtraMedia)
-# admin.site.register(MultipleChoiceQuestion, MultipleChoiceQuestionAdmin, Media=ExtraMedia)
 admin.site.register(UserNote)
-
-

@@ -94,10 +94,6 @@ GRAPPELLI_ADMIN_TITLE = 'GGV Admin'
 
 CRISPY_TEMPLATE_PACK = 'bootstrap3'
 
-# LOGIN_URL = '/login'
-
-# LOGIN_REDIRECT_URL = '/home'
-
 AUTHENTICATION_BACKENDS = (
     'social.backends.google.GoogleOAuth2',
     'django.contrib.auth.backends.ModelBackend',
@@ -105,7 +101,7 @@ AUTHENTICATION_BACKENDS = (
 )
 
 ANONYMOUS_USER_ID = -1
-SESSION_COOKIE_AGE = 86400 # 1 day inactivity logout
+SESSION_COOKIE_AGE = 86400  # 1 day inactivity logout
 
 GRAPPELLI_INDEX_DASHBOARD = 'ggvproject.ggvadmindashboard.CustomIndexDashboard'
 
@@ -114,7 +110,3 @@ FILEBROWSER_MEDIA_URL = '/media/'
 FILEBROWSER_MEDIA_ROOT = 'media'
 
 FILEBROWSER_VERSIONS_BASEDIR = '_versions'
-
-
-
-

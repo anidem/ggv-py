@@ -31,23 +31,28 @@
             <th>Time</th>
             <th>Assignment</th>
             <th>Content Area</th>
+            <th>Score</th>
             <th>Subject</th>
           </tr>
         </thead>
         <tbody>
         {% for i in activity_log %}
-        {% ifchanged i.day %}<tr><td><h2>{{ i.day }}</h2></td></tr> {% endifchanged %}
-        <tr>
-            <th scope="row">{{ i.timestamp|time }}</th>
-            <td>{{ i.action }}</td>
+        {% ifchanged i.activity.day %}<tr><td><h2>{{ i.activity.day }}</h2></td></tr> {% endifchanged %}
+        <tr class="hoverpad">
+            <th scope="row">{{ i.activity.timestamp|time }}</th>
+            <td>{{ i.activity.action }}</td>
             <td>
-                {% if i.action != 'login' %}
-                    {{ i.message|safe }}
+                {% if i.activity.action == 'completed-worksheet' or i.activity.action == 'access-worksheet' %}
+                    <a href="{{ i.report_url }}"> {{i.worksheet }}</a>
+                    {% comment %} {{ i.activity.message|safe }} {% endcomment %}
+                {% elif i.activity.action == 'access-presentation' %}
+                    {{ i.activity.message|safe }}
                 {% else %}
-                    {{ i.message }}
+                    {{ i.activity.message }}
                 {% endif %}
             </td>
-            <td>{{ i.message_detail }}</td>
+            <td>{% if i.score %} <strong>{{ i.score|floatformat:"0" }}%</strong> {% endif %}</td>
+            <td>{{ i.activity.message_detail }}</td>
         </tr>
         {% empty %}
             <div class="panel-body">No students are assigned to this course.</div>

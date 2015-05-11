@@ -72,7 +72,7 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
         """
         activity = []
         for i in user.activitylog.all().extra({'day': 'date(timestamp)'}):
-            if i.action == 'completed-worksheet' or i.action == 'access-worksheet':
+            if i.action == 'completed-worksheet':
                 try:
                     wurl = i.message.split('/')
                     course = Course.objects.get(slug=wurl[2])
@@ -84,7 +84,7 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
                     activity.append({'activity': i, 'report_url': report_url, 'worksheet': worksheet, 'score': score})
                 except:
                     pass  # malformed log message. proceed silently...
-            elif i.action == 'access-presentation':
+            elif i.action == 'access-presentation' or i.action == 'access-worksheet':
                 activity.append({'activity': i, 'report_url': i.message, 'worksheet': None, 'score': None})
 
             else:

@@ -32,32 +32,40 @@
             <th>Assignment</th>
             <th>Content Area</th>
             <th>Subject</th>
-            <th>Score</th>
           </tr>
         </thead>
         <tbody>
-        {% for i in activity_log %}
-        {% ifchanged i.activity.day %}<tr><td><h2>{{ i.activity.day }}</h2></td></tr> {% endifchanged %}
-        <tr class="hoverpad">
-            <th scope="row">{{ i.activity.timestamp|time }}</th>
-            <td>{{ i.activity.action }}</td>
+        {% for i, j in activity_log.items %}
+        <tr>
             <td>
-                {% if i.activity.action == 'completed-worksheet' %}
-                    <a href="{{ i.report_url }}"> {{i.worksheet }}</a>
-                    {% comment %} {{ i.activity.message|safe }} {% endcomment %}
-                {% elif i.activity.action == 'access-presentation'  or i.activity.action == 'access-worksheet' %}
-                    {{ i.activity.message|safe }}
-                {% else %}
-                    {{ i.activity.message }}
-                {% endif %}
-            </td>
+                <h2>{{ i }}
+                    <small>{% with f=j|first l=j|last %}{{ l.activity.timestamp|timesince:f.activity.timestamp }}{% endwith %}</small>
+                </h2>
 
-            <td>{{ i.activity.message_detail }}</td>
-            <td>{% if i.score %} <strong>{{ i.score|floatformat:"0" }}%</strong> {% endif %}</td>
+            </td>
         </tr>
+            {% for adict in j %}
+            <tr class="hoverpad">
+                <th scope="row">{{ adict.activity.timestamp|time }}</th>
+                <td>{{ adict.activity.action }}</td>
+                <td>
+                    {% if adict.activity.action == 'completed-worksheet' %}
+                        <a href="{{ adict.report_url }}"> {{adict.worksheet }}</a>
+                        {% comment %} {{ i.activity.message|safe }} {% endcomment %}
+                    {% elif adict.activity.action == 'access-presentation'  or adict.activity.action == 'access-worksheet' %}
+                        {{ adict.activity.message|safe }}
+                    {% else %}
+                        {{ adict.activity.message }}
+                    {% endif %}
+                </td>
+
+                <td>{{ adict.activity.message_detail }}</td>
+            </tr>
+            {% endfor %}
         {% empty %}
             <div class="panel-body">No students are assigned to this course.</div>
         {% endfor %}
+
         </tbody>
         </table>
     </div>

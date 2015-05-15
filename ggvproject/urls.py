@@ -14,7 +14,7 @@ from core.views import (
     CreateGgvUserView, ListGgvUserView, GgvUserView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
-from courses.views import CourseView, CourseManageView, UserManageView
+from courses.views import CourseView, CourseManageView, UserManageView, UserProgressView
 from lessons.views import LessonView, SectionUpdateView
 from questions.views import (
     WorksheetHomeView, WorksheetUpdateView, WorksheetLaunchView, QuestionResponseView,
@@ -41,6 +41,7 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/$', CourseView.as_view(), name='course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/$', CourseManageView.as_view(), name='manage_course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/user/(?P<user>\d+)/$', UserManageView.as_view(), name='manage_user'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/progress/user/(?P<user>\d+)/$', UserProgressView.as_view(), name='user_progress'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/$', LessonView.as_view(), name='lesson'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/key/$', LessonKeyView.as_view(), name='lesson_key'),
 

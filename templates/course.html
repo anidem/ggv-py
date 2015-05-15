@@ -80,7 +80,7 @@
                         {% comment %}
                         <a href="{% url 'manage_user' course.slug i.id %}" class="static"><button class="btn btn-xs">Progress Report</button></a>
                         {% endcomment %}
-                        <a href="{% url 'manage_user' course.slug i.id %}" class="static"><button class="btn btn-xs">Activity Log</button></a>
+                        <a href="{% url 'user_progress' course.slug i.id %}" class="static"><button class="btn btn-xs">Progress</button></a>
                         {{ i.first_name }} {{ i.last_name }} ({{ i.username }})
                     </p>
                 </div>

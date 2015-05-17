@@ -9,7 +9,7 @@ from django.core.urlresolvers import reverse_lazy
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 
 from core.mixins import CourseContextMixin, AccessRequiredMixin
-from core.models import Bookmark
+from core.models import Bookmark, BOOKMARK_TYPES
 from .models import Lesson, Section
 from questions.models import Option
 
@@ -23,18 +23,37 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         context = super(LessonView, self).get_context_data(**kwargs)
         lesson = self.get_object()
 
+        opts = dict(BOOKMARK_TYPES)
+        for i, j in opts.items():
+            if lesson.language == 'span':
+                opts[i] = j.split(',')[1]
+            else:
+                opts[i] = j.split(',')[0]
+
+        context['bookmark_type_opts'] = opts
+
         activity_list = []
         bookmarks = Bookmark.objects.filter(creator=self.request.user).filter(course_context=context['course'])
 
         for i in lesson.activities():
-            activity_type=ContentType.objects.get_for_model(i).id
+            activity_type = ContentType.objects.get_for_model(i).id
             bookmark = None
             bookmark_label = ''
             bookmark_id = ''
+            bookmark_type = 'none'
             try:
                 bookmark = bookmarks.filter(content_type=activity_type).get(object_id=i.id)
-                bookmark_label = bookmark.get_mark_type_display()
+
+                label = bookmark.get_mark_type_display()
+                if lesson.language == 'span':
+                    label = label.split(',')[1]
+                else:
+                    label = label.split(',')[0]
+
+                bookmark_label = label
                 bookmark_id = bookmark.id
+                bookmark_type = bookmark.mark_type
+
                 # bookmarkform = BookmarkForm(instance=bookmark)
 
             except:
@@ -48,6 +67,7 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
             a['bookmark'] = bookmark
             a['bookmark_id'] = bookmark_id
             a['bookmark_label'] = bookmark_label
+            a['bookmark_type'] = bookmark_type
             a['date'] = None
 
             activity_list.append(a)

@@ -19,12 +19,12 @@ ACTIONS = (
 )
 
 BOOKMARK_TYPES = (
-    ('remember', 'Review'),
-    ('todo', 'Need to Finish'),
-    ('started', 'Start'),
-    ('completed', 'Completed'),
-    ('question', 'Question'),
-    ('none', 'None'),
+    ('remember', 'Review,Revisa'),
+    ('todo', 'Need to Finish,Acabar'),
+    ('started', 'Start,Comienza'),
+    ('completed', 'Completed,Completado'),
+    ('question', 'Question,Pregunta'),
+    ('none', 'None,Borrar'),
 )
 
 
@@ -63,6 +63,10 @@ class Bookmark(models.Model):
 
     def __unicode__(self):
         return self.mark_type
+
+    # Thought about implementing this but the transaction efficiency might suffer...
+    # class Meta:
+    #     unique_together = ('creator', 'content_type', 'object_id', 'course_context')
 
 
 class Notification(models.Model):

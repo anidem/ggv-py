@@ -77,30 +77,32 @@
 
                     <div class="col-md-1"></div>
 
-                    <div class="col-md-1">
-                      <a id="{{i.act.id}}_bkbtn" href="#{{i.act.id}}_add_bookmark" class="btn btn-xs" data-toggle="collapse" aria-expanded="false">
+                    <div class="col-md-1 bookmarkpanel">
+                      <a id="{{i.act.id}}_bkbtn" href="#{{i.act.id}}_add_bookmark" class="bkbtn btn btn-xs" data-toggle="collapse" aria-expanded="false">
                         <i class="bookmarker fa fa-2x {% if i.bookmark %}fa-star{% else %}fa-star-o{% endif %}"></i>
-                        <span>{{ i.bookmark_label }}</span>
+                        <span class="bookmark_label">{{ i.bookmark_label }}</span>
                       </a>
 
                       <div id="{{i.act.id}}_add_bookmark" class="panel-collapse collapse">
 
                         <form id="{{i.act.id}}_flag_form" action="" method="post" class="bookmarkform" data-panel="#{{i.act.id}}_add_bookmark" data-update="#{{i.act.id}}_bkbtn" data-target="{{ i.bookmark_id }}">{% csrf_token %}
-                            <div id="div_id_mark_type" class="form-group">
+                            <div class="form-group">
                                 <div class="controls ">
-                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "Started" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_3" value="started">Start</label>
-                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "Review" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_1" value="remember">Review</label>
-                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "Need to Finish" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_2" value="todo">Need To Finish</label>
-                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "Completed" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_4" value="completed">Completed</label>
-                                    <label class="radio"><input type="radio" {% if i.bookmark_label == "Question" %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_5" value="question">Question</label>
-                                    <label class="radio"><input type="radio" {% if not i.bookmark_label %}checked="checked"{% endif %} name="mark_type" id="id_mark_type_6" value="none">Clear</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark_type == "started" %}checked{% endif %} name="mark_type" id="id_mark_type_3" value="started" data-label="{{i.bookmark_label}}"> {{ bookmark_type_opts.started }}</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark_type == "review" %}checked{% endif %} name="mark_type" id="id_mark_type_1" value="remember" data-label="{{i.bookmark_label}}">{{ bookmark_type_opts.remember }}</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark_type == "todo" %}checked{% endif %} name="mark_type" id="id_mark_type_2" value="todo" data-label="{{i.bookmark_label}}">{{ bookmark_type_opts.todo }}</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark_type == "completed" %}checked{% endif %} name="mark_type" id="id_mark_type_4" value="completed" data-label="{{i.bookmark_label}}">{{ bookmark_type_opts.completed }}</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark_type == "question" %}checked{% endif %} name="mark_type" id="id_mark_type_5" value="question" data-label="{{i.bookmark_label}}">{{ bookmark_type_opts.question }}</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark_type == "none" %}checked{% endif %} name="mark_type" id="id_mark_type_6" value="none" data-label="">{{ bookmark_type_opts.none }}</label>
                                 </div>
                             </div>
+                            <input class="bktarget" name="bktarget" type="hidden" value="{{ i.bookmark_id }}">
+                            <input class="bklabel" name="bklabel" type="hidden" value="{{ i.bookmark_label }}">
                             <input id="id_creator" name="creator" type="hidden" value="{{ user.id }}">
                             <input id="id_content_type" name="content_type" type="hidden" value="{{ i.act_type_id }}">
                             <input id="id_object_id" name="object_id" type="hidden" value="{{i.act.id}}">
+                            <input id="id_lesson_lang" name="lesson_lang" type="hidden" value="{{ object.language }}">
                             <input id="id_course_context" name="course_context" type="hidden" value="{{ course.id }}">
-
                         </form>
 
                       </div>

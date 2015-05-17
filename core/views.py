@@ -117,8 +117,15 @@ class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
         bookmarkform = BookmarkForm(request.POST)
         if bookmarkform.is_valid():
             new_bookmark = bookmarkform.save()
+
+            label = new_bookmark.get_mark_type_display()
+            if 'span' in request.POST['lesson_lang']:
+                label = label.split(',')[1]
+            else:
+                label = label.split(',')[0]
+
             data = {}
-            data['mark_type'] = new_bookmark.get_mark_type_display()
+            data['mark_type'] = label
             data['bookmark_id'] = new_bookmark.id
             return self.render_json_response(data)
         else:
@@ -136,8 +143,14 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             updated_bk.mark_type = bookmarkform.cleaned_data['mark_type']
             updated_bk.save()
 
+            label = updated_bk.get_mark_type_display()
+            if 'span' in request.POST['lesson_lang']:
+                label = label.split(',')[1]
+            else:
+                label = label.split(',')[0]
+
             data = {}
-            data['mark_type'] = updated_bk.get_mark_type_display()
+            data['mark_type'] = label
             data['bookmark_id'] = updated_bk.id
             return self.render_json_response(data)
         else:

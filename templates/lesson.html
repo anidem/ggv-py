@@ -4,7 +4,7 @@
 {% load crispy_forms_tags %}
 
 {% block page_crumb %}
-  <li><a href="{% url 'course' course.slug %}">{{ course }} <i class="fa fa-caret-right"></i> </a></li>
+  <li><a href="{% url 'course' course.slug %}">{{ course }} Home <i class="fa fa-caret-right"></i> </a></li>
   <li><a>{{ object.title }}</a></li>
 {% endblock page_crumb %}
 
@@ -43,6 +43,11 @@
 {% block content %}
 
 <div class="col-md-12 lesson_list" data-course="{{ course.id }}" data-user="{{ user }}">
+    <div class="row">
+        <div class="col-md-10"></div>
+        <div class="col-md-1"></div>
+        <div class="col-md-1">bookmarks</div>
+    </div>
     	{% for i in acts %}
         {% ifchanged i.act.section %}
             <h2 id="{{ i.act.section|title }}" class="section_heading">
@@ -57,6 +62,7 @@
         {% endifchanged %}
         <div class="block row">
             <div class="block col-md-12">
+
                 <div class="block-heading row">
                     <div class="col-md-10" style="clear: both">
                       <h4>

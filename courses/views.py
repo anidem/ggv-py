@@ -29,11 +29,37 @@ class CourseView(LoginRequiredMixin, AccessRequiredMixin, PrivelegedAccessMixin,
         context['span_lessons'] = lessons.filter(
             lesson__language='span').order_by('lesson__subject')
 
+        if self.request.user.is_staff or context['is_instructor'] or context['is_manager']:
+            students = []
+            for i in course.student_list():
+                try:
+                    activity = i.activitylog.all()[0]
+                    students.append((i, {'recent_act': activity.action, 'recent_time': activity.timestamp}))
+                except:
+                    pass  # student[i] has no activity on record. Move on, nothing to see here.
+
+            instructors = []
+            for i in course.instructor_list():
+                try:
+                    activity = i.activitylog.all()[0]
+                    instructors.append((i, {'recent_act': activity.action, 'recent_time': activity.timestamp}))
+                except:
+                    pass  # instructors[i] has no activity on record. Move on, nothing to see here.
+
+            context['instructors'] = instructors
+            context['students'] = students
+        else:
+            context['instructors'] = course.instructor_list()
+
+        context['deactivated'] = course.deactivated_list()
+        context['unvalidated'] = course.unvalidated_list()
+
         # this provides access to the users full list of courses.
         context['courses'] = [
             Course.objects.get(slug=i) for i in self.request.session['user_courses']]
-        context['instructors'] = course.instructor_list()
-        context['students'] = course.student_list(extra_details=True)
+
+        # context['instructors'] = course.instructor_list()
+        # context['students'] = course.student_list(extra_details=True)
         return context
 
 

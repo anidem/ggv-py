@@ -12,7 +12,7 @@ from lessons.models import Lesson, Section
 from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option
 from slidestacks.models import SlideStack
 from notes.models import UserNote
-from core.models import ActivityLog, GGVUser, Bookmark
+from core.models import ActivityLog, GGVUser, Bookmark, SiteMessage
 
 
 class ExtraMedia:
@@ -164,4 +164,5 @@ admin.site.register(QuestionResponse)
 admin.site.register(ActivityLog, ActivityLogAdmin)
 admin.site.register(GGVUser, GGVUserAdmin)
 admin.site.register(Bookmark)
+admin.site.register(SiteMessage)
 admin.site.register(UserNote)

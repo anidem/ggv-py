@@ -80,3 +80,12 @@ class Notification(models.Model):
 
     def __unicode__(self):
         return self.event
+
+
+class SiteMessage(models.Model):
+    message = models.TextField(default='Message from ggvinteractive.com here.')
+    url_context = models.URLField(max_length=312, default='http://www.ggvinteractive.com')
+    show = models.BooleanField(default=True)
+
+    def __unicode__(self):
+        return self.message

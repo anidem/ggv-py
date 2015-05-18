@@ -5,13 +5,14 @@
 
 
 {% block page_crumb %}
-    <li><a href="" class="lead">{{ object }}</a></li>
+    <li><a href="" class="lead">{{ object }} Home</a></li>
 {% endblock page_crumb %}
 
 {% block local_nav %}
     {% if is_instructor or is_manager %}
         <li><a href="{% url 'manage_course' course.slug %}"><button class="btn btn-xs btn-success">Roster Manager</button></a></li>
     {% endif %}
+    {% if is_manager %}<li><a href="{% url 'create_user' course.slug %}"><button class="btn btn-success btn-xs"><i class="fa fa-plus"></i> Add User </button> </a></li>{% endif %}
 {% endblock local_nav %}
 
 {% block page_header %}
@@ -72,31 +73,83 @@
 
     <div class="row">
         <h4>Roster: ({{ students|length}} active students) </h4>
-        <div class="col-md-12">
-            {% for i in students %}
-            <div class="">
-                <div class="">
-                    <p class="">
-                        {% comment %}
-                        <a href="{% url 'manage_user' course.slug i.id %}" class="static"><button class="btn btn-xs">Progress Report</button></a>
-                        {% endcomment %}
-                        <a href="{% url 'user_progress' course.slug i.id %}" class="static"><button class="btn btn-xs">Progress</button></a>
-                        {{ i.first_name }} {{ i.last_name }} ({{ i.username }})
-                    </p>
-                </div>
-                <div id="{{ i.id }}-data" class="panel-collapse collapse">
-                  <div class=""></div>
-                </div>
+        <div id="sorts" class="row">
+            <div class="col-xs-1"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+            <div class="col-xs-1"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+
+            <div class="col-xs-2">
+                <button class="btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button>
             </div>
+
+            <div class="col-xs-4">
+                <button class="btn btn-block btn-sm" data-sort-by="recent_timestamp" data-order="asc"><i class="fa fa-sort"></i> last activity</button>
+            </div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+            <div class="col-xs-2"><button class="btn btn-sm" data-sort-by="original-order"><i class="fa fa-refresh"></i></button></div>
+        </div>
+
+        <div id="container_0" class="row">
+            {% for i in students %}
+
+
+            <div class="item hoverpad col-xs-12" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
+
+                <a href="{% url 'user_progress' course.slug i.0.id %}" class="static">
+
+                <div class="col-xs-1 firstname">{{ i.0.first_name }}</div>
+                <div class="col-xs-1 lastname">{{ i.0.last_name }}</div>
+                <div class="col-xs-2 login">{{ i.0.last_login|date:"M d, g:i A" }}</div>
+                <div class="col-xs-4 recent">{{ i.1.recent_time|date:"M d, g:i A" }} <strong>{{ i.1.recent_act }}</strong></div>
+                <div class="col-xs-2 username"><span class="small">{{ i.0.username }}</span></div>
+                <div class="col-xs-2"></div>
+
+                </a>
+
+            </div>
+
+
             {% empty %}
-                <p>No students are assigned this lesson.</p>
+                <div class="panel-body">No students are assigned to this course.</div>
             {% endfor %}
         </div>
     </div>
 {% endif %}
 
     <div class="row">
-        <h4>Instructor{{ instructors|length|pluralize }}: </h4>
+        <h4>Instructors: ({{ instructors|length}}) </h4>
+        {% if user.is_staff %}
+
+        <div class="row">
+            <div class="col-xs-1"><strong>first</strong></div>
+            <div class="col-xs-1"><strong>last</strong></div>
+            <div class="col-xs-2"><strong>last login</strong></div>
+
+            <div class="col-xs-4"><strong>last activity</strong></div>
+            <div class="col-xs-3"><strong>username</strong></div>
+            <div class="col-xs-1"></div>
+        </div>
+
+        {% for i in instructors %}
+        <div class="item hoverpad row" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
+            <a href="{% url 'manage_user' course.slug i.0.id %}" class="static">
+            <div class="col-xs-1 firstname">{{ i.0.first_name }}</div>
+            <div class="col-xs-1 lastname">{{ i.0.last_name }}</div>
+            <div class="col-xs-2 login">{{ i.0.last_login|date:"M d, g:i A" }}</div>
+            <div class="col-xs-4 recent">{{ i.1.recent_time|date:"M d, g:i A" }} <strong>{{ i.1.recent_act }}</strong></div>
+            <div class="col-xs-3 username"><span class="small">{{ i.0.username }}</span></div>
+            <div class="col-xs-1"></div>
+            </a>
+
+        </div>
+
+        {% empty %}
+            <div class="panel-body">No students are assigned to this course.</div>
+        {% endfor %}
+
+
+
+        {% else %}
+
         <div class="col-md-12">
         {% for i in instructors %}
             <span><em>{{ i.first_name }} {{ i.last_name }}{% if i == request.user %}<small> (this is you) </small> {% endif %}, </em></span>
@@ -104,22 +157,65 @@
             <p>No instructors are assigned to this lesson.</p>
         {% endfor %}
         </div>
-    </div>
 
+        {% endif %}
+    </div>
 {% endblock content %}
 
 
 
 {% block local_js %}
-    <script>
-      $('.btn-toggle').click(function() {
-          $(this).find('.btn').toggleClass('active');
-          $(this).find('.btn').toggleClass('btn-success');
-          $(this).find('.btn').toggleClass('btn-default');
-          $('.eng').toggleClass('collapse')
-          $('.span').toggleClass('collapse')
-      });
+    <script src="{% static 'js/isotope.pkgd.min.js'%}"></script>
+
+    <script type="text/javascript">
+        jQuery(function($) {
+
+            $('.btn-toggle').click(function() {
+                $(this).find('.btn').toggleClass('active');
+                $(this).find('.btn').toggleClass('btn-success');
+                $(this).find('.btn').toggleClass('btn-default');
+                $('.eng').toggleClass('collapse')
+                $('.span').toggleClass('collapse')
+            });
+
+            var $container = $('#container_0').isotope({
+                getSortData: {
+                    login: '[data-login] parseInt',
+                    recent_timestamp: '[data-recent] parseInt',
+                    firstname: '.firstname',
+                    lastname: '.lastname',
+                    username: '.username'
+                },
+
+            });
+
+            // sort items on button click
+            $('#sorts').on( 'click', 'button', function() {
+                var sortByValue = $(this).attr('data-sort-by');
+                var order = "";
+                if ($(this).attr("data-order")==="asc") {
+                    order = true;
+                    $(this).attr("data-order", "");
+
+                } else {
+                    order = false;
+                    $(this).attr("data-order", "asc");
+                }
+                $('.btn-primary').removeClass('btn-primary');
+                $(this).addClass("btn-primary");
+
+                $container.isotope({
+                    sortBy: sortByValue,
+                    sortAscending: order
+                });
+            });
+
+            $(document).ready(function() {
+
+            });
+        });
     </script>
 
 {% endblock local_js %}
+
 

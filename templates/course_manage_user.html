@@ -5,9 +5,9 @@
 
 
 {% block page_crumb %}
-    <li><a href="{% url 'course' object.slug %}">{{ object }} <i class="fa fa-caret-right"></i></a></li>
+    <li><a href="{% url 'course' object.slug %}">{{ object }} Home <i class="fa fa-caret-right"></i></a></li>
     {% if is_instructor or is_manager %}
-        <li><a href="{% url 'manage_course' course.slug %}">Roster Manager <i class="fa fa-caret-right"></i></a></li>
+        <li><a href="{% url 'user_progress' course.slug student_user.id %}">User Progress ({{ student_user.first_name }}) <i class="fa fa-caret-right"></i></a></li>
         <li><a href="" class="btn btn-md"><strong>User Activity Detail</strong></a></li>
     {% endif %}
 {% endblock page_crumb %}

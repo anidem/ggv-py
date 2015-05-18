@@ -9,7 +9,7 @@ from guardian.shortcuts import assign_perm
 
 from courses.models import Course
 
-from .models import Bookmark, GGVUser
+from .models import Bookmark, GGVUser, SiteMessage
 from .forms import BookmarkForm, GgvUserCreateForm
 from .mixins import CourseContextMixin
 from .signals import *
@@ -17,6 +17,11 @@ from .signals import *
 
 class IndexView(TemplateView):
     template_name = 'index.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(IndexView, self).get_context_data(**kwargs)
+        context['site_message'] = SiteMessage.objects.get(url_context='http://www.ggvinteractive.com/')
+        return context
 
 
 class HomeView(LoginRequiredMixin, TemplateView):
@@ -32,7 +37,6 @@ class HomeView(LoginRequiredMixin, TemplateView):
             courses = None
 
         return super(HomeView, self).get(request, *args, **kwargs)
-
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
@@ -108,6 +112,16 @@ class AccessForbiddenView(TemplateView):
 
 class ActivityLogView(TemplateView):
     pass
+
+
+class CreateMessageView(TemplateView):
+    pass
+
+# messages.debug(request, '%s SQL statements were executed.' % count)
+# messages.info(request, 'Three credits remain in your account.')
+# messages.success(request, 'Profile details updated.')
+# messages.warning(request, 'Your account expires in three days.')
+# messages.error(request, 'Document deleted.')
 
 
 class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, CreateView):

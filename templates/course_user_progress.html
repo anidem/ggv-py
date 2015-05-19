@@ -7,7 +7,7 @@
 {% block page_crumb %}
     <li><a href="{% url 'course' object.slug %}">{{ object }} Home <i class="fa fa-caret-right"></i></a></li>
     {% if is_instructor or is_manager %}
-        <li><a href="" class="btn btn-md"><strong>Student Progress</strong> for {{ student_user.first_name }} </a></li>
+        <li><a href="" class="btn btn-md"><strong>Progress Report</strong> for {{ student_user.first_name }} </a></li>
     {% endif %}
 {% endblock page_crumb %}
 
@@ -38,7 +38,7 @@
 
         {% for i, j in activity_log.items %}
             <div class="row">
-                <h2>{{ i }}</h2>
+                <h3>{{ i }} <sup><small>MST</small></h3>
             </div>
 
             {% for adict in j %}

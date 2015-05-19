@@ -1,10 +1,14 @@
 from operator import attrgetter
 from collections import OrderedDict, namedtuple
 from datetime import datetime
+from pytz import timezone
 
 from django.views.generic import DetailView
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
+# from django.utils import timezone
+from django.conf import settings
+
 
 from braces.views import LoginRequiredMixin
 
@@ -13,6 +17,7 @@ from questions.models import QuestionSet
 from slidestacks.models import SlideStack
 from .models import Course
 
+tz = timezone(settings.TIME_ZONE)
 
 class CourseView(LoginRequiredMixin, AccessRequiredMixin, PrivelegedAccessMixin, DetailView):
     model = Course
@@ -102,7 +107,8 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
         """
         activity = OrderedDict()  # {'day': {'duration': n, 'activity_list':[dicts]}
         for i in user.activitylog.all():
-            tkey = datetime.strftime(i.timestamp, '%b-%d-%Y')
+            tkey = i.timestamp.astimezone(tz).strftime('%b-%d-%Y')
+
             try:
                 activity[tkey]
             except:
@@ -185,7 +191,7 @@ class UserProgressView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
 
             if activity_dict:
 
-                tkey = datetime.strftime(i.timestamp, '%b-%d-%Y')
+                tkey = i.timestamp.astimezone(tz).strftime('%b-%d-%Y')
                 try:
                     activity[tkey].append(activity_dict)
                 except:

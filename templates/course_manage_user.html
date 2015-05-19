@@ -2,13 +2,15 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load guardian_tags %}
+{% load tz %}
 
 
 {% block page_crumb %}
     <li><a href="{% url 'course' object.slug %}">{{ object }} Home <i class="fa fa-caret-right"></i></a></li>
+
     {% if is_instructor or is_manager %}
-        <li><a href="{% url 'user_progress' course.slug student_user.id %}">User Progress ({{ student_user.first_name }}) <i class="fa fa-caret-right"></i></a></li>
-        <li><a href="" class="btn btn-md"><strong>User Activity Detail</strong></a></li>
+        <li><a href="{% url 'user_progress' course.slug student_user.id %}">Progress Report for {{ student_user.first_name }}  <i class="fa fa-caret-right"></i></a></li>
+        <li><a href="" class="btn btn-md"><strong>Activity Detail</strong> for {{ student_user.first_name }}</a></li>
     {% endif %}
 {% endblock page_crumb %}
 
@@ -28,7 +30,7 @@
         <table class="table">
         <thead>
           <tr>
-            <th>Time</th>
+            <th>Time<sup><small>Mountain Std Time</small></sup></th>
             <th>Assignment</th>
             <th>Content Area</th>
             <th>Subject</th>
@@ -38,15 +40,15 @@
         {% for i, j in activity_log.items %}
         <tr>
             <td>
-                <h2>{{ i }}
+                <h3>{{ i }}
                     <small>{% with f=j|first l=j|last %}{{ l.activity.timestamp|timesince:f.activity.timestamp }}{% endwith %}</small>
-                </h2>
+                </h3>
 
             </td>
         </tr>
             {% for adict in j %}
             <tr class="hoverpad">
-                <th scope="row">{{ adict.activity.timestamp|time }}</th>
+                <th scope="row">{{ adict.activity.timestamp|time}}</th>
                 <td>{{ adict.activity.action }}</td>
                 <td>
                     {% if adict.activity.action == 'completed-worksheet' %}

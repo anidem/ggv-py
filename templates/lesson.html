@@ -84,14 +84,14 @@
                     <div class="col-md-1"></div>
 
                     <div class="col-md-1 bookmarkpanel">
-                      <a id="{{i.act.id}}_bkbtn" href="#{{i.act.id}}_add_bookmark" class="bkbtn btn btn-xs" data-toggle="collapse" aria-expanded="false">
+                      <a id="{{i.act.id}}_{{i.act.activity_type}}_bkbtn" href="#{{i.act.id}}_{{i.act.activity_type}}_add_bookmark" class="bkbtn btn btn-xs" data-toggle="collapse" aria-expanded="false">
                         <i class="bookmarker fa fa-2x {% if i.bookmark %}fa-star{% else %}fa-star-o{% endif %}"></i>
                         <span class="bookmark_label">{{ i.bookmark_label }}</span>
                       </a>
 
-                      <div id="{{i.act.id}}_add_bookmark" class="panel-collapse collapse">
+                      <div id="{{i.act.id}}_{{i.act.activity_type}}_add_bookmark" class="panel-collapse collapse">
 
-                        <form id="{{i.act.id}}_flag_form" action="" method="post" class="bookmarkform" data-panel="#{{i.act.id}}_add_bookmark" data-update="#{{i.act.id}}_bkbtn" data-target="{{ i.bookmark_id }}">{% csrf_token %}
+                        <form id="{{i.act.id}}_{{i.act.activity_type}}_flag_form" action="" method="post" class="bookmarkform" data-panel="#{{i.act.id}}_{{i.act.activity_type}}_add_bookmark" data-update="#{{i.act.id}}_{{i.act.activity_type}}_bkbtn" data-target="{{ i.bookmark_id }}">{% csrf_token %}
                             <div class="form-group">
                                 <div class="controls ">
                                     <label class="radio"><input type="radio" {% if i.bookmark_type == "started" %}checked{% endif %} name="mark_type" id="id_mark_type_3" value="started" data-label="{{i.bookmark_label}}"> {{ bookmark_type_opts.started }}</label>

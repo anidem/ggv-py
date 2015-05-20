@@ -5,7 +5,7 @@
 
 
 {% block page_crumb %}
-    <li><a href="" class="lead">{{ object }} Home</a></li>
+    <li><a href="" class="">{{ object }} Home</a></li>
 {% endblock page_crumb %}
 
 {% block local_nav %}
@@ -72,10 +72,15 @@
     {% endcomment %}
 
     <div class="row">
-        <h4>Roster: ({{ students|length}} active students) </h4>
-        <div id="sorts" class="row">
-            <div class="col-xs-1"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
-            <div class="col-xs-1"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+        <div id="sorter" class="col-xs-12">
+            <h4>Roster: ({{ students|length}} active students) </h4>
+
+            <div class="col-xs-1">
+                <button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button>
+            </div>
+            <div class="col-xs-1">
+                <button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button>
+            </div>
 
             <div class="col-xs-2">
                 <button class="btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button>
@@ -84,82 +89,74 @@
             <div class="col-xs-4">
                 <button class="btn btn-block btn-sm" data-sort-by="recent_timestamp" data-order="asc"><i class="fa fa-sort"></i> last activity</button>
             </div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
-            <div class="col-xs-2"><button class="btn btn-sm" data-sort-by="original-order"><i class="fa fa-refresh"></i></button></div>
+            <div class="col-xs-2">
+                <button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button>
+            </div>
+            <div class="col-xs-2">
+                <button class="btn btn-sm" data-sort-by="original-order"><i class="fa fa-refresh"></i></button>
+            </div>
         </div>
 
-        <div id="container_0" class="row">
-            {% for i in students %}
+        <div id="container_0" class="col-xs-12">
+        {% for i in students %}
 
-
-            <div class="item hoverpad col-xs-12" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
+            <div class="col-xs-12 item hoverpad" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
 
                 <a href="{% url 'user_progress' course.slug i.0.id %}" class="static">
-
                 <div class="col-xs-1 firstname">{{ i.0.first_name }}</div>
                 <div class="col-xs-1 lastname">{{ i.0.last_name }}</div>
                 <div class="col-xs-2 login">{{ i.0.last_login|date:"M d, g:i A" }}</div>
                 <div class="col-xs-4 recent">{{ i.1.recent_time|date:"M d, g:i A" }} <strong>{{ i.1.recent_act }}</strong></div>
                 <div class="col-xs-2 username"><span class="small">{{ i.0.username }}</span></div>
                 <div class="col-xs-2"></div>
-
                 </a>
 
             </div>
 
-
-            {% empty %}
-                <div class="panel-body">No students are assigned to this course.</div>
-            {% endfor %}
+        {% empty %}
+            <div class="col-xs-12">No students are assigned to this course.</div>
+        {% endfor %}
         </div>
     </div>
 {% endif %}
 
+{% if user.is_staff %}
     <div class="row">
-        <h4>Instructors: ({{ instructors|length}}) </h4>
-        {% if user.is_staff %}
-
-        <div class="row">
+        <div class="col-xs-12">
+            <h4>Instructors: ({{ instructors|length}}) </h4>
             <div class="col-xs-1"><strong>first</strong></div>
             <div class="col-xs-1"><strong>last</strong></div>
             <div class="col-xs-2"><strong>last login</strong></div>
-
             <div class="col-xs-4"><strong>last activity</strong></div>
             <div class="col-xs-3"><strong>username</strong></div>
             <div class="col-xs-1"></div>
         </div>
 
         {% for i in instructors %}
-        <div class="item hoverpad row" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
+        <div class="col-xs-12 item hoverpad" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
             <a href="{% url 'manage_user' course.slug i.0.id %}" class="static">
-            <div class="col-xs-1 firstname">{{ i.0.first_name }}</div>
-            <div class="col-xs-1 lastname">{{ i.0.last_name }}</div>
-            <div class="col-xs-2 login">{{ i.0.last_login|date:"M d, g:i A" }}</div>
-            <div class="col-xs-4 recent">{{ i.1.recent_time|date:"M d, g:i A" }} <strong>{{ i.1.recent_act }}</strong></div>
-            <div class="col-xs-3 username"><span class="small">{{ i.0.username }}</span></div>
-            <div class="col-xs-1"></div>
+                <div class="col-xs-1 firstname">{{ i.0.first_name }}</div>
+                <div class="col-xs-1 lastname">{{ i.0.last_name }}</div>
+                <div class="col-xs-2 login">{{ i.0.last_login|date:"M d, g:i A" }}</div>
+                <div class="col-xs-4 recent">{{ i.1.recent_time|date:"M d, g:i A" }} <strong>{{ i.1.recent_act }}</strong></div>
+                <div class="col-xs-3 username"><span class="small">{{ i.0.username }}</span></div>
+                <div class="col-xs-1"></div>
             </a>
-
         </div>
-
-        {% empty %}
-            <div class="panel-body">No students are assigned to this course.</div>
         {% endfor %}
-
-
-
-        {% else %}
-
-        <div class="col-md-12">
+    </div>
+{% else %}
+    <div class="row">
+        <div class="col-xs-12">
         {% for i in instructors %}
             <span><em>{{ i.first_name }} {{ i.last_name }}{% if i == request.user %}<small> (this is you) </small> {% endif %}, </em></span>
         {% empty %}
             <p>No instructors are assigned to this lesson.</p>
         {% endfor %}
         </div>
-
-        {% endif %}
     </div>
+{% endif %}
+
 {% endblock content %}
 
 
@@ -190,7 +187,7 @@
             });
 
             // sort items on button click
-            $('#sorts').on( 'click', 'button', function() {
+            $('#sorter').on( 'click', 'button', function() {
                 var sortByValue = $(this).attr('data-sort-by');
                 var order = "";
                 if ($(this).attr("data-order")==="asc") {
@@ -210,9 +207,7 @@
                 });
             });
 
-            $(document).ready(function() {
-
-            });
+            $(document).ready(function() { });
         });
     </script>
 

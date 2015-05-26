@@ -6,11 +6,10 @@
 
 
 {% block page_crumb %}
-    <li><a href="{% url 'course' object.slug %}">{{ object }} Home <i class="fa fa-caret-right"></i></a></li>
-
+    <li><a href="{% url 'course' object.slug %}"><button class="btn btn-success btn-xs"><i class="fa fa-caret-left"></i> {{ object }} Home</button></a></li>
     {% if is_instructor or is_manager %}
-        <li><a href="{% url 'user_progress' course.slug student_user.id %}">Progress Report for {{ student_user.first_name }}  <i class="fa fa-caret-right"></i></a></li>
-        <li><a href="" class="btn btn-md"><strong>Activity Detail</strong> for {{ student_user.first_name }}</a></li>
+        <li><a href="{% url 'user_progress' course.slug student_user.id %}"> <i class="fa fa-caret-left"></i> Progress Report for {{ student_user.first_name }} </a></li>
+        <li><a href="#" class="btn btn-md"><strong>Activity Detail</strong> for {{ student_user.first_name }}</a></li>
     {% endif %}
 {% endblock page_crumb %}
 

@@ -5,9 +5,9 @@
 
 
 {% block page_crumb %}
-    <li><a href="{% url 'course' object.slug %}">{{ object }} Home <i class="fa fa-caret-right"></i></a></li>
+    <li><a href="{% url 'course' object.slug %}"><button class="btn btn-success btn-xs"><i class="fa fa-caret-left"></i> {{ object }} Home</button></a></li>
     {% if is_instructor or is_manager %}
-        <li><a href="" class="btn btn-md"><strong>Progress Report</strong> for {{ student_user.first_name }} </a></li>
+        <li><a href="#" class="btn btn-md"><strong>Progress Report</strong> for {{ student_user.first_name }} </a></li>
     {% endif %}
 {% endblock page_crumb %}
 
@@ -46,14 +46,14 @@
                 <div class="col-xs-1">{{ adict.access_time|time }}</div>
                 <div class="col-xs-1">{{ adict.completed_time|time }}</div>
                 <div class="col-xs-3">
-                    <a href="{% url 'lesson' adict.course.slug adict.content.lesson.id %}#{{ adict.content.section|title }}">{{ adict.content.lesson }}</a>
+                    {{ adict.content.lesson }} <a href="{% url 'lesson' adict.course.slug adict.content.lesson.id %}#{{ adict.content.section|title }}">(view lesson)</a>
 
                 </div>
 
                 <div class="col-xs-5">
                     {% if adict.activity.action == 'completed-worksheet' %}
                         <i class="fa fa-pencil-square-o fa-2x icon-worksheet"></i>
-                        <a href="{{ adict.report_url }}"> {{adict.content }}</a>
+                        {{adict.content }} <a href="{{ adict.report_url }}">(view report)</a>
                         {% comment %} {{ i.activity.message|safe }} {% endcomment %}
                     {% elif adict.activity.action == 'access-presentation' %}
                         <i class="fa fa-desktop fa-2x icon-slidestack"></i>

@@ -2,9 +2,9 @@
 {% extends "base.html" %}
 
 {% block page_crumb %}
-    <li><a href="{{ course.get_absolute_url }}">{{ course }} <i class="fa fa-caret-right"></i></a></li>
-    <li><a href="{% url 'lesson' course.slug worksheet.lesson.id %}">{{ worksheet.lesson }} <i class="fa fa-caret-right"></i></a></li>
-    <li><a>{{ worksheet }}</a></li>
+  <li><a href="{{ course.get_absolute_url }}"><button class="btn btn-success btn-xs"><i class="fa fa-caret-left"></i> {{ course }} Home </button></a></li>
+    <li><a href="{% url 'lesson' course.slug worksheet.lesson.id %}"> <i class="fa fa-caret-left"></i> {{ worksheet.lesson }} </a></li>
+    <li><a href="#">{{ worksheet }}</a></li>
 {% endblock page_crumb %}
 
 {% block content %}

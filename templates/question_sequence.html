@@ -39,7 +39,7 @@
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
                           </div>
                           <div class="modal-body">
-                            <iframe src = "{% static 'js/ViewerJS/' %}#{{calculator}}" width='100%' height='450' allowfullscreen webkitallowfullscreen></iframe>
+                            <iframe class="pdfframe" src="{{calculator|slice:"-3" }}html" allowfullscreen webkitallowfullscreen></iframe>
 
                           </div>
                           <div class="modal-footer">
@@ -64,7 +64,7 @@
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
                           </div>
                           <div class="modal-body">
-                            <iframe src = "{% static 'js/ViewerJS/' %}#{{formula}}" width='100%' height='450' allowfullscreen webkitallowfullscreen></iframe>
+                            <iframe class="pdfframe" src="{{formula|slice:"-3"}}html" width='100%' height='450' allowfullscreen webkitallowfullscreen></iframe>
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
@@ -161,13 +161,13 @@
             {%if question.display_pdf %}
                 <div class="col-md-8">
                     <div><a href="{{ question.display_pdf.url|slice:"-3" }}html" target="_blank">print</a></div>
-                    <iframe src = "{{ question.display_pdf.url|slice:"-3" }}html" width='100%' height='600' allowfullscreen webkitallowfullscreen></iframe>
+                    <iframe class="pdfframe" src="{{ question.display_pdf.url|slice:"-3" }}html" allowfullscreen webkitallowfullscreen></iframe>
                 </div>
             {% endif %}
 
             {% if worksheet.display_pdf %}
                 <div class="col-md-8">
-                    <iframe src = "{{ worksheet.display_pdf.url|slice:"-3" }}html" width='100%' height='600' allowfullscreen webkitallowfullscreen></iframe>
+                    <iframe class="pdfframe" src="{{ worksheet.display_pdf.url|slice:"-3" }}html" allowfullscreen webkitallowfullscreen></iframe>
                 </div>
             {% endif %}
 
@@ -214,6 +214,8 @@
         $(document).ready(function() {
             set_body_height();
             $(window).bind('resize', function() { set_body_height(); });
+
+            // $("#pdfframe").load("");
         });
     </script>
 

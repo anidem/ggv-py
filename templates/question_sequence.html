@@ -160,14 +160,14 @@
 
             {%if question.display_pdf %}
                 <div class="col-md-8">
-                    <div><a href="{{ question.display_pdf.url }}" target="_blank">print</a></div>
-                    <iframe src = "{% static 'js/ViewerJS/' %}#{{ question.display_pdf.url }}" width='100%' height='600' allowfullscreen webkitallowfullscreen></iframe>
+                    <div><a href="{{ question.display_pdf.url|slice:"-3" }}html" target="_blank">print</a></div>
+                    <iframe src = "{{ question.display_pdf.url|slice:"-3" }}html" width='100%' height='600' allowfullscreen webkitallowfullscreen></iframe>
                 </div>
             {% endif %}
 
             {% if worksheet.display_pdf %}
                 <div class="col-md-8">
-                    <iframe src = "{% static 'js/ViewerJS/' %}#{{ worksheet.display_pdf.url }}" width='100%' height='600' allowfullscreen webkitallowfullscreen></iframe>
+                    <iframe src = "{{ worksheet.display_pdf.url|slice:"-3" }}html" width='100%' height='600' allowfullscreen webkitallowfullscreen></iframe>
                 </div>
             {% endif %}
 

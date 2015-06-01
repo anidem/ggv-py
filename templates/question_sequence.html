@@ -39,7 +39,7 @@
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
                           </div>
                           <div class="modal-body">
-                            <iframe class="pdfframe" src="{{calculator|slice:"-3" }}html" allowfullscreen webkitallowfullscreen></iframe>
+                            <iframe class="pdfframe" src="{{calculator|slice:"-3" }}html" width='100%' height='450' allowfullscreen webkitallowfullscreen></iframe>
 
                           </div>
                           <div class="modal-footer">
@@ -52,11 +52,11 @@
 
                     {% if formula %}
                     <!-- Modal trigger -->
-                    <a type="button" style="padding: 0 5px 0 5px" class="pull-right" data-toggle="modal" data-target="#formula_display">
+                    <button type="button" style="padding: 0 5px 0 5px" class="pull-right" data-toggle="modal" data-target="#formula_display">
                        <i class="fa fa-book"></i>
-                    </a>
+                    </button>
                     <!-- Modal Content -->
-                    <div class="modal fade" id="formula_display" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                    <div class="modal fade" id="formula_display" role="dialog" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                           <div class="modal-header">

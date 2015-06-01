@@ -161,7 +161,7 @@
             {%if question.display_pdf %}
                 <div class="col-md-8">
                     <div><a href="{{ question.display_pdf.url|slice:"-3" }}html" target="_blank">print</a></div>
-                    <iframe class="pdfframe" src="{{ question.display_pdf.url|slice:"-3" }}html" allowfullscreen webkitallowfullscreen></iframe>
+                    <iframe class="pdfframe" src="{{ question.display_pdf.url|slice:"-3" }}html"></iframe>
                 </div>
             {% endif %}
 

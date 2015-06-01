@@ -37,7 +37,7 @@ EMAIL_PORT = 587
 # STATIC_URL = 'http://ggv2.developers.com/static/'
 
 MEDIA_ROOT = '/Library/WebServer/Documents/media'
-MEDIA_URL = 'http://ggv2.developers.com/media/'
+MEDIA_URL = 'http://localhost/media/'
 
 STACKS_ROOT = '/Library/WebServer/Documents/stacks'
 STACKS_DATA_DIR = 'data'

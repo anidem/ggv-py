@@ -265,15 +265,15 @@ form ul {
     width: 100%;
     height: 600px;
     overflow-y: scroll;
-    overflow: hidden;
+    overflow: scroll;
     -webkit-overflow-scrolling: touch;
-    zoom: 1.0;
+    /*zoom: 1.0;
     -moz-transform: scale(1.0);
     -moz-transform-origin: 0 0;
     -o-transform: scale(1.0);
     -o-transform-origin: 0 0;
     -webkit-transform: scale(1.0);
-    -webkit-transform-origin: 0 0;
+    -webkit-transform-origin: 0 0;*/
 }
 
 

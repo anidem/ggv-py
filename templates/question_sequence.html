@@ -39,7 +39,7 @@
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
                           </div>
                           <div class="modal-body">
-                            <iframe class="pdfframe" src="{{calculator|slice:"-3" }}html" width='100%' height='450' allowfullscreen webkitallowfullscreen></iframe>
+                            <iframe class="pdfframe" src="{{calculator|slice:"-3" }}html" width='100%' height='450'></iframe>
 
                           </div>
                           <div class="modal-footer">
@@ -64,7 +64,7 @@
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
                           </div>
                           <div class="modal-body">
-                            <iframe class="pdfframe" src="{{formula|slice:"-3"}}html" width='100%' height='450' allowfullscreen webkitallowfullscreen></iframe>
+                            <iframe class="pdfframe" src="{{formula|slice:"-3"}}html" width='100%' height='450'></iframe>
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
@@ -160,13 +160,17 @@
 
             {%if question.display_pdf %}
                 <div class="col-md-8">
-                    <div class="pdfframe"><iframe id="pdf_display" class="" src="{{ question.display_pdf.url|slice:"-3" }}html" width="100%" height="200px"></iframe></div>
+                    <!-- <div class="pdfframe"> -->
+                        <iframe id="pdf_display"  class="pdfframe"></iframe>
+                    <!-- </div> -->
                 </div>
             {% endif %}
 
             {% if worksheet.display_pdf %}
                 <div class="col-md-8">
-                    <iframe class="pdfframe" src="{{ worksheet.display_pdf.url|slice:"-3" }}html" allowfullscreen webkitallowfullscreen></iframe>
+                    <!-- <div class="pdfframe"> -->
+                        <iframe id="ws_pdf_display" class="pdfframe"></iframe>
+                    <!-- </div> -->
                 </div>
             {% endif %}
 
@@ -206,16 +210,21 @@
     <script src="{% static 'js/questions.js'%}"></script>
 
     <script type="text/javascript" language="JavaScript">
+
         function set_body_height() {
             var wh = $(window).height();
             $('body').attr('style', 'height:' + wh + 'px;');
         }
         $(document).ready(function() {
-            $("#pdf_display").scrollIntoView()
-            // set_body_height();
-            // $(window).bind('resize', function() { set_body_height(); });
+            {% if worksheet.display_pdf %}
+                $("#ws_pdf_display").attr({"src": "{{ worksheet.display_pdf.url|slice:"-3" }}html"});
+            {% endif %}
+            {% if question.display_pdf %}
+                $("#pdf_display").attr({"src": "{{ question.display_pdf.url|slice:"-3" }}html"});
+            {% endif %}
 
-            // $("#pdf_display").load("");
+            set_body_height();
+            $(window).bind('resize', function() { set_body_height(); });
         });
     </script>
 

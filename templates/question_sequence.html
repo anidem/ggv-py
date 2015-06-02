@@ -19,7 +19,7 @@
             </form>
 
         <!-- LEFT panel: Question text and input for response -->
-            <div class="col-md-4 ">
+            <div class="col-md-4">
             <!-- Question header -->
                 <div class="lead">
                     {{ question_position }}/{{ question_list|length }}.
@@ -231,8 +231,8 @@
                 $("#pdf_formula").attr({"src": "{{ formula|slice:"-3" }}html"});
             });
 
-            set_body_height();
-            $(window).bind('resize', function() { set_body_height(); });
+            // set_body_height();
+            // $(window).bind('resize', function() { set_body_height(); });
         });
     </script>
 

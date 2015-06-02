@@ -27,7 +27,7 @@
                     <h6></h6>
                     {% if calculator %}
                     <!-- Modal trigger -->
-                    <a href="#" style="padding: 0 5px 0 5px" class="pull-right" data-toggle="modal" data-target="#calculator">
+                    <a id="calculator_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" data-toggle="modal" data-target="#calculator">
                       <i class="fa fa-calculator"></i>
                     </a>
                     <!-- Modal Content -->
@@ -51,11 +51,11 @@
 
                     {% if formula %}
                     <!-- Modal trigger -->
-                    <a href="#" style="padding: 0 5px 0 5px" class="pull-right" data-toggle="modal" data-target="#formula_display">
+                    <a id="formula_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" data-toggle="modal" data-target="#formula">
                        <i class="fa fa-book"></i>
                     </a>
                     <!-- Modal Content -->
-                    <div class="modal fade" id="formula_display" role="dialog" aria-hidden="true">
+                    <div class="modal fade" id="formula" role="dialog" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
                         <div class="modal-content">
                           <div class="modal-header">
@@ -63,7 +63,7 @@
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
                           </div>
                           <div class="modal-body">
-                            <iframe id="pdf_formula" class="pdfframe" src="{{formula|slice:"-3"}}html"></iframe>
+                            <iframe id="pdf_formula" class="pdfframe"></iframe>
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
@@ -218,15 +218,18 @@
             {% if worksheet.display_pdf %}
                 $("#ws_pdf_display").attr({"src": "{{ worksheet.display_pdf.url|slice:"-3" }}html"});
             {% endif %}
+
             {% if question.display_pdf %}
                 $("#pdf_display").attr({"src": "{{ question.display_pdf.url|slice:"-3" }}html"});
             {% endif %}
-            {% if formula %}
-                $("#pdf_formula").attr({"src": "{{ formula|slice:"-3" }}html"});
-            {% endif %}
-            {% if calculator %}
-                $("#pdf_calculator").attr({"src": "{{ calculator|slice:"-3" }}html"});
-            {% endif %}
+
+            $("#calculator").on("shown.bs.modal", function(e) {
+                $("#pdf_calculator").attr({"src": "http:///localhost{{ calculator|slice:"-3" }}html"});
+            });
+
+            $("#formula").on("shown.bs.modal", function(e) {
+                $("#pdf_formula").attr({"src": "http://localhost{{ formula|slice:"-3" }}html"});
+            });
 
             set_body_height();
             $(window).bind('resize', function() { set_body_height(); });

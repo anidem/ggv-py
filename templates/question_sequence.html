@@ -224,11 +224,11 @@
             {% endif %}
 
             $("#calculator").on("shown.bs.modal", function(e) {
-                $("#pdf_calculator").attr({"src": "http:///localhost{{ calculator|slice:"-3" }}html"});
+                $("#pdf_calculator").attr({"src": "{{ calculator|slice:"-3" }}html"});
             });
 
             $("#formula").on("shown.bs.modal", function(e) {
-                $("#pdf_formula").attr({"src": "http://localhost{{ formula|slice:"-3" }}html"});
+                $("#pdf_formula").attr({"src": "{{ formula|slice:"-3" }}html"});
             });
 
             set_body_height();

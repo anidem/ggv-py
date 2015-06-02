@@ -159,6 +159,7 @@
 
             {%if question.display_pdf %}
                 <div class="col-md-8">
+                        <a href="{{ question.display_pdf.url }}" target="_blank">print</a>
                     <!-- <div class="pdfframe"> -->
                         <iframe id="pdf_display"  class="pdfframe"></iframe>
                     <!-- </div> -->
@@ -167,6 +168,7 @@
 
             {% if worksheet.display_pdf %}
                 <div class="col-md-8">
+                    <a href="{{ worksheet.display_pdf.url }}" target="_blank">print</a>
                     <!-- <div class="pdfframe"> -->
                         <iframe id="ws_pdf_display" class="pdfframe"></iframe>
                     <!-- </div> -->

@@ -214,6 +214,7 @@
             var wh = $(window).height();
             $('body').attr('style', 'height:' + wh + 'px;');
         }
+
         $(document).ready(function() {
             {% if worksheet.display_pdf %}
                 $("#ws_pdf_display").attr({"src": "{{ worksheet.display_pdf.url|slice:"-3" }}html"});

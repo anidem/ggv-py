@@ -4,10 +4,17 @@
 {% load crispy_forms_tags %}
 
 {% block page_crumb %}
-    <li><a href="{{ course.get_absolute_url }}"><button class="btn btn-success btn-xs"><i class="fa fa-caret-left"></i> {{ course }} Home</button></a></li>
-    <li><a href="{% url 'lesson' course.slug worksheet.lesson.id %}"> <i class="fa fa-caret-left"></i> {{ worksheet.lesson }} </a></li>
-    <li><a href="{% url 'lesson' course.slug worksheet.lesson.id %}#{{ worksheet.section|title }}"> <i class="fa fa-caret-left"></i> {{ worksheet.section|title }} </a></li>
-    <li><a>{{ worksheet }}</a></li>
+    <li>
+        <a href="{{ course.get_absolute_url }}"><button class="btn btn-xs btn-default"><i class="fa fa-home"></i> {{ course }}</button></a>
+    </li>
+    <li>
+        <a href="{% url 'lesson' course.slug worksheet.lesson.id %}"> <i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-default"> {{ worksheet.lesson }}</button> </a>
+    </li>
+    <li>
+        <a href="{% url 'lesson' course.slug worksheet.lesson.id %}#{{ worksheet.section|title }}"> <i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-default"> {{ worksheet.section|title }}</button></a></li>
+    <li>
+        <a class="static"><button class="btn btn-xs btn-success">{{ worksheet }}</button></a>
+    </li>
 {% endblock page_crumb %}
 
 {% block content %}

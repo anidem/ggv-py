@@ -5,9 +5,9 @@
 
 
 {% block page_crumb %}
-    <li><a href="{% url 'course' object.slug %}"><button class="btn btn-success btn-xs"><i class="fa fa-caret-left"></i> {{ object }} Home</button></a></li>
+    <li><a href="{% url 'course' object.slug %}"><button class="btn btn-xs btn-default"><i class="fa fa-home"></i> {{ object }}</button></a></li>
     {% if is_instructor or is_manager %}
-        <li><a href="#" class="btn btn-md"><strong>Progress Report</strong> for {{ student_user.first_name }} </a></li>
+        <li><a href="#"><button class="btn btn-xs btn-success">Progress Report for {{ student_user.first_name }}</button></a></li>
     {% endif %}
 {% endblock page_crumb %}
 

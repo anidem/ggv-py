@@ -13,7 +13,8 @@
 {% block local_nav %}
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Activities <b class="caret"></b></a>
-  <ul class="dropdown-menu">
+
+  <ul class="dropdown-menu scrollable-menu">
     {% for i in acts %}
       <li>
         {% if i.act.activity_type = 'slidestack' %}
@@ -30,7 +31,7 @@
 </li>
 <li class="dropdown">
   <a href="#" class="dropdown-toggle" data-toggle="dropdown">Section <b class="caret"></b></a>
-  <ul class="dropdown-menu section_drop">
+  <ul class="dropdown-menu section_drop scrollable-menu">
     {% for i in sections %}<li><a href="#{{ i|title }}">{{ i|title }}</a></li>{% endfor %}
   </ul>
 </li>

@@ -276,4 +276,19 @@ form ul {
     -webkit-transform-origin: 0 0;
 }
 
+.scrollable-menu {
+    height: auto;
+    max-height: 320px;
+    overflow-x: hidden;
+}
+
+/*.scrollable-menu::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 4px;
+}
+.scrollable-menu::-webkit-scrollbar-thumb {
+    border-radius: 3px;
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.75);
+}
+*/
 

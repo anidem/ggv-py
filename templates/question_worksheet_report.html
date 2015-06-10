@@ -2,13 +2,14 @@
 {% extends "base.html" %}
 
 {% block page_crumb %}
-  <li><a href="{{ course.get_absolute_url }}"><button class="btn btn-success btn-xs"><i class="fa fa-caret-left"></i> {{ course }} Home </button></a></li>
-    <li><a href="{% url 'lesson' course.slug worksheet.lesson.id %}"> <i class="fa fa-caret-left"></i> {{ worksheet.lesson }} </a></li>
-    <li><a href="#">{{ worksheet }}</a></li>
+  <li><a href="{{ course.get_absolute_url }}"><button class="btn btn-default btn-xs"><i class="fa fa-home"></i> {{ course }} </button></a></li>
+    <li><a href="{% url 'lesson' course.slug worksheet.lesson.id %}"> <i class="fa fa-caret-left"></i> <button class="btn btn-default btn-xs"> {{ worksheet.lesson }} </button> </a></li>
+    <li><a href="#"><button class="btn btn-success btn-xs disable">{{ worksheet }}</button></a></li>
 {% endblock page_crumb %}
 
 {% block content %}
 <div class="col-md-12">
+    <p class="lead">Worksheet Report {% if student %} {{ student.first_name }} {{ student.last_name }} {% else %} All Students {% endif %}</p>
     <span class="label label-xs label-success pull-right"><i class="fa fa-check"></i> = correct</span>
     <span class="label label-xs label-warning pull-right"><i class="fa fa-check"></i> = incorrect</span>
     <h3>{{ worksheet }}</h3>

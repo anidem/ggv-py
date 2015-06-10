@@ -9,18 +9,23 @@
 {% endblock page_crumb %}
 
 {% block local_nav %}
-    <a class="nav-btn btn-group btn-toggle">
-    {% if eng_lessons and span_lessons %}
-        {% if user.ggvuser.language_pref == 'spanish' %}
-            <button class="btn btn-xs btn-default">English</button>
-            <button class="btn btn-xs btn-success active">Español</button>
-        {% else %}
-            <button class="btn btn-xs btn-success active">English</button>
-            <button class="btn btn-xs btn-default">Español</button>
-        {% endif %}
-    {% endif %}
-    </a>
 
+    {% if eng_lessons and span_lessons %}
+    <li>
+        <a class="nav-btn btn-group btn-toggle">
+            {% if user.ggvuser.language_pref == 'spanish' %}
+                <button class="btn btn-xs btn-default">English</button>
+                <button class="btn btn-xs btn-success active">Español</button>
+            {% else %}
+                <button class="btn btn-xs btn-success active">English</button>
+                <button class="btn btn-xs btn-default">Español</button>
+            {% endif %}
+        </a>
+    </li>
+    {% endif %}
+    {% if is_instructor or is_manager %}
+    <li><a href="{% url 'manage_course' course.slug %}" class="static"><button class="btn btn-xs btn-default">Roster Details</button></a></li>
+    {% endif %}
 
     {% if is_manager %}<li><a href="{% url 'create_user' course.slug %}"><button class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Add User </button> </a></li>{% endif %}
 {% endblock local_nav %}
@@ -73,9 +78,7 @@
 
     <div class="row">
         <div class="col-xs-12">
-            <h4>Active Students ({{ students|length}})
-                <small><a href="{% url 'manage_course' course.slug %}" class="static"><button class="btn btn-xs">Roster Details</button></a></small>
-            </h4>
+            <h4>Active Students ({{ students|length}}) </h4>
         </div>
         <div id="sorter" class="col-xs-12">
             <div class="col-xs-2">

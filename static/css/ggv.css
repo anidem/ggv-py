@@ -280,6 +280,8 @@ form ul {
     height: auto;
     max-height: 320px;
     overflow-x: hidden;
+    overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
 }
 
 /*.scrollable-menu::-webkit-scrollbar {

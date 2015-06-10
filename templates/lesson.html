@@ -30,7 +30,7 @@
   </ul>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Section <b class="caret"></b></a>
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <b class="caret"></b></a>
   <ul class="dropdown-menu section_drop scrollable-menu">
     {% for i in sections %}<li><a href="#{{ i|title }}">{{ i|title }}</a></li>{% endfor %}
   </ul>
@@ -47,10 +47,14 @@
 
 <div class="col-md-12 lesson_list" data-course="{{ course.id }}" data-user="{{ user }}">
     <div class="row">
-        <div class="col-md-10"></div>
-        <div class="col-md-1"></div>
-        <div class="col-md-1">bookmarks</div>
+        <div class="col-md-12">
+            <p></p>
+            <p style="opacity: 0.7;background-color: black; color: white; padding: 10px; position: fixed; top: 50px; right: 50px">bookmarks</p>
+            <h1></h1>
+        </div>
     </div>
+
+
     	{% for i in acts %}
         {% ifchanged i.act.section %}
             <h2 id="{{ i.act.section|title }}" class="section_heading">

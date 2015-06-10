@@ -67,7 +67,7 @@
             </div>
             {% endfor %}
         {% empty %}
-            <div class="panel-body">No students are assigned to this course.</div>
+            <div class="panel-body">{{ student.first_name }} does not appear to have any activity.</div>
         {% endfor %}
     </div>
 

@@ -51,8 +51,8 @@ jQuery(function($) {
             },
 
             // handle a non-successful response
-            error : function(xhr, errmsg, err) {
-                console.log(xhr.status + ": " + err );
+            error : function(xhr, json) {
+                console.log(xhr.status + "Bookmarker error: " + json );
             }
         });
 

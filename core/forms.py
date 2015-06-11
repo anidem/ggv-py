@@ -29,8 +29,17 @@ class GgvUserCreateForm(forms.ModelForm):
 
 
 class BookmarkForm(forms.ModelForm):
-    def clean(self):
-        print self.instance
+
+    def form_valid(self):
+
+        try:
+            self.object = self.save(commit=False)
+            self.object.full_clean()
+
+        except Exception as e:
+            pass
+
+        return True
 
     class Meta:
         model = Bookmark

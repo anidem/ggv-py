@@ -29,6 +29,8 @@ class GgvUserCreateForm(forms.ModelForm):
 
 
 class BookmarkForm(forms.ModelForm):
+    def clean(self):
+        print self.instance
 
     class Meta:
         model = Bookmark

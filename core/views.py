@@ -130,19 +130,24 @@ class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
     def post_ajax(self, request, *args, **kwargs):
         bookmarkform = BookmarkForm(request.POST)
         if bookmarkform.is_valid():
-            new_bookmark = bookmarkform.save()
-
-            label = new_bookmark.get_mark_type_display()
-            if 'span' in request.POST['lesson_lang']:
-                label = label.split(',')[1]
-            else:
-                label = label.split(',')[0]
-
             data = {}
-            data['mark_type'] = label
-            data['bookmark_id'] = new_bookmark.id
+            try:
+                new_bookmark = bookmarkform.save()
+
+                label = new_bookmark.get_mark_type_display()
+                if 'span' in request.POST['lesson_lang']:
+                    label = label.split(',')[1]
+                else:
+                    label = label.split(',')[0]
+
+                data['mark_type'] = label
+                data['bookmark_id'] = new_bookmark.id
+            except Exception as e:
+                print e
+                pass
             return self.render_json_response(data)
         else:
+            print 'error'
             data = bookmarkform.errors
             return self.render_json_response(data)
 
@@ -153,6 +158,7 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
     def post_ajax(self, request, *args, **kwargs):
         bookmarkform = BookmarkForm(request.POST)
         if bookmarkform.is_valid():
+            data = {}
             updated_bk = self.get_object()
             updated_bk.mark_type = bookmarkform.cleaned_data['mark_type']
             updated_bk.save()
@@ -163,10 +169,10 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             else:
                 label = label.split(',')[0]
 
-            data = {}
             data['mark_type'] = label
             data['bookmark_id'] = updated_bk.id
             return self.render_json_response(data)
+
         else:
             data = bookmarkform.errors
             return self.render_json_response(data)

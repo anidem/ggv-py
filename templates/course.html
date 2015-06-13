@@ -6,6 +6,9 @@
 
 {% block page_crumb %}
     <li><a href="#" class="static"><button class="btn btn-xs btn-success"><i class="fa fa-home"></i> {{ object }}</button></a></li>
+    {% if is_instructor or is_manager %}
+    <li><a href="{% url 'manage_course' course.slug %}" class="static"><button class="btn btn-xs btn-default">Roster Details</button></a></li>
+    {% endif %}
 {% endblock page_crumb %}
 
 {% block local_nav %}
@@ -23,9 +26,7 @@
         </a>
     </li>
     {% endif %}
-    {% if is_instructor or is_manager %}
-    <li><a href="{% url 'manage_course' course.slug %}" class="static"><button class="btn btn-xs btn-default">Roster Details</button></a></li>
-    {% endif %}
+
 
     {% if is_manager %}<li><a href="{% url 'create_user' course.slug %}"><button class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Add User </button> </a></li>{% endif %}
 {% endblock local_nav %}
@@ -61,7 +62,7 @@
         {% endfor %}
     </div>
 
-{% if is_instructor or is_manager %}
+{% if is_manager %}
     {% comment %}
     <div class="row">
         <h4>Notifications:</h4>

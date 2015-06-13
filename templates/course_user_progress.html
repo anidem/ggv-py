@@ -7,6 +7,7 @@
 {% block page_crumb %}
     <li><a href="{% url 'course' object.slug %}"><button class="btn btn-xs btn-default"><i class="fa fa-home"></i> {{ object }}</button></a></li>
     {% if is_instructor or is_manager %}
+        <li><a href="{% url 'manage_course' object.slug %}"><button class="btn btn-xs btn-default"><i class="fa fa-caret-left"></i> Roster Detail</button></a></li>
         <li><a href="#"><button class="btn btn-xs btn-success">Progress Report for {{ student_user.first_name }}</button></a></li>
     {% endif %}
 {% endblock page_crumb %}
@@ -23,7 +24,7 @@
 {% block content %}
     <div class="lead">
         {{ student_user.first_name }} {{ student_user.last_name }} ({{ student_user }})
-        <a href="{% url 'manage_user' course.slug student_user.id %}" class="static"><button class="btn btn-xs">more detail</button></a>
+        <a href="{% url 'manage_user' course.slug student_user.id %}" class="static"><button class="btn btn-xs btn-warning"> view more details</button></a>
     </div>
     <div class="row">
 

@@ -1,6 +1,7 @@
 # core/forms.py
 from django import forms
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
 
 from courses.models import Course
 from .models import Bookmark
@@ -37,7 +38,8 @@ class BookmarkForm(forms.ModelForm):
             self.object.full_clean()
 
         except Exception as e:
-            pass
+            print e
+
 
         return True
 

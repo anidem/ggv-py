@@ -66,7 +66,7 @@ class Bookmark(models.Model):
 
     # Thought about implementing this but the transaction efficiency might suffer...
     class Meta:
-        unique_together = ('creator', 'content_type', 'object_id', 'course_context')
+        unique_together = ('mark_type', 'creator', 'content_type', 'object_id', 'course_context')
 
 
 class Notification(models.Model):

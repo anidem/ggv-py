@@ -129,27 +129,29 @@ class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
 
     def post_ajax(self, request, *args, **kwargs):
         bookmarkform = BookmarkForm(request.POST)
-        if bookmarkform.is_valid():
-            data = {}
-            try:
-                new_bookmark = bookmarkform.save()
+        # if bookmarkform.is_valid():
+        data = {}
+        try:
+            new_bookmark = bookmarkform.save()
 
-                label = new_bookmark.get_mark_type_display()
-                if 'span' in request.POST['lesson_lang']:
-                    label = label.split(',')[1]
-                else:
-                    label = label.split(',')[0]
+            label = new_bookmark.get_mark_type_display()
+            if 'span' in request.POST['lesson_lang']:
+                label = label.split(',')[1]
+            else:
+                label = label.split(',')[0]
 
-                data['mark_type'] = label
-                data['bookmark_id'] = new_bookmark.id
-            except Exception as e:
-                print e
-                pass
-            return self.render_json_response(data)
-        else:
-            print 'error'
-            data = bookmarkform.errors
-            return self.render_json_response(data)
+            data['mark_type'] = label
+            data['bookmark_id'] = new_bookmark.id
+
+        except Exception as e:
+            print e
+            pass
+
+        return self.render_json_response(data)
+        # else:
+        #     print 'error'
+        #     data = bookmarkform.errors
+        #     return self.render_json_response(data)
 
 
 class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, UpdateView):
@@ -157,26 +159,33 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
 
     def post_ajax(self, request, *args, **kwargs):
         bookmarkform = BookmarkForm(request.POST)
+        print 'updating bookmark'
         # if bookmarkform.is_valid():
-        bookmarkform.form_valid()
-        data = {}
-        updated_bk = self.get_object()
-        updated_bk.mark_type = bookmarkform.cleaned_data['mark_type']
-        updated_bk.save()
+        try:
 
-        label = updated_bk.get_mark_type_display()
-        if 'span' in request.POST['lesson_lang']:
-            label = label.split(',')[1]
-        else:
-            label = label.split(',')[0]
+            bookmarkform.form_valid()
+            data = {}
+            updated_bk = self.get_object()
+            updated_bk.mark_type = bookmarkform.cleaned_data['mark_type']
+            updated_bk.save()
 
-        data['mark_type'] = label
-        data['bookmark_id'] = updated_bk.id
+            label = updated_bk.get_mark_type_display()
+            if 'span' in request.POST['lesson_lang']:
+                label = label.split(',')[1]
+            else:
+                label = label.split(',')[0]
+
+            data['mark_type'] = label
+            data['bookmark_id'] = updated_bk.id
+        except Exception as e:
+            print e
+            pass
+
         return self.render_json_response(data)
 
-    # else:
-        # data = bookmarkform.errors
-        return self.render_json_response(data)
+        # else:
+            # data = bookmarkform.errors
+            # return self.render_json_response(data)
 
 
 class BookmarkAjaxDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, UpdateView):

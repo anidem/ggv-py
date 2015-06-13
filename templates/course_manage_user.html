@@ -8,7 +8,7 @@
 {% block page_crumb %}
     <li><a href="{% url 'course' object.slug %}"><button class="btn btn-xs btn-default"><i class="fa fa-home"></i> {{ object }}</button></a></li>
     {% if is_instructor or is_manager %}
-        <li><a href="{% url 'manage_course' object.slug %}"><button class="btn btn-xs btn-default"><i class="fa fa-caret-left"></i> Roster Detail</button></a></li>
+        <li><a href="{% url 'manage_course' object.slug %}"><i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-default"> Roster Detail</button></a></li>
         <li><a href="{% url 'user_progress' course.slug student_user.id %}"><i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-default"> Progress Report for {{ student_user.first_name }}</button></a></li>
         <li><a href="#"><button class="btn btn-xs btn-success">More Details for {{ student_user.first_name }}</button></a></li>
     {% endif %}

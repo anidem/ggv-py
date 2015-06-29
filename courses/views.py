@@ -3,7 +3,7 @@ from collections import OrderedDict, namedtuple
 from datetime import datetime
 from pytz import timezone
 
-from django.views.generic import DetailView
+from django.views.generic import DetailView, UpdateView
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 # from django.utils import timezone
@@ -16,8 +16,18 @@ from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAc
 from questions.models import QuestionSet
 from slidestacks.models import SlideStack
 from .models import Course
+from .forms import CourseUpdateForm
 
 tz = timezone(settings.TIME_ZONE)
+
+
+class CourseUpdateView(LoginRequiredMixin, AccessRequiredMixin, UpdateView):
+    model = Course
+    template_name = 'course_edit.html'
+    slug_url_kwarg = 'crs_slug'
+    form_class = CourseUpdateForm
+    access_object = None
+
 
 class CourseView(LoginRequiredMixin, AccessRequiredMixin, PrivelegedAccessMixin, DetailView):
     model = Course
@@ -191,3 +201,6 @@ class UserProgressView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
         context['activity_log'] = activity
 
         return context
+
+
+

@@ -9,9 +9,10 @@ from guardian.admin import GuardedModelAdmin
 
 from courses.models import Course, CourseLesson
 from lessons.models import Lesson, Section
-from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option
+from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option, UserWorksheetStatus
 from slidestacks.models import SlideStack
 from notes.models import UserNote
+from django.contrib.auth.models import User
 from core.models import ActivityLog, GGVUser, Bookmark, SiteMessage
 
 
@@ -38,6 +39,7 @@ class QuestionOptionInlineAdmin(admin.TabularInline):
     formfield_overrides = {
         models.IntegerField: {'widget': forms.NumberInput},
     }
+
 
 # class QuestionSetInlineAdmin(EditLinkToInlineObject, admin.TabularInline):
 #     model = MultipleChoiceQuestion
@@ -148,8 +150,8 @@ class ActivityLogAdmin(admin.ModelAdmin):
 
 
 class GGVUserAdmin(admin.ModelAdmin):
-    list_display = ('user', 'language_pref', 'clean_logout')
-    list_editable = ('user', 'language_pref', 'clean_logout')
+    list_display = ('user', 'language_pref', 'clean_logout', )
+    list_editable = ('user', 'language_pref', 'clean_logout', )
 
 
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
@@ -161,6 +163,7 @@ admin.site.register(QuestionSet, QuestionSetAdmin, Media=ExtraMedia)
 admin.site.register(OptionQuestion, OptionQuestionAdmin, Media=ExtraMedia)
 admin.site.register(TextQuestion, TextQuestionAdmin, Media=ExtraMedia)
 admin.site.register(QuestionResponse)
+admin.site.register(UserWorksheetStatus)
 admin.site.register(ActivityLog, ActivityLogAdmin)
 admin.site.register(GGVUser, GGVUserAdmin)
 admin.site.register(Bookmark)

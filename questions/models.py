@@ -334,3 +334,5 @@ class UserWorksheetStatus(TimeStampedModel):
     """
     user = models.ForeignKey(User, related_name='completed_worksheets')
     completed_worksheet = models.ForeignKey(QuestionSet)
+    can_check_results = models.BooleanField(default=False)
+

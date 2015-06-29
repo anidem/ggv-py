@@ -14,7 +14,7 @@ from core.views import (
     CreateGgvUserView, ListGgvUserView, GgvUserView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
-from courses.views import CourseView, CourseManageView, UserManageView, UserProgressView
+from courses.views import CourseView, CourseUpdateView, CourseManageView, UserManageView, UserProgressView
 from lessons.views import LessonView, SectionUpdateView
 from questions.views import (
     WorksheetHomeView, WorksheetUpdateView, WorksheetLaunchView, QuestionResponseView,
@@ -22,7 +22,7 @@ from questions.views import (
     TextQuestionView, TextQuestionUpdateView,
     QuestionAssetHandlerView,
     UserReportView, FullReportView,
-    LessonKeyView, WorksheetKeyView, TestDocView
+    LessonKeyView, WorksheetKeyView, WorksheetCompletedView, RestrictResultsUpdateView, TestDocView
     )
 from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView, slide_view
 
@@ -39,6 +39,7 @@ urlpatterns = patterns('',
 
 # GGV
     url(r'^ggv/(?P<crs_slug>[-\w]+)/$', CourseView.as_view(), name='course'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/edit/$', CourseUpdateView.as_view(), name='edit_course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/$', CourseManageView.as_view(), name='manage_course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/user/(?P<user>\d+)/$', UserManageView.as_view(), name='manage_user'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/progress/user/(?P<user>\d+)/$', UserProgressView.as_view(), name='user_progress'),
@@ -61,6 +62,10 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/report/(?P<user>\d+)/$', UserReportView.as_view(), name='worksheet_user_report'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/fullreport/$', FullReportView.as_view(), name='worksheet_report'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/key/$', WorksheetKeyView.as_view(), name='worksheet_key'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/status-update/(?P<pk>\d+)/$', RestrictResultsUpdateView.as_view(), name='worksheet_report_access'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet-completed/(?P<pk>\d+)/$', WorksheetCompletedView.as_view(), name='worksheet_completed'),
+
+
 
     url(r'^ggv/worksheet/(?P<pk>\d+)/$', WorksheetHomeView.as_view(), name='worksheet'),
     url(r'^ggv/worksheet/edit/(?P<pk>\d+)/$', WorksheetUpdateView.as_view(), name='worksheet_update'),

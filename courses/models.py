@@ -14,11 +14,12 @@ from lessons.models import Lesson
 class Course(models.Model):
 
     """
-    Courses are synomous with a testing site.
+    Courses are synonymous with a testing site.
     A course contains one or more lessons and has zero or more designated instuctors and zero or more students.
     """
     title = models.CharField(max_length=256)
     slug = models.SlugField(max_length=128, unique=True)
+    control_worksheet_results = models.BooleanField(default=False)
     access_code = models.CharField(max_length=8, null=True, blank=True)
 
     class Meta:

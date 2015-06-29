@@ -6,6 +6,7 @@ from django.views.generic import DetailView, UpdateView, CreateView, RedirectVie
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse, reverse_lazy
+from django.core.exceptions import ObjectDoesNotExist
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -109,11 +110,16 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
     def get(self, request, *args, **kwargs):
         course = Course.objects.get(slug=self.kwargs['crs_slug'])
         is_instructor = 'instructor' in get_perms(self.request.user, course)
+        is_student = 'access' in get_perms(self.request.user, course)
 
-        """ User has completed or is staff. No viewing restrictions enforced. """
+        """ User has previously completed or is staff. No viewing restrictions enforced. """
         if self.request.user.is_staff or is_instructor or self.completion_status.count():
             if not self.next_question:
-                """ No more questions. Send user to worksheet report. """
+                """ No more questions. Show student user to worksheet completion page. """
+                if is_student:
+                    user_ws_status = UserWorksheetStatus.objects.filter(user=self.request.user).get(completed_worksheet=self.worksheet)
+                    return HttpResponseRedirect(reverse('worksheet_completed', args=(self.kwargs['crs_slug'], user_ws_status.id)))
+
                 return HttpResponseRedirect(reverse(
                     'worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id, self.request.user.id)))
 
@@ -133,7 +139,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         """
         if not self.next_question:
             if not self.completion_status:
-                UserWorksheetStatus(
+                user_ws_status = UserWorksheetStatus(
                     user=self.request.user, completed_worksheet=self.worksheet).save()
                 self.completion_status = True
                 logpath = reverse(
@@ -142,7 +148,8 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
                 msg_detail = self.worksheet.lesson.title
                 ActivityLog(user=self.request.user, action='completed-worksheet',
                             message=msg, message_detail=msg_detail).save()
-                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.worksheet.id, self.request.user.id)))
+
+                return HttpResponseRedirect(reverse('worksheet_completed', args=(self.kwargs['crs_slug'], user_ws_status.id)))
 
         """
         Request parameter <j> is potentially overidden by next unanswered question
@@ -354,9 +361,34 @@ class OptionQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateVie
         return context
 
 
+class WorksheetCompletedView(LoginRequiredMixin, CourseContextMixin, DetailView):
+    model = UserWorksheetStatus
+    template_name = 'question_worksheet_completed.html'
+    context_object_name = 'status'
+
+
 class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = QuestionSet
     template_name = 'question_worksheet_report.html'
+
+    def get(self, request, *args, **kwargs):
+        course = Course.objects.get(slug=self.kwargs['crs_slug'])
+        is_instructor = 'instructor' in get_perms(self.request.user, course)
+        user_report = User.objects.get(pk=self.kwargs['user'])
+
+        if self.request.user.is_staff or is_instructor:
+            return super(UserReportView, self).get(request, *args, **kwargs)
+
+        try:
+            user_ws_status = UserWorksheetStatus.objects.filter(user=user_report).get(completed_worksheet=self.get_object())
+        except ObjectDoesNotExist:  # Student has not completed the worksheet.
+            return HttpResponseRedirect(reverse('worksheet_launch', args=(self.kwargs['crs_slug'], self.get_object().id)))
+
+        """ Course settings indicate that instructor must approve student access to report """
+        if course.control_worksheet_results and not user_ws_status.can_check_results:
+            return HttpResponseRedirect(reverse('worksheet_completed', args=(self.kwargs['crs_slug'], user_ws_status.id)))
+
+        return super(UserReportView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(UserReportView, self).get_context_data(**kwargs)
@@ -371,10 +403,15 @@ class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         report = worksheet.get_user_responses(
             user, worksheet.get_ordered_question_list(), context['course'])
         context['report'] = report['report']
-
         context['correct'] = report['correct']
         context['grade'] = report['grade']
         context['student'] = user
+        context['is_instructor'] = 'instructor' in get_perms(self.request.user, context['course'])
+        try:
+            context['ws_status'] = UserWorksheetStatus.objects.filter(user=user).get(completed_worksheet=worksheet)
+        except ObjectDoesNotExist:
+            context['ws_status'] = None
+
         return context
 
 
@@ -456,3 +493,17 @@ class WorksheetKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
 
         context['worksheets'] = key
         return context
+
+
+class RestrictResultsUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateView):
+    model = UserWorksheetStatus
+    template_name = ""
+    fields = ['can_check_results']
+
+    def get_success_url(self):
+        ws_status_obj = self.get_object()
+        course = self.kwargs['crs_slug']
+        worksheet = ws_status_obj.completed_worksheet.id
+        user = ws_status_obj.user.id
+        return reverse_lazy('worksheet_user_report', args=[course, worksheet, user])
+

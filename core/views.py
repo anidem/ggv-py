@@ -9,8 +9,8 @@ from guardian.shortcuts import assign_perm
 
 from courses.models import Course
 
-from .models import Bookmark, GGVUser, SiteMessage
-from .forms import BookmarkForm, GgvUserCreateForm
+from .models import Bookmark, GGVUser, SiteMessage, Notification
+from .forms import BookmarkForm, GgvUserCreateForm, GgvUserSettingsForm, GgvUserStudentSettingsForm
 from .mixins import CourseContextMixin
 from .signals import *
 
@@ -92,6 +92,19 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         return context
 
 
+class UpdateGgvUserView(LoginRequiredMixin, CourseContextMixin, UpdateView):
+    model = GGVUser
+    template_name = "user_edit.html"
+    form_class = GgvUserStudentSettingsForm
+    success_url = reverse_lazy('ggvhome')
+
+    def dispatch(self, request, *args, **kwargs):
+        if request.user.has_perm('instructor') or request.user.has_perm('manage'):
+            self.form_class = GgvUserSettingsForm
+
+        return super(UpdateGgvUserView, self).dispatch(request, *args, **kwargs)
+
+
 class ListGgvUserView(LoginRequiredMixin, CourseContextMixin, ListView):
     model = User
     template_name = 'user_view.html'
@@ -129,7 +142,6 @@ class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
 
     def post_ajax(self, request, *args, **kwargs):
         bookmarkform = BookmarkForm(request.POST)
-        # if bookmarkform.is_valid():
         data = {}
         try:
             new_bookmark = bookmarkform.save()
@@ -143,15 +155,18 @@ class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             data['mark_type'] = label
             data['bookmark_id'] = new_bookmark.id
 
+            # course = Course.objects.get(
+            #     slug=self.kwargs['crs_slug'])
+            print 'bookmark==>', new_bookmark.content_type
+            for i in context['course'].instructor_list():
+                notification = Notification(user_to_notify=i, context='bookmark', event=new_bookmark.notify_text())
+                notification.save()
+
         except Exception as e:
             print e
             pass
 
         return self.render_json_response(data)
-        # else:
-        #     print 'error'
-        #     data = bookmarkform.errors
-        #     return self.render_json_response(data)
 
 
 class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, UpdateView):
@@ -159,10 +174,8 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
 
     def post_ajax(self, request, *args, **kwargs):
         bookmarkform = BookmarkForm(request.POST)
-        print 'updating bookmark'
-        # if bookmarkform.is_valid():
-        try:
 
+        try:
             bookmarkform.form_valid()
             data = {}
             updated_bk = self.get_object()
@@ -177,15 +190,11 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
 
             data['mark_type'] = label
             data['bookmark_id'] = updated_bk.id
-        except Exception as e:
-            print e
+
+        except Exception:
             pass
 
         return self.render_json_response(data)
-
-        # else:
-            # data = bookmarkform.errors
-            # return self.render_json_response(data)
 
 
 class BookmarkAjaxDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, UpdateView):

@@ -85,6 +85,12 @@
                     </li>
                     {% endif %}
 
+                    <li>
+                        <a class="static nav-text" href="{% url 'edit_user' request.user.id %}">
+                            <button class="btn btn-xs btn-default"><i class="fa fa-gear"></i></button>
+                        </a>
+                    </li>
+
                     <!-- login/logout button -->
                     <li>
                     {% if user.is_authenticated %}

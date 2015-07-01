@@ -11,7 +11,7 @@ from core.views import (
     IndexView, HomeView,
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView, ActivateView,
-    CreateGgvUserView, ListGgvUserView, GgvUserView
+    CreateGgvUserView, ListGgvUserView, GgvUserView, UpdateGgvUserView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import CourseView, CourseUpdateView, CourseManageView, UserManageView, UserProgressView
@@ -96,8 +96,7 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/user/add/$', CreateGgvUserView.as_view(), name='create_user'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/user/list/$', ListGgvUserView.as_view(), name='list_users'),
     url(r'^ggv/user/(?P<pk>[-\d]+)/$', GgvUserView.as_view(), name='view_user'),
-
-
+    url(r'^ggv/user/edit/(?P<pk>[-\d]+)/', UpdateGgvUserView.as_view(), name='edit_user'),
 
 # Login urls
 
@@ -115,7 +114,7 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^ggvadmin/filebrowser/', include(site.urls)),
     url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
-    url(r'^ggvadmin/',  include(admin.site.urls)),  # admin site
+    url(r'^ggvadmin',  include(admin.site.urls)),  # admin site
 
 
 

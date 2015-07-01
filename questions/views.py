@@ -11,6 +11,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.conf import settings
 from django import forms
+from django.core.mail import send_mail
 
 
 from braces.views import CsrfExemptMixin, LoginRequiredMixin, StaffuserRequiredMixin
@@ -19,7 +20,7 @@ from guardian.shortcuts import get_perms
 
 from sendfile import sendfile
 
-from core.models import ActivityLog
+from core.models import ActivityLog, Notification
 from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import PresetBookmarkForm
 from notes.forms import UserNoteForm
@@ -36,6 +37,11 @@ def filter_filelisting_images(item):
         return item.filetype == "Image"
     except:
         return False
+
+
+def blast_email(msg):
+    send_mail('Message from GGV2', msg, 'ggvsys@gmail.com', ['richmedina@gmail.com'], fail_silently=False)
+
 
 
 class TestDocView(TemplateView):
@@ -140,14 +146,27 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         if not self.next_question:
             if not self.completion_status:
                 user_ws_status = UserWorksheetStatus(
-                    user=self.request.user, completed_worksheet=self.worksheet).save()
+                    user=self.request.user, completed_worksheet=self.worksheet)
+                user_ws_status.save()
                 self.completion_status = True
                 logpath = reverse(
                     'worksheet_report', args=(self.kwargs['crs_slug'], self.worksheet.id,))
                 msg = '<a href="%s">%s</a>' % (logpath, self.worksheet.title)
                 msg_detail = self.worksheet.lesson.title
-                ActivityLog(user=self.request.user, action='completed-worksheet',
-                            message=msg, message_detail=msg_detail).save()
+                logged = ActivityLog(user=self.request.user, action='completed-worksheet',
+                            message=msg, message_detail=msg_detail)
+                logged.save()
+
+                """ Create notification for instructor(s) """
+                for i in course.instructor_list():
+                    notification = Notification(user_to_notify=i, context='worksheet', event='', logdata=logged)
+                    notification.save()
+
+                    """ send email to instructor(s) """
+                msg = '%s has completed worksheet: %s' % (self.request.user, self.worksheet)
+                blast_email(msg)
+
+
 
                 return HttpResponseRedirect(reverse('worksheet_completed', args=(self.kwargs['crs_slug'], user_ws_status.id)))
 
@@ -388,6 +407,7 @@ class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         if course.control_worksheet_results and not user_ws_status.can_check_results:
             return HttpResponseRedirect(reverse('worksheet_completed', args=(self.kwargs['crs_slug'], user_ws_status.id)))
 
+        blast_email('Worksheet was completed at ggv.')
         return super(UserReportView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

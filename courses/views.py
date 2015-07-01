@@ -12,6 +12,7 @@ from django.conf import settings
 
 from braces.views import LoginRequiredMixin
 
+from core.models import Notification
 from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin
 from questions.models import QuestionSet
 from slidestacks.models import SlideStack
@@ -21,13 +22,12 @@ from .forms import CourseUpdateForm
 tz = timezone(settings.TIME_ZONE)
 
 
-class CourseUpdateView(LoginRequiredMixin, AccessRequiredMixin, UpdateView):
+class CourseUpdateView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, UpdateView):
     model = Course
-    template_name = 'course_edit.html'
+    template_name = 'course_settings.html'
     slug_url_kwarg = 'crs_slug'
     form_class = CourseUpdateForm
     access_object = None
-
 
 class CourseView(LoginRequiredMixin, AccessRequiredMixin, PrivelegedAccessMixin, DetailView):
     model = Course
@@ -46,12 +46,12 @@ class CourseView(LoginRequiredMixin, AccessRequiredMixin, PrivelegedAccessMixin,
 
         if self.request.user.is_staff or context['is_instructor'] or context['is_manager']:
             students = course.student_list()
-
-
             instructors = course.instructor_list()
-
             context['instructors'] = instructors
             context['students'] = students
+
+            context['notifications'] = Notification.objects.filter(user_to_notify=self.request.user)
+
         else:
             context['instructors'] = course.instructor_list()
 

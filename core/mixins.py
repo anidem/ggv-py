@@ -35,6 +35,7 @@ class AccessRequiredMixin(object):
 
         return super(AccessRequiredMixin, self).dispatch(*args, **kwargs)
 
+
 class RestrictedAccessZoneMixin(object):
 
     """
@@ -60,7 +61,6 @@ class RestrictedAccessZoneMixin(object):
 
         raise PermissionDenied
         # return super(RestrictedAccessZoneMixin, self).dispatch(*args, **kwargs)
-
 
 
 class PrivelegedAccessMixin(object):

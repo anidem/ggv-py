@@ -33,6 +33,9 @@ class GGVUser(models.Model):
     language_pref = models.CharField(max_length=32, default='english', choices=(
         ('english', 'english'), ('spanish', 'spanish')))
     clean_logout = models.BooleanField(default=True)
+    receive_notify_email = models.BooleanField(default=True)
+    receive_email_messages = models.BooleanField(default=True)
+
 
     def __unicode__(self):
         return self.user.username
@@ -61,17 +64,22 @@ class Bookmark(models.Model):
     content_object = generic.GenericForeignKey('content_type', 'object_id')
     course_context = models.ForeignKey(Course, null=True, blank=True)
 
+    def notify_text(self):
+        text = '%s %s bookmarked %s' % (self.creator.first_name, self.creator.last_name, self.content_object)
+        return text
+
     def __unicode__(self):
         return self.mark_type
 
-    # Thought about implementing this but the transaction efficiency might suffer...
     class Meta:
         unique_together = ('mark_type', 'creator', 'content_type', 'object_id', 'course_context')
 
 
 class Notification(models.Model):
     user_to_notify = models.ForeignKey(User)
-    event = models.CharField(max_length=512)
+    context = models.CharField(max_length=128)
+    event = models.CharField(max_length=512, blank=True, null=True)
+    logdata = models.ForeignKey(ActivityLog, blank=True, null=True)
     timestamp = models.DateTimeField(auto_now_add=True)
     read_status = models.BooleanField(default=False)
 
@@ -79,7 +87,7 @@ class Notification(models.Model):
         return json.loads(self.event)
 
     def __unicode__(self):
-        return self.event
+        return '%s, %s'% (self.event, self.logdata)
 
 
 class SiteMessage(models.Model):

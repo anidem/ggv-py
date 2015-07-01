@@ -2,6 +2,7 @@
 from django import forms
 from django.contrib.auth.models import User
 
+from core.models import GGVUser
 from courses.models import Course
 from .models import Bookmark
 
@@ -28,6 +29,20 @@ class GgvUserCreateForm(forms.ModelForm):
         }
 
 
+class GgvUserSettingsForm(forms.ModelForm):
+
+    class Meta:
+        model = GGVUser
+        fields = ['language_pref', 'clean_logout', 'receive_notify_email', 'receive_email_messages']
+
+
+class GgvUserStudentSettingsForm(forms.ModelForm):
+
+    class Meta:
+        model = GGVUser
+        fields = ['language_pref']
+
+
 class BookmarkForm(forms.ModelForm):
 
     def form_valid(self):
@@ -38,7 +53,6 @@ class BookmarkForm(forms.ModelForm):
 
         except Exception as e:
             print e
-
 
         return True
 

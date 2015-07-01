@@ -33,8 +33,6 @@
 
 {% block page_header %}
 <div class="col-md-12 center-block">
-
-
     <h1></h1>
 </div>
 {% endblock page_header %}
@@ -62,21 +60,28 @@
         {% endfor %}
     </div>
 
-{% comment %}
-{% if is_manager %}
+
+{% if is_manager or is_instructor%}
 
     <div class="row">
         <h4>Notifications:</h4>
         <div class="col-md-12 well">
 
             {% for i in notifications %}
-                <div></div>
+                {% if i.logdata %}
+                <div>{{ i.logdata.user }} ==> {{ i.logdata.action }} {{ i.logdata.message|safe }}</div>
+                {% else %}
+                <div>{{i.context }} {{ i.event }} </div>
+                {% endif %}
+
             {% endfor %}
 
 
         </div>
     </div>
+{% endif %}
 
+{% comment %}
     <div class="row">
         <div class="col-xs-12">
             <h4>Active Students ({{ students|length}}) </h4>

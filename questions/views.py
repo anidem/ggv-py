@@ -149,8 +149,10 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
                     user=self.request.user, completed_worksheet=self.worksheet)
                 user_ws_status.save()
                 self.completion_status = True
+
                 logpath = reverse(
                     'worksheet_report', args=(self.kwargs['crs_slug'], self.worksheet.id,))
+
                 msg = '<a href="%s">%s</a>' % (logpath, self.worksheet.title)
                 msg_detail = self.worksheet.lesson.title
                 logged = ActivityLog(user=self.request.user, action='completed-worksheet',
@@ -158,13 +160,13 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
                 logged.save()
 
                 """ Create notification for instructor(s) """
-                for i in course.instructor_list():
-                    notification = Notification(user_to_notify=i, context='worksheet', event='', logdata=logged)
-                    notification.save()
+                # for i in course.instructor_list():
+                #     notification = Notification(user_to_notify=i, context='worksheet', event='', logdata=logged)
+                #     notification.save()
 
-                    """ send email to instructor(s) """
-                msg = '%s has completed worksheet: %s' % (self.request.user, self.worksheet)
-                blast_email(msg)
+                #     """ send email to instructor(s) """
+                # msg = '%s has completed worksheet: %s' % (self.request.user, self.worksheet)
+                # blast_email(msg)
 
 
 

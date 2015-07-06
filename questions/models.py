@@ -15,6 +15,7 @@ from lessons.models import Lesson, AbstractActivity
 from notes.models import UserNote
 from core.models import Bookmark
 
+
 class QuestionSet(AbstractActivity):
     lesson = models.ForeignKey(
         Lesson, null=True, blank=True, related_name='worksheets')
@@ -133,8 +134,9 @@ class QuestionSet(AbstractActivity):
 
         return report
 
-    def get_absolute_url(self):
-        return reverse('question_response', args=[self.id, '1'])
+    def get_absolute_url(self, **kwargs):
+
+        return reverse('worksheet_launch', args=[kwargs['crs_slug'], self.id])
 
     def __unicode__(self):
         return self.title

@@ -65,7 +65,13 @@ class Bookmark(models.Model):
     course_context = models.ForeignKey(Course, null=True, blank=True)
 
     def notify_text(self):
-        text = '%s %s bookmarked %s' % (self.creator.first_name, self.creator.last_name, self.content_object)
+
+        if str(self.content_type) in ['option question', 'text question']:
+            target_url = self.content_object.get_sequence_url(self.course_context)
+        else:
+            target_url = self.content_object.get_absolute_url(crs_slug=self.course_context.slug)
+
+        text = '%s %s bookmarked %s' % (self.creator.first_name, self.creator.last_name, target_url)
         return text
 
     def __unicode__(self):
@@ -87,7 +93,7 @@ class Notification(models.Model):
         return json.loads(self.event)
 
     def __unicode__(self):
-        return '%s, %s'% (self.event, self.logdata)
+        return '%s, %s' % (self.event, self.logdata)
 
 
 class SiteMessage(models.Model):

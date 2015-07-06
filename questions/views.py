@@ -43,7 +43,6 @@ def blast_email(msg):
     send_mail('Message from GGV2', msg, 'ggvsys@gmail.com', ['richmedina@gmail.com'], fail_silently=False)
 
 
-
 class TestDocView(TemplateView):
     template_name = 'test-frame.html'
 
@@ -121,7 +120,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         """ User has previously completed or is staff. No viewing restrictions enforced. """
         if self.request.user.is_staff or is_instructor or self.completion_status.count():
             if not self.next_question:
-                """ No more questions. Show student user to worksheet completion page. """
+                """ No more questions. Show student user the worksheet completion page. """
                 if is_student:
                     user_ws_status = UserWorksheetStatus.objects.filter(user=self.request.user).get(completed_worksheet=self.worksheet)
                     return HttpResponseRedirect(reverse('worksheet_completed', args=(self.kwargs['crs_slug'], user_ws_status.id)))
@@ -160,13 +159,13 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
                 logged.save()
 
                 """ Create notification for instructor(s) """
-                # for i in course.instructor_list():
-                #     notification = Notification(user_to_notify=i, context='worksheet', event='', logdata=logged)
-                #     notification.save()
+                for i in course.instructor_list():
+                    notification = Notification(user_to_notify=i, context='worksheet', event='', logdata=logged)
+                    notification.save()
 
-                #     """ send email to instructor(s) """
-                # msg = '%s has completed worksheet: %s' % (self.request.user, self.worksheet)
-                # blast_email(msg)
+                    """ send email to instructor(s) """
+                msg = '%s has completed worksheet: %s' % (self.request.user, self.worksheet)
+                blast_email(msg)
 
 
 

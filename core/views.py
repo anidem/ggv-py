@@ -3,6 +3,8 @@ from django.views.generic import TemplateView, CreateView, UpdateView, ListView,
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
+
 
 from braces.views import CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, LoginRequiredMixin
 from guardian.shortcuts import assign_perm
@@ -144,26 +146,28 @@ class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
         bookmarkform = BookmarkForm(request.POST)
         data = {}
         try:
+            # print bookmarkform
             new_bookmark = bookmarkform.save()
 
             label = new_bookmark.get_mark_type_display()
-            if 'span' in request.POST['lesson_lang']:
-                label = label.split(',')[1]
-            else:
-                label = label.split(',')[0]
+            try:
+                if 'span' in request.POST['lesson_lang']:
+                    label = label.split(',')[1]
+                else:
+                    label = label.split(',')[0]
 
-            data['mark_type'] = label
+                data['mark_type'] = label
+            except:
+                pass
+
             data['bookmark_id'] = new_bookmark.id
 
-            # course = Course.objects.get(
-            #     slug=self.kwargs['crs_slug'])
-            print 'bookmark==>', new_bookmark.content_type
-            for i in context['course'].instructor_list():
+            for i in course.instructor_list():
                 notification = Notification(user_to_notify=i, context='bookmark', event=new_bookmark.notify_text())
                 notification.save()
 
         except Exception as e:
-            print e
+            print 'error creating: ' , e
             pass
 
         return self.render_json_response(data)
@@ -202,11 +206,13 @@ class BookmarkAjaxDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
 
     def post_ajax(self, request, *args, **kwargs):
         bookmarkform = BookmarkForm(request.POST)
-        if bookmarkform.is_valid():
-            self.get_object().delete()
-            data = {}
-            data['deleted'] = 'deleted'
-            return self.render_json_response(data)
-        else:
-            data = bookmarkform.errors
-            return self.render_json_response(data)
+        # if bookmarkform.is_valid():
+        self.get_object().delete()
+        data = {}
+        data['deleted'] = 'deleted'
+        return self.render_json_response(data)
+        # else:
+
+            # data = bookmarkform.errors
+            # print data
+            # return self.render_json_response(data)

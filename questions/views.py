@@ -40,7 +40,8 @@ def filter_filelisting_images(item):
 
 
 def blast_email(msg):
-    send_mail('Message from GGV2', msg, 'ggvsys@gmail.com', ['richmedina@gmail.com'], fail_silently=False)
+   pass
+   # send_mail('Message from GGV2', msg, 'ggvsys@gmail.com', ['richmedina@gmail.com'], fail_silently=False)
 
 
 

@@ -71,7 +71,7 @@ class Bookmark(models.Model):
         else:
             target_url = self.content_object.get_absolute_url(crs_slug=self.course_context.slug)
 
-        text = '%s %s bookmarked %s' % (self.creator.first_name, self.creator.last_name, target_url)
+        text = '%s %s bookmarked (%s) %s' % (self.creator.first_name, self.creator.last_name, self.mark_type, target_url)
         return text
 
     def __unicode__(self):

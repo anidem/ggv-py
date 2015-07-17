@@ -39,9 +39,6 @@ def filter_filelisting_images(item):
         return False
 
 
-def blast_email(msg):
-    send_mail('Message from GGV2', msg, 'ggvsys@gmail.com', ['richmedina@gmail.com'], fail_silently=False)
-
 
 class TestDocView(TemplateView):
     template_name = 'test-frame.html'
@@ -160,13 +157,18 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
 
                 """ Create notification for instructor(s) """
                 for i in course.instructor_list():
-                    notification = Notification(user_to_notify=i, context='worksheet', event='', logdata=logged)
+                    notification = Notification(user_to_notify=i, context='worksheet', event=self.worksheet.notify_text(crs_slug=course.slug, user=self.request.user))
                     notification.save()
 
                     """ send email to instructor(s) """
-                msg = '%s has completed worksheet: %s' % (self.request.user, self.worksheet)
-                blast_email(msg)
+                msg = '%s has completed worksheet: %s at %s' % (self.request.user, self.worksheet, self.worksheet.get_absolute_url(crs_slug=course.slug))
 
+                recipients = []
+                for i in course.instructor_list():
+                    if i.ggvuser.receive_notify_email:
+                        recipients.append(i.email)
+
+                send_mail('Message from GGV2', msg, 'ggvsys@gmail.com', recipients, fail_silently=True)
 
 
                 return HttpResponseRedirect(reverse('worksheet_completed', args=(self.kwargs['crs_slug'], user_ws_status.id)))

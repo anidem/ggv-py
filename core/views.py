@@ -129,6 +129,10 @@ class ActivityLogView(TemplateView):
     pass
 
 
+class SendEmailMessage(LoginRequiredMixin, TemplateView)
+    pass
+
+
 class CreateMessageView(TemplateView):
     pass
 
@@ -162,12 +166,11 @@ class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
 
             data['bookmark_id'] = new_bookmark.id
 
-            for i in course.instructor_list():
+            for i in new_bookmark.course_context.instructor_list():
                 notification = Notification(user_to_notify=i, context='bookmark', event=new_bookmark.notify_text())
                 notification.save()
 
         except Exception as e:
-            print 'error creating: ' , e
             pass
 
         return self.render_json_response(data)
@@ -194,6 +197,10 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
 
             data['mark_type'] = label
             data['bookmark_id'] = updated_bk.id
+
+            for i in updated_bk.course_context.instructor_list():
+                notification = Notification(user_to_notify=i, context='bookmark', event=updated_bk.notify_text())
+                notification.save()
 
         except Exception:
             pass

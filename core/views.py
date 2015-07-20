@@ -1,5 +1,5 @@
 # core/views.py
-from django.views.generic import TemplateView, CreateView, UpdateView, ListView, DetailView
+from django.views.generic import FormView, TemplateView, CreateView, UpdateView, ListView, DetailView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
@@ -12,7 +12,7 @@ from guardian.shortcuts import assign_perm
 from courses.models import Course
 
 from .models import Bookmark, GGVUser, SiteMessage, Notification
-from .forms import BookmarkForm, GgvUserCreateForm, GgvUserSettingsForm, GgvUserStudentSettingsForm
+from .forms import BookmarkForm, GgvUserCreateForm, GgvUserSettingsForm, GgvEmailForm, GgvUserStudentSettingsForm
 from .mixins import CourseContextMixin
 from .signals import *
 
@@ -129,8 +129,28 @@ class ActivityLogView(TemplateView):
     pass
 
 
-class SendEmailMessage(LoginRequiredMixin, TemplateView)
-    pass
+class SendEmailMessageView(LoginRequiredMixin, FormView):
+    form_class = GgvEmailForm
+    template_name = "ggv_send_email.html"
+    success_url = '/'
+
+    def get_success_url(self):
+        print 'Email done. ', self.request.GET['referrer']
+        return reverse('ggv_home')
+
+    def form_valid(self, form):
+        message = "{name} / {email} said: ".format(
+            name=form.cleaned_data.get('name'),
+            email=form.cleaned_data.get('email'))
+        message += "\n\n{0}".format(form.cleaned_data.get('message'))
+        send_mail(
+            subject=form.cleaned_data.get('subject').strip(),
+            message=message,
+            from_email='ggvsys@gmail.com',
+            recipient_list=['ggvsys@gmail.com', 'richmedina@gmail.com'],
+        )
+
+        return super(SendEmailMessageView, self).form_valid(form)
 
 
 class CreateMessageView(TemplateView):

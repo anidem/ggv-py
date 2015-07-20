@@ -43,6 +43,13 @@ class GgvUserStudentSettingsForm(forms.ModelForm):
         fields = ['language_pref']
 
 
+class GgvEmailForm(forms.Form):
+    name = forms.CharField(required=True)
+    email = forms.EmailField(required=True)
+    subject = forms.CharField(required=True)
+    message = forms.CharField(widget=forms.Textarea)
+
+
 class BookmarkForm(forms.ModelForm):
 
     def form_valid(self):

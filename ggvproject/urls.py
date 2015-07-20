@@ -11,7 +11,8 @@ from core.views import (
     IndexView, HomeView,
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView, ActivateView,
-    CreateGgvUserView, ListGgvUserView, GgvUserView, UpdateGgvUserView
+    CreateGgvUserView, ListGgvUserView, GgvUserView, UpdateGgvUserView,
+    SendEmailMessageView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import CourseView, CourseUpdateView, CourseManageView, UserManageView, UserProgressView
@@ -32,6 +33,9 @@ urlpatterns = patterns('',
     url('', include('django.contrib.auth.urls', namespace='auth')),
     # url('', include('social.apps.django_app.urls', namespace='disconnect_individual')),
     url(r'^ggv/test/$', TestDocView.as_view(), name='util'),
+    url(r'^ggv/emailus/$', SendEmailMessageView.as_view(), name='send_email'),
+
+
 # Utility - NON Production use only!
     url(r'^ggv/utility/$', csvutil, name='util'),
     url(r'^ggv/slideutility/$', csvutilslides, name='slideutil'),
@@ -91,6 +95,7 @@ urlpatterns = patterns('',
     url(r'^ggv/bookmark/add/$', BookmarkAjaxCreateView.as_view(), name='create_bookmark'),
     url(r'^ggv/bookmark/update/(?P<pk>\d+)/$', BookmarkAjaxUpdateView.as_view(), name='update_bookmark'),
     url(r'^ggv/bookmark/delete/(?P<pk>\d+)/$', BookmarkAjaxDeleteView.as_view(), name='delete_bookmark'),
+
 
 # Users
     url(r'^ggv/(?P<crs_slug>[-\w]+)/user/add/$', CreateGgvUserView.as_view(), name='create_user'),

@@ -132,11 +132,13 @@ class ActivityLogView(TemplateView):
 class SendEmailMessageView(LoginRequiredMixin, FormView):
     form_class = GgvEmailForm
     template_name = "ggv_send_email.html"
-    success_url = '/'
+    success_url = None
 
     def get_success_url(self):
-        print 'Email done. ', self.request.GET['referrer']
-        return reverse('ggv_home')
+        try:
+            return self.request.GET['q']
+        except:
+            return reverse('ggv_home')
 
     def form_valid(self, form):
         message = "{name} / {email} said: ".format(

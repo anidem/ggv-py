@@ -11,7 +11,7 @@ from guardian.shortcuts import assign_perm
 
 from courses.models import Course
 
-from .models import Bookmark, GGVUser, SiteMessage, Notification
+from .models import Bookmark, GGVUser, SiteMessage, Notification, SitePage
 from .forms import BookmarkForm, GgvUserCreateForm, GgvUserSettingsForm, GgvEmailForm, GgvUserStudentSettingsForm
 from .mixins import CourseContextMixin
 from .signals import *
@@ -22,7 +22,7 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['site_message'] = SiteMessage.objects.get(url_context='http://www.ggvinteractive.com/')
+        context['site_message'] = SiteMessage.objects.get(url_context='/')
         return context
 
 
@@ -117,6 +117,20 @@ class GgvUserView(LoginRequiredMixin, DetailView):
     template_name = 'user_view.html'
 
 
+class GgvUserActivationView(LoginRequiredMixin, UpdateView):
+    model = User
+    template_name = 'user_update_activation.html'
+    fields = ['is_active']
+
+    def get_success_url(self):
+        try:
+            # Hack to return the user back to the course manage list.
+            str = self.request.META['HTTP_REFERER']
+            str = str[str.find('q=')+2 :]
+            return reverse('manage_course', args=[str])
+        except:
+            return reverse('ggvhome')
+
 class ActivateView(LoginRequiredMixin, TemplateView):
     template_name = 'activate.html'
 
@@ -138,18 +152,18 @@ class SendEmailMessageView(LoginRequiredMixin, FormView):
         try:
             return self.request.GET['q']
         except:
-            return reverse('ggv_home')
+            return reverse('ggvhome')
 
     def form_valid(self, form):
-        message = "{name} / {email} said: ".format(
-            name=form.cleaned_data.get('name'),
-            email=form.cleaned_data.get('email'))
+        message = "Hi {recipient_name}, {senders_name} said: ".format(
+            senders_name=form.cleaned_data.get('senders_name'),
+            recipient_name=form.cleaned_data.get('recipient_name'))
         message += "\n\n{0}".format(form.cleaned_data.get('message'))
         send_mail(
             subject=form.cleaned_data.get('subject').strip(),
             message=message,
             from_email='ggvsys@gmail.com',
-            recipient_list=['ggvsys@gmail.com', 'richmedina@gmail.com'],
+            recipient_list=['ggvsys@gmail.com', form.cleaned_data.get('recipient_email')],
         )
 
         return super(SendEmailMessageView, self).form_valid(form)
@@ -157,6 +171,11 @@ class SendEmailMessageView(LoginRequiredMixin, FormView):
 
 class CreateMessageView(TemplateView):
     pass
+
+
+
+
+
 
 # messages.debug(request, '%s SQL statements were executed.' % count)
 # messages.info(request, 'Three credits remain in your account.')
@@ -245,3 +264,14 @@ class BookmarkAjaxDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             # data = bookmarkform.errors
             # print data
             # return self.render_json_response(data)
+
+
+class FaqView(TemplateView):
+    template_name = 'faq.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(FaqView, self).get_context_data(**kwargs)
+        context["sitepage"] = SitePage.objects.get(title='FAQ')
+        return context
+
+

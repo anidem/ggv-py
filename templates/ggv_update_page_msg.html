@@ -1,0 +1,14 @@
+<!-- ggv_update_page_msg.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<form action="" method="post">{% csrf_token %}
+    {{ form|crispy }}
+    <input type="submit" value="Update" />
+</form>
+
+{{request.path}}<br>{{request.GET.q}}
+
+{% endblock content %}

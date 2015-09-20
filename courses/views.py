@@ -3,7 +3,7 @@ from collections import OrderedDict, namedtuple
 from datetime import datetime
 from pytz import timezone
 
-from django.views.generic import DetailView, UpdateView
+from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 # from django.utils import timezone
@@ -12,7 +12,7 @@ from django.conf import settings
 
 from braces.views import LoginRequiredMixin
 
-from core.models import Notification
+from core.models import Notification, SiteMessage
 from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin
 from questions.models import QuestionSet
 from slidestacks.models import SlideStack
@@ -28,6 +28,7 @@ class CourseUpdateView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
     slug_url_kwarg = 'crs_slug'
     form_class = CourseUpdateForm
     access_object = None
+
 
 class CourseView(LoginRequiredMixin, AccessRequiredMixin, PrivelegedAccessMixin, DetailView):
     model = Course
@@ -62,8 +63,11 @@ class CourseView(LoginRequiredMixin, AccessRequiredMixin, PrivelegedAccessMixin,
         context['courses'] = [
             Course.objects.get(slug=i) for i in self.request.session['user_courses']]
 
-        # context['instructors'] = course.instructor_list()
-        # context['students'] = course.student_list(extra_details=True)
+        try:
+            context['site_message'] = SiteMessage.objects.get(url_context=reverse('course', kwargs={'crs_slug': course.slug}))
+        except:
+            context['site_message'] = None
+
         return context
 
 
@@ -201,6 +205,69 @@ class UserProgressView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
         context['activity_log'] = activity
 
         return context
+
+
+class CourseMessageAddView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, CreateView):
+    model = SiteMessage
+    template_name = 'ggv_create_page_msg.html'
+    course = None
+    fields = ['message', 'url_context', 'show']
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.course = Course.objects.get(slug=kwargs['crs_slug'])
+        except:
+            self.course = None
+
+        return super(CourseMessageAddView, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('course', kwargs={'crs_slug': self.course.slug})
+
+    def get_initial(self):
+        self.initial = {'url_context':  reverse('course', kwargs={'crs_slug': self.course.slug})}
+        return self.initial
+
+
+class CourseMessageUpdateView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, UpdateView):
+    model = SiteMessage
+    template_name = 'ggv_update_page_msg.html'
+    course = None
+    fields = ['message', 'url_context', 'show']
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.course = Course.objects.get(slug=kwargs['crs_slug'])
+        except:
+            self.course = None
+
+        return super(CourseMessageUpdateView, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('course', kwargs={'crs_slug': self.course.slug})
+
+
+class CourseMessageDeleteView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, DeleteView):
+    model = SiteMessage
+    template_name = 'ggv_delete_page_msg.html'
+    course = None
+    fields = ['message', 'url_context', 'show']
+
+    def dispatch(self, request, *args, **kwargs):
+        try:
+            self.course = Course.objects.get(slug=kwargs['crs_slug'])
+        except:
+            self.course = None
+
+        return super(CourseMessageDeleteView, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('course', kwargs={'crs_slug': self.course.slug})
+
+
+
+
+
 
 
 

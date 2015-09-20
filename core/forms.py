@@ -44,8 +44,9 @@ class GgvUserStudentSettingsForm(forms.ModelForm):
 
 
 class GgvEmailForm(forms.Form):
-    name = forms.CharField(required=True)
-    email = forms.EmailField(required=True)
+    recipient_name = forms.CharField(required=True)
+    recipient_email = forms.EmailField(required=True)
+    senders_name = forms.CharField(required=True)
     subject = forms.CharField(required=True)
     message = forms.CharField(widget=forms.Textarea)
 

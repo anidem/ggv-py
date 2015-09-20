@@ -98,8 +98,19 @@ class Notification(models.Model):
 
 class SiteMessage(models.Model):
     message = models.TextField(default='Message from ggvinteractive.com here.')
-    url_context = models.URLField(max_length=312, default='http://www.ggvinteractive.com')
+    url_context = models.CharField(max_length=512, default='/', unique=True)
     show = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.message
+
+
+class SitePage(models.Model):
+    title = models.TextField()
+    content = models.TextField()
+
+    def __unicode__(self):
+        return self.title
+
+
+

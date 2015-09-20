@@ -11,11 +11,11 @@ from core.views import (
     IndexView, HomeView,
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView, ActivateView,
-    CreateGgvUserView, ListGgvUserView, GgvUserView, UpdateGgvUserView,
-    SendEmailMessageView
+    CreateGgvUserView, ListGgvUserView, GgvUserView, UpdateGgvUserView, GgvUserActivationView,
+    SendEmailMessageView, FaqView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
-from courses.views import CourseView, CourseUpdateView, CourseManageView, UserManageView, UserProgressView
+from courses.views import CourseView, CourseUpdateView, CourseManageView, UserManageView, UserProgressView, CourseMessageAddView, CourseMessageUpdateView, CourseMessageDeleteView
 from lessons.views import LessonView, SectionUpdateView
 from questions.views import (
     WorksheetHomeView, WorksheetUpdateView, WorksheetLaunchView, QuestionResponseView,
@@ -50,6 +50,9 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/$', LessonView.as_view(), name='lesson'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/key/$', LessonKeyView.as_view(), name='lesson_key'),
 
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/add/message$', CourseMessageAddView.as_view(), name='add_course_msg'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/edit/message/(?P<pk>\d+)/$', CourseMessageUpdateView.as_view(), name='edit_course_msg'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/remove/message/(?P<pk>\d+)/$', CourseMessageDeleteView.as_view(), name='delete_course_msg'),
 
 # GGV lesson activities
     # slides are independent files but protected here.
@@ -102,6 +105,7 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/user/list/$', ListGgvUserView.as_view(), name='list_users'),
     url(r'^ggv/user/(?P<pk>[-\d]+)/$', GgvUserView.as_view(), name='view_user'),
     url(r'^ggv/user/edit/(?P<pk>[-\d]+)/', UpdateGgvUserView.as_view(), name='edit_user'),
+    url(r'^ggv/user/deactivate/(?P<pk>[-\d]+)/$', GgvUserActivationView.as_view(), name='update_user_activation'),
 
 # Login urls
 
@@ -122,7 +126,7 @@ urlpatterns = patterns('',
     url(r'^ggvadmin',  include(admin.site.urls)),  # admin site
 
 
-
+    url(r'^faq/$', FaqView.as_view(), name='faq'),
     url(r'^home/$', HomeView.as_view(), name='ggvhome'),
     url(r'^', IndexView.as_view(), name='splash'),
 )

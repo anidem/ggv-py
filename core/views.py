@@ -22,7 +22,7 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        # context['site_message'] = SiteMessage.objects.get(url_context='/')
+        context['site_message'] = SiteMessage.objects.get(url_context='/')
         return context
 
 
@@ -269,9 +269,9 @@ class BookmarkAjaxDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
 class FaqView(TemplateView):
     template_name = 'faq.html'
 
-    # def get_context_data(self, **kwargs):
-    #     context = super(FaqView, self).get_context_data(**kwargs)
-    #     context["sitepage"] = SitePage.objects.get(title='FAQ')
-    #     return context
+    def get_context_data(self, **kwargs):
+        context = super(FaqView, self).get_context_data(**kwargs)
+        context["sitepage"] = SitePage.objects.get(title='FAQ')
+        return context
 
 

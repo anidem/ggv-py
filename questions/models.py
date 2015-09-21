@@ -15,6 +15,7 @@ from lessons.models import Lesson, AbstractActivity
 from notes.models import UserNote
 from core.models import Bookmark
 
+
 class QuestionSet(AbstractActivity):
     lesson = models.ForeignKey(
         Lesson, null=True, blank=True, related_name='worksheets')
@@ -119,6 +120,15 @@ class QuestionSet(AbstractActivity):
 
         return {'report': report, 'correct': numcorrect, 'grade': grade}
 
+    def delete_user_responses(self, user, course):
+        questions = self.get_ordered_question_list()
+        for i in questions:
+            i.user_response_object(user).delete()
+
+        status = user.completed_worksheets.filter(completed_worksheet=ws).get() or None
+        if status:
+            status.delete()
+
     def get_all_responses(self, course):
         members = course.member_list()
         questions = self.get_ordered_question_list()
@@ -133,8 +143,16 @@ class QuestionSet(AbstractActivity):
 
         return report
 
-    def get_absolute_url(self):
-        return reverse('question_response', args=[self.id, '1'])
+    def notify_text(self, **kwargs):
+        """ Expected kwargs: crs_slug, user associated with worksheet completion """
+        target_url = self.get_absolute_url(crs_slug=kwargs['crs_slug'])
+
+        text = '%s %s completed worksheet %s' % (kwargs['user'].first_name, kwargs['user'].last_name, target_url)
+        return text
+
+    def get_absolute_url(self, **kwargs):
+
+        return reverse('worksheet_launch', args=[kwargs['crs_slug'], self.id])
 
     def __unicode__(self):
         return self.title

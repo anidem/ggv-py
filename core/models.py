@@ -65,7 +65,13 @@ class Bookmark(models.Model):
     course_context = models.ForeignKey(Course, null=True, blank=True)
 
     def notify_text(self):
-        text = '%s %s bookmarked %s' % (self.creator.first_name, self.creator.last_name, self.content_object)
+
+        if str(self.content_type) in ['option question', 'text question']:
+            target_url = self.content_object.get_sequence_url(self.course_context)
+        else:
+            target_url = self.content_object.get_absolute_url(crs_slug=self.course_context.slug)
+
+        text = '%s %s bookmarked (%s) %s' % (self.creator.first_name, self.creator.last_name, self.mark_type, target_url)
         return text
 
     def __unicode__(self):
@@ -87,13 +93,24 @@ class Notification(models.Model):
         return json.loads(self.event)
 
     def __unicode__(self):
-        return '%s, %s'% (self.event, self.logdata)
+        return '%s, %s' % (self.event, self.logdata)
 
 
 class SiteMessage(models.Model):
     message = models.TextField(default='Message from ggvinteractive.com here.')
-    url_context = models.URLField(max_length=312, default='http://www.ggvinteractive.com')
+    url_context = models.CharField(max_length=512, default='/', unique=True)
     show = models.BooleanField(default=True)
 
     def __unicode__(self):
         return self.message
+
+
+class SitePage(models.Model):
+    title = models.TextField()
+    content = models.TextField()
+
+    def __unicode__(self):
+        return self.title
+
+
+

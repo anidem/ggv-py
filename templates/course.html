@@ -29,6 +29,9 @@
 
 
     {% if is_manager %}<li><a href="{% url 'create_user' course.slug %}"><button class="btn btn-primary btn-xs"><i class="fa fa-plus"></i> Add User </button> </a></li>{% endif %}
+
+
+
 {% endblock local_nav %}
 
 {% block page_header %}
@@ -38,6 +41,25 @@
 {% endblock page_header %}
 
 {% block content %}
+
+    {% if is_instructor or is_manager %}
+        <p class="text-center">
+        {% if not site_message %}
+            <a href="{% url 'add_course_msg' course.slug %}">Add a message board to post course related news</a>
+        {% elif not site_message.show %}
+            Message board is currently hidden, <a href="{% url 'edit_course_msg' course.slug site_message.id %}">unhide</a>
+        {% else %}
+            <a href="{% url 'edit_course_msg' course.slug site_message.id %}">Edit or hide message board</a>
+        {% endif %}
+        </p>
+    {% endif %}
+
+    {% if site_message and site_message.show %}
+        <div class="lead text-center well">
+            {{ site_message.message|safe }}
+        </div>
+    {% endif %}
+
     <div class="row icon eng {% if user.ggvuser.language_pref == 'spanish' %}collapse{% endif %}">
         {% for i in eng_lessons %}
         	<div class="col-md-3 icon-{{ i.lesson.subject }}">

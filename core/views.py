@@ -1,16 +1,18 @@
 # core/views.py
-from django.views.generic import TemplateView, CreateView, UpdateView, ListView, DetailView
+from django.views.generic import FormView, TemplateView, CreateView, UpdateView, ListView, DetailView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
+from django.core.mail import send_mail
+
 
 from braces.views import CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, LoginRequiredMixin
 from guardian.shortcuts import assign_perm
 
 from courses.models import Course
 
-from .models import Bookmark, GGVUser, SiteMessage, Notification
-from .forms import BookmarkForm, GgvUserCreateForm, GgvUserSettingsForm, GgvUserStudentSettingsForm
+from .models import Bookmark, GGVUser, SiteMessage, Notification, SitePage
+from .forms import BookmarkForm, GgvUserCreateForm, GgvUserSettingsForm, GgvEmailForm, GgvUserStudentSettingsForm
 from .mixins import CourseContextMixin
 from .signals import *
 
@@ -20,7 +22,7 @@ class IndexView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(IndexView, self).get_context_data(**kwargs)
-        context['site_message'] = SiteMessage.objects.get(url_context='http://www.ggvinteractive.com/')
+        context['site_message'] = SiteMessage.objects.get(url_context='/')
         return context
 
 
@@ -115,6 +117,20 @@ class GgvUserView(LoginRequiredMixin, DetailView):
     template_name = 'user_view.html'
 
 
+class GgvUserActivationView(LoginRequiredMixin, UpdateView):
+    model = User
+    template_name = 'user_update_activation.html'
+    fields = ['is_active']
+
+    def get_success_url(self):
+        try:
+            # Hack to return the user back to the course manage list.
+            str = self.request.META['HTTP_REFERER']
+            str = str[str.find('q=')+2 :]
+            return reverse('manage_course', args=[str])
+        except:
+            return reverse('ggvhome')
+
 class ActivateView(LoginRequiredMixin, TemplateView):
     template_name = 'activate.html'
 
@@ -127,8 +143,39 @@ class ActivityLogView(TemplateView):
     pass
 
 
+class SendEmailMessageView(LoginRequiredMixin, FormView):
+    form_class = GgvEmailForm
+    template_name = "ggv_send_email.html"
+    success_url = None
+
+    def get_success_url(self):
+        try:
+            return self.request.GET['q']
+        except:
+            return reverse('ggvhome')
+
+    def form_valid(self, form):
+        message = "Hi {recipient_name}, {senders_name} said: ".format(
+            senders_name=form.cleaned_data.get('senders_name'),
+            recipient_name=form.cleaned_data.get('recipient_name'))
+        message += "\n\n{0}".format(form.cleaned_data.get('message'))
+        send_mail(
+            subject=form.cleaned_data.get('subject').strip(),
+            message=message,
+            from_email='ggvsys@gmail.com',
+            recipient_list=['ggvsys@gmail.com', form.cleaned_data.get('recipient_email')],
+        )
+
+        return super(SendEmailMessageView, self).form_valid(form)
+
+
 class CreateMessageView(TemplateView):
     pass
+
+
+
+
+
 
 # messages.debug(request, '%s SQL statements were executed.' % count)
 # messages.info(request, 'Three credits remain in your account.')
@@ -144,26 +191,27 @@ class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
         bookmarkform = BookmarkForm(request.POST)
         data = {}
         try:
+            # print bookmarkform
             new_bookmark = bookmarkform.save()
 
             label = new_bookmark.get_mark_type_display()
-            if 'span' in request.POST['lesson_lang']:
-                label = label.split(',')[1]
-            else:
-                label = label.split(',')[0]
+            try:
+                if 'span' in request.POST['lesson_lang']:
+                    label = label.split(',')[1]
+                else:
+                    label = label.split(',')[0]
 
-            data['mark_type'] = label
+                data['mark_type'] = label
+            except:
+                pass
+
             data['bookmark_id'] = new_bookmark.id
 
-            # course = Course.objects.get(
-            #     slug=self.kwargs['crs_slug'])
-            print 'bookmark==>', new_bookmark.content_type
-            for i in context['course'].instructor_list():
+            for i in new_bookmark.course_context.instructor_list():
                 notification = Notification(user_to_notify=i, context='bookmark', event=new_bookmark.notify_text())
                 notification.save()
 
         except Exception as e:
-            print e
             pass
 
         return self.render_json_response(data)
@@ -191,6 +239,10 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             data['mark_type'] = label
             data['bookmark_id'] = updated_bk.id
 
+            for i in updated_bk.course_context.instructor_list():
+                notification = Notification(user_to_notify=i, context='bookmark', event=updated_bk.notify_text())
+                notification.save()
+
         except Exception:
             pass
 
@@ -202,11 +254,24 @@ class BookmarkAjaxDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
 
     def post_ajax(self, request, *args, **kwargs):
         bookmarkform = BookmarkForm(request.POST)
-        if bookmarkform.is_valid():
-            self.get_object().delete()
-            data = {}
-            data['deleted'] = 'deleted'
-            return self.render_json_response(data)
-        else:
-            data = bookmarkform.errors
-            return self.render_json_response(data)
+        # if bookmarkform.is_valid():
+        self.get_object().delete()
+        data = {}
+        data['deleted'] = 'deleted'
+        return self.render_json_response(data)
+        # else:
+
+            # data = bookmarkform.errors
+            # print data
+            # return self.render_json_response(data)
+
+
+class FaqView(TemplateView):
+    template_name = 'faq.html'
+
+    def get_context_data(self, **kwargs):
+        context = super(FaqView, self).get_context_data(**kwargs)
+        context["sitepage"] = SitePage.objects.get(title='FAQ')
+        return context
+
+

@@ -77,19 +77,23 @@
 
                 <ul class="nav navbar-nav navbar-right">
                     {% block local_nav %} {% endblock local_nav %}
-                    {% if request.session.user_courses|length > 1 %}
-                    <li>
-                        <a class="static nav-text" href="{% url 'ggvhome' %}">
-                            <button class="btn btn-xs btn-primary"><i class="fa fa-list"></i> All Courses</button>
-                        </a>
-                    </li>
-                    {% endif %}
+
+                    {% if user.is_authenticated %}
+                        {% if request.session.user_courses|length > 1 %}
+                        <li>
+                            <a class="static nav-text" href="{% url 'ggvhome' %}">
+                                <button class="btn btn-xs btn-primary"><i class="fa fa-list"></i> All Courses</button>
+                            </a>
+                        </li>
+                        {% endif %}
+
 
                     <li>
                         <a class="static nav-text" href="{% url 'edit_user' request.user.id %}">
                             <button class="btn btn-xs btn-default"><i class="fa fa-gear"></i></button>
                         </a>
                     </li>
+                    {% endif %}
 
                     <!-- login/logout button -->
                     <li>

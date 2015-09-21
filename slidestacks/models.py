@@ -18,5 +18,5 @@ class SlideStack(AbstractActivity):
     notes = generic.GenericRelation(UserNote)
     bookmarks = GenericRelation(Bookmark)
 
-    def get_absolute_url(self):
-        return reverse('slideview', args=[str(self.asset)])
+    def get_absolute_url(self, **kwargs):
+        return reverse('slideview', args=[kwargs['crs_slug'], self.id]) # str(self.asset)])

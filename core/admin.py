@@ -13,7 +13,7 @@ from questions.models import QuestionSet, QuestionResponse, OptionQuestion, Text
 from slidestacks.models import SlideStack
 from notes.models import UserNote
 from django.contrib.auth.models import User
-from core.models import ActivityLog, GGVUser, Bookmark, SiteMessage
+from core.models import ActivityLog, GGVUser, Bookmark, SiteMessage, SitePage
 
 
 class ExtraMedia:
@@ -168,4 +168,5 @@ admin.site.register(ActivityLog, ActivityLogAdmin)
 admin.site.register(GGVUser, GGVUserAdmin)
 admin.site.register(Bookmark)
 admin.site.register(SiteMessage)
+admin.site.register(SitePage)
 admin.site.register(UserNote)

@@ -12,7 +12,7 @@ from core.views import (
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView, ActivateView,
     CreateGgvUserView, ListGgvUserView, GgvUserView, UpdateGgvUserView, GgvUserActivationView,
-    SendEmailMessageView, FaqView
+    SendEmailToInstructorsView, SendEmailMessageView, FaqView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import CourseView, CourseUpdateView, CourseManageView, UserManageView, UserProgressView, CourseMessageAddView, CourseMessageUpdateView, CourseMessageDeleteView
@@ -53,6 +53,8 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/add/message$', CourseMessageAddView.as_view(), name='add_course_msg'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/edit/message/(?P<pk>\d+)/$', CourseMessageUpdateView.as_view(), name='edit_course_msg'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/remove/message/(?P<pk>\d+)/$', CourseMessageDeleteView.as_view(), name='delete_course_msg'),
+
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/email-instructors/$', SendEmailToInstructorsView.as_view(), name='email_instructors'),
 
 # GGV lesson activities
     # slides are independent files but protected here.

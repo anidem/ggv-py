@@ -12,7 +12,7 @@ from guardian.shortcuts import assign_perm
 from courses.models import Course
 
 from .models import Bookmark, GGVUser, SiteMessage, Notification, SitePage
-from .forms import BookmarkForm, GgvUserCreateForm, GgvUserSettingsForm, GgvEmailForm, GgvUserStudentSettingsForm
+from .forms import BookmarkForm, GgvUserCreateForm, GgvUserSettingsForm, GgvEmailForm, GgvUserStudentSettingsForm, GgvEmailInstructorsForm
 from .mixins import CourseContextMixin
 from .signals import *
 
@@ -143,6 +143,91 @@ class ActivityLogView(TemplateView):
     pass
 
 
+class SendEmailToInstructorsView(LoginRequiredMixin, CourseContextMixin, FormView):
+    form_class = GgvEmailInstructorsForm
+    template_name = "ggv_send_email.html"
+    success_url = None
+    course = None
+
+    def get_success_url(self):
+        try:
+            return self.request.GET['q']
+        except:
+            return reverse('ggvhome')
+
+    def dispatch(self, request, *args, **kwargs):
+        self.course = Course.objects.get(slug=kwargs['crs_slug'])
+
+        return super(SendEmailToInstructorsView, self).dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        user_sender = self.request.user.first_name + ' ' + self.request.user.last_name + ' ' + self.request.user.email
+        instructor_list = []
+        for i in self.course.instructor_list():
+            instructor_list.append(i.email)
+
+        message = "Hi {course} Instructors, {sender} has sent you the following message: ".format(
+            course=self.course,
+            sender=user_sender)
+
+        message += "\n\n{0}".format(form.cleaned_data.get('message'))
+
+        send_mail(
+            subject='Message from one of your GGV students',
+            message=message,
+            from_email='ggvsys@gmail.com',
+            recipient_list=instructor_list,
+        )
+
+        return super(SendEmailToInstructorsView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(SendEmailToInstructorsView, self).get_context_data(**kwargs)
+
+        return context
+
+class SendEmailToStaff(LoginRequiredMixin, CourseContextMixin, FormView):
+    form_class = GgvEmailInstructorsForm
+    template_name = "ggv_send_email.html"
+    success_url = None
+    course = None
+
+    def get_success_url(self):
+        try:
+            return self.request.GET['q']
+        except:
+            return reverse('ggvhome')
+
+    def dispatch(self, request, *args, **kwargs):
+        self.course = Course.objects.get(slug=kwargs['crs_slug'])
+
+        return super(SendEmailToInstructorsView, self).dispatch(request, *args, **kwargs)
+
+    def form_valid(self, form):
+        user_sender = self.request.user.first_name + ' ' + self.request.user.last_name + ' ' + self.request.user.email
+        instructor_list = []
+        for i in self.course.instructor_list():
+            instructor_list.append(i.email)
+
+        message = "Hi GGV Staff, {sender} has sent you the following message: ".format(sender=user_sender)
+
+        message += "\n\n{0}".format(form.cleaned_data.get('message'))
+
+        send_mail(
+            subject='Message from a GGV user',
+            message=message,
+            from_email='ggvsys@gmail.com',
+            recipient_list=['ggvsys@gmail.com', 'drchingon7@gmail.com', 'gedgonevirtual@gmail.com'],
+        )
+
+        return super(SendEmailToInstructorsView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(SendEmailToInstructorsView, self).get_context_data(**kwargs)
+
+        return context
+
+
 class SendEmailMessageView(LoginRequiredMixin, FormView):
     form_class = GgvEmailForm
     template_name = "ggv_send_email.html"
@@ -153,6 +238,7 @@ class SendEmailMessageView(LoginRequiredMixin, FormView):
             return self.request.GET['q']
         except:
             return reverse('ggvhome')
+
 
     def form_valid(self, form):
         message = "Hi {recipient_name}, {senders_name} said: ".format(
@@ -171,17 +257,6 @@ class SendEmailMessageView(LoginRequiredMixin, FormView):
 
 class CreateMessageView(TemplateView):
     pass
-
-
-
-
-
-
-# messages.debug(request, '%s SQL statements were executed.' % count)
-# messages.info(request, 'Three credits remain in your account.')
-# messages.success(request, 'Profile details updated.')
-# messages.warning(request, 'Your account expires in three days.')
-# messages.error(request, 'Document deleted.')
 
 
 class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, CreateView):

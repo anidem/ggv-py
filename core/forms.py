@@ -43,6 +43,10 @@ class GgvUserStudentSettingsForm(forms.ModelForm):
         fields = ['language_pref']
 
 
+class GgvEmailInstructorsForm(forms.Form):
+    message = forms.CharField(widget=forms.Textarea)
+
+
 class GgvEmailForm(forms.Form):
     recipient_name = forms.CharField(required=True)
     recipient_email = forms.EmailField(required=True)

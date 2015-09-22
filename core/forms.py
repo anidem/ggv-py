@@ -34,6 +34,13 @@ class GgvUserSettingsForm(forms.ModelForm):
     class Meta:
         model = GGVUser
         fields = ['language_pref', 'clean_logout', 'receive_notify_email', 'receive_email_messages']
+        labels = {
+            'language_pref': 'Preferred language?',
+            'clean_logout': 'Clean logout? (Logout of Google services when logging out of GGV. Recommended if you use GGV on public computers.)',
+            'receive_notify_email': 'Receive student activity notifications in email?',
+            'receive_email_messages': 'Receive emails from students?'
+        }
+
 
 
 class GgvUserStudentSettingsForm(forms.ModelForm):
@@ -41,7 +48,9 @@ class GgvUserStudentSettingsForm(forms.ModelForm):
     class Meta:
         model = GGVUser
         fields = ['language_pref']
-
+        labels = {
+            'language_pref': 'Preferred language?'
+        }
 
 class GgvEmailInstructorsForm(forms.Form):
     message = forms.CharField(widget=forms.Textarea)

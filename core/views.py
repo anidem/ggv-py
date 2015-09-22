@@ -7,7 +7,7 @@ from django.core.mail import send_mail
 
 
 from braces.views import CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, LoginRequiredMixin
-from guardian.shortcuts import assign_perm
+from guardian.shortcuts import assign_perm, get_objects_for_user
 
 from courses.models import Course
 
@@ -101,7 +101,8 @@ class UpdateGgvUserView(LoginRequiredMixin, CourseContextMixin, UpdateView):
     success_url = reverse_lazy('ggvhome')
 
     def dispatch(self, request, *args, **kwargs):
-        if request.user.has_perm('instructor') or request.user.has_perm('manage'):
+
+        if get_objects_for_user(request.user, ['instructor', 'manage'], Course, any_perm=True):
             self.form_class = GgvUserSettingsForm
 
         return super(UpdateGgvUserView, self).dispatch(request, *args, **kwargs)

@@ -166,7 +166,8 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
                     if i.ggvuser.receive_notify_email:
                         recipients.append(i.email)
 
-                send_mail('Message from GGV2', msg, 'ggvsys@gmail.com', recipients, fail_silently=True)
+                if recipients:
+                    send_mail('Message from GGV2', msg, 'ggvsys@gmail.com', recipients, fail_silently=True)
 
 
                 return HttpResponseRedirect(reverse('worksheet_completed', args=(self.kwargs['crs_slug'], user_ws_status.id)))
@@ -408,7 +409,6 @@ class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         if course.control_worksheet_results and not user_ws_status.can_check_results:
             return HttpResponseRedirect(reverse('worksheet_completed', args=(self.kwargs['crs_slug'], user_ws_status.id)))
 
-        blast_email('Worksheet was completed at ggv.')
         return super(UserReportView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):

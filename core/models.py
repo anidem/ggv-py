@@ -33,8 +33,8 @@ class GGVUser(models.Model):
     language_pref = models.CharField(max_length=32, default='english', choices=(
         ('english', 'english'), ('spanish', 'spanish')))
     clean_logout = models.BooleanField(default=True)
-    receive_notify_email = models.BooleanField(default=True)
-    receive_email_messages = models.BooleanField(default=True)
+    receive_notify_email = models.BooleanField(default=False)
+    receive_email_messages = models.BooleanField(default=False)
 
 
     def __unicode__(self):

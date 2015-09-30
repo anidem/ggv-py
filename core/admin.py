@@ -13,7 +13,12 @@ from questions.models import QuestionSet, QuestionResponse, OptionQuestion, Text
 from slidestacks.models import SlideStack
 from notes.models import UserNote
 from django.contrib.auth.models import User
+from django.contrib.auth.admin import UserAdmin
+
 from core.models import ActivityLog, GGVUser, Bookmark, SiteMessage, SitePage
+
+UserAdmin.list_display = ('email', 'first_name', 'last_name', 'is_active', 'date_joined', 'is_staff', 'last_login', 'date_joined')
+UserAdmin.list_editable = ('is_active',)
 
 
 class ExtraMedia:
@@ -170,3 +175,5 @@ admin.site.register(Bookmark)
 admin.site.register(SiteMessage)
 admin.site.register(SitePage)
 admin.site.register(UserNote)
+admin.site.unregister(User)
+admin.site.register(User, UserAdmin)

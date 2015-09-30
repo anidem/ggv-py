@@ -19,7 +19,7 @@ from core.models import ActivityLog, GGVUser, Bookmark, SiteMessage, SitePage
 
 UserAdmin.list_display = ('email', 'first_name', 'last_name', 'is_active', 'date_joined', 'is_staff', 'last_login', 'date_joined')
 UserAdmin.list_editable = ('is_active',)
-
+UserAdmin.list_filter = ('email')
 
 class ExtraMedia:
     js = [

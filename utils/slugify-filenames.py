@@ -7,7 +7,7 @@ input_dir = os.path.abspath('.')
 
 def slugify_file(directory, fstr):
     froot = fstr[:-4]
-    fext = fstr[-4:] # get the three letter extension with the '.'
+    fext = fstr[-4:]  # get the three letter extension with the '.'
     j = slugify(unicode(froot, errors='replace'))
     j = j + fext
     # print '\t\tRENAMED', j
@@ -15,14 +15,14 @@ def slugify_file(directory, fstr):
     os.rename(
         os.path.join(directory, fstr),
         os.path.join(directory, j)
-    )    
+    )
+
 
 def slugify_dir(directory):
-    # loop through files in dir -- rename each file by slugifying it. 
+    # loop through files in dir -- rename each file by slugifying it.
     for i in os.listdir(directory):
         # print '\t',i
         slugify_file(directory, i)
-
 
 
 slugify_dir(input_dir)
@@ -31,9 +31,3 @@ slugify_dir(input_dir)
 #     subdir = os.path.abspath(os.path.join(input_dir, j))
 #     # print subdir
 #     slugify_dir(subdir)
-
-
-
-
-
-        

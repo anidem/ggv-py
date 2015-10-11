@@ -256,21 +256,6 @@ class UserProgressView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
         return context
 
 
-class UserActivityReportDownloadView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, TemplateView):
-    """
-        Creates a csv file containing a report based on activity log data for a student/user for a course.
-        Returns a downloadable csv file that can be opened and viewed in spreadsheet applications.
-    """
-    template_name = ''
-
-
-
-    def get_context_data(self, **kwargs):
-        context = super(UserActivityReportDownloadView, self).get_context_data(**kwargs)
-
-        return context
-
-
 class CourseMessageAddView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, CreateView):
     model = SiteMessage
     template_name = 'ggv_create_page_msg.html'

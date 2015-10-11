@@ -517,8 +517,15 @@ class WorksheetKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
 
 
 class RestrictResultsUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateView):
+    """
+    This view is setup to update whether or not a user can view their worksheeet results.
+    It take update values through form data, not through specialized form.
+    Hence there is no template defined.
+
+    Called from worksheet report template.
+    """
     model = UserWorksheetStatus
-    template_name = ""
+    template_name = ''
     fields = ['can_check_results']
 
     def get_success_url(self):

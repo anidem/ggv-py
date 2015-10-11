@@ -70,6 +70,17 @@
 {% if reports %}
     {% for report in reports %}
     <h4 class="">{{ report.0 }}  </h4>
+    {% if course.control_worksheet_results and report.4 %}
+        <form method="post" action="{% url 'worksheet_report_access' course.slug report.4.id %}">{% csrf_token %}
+            {% if report.4.can_check_results %}
+            <button class="btn btn-xs btn-primary" name="can_check_results" value="False"> hide results from student</button>
+            {% else %}
+            <button class="btn btn-xs btn-primary" name="can_check_results" value="True"> allow student to view results</button>
+            {% endif %}
+            </input>
+        </form>
+    {% endif %}
+
     <div><span class="label label-lg label-default">{{ report.3|floatformat:"0" }}</b>%</span> <span class="small"> ({{report.2}}/{{numquestions}})</span></div>
         <table class="table">
             <tbody>
@@ -87,6 +98,7 @@
                 {% for h,i,j,k in report.1 %}
 
                         {% if j %}
+
                         <tr class=" {% cycle 'row1' 'row2' %}">
                             <td> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</td>
                             <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">{{ i.display_text | safe }}</a></td>

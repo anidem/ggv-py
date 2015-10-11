@@ -28,6 +28,12 @@
 </div>
 
 <div class="col-md-12">
+    <div class="row"><div class="col-md-12">
+        <h2>{{ instructors|length}} Instructors</h2>
+        {% for i in instructors %}
+        {{ i.first_name }} {{ i.last_name }},
+        {% endfor %}
+    </div></div>
     <div class="row"><div class="col-md-12"><h2>{{ students|length}} Active Students</h2></div></div>
 
     <div class="row">

@@ -138,8 +138,12 @@ class QuestionSet(AbstractActivity):
             responses = user_report['report']
             correct = user_report['correct']
             grade = user_report['grade']
+            try:
+                ws_status = UserWorksheetStatus.objects.filter(user=i).get(completed_worksheet=self.id)
+            except:
+                ws_status = None
 
-            report.append((i, responses, correct, grade))
+            report.append((i, responses, correct, grade, ws_status))
 
         return report
 
@@ -349,6 +353,9 @@ class QuestionResponse(TimeStampedModel):
 class UserWorksheetStatus(TimeStampedModel):
     """
     Maintains record of completed worksheets by user.
+    Additionally, this object maintains whether a user can view their
+    results. This property is checked if instructor as indicated they
+    want to control/filter access to worksheet results.
     """
     user = models.ForeignKey(User, related_name='completed_worksheets')
     completed_worksheet = models.ForeignKey(QuestionSet)

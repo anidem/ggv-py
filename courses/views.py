@@ -1,19 +1,21 @@
-from operator import attrgetter
-from collections import OrderedDict, namedtuple
-from datetime import datetime
+from collections import OrderedDict
 from pytz import timezone
+from datetime import datetime
+import csv
 
-from django.views.generic import DetailView, UpdateView, CreateView, DeleteView
+
+from django.views.generic import TemplateView, DetailView, UpdateView, CreateView, DeleteView
+from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
-# from django.utils import timezone
 from django.conf import settings
-
+from django.utils import html, text
 
 from braces.views import LoginRequiredMixin
 
 from core.models import Notification, SiteMessage
 from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin
+from core.utils import UnicodeWriter
 from questions.models import QuestionSet
 from slidestacks.models import SlideStack
 from .models import Course
@@ -72,6 +74,16 @@ class CourseView(LoginRequiredMixin, AccessRequiredMixin, PrivelegedAccessMixin,
 
 
 class CourseManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+    """
+        Displays an overview of student status and activity. Student status is
+        either active, deactivated, or not validated (student account is created
+        but student has never logged in.)
+        The most recent activity for each active student is displayed.
+        This view also provides a Course Settings button to allow instructors to modify
+        settings that apply to the course.
+
+        Visibility: sysadmin, staff, and instructor
+    """
     model = Course
     template_name = 'course_manage.html'
     slug_url_kwarg = 'crs_slug'
@@ -96,15 +108,48 @@ class CourseManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
 
 
 class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+    """
+        Displays a detailed or raw dump of user activity from activity log table. Data is displayed
+        sequentially ordered with most recent activity listed first.
+
+        If request contains query parameter export=csv, then response will be a download of csv
+        file containing user activity.
+
+        Visibility: sysadmin, staff, instructor
+    """
+
     model = Course
     template_name = 'course_manage_user.html'
     slug_url_kwarg = 'crs_slug'
     access_object = None
 
+    def render_to_response(self, context, **response_kwargs):
+        if 'csv' in self.request.GET.get('export', ''):
+            response = HttpResponse(content_type='text/csv')
+            daystr = datetime.now().date().strftime('%Y-%m-%d')
+            userstr = context['student_user'].last_name + '-' + context['student_user'].first_name
+            filename = userstr + '-' + daystr + '-activity-report.csv'
+            response['Content-Disposition'] = 'attachment; filename=' + filename
+
+            writer = UnicodeWriter(response)
+            writer.writerow(['Activity Report for ' + context['student_user'].last_name + ', ' + context['student_user'].first_name, ' generated on ' + daystr])
+
+            for i, j in context['activity_log'].items():
+                e = j[0]['activity'].timestamp - j[len(j)-1]['activity'].timestamp
+                e = 'Time on site: %s hours %s minutes' % (e.seconds/3600, (e.seconds % 3600)/60)
+                writer.writerow([i, e])
+                # print i, e
+                for k in j:
+                    a = k['activity']
+                    writer.writerow(['', a.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), a.action, html.strip_tags(a.message), a.message_detail or ' '])
+                    # print '\t', a.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), ':',  a.action, ':',  html.strip_tags(a.message), ':',  a.message_detail
+            return response
+        else:
+            return super(UserManageView, self).render_to_response(context, **response_kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(UserManageView, self).get_context_data(**kwargs)
         user = User.objects.get(pk=self.kwargs['user'])
-
         """
         (activitylog entry, score)
         """
@@ -141,6 +186,13 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
 
 
 class UserProgressView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+    """
+        Displays progress data for a user/student. This data is filtered here to display
+        sequential activity related to a users access and completion of worksheets as well
+        as when they view presentations.
+
+        Visibility: sysadmin, staff, instructor
+    """
     model = Course
     template_name = 'course_user_progress.html'
     slug_url_kwarg = 'crs_slug'
@@ -159,12 +211,9 @@ class UserProgressView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
         """
         activity = OrderedDict()
         for i in user.activitylog.all():
-
-
             activity_info = []
             try:
                 activity_info = [j for j in i.message.split('/ggv/')[1].split('/')]
-
             except:
                 pass
 
@@ -203,6 +252,21 @@ class UserProgressView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
 
         context['student_user'] = user
         context['activity_log'] = activity
+
+        return context
+
+
+class UserActivityReportDownloadView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, TemplateView):
+    """
+        Creates a csv file containing a report based on activity log data for a student/user for a course.
+        Returns a downloadable csv file that can be opened and viewed in spreadsheet applications.
+    """
+    template_name = ''
+
+
+
+    def get_context_data(self, **kwargs):
+        context = super(UserActivityReportDownloadView, self).get_context_data(**kwargs)
 
         return context
 

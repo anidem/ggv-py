@@ -10,7 +10,7 @@
     {% if is_instructor or is_manager %}
         <li><a href="{% url 'manage_course' object.slug %}"><i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-default"> Roster Detail</button></a></li>
         <li><a href="{% url 'user_progress' course.slug student_user.id %}"><i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-default"> Progress Report for {{ student_user.first_name }}</button></a></li>
-        <li><a href="#"><button class="btn btn-xs btn-success">More Details for {{ student_user.first_name }}</button></a></li>
+        <li><a href="#"><div class="label label-xs label-success">Activity Details for {{ student_user.first_name }}</div></a></li>
     {% endif %}
 {% endblock page_crumb %}
 
@@ -25,7 +25,10 @@
 
 {% block content %}
     <div class="">
-        <div class="lead">{{ student_user.first_name }} {{ student_user.last_name }} ({{ student_user }}) </div>
+        <div class="lead">
+            {{ student_user.first_name }} {{ student_user.last_name }} ({{ student_user }})
+            <a class="btn btn-primary btn-xs" href="./?export=csv">Download this report as csv file (open with Excel)</a>
+        </div>
         <!-- <div class="panel-body"></div> -->
         <table class="table">
         <thead>

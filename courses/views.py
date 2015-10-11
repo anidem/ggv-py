@@ -126,7 +126,7 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
     def render_to_response(self, context, **response_kwargs):
         if 'csv' in self.request.GET.get('export', ''):
             response = HttpResponse(content_type='text/csv')
-            daystr = datetime.now().date().strftime('%Y-%m-%d')
+            daystr = datetime.now().strftime('%Y-%m-%d-%I_%M_%p ')
             userstr = context['student_user'].last_name + '-' + context['student_user'].first_name
             filename = userstr + '-' + daystr + '-activity-report.csv'
             response['Content-Disposition'] = 'attachment; filename=' + filename

@@ -132,16 +132,17 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
             response['Content-Disposition'] = 'attachment; filename=' + filename
 
             writer = UnicodeWriter(response)
-            writer.writerow(['Activity Report for ' + context['student_user'].last_name + ', ' + context['student_user'].first_name, ' generated on ' + daystr])
-
+            writer.writerow([('%s'%context['student_user'].id), context['student_user'].first_name + ' ' + context['student_user'].last_name, context['student_user'].email, ' Report date: ' + daystr])
+            writer.writerow([' '])
+            writer.writerow(['Date', 'Total Time on Curriculum', 'Date & Time', 'Activity', 'More Details', 'Results', 'Subject'])
             for i, j in context['activity_log'].items():
                 e = j[0]['activity'].timestamp - j[len(j)-1]['activity'].timestamp
-                e = 'Time on site: %s hours %s minutes' % (e.seconds/3600, (e.seconds % 3600)/60)
+                e = '%s hours %s minutes' % (e.seconds/3600, (e.seconds % 3600)/60)
                 writer.writerow([i, e])
                 # print i, e
                 for k in j:
                     a = k['activity']
-                    writer.writerow(['', a.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), a.action, html.strip_tags(a.message), a.message_detail or ' '])
+                    writer.writerow(['', '', a.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), a.action, html.strip_tags(a.message), '', a.message_detail or ' '])
                     # print '\t', a.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), ':',  a.action, ':',  html.strip_tags(a.message), ':',  a.message_detail
             return response
         else:

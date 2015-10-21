@@ -93,7 +93,7 @@ class GGVAuthForbidden(SocialAuthBaseException):
         super(GGVAuthForbidden, self).__init__(*args, **kwargs)
 
     def __str__(self):
-        m = 'The google account in use in this browser ' + self.gaccount + ' is not allowed on this site. Please see instructions below. '
+        m = self.gaccount
         return m
 
 

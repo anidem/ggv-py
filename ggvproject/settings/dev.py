@@ -5,7 +5,7 @@ from .base import *
 # Stored in environment variable -- not here.
 SECRET_KEY = os.environ['SECRET_KEY']
 
-DEBUG = True
+DEBUG = False
 
 TEMPLATE_DEBUG = True
 
@@ -21,7 +21,7 @@ DATABASES = {
 }
 
 # Allow all host headers
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # INSTALLED_APPS += (
 # 'debug_toolbar', # This breaks the pres player -- conflicts with prototype.

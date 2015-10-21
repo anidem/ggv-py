@@ -2,15 +2,49 @@
 import csv
 import codecs
 import cStringIO
+from datetime import datetime
+
+from openpyxl import Workbook
+from openpyxl.cell import get_column_letter
+from openpyxl.styles import Font
 
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
 
-from social.exceptions import AuthForbidden
+from social.exceptions import SocialAuthBaseException, AuthException, AuthForbidden
 
 from .models import ActivityLog
 
+
+class GGVExcelWriter:
+
+
+    wb = None
+
+    def __init__(self):
+        self.wb = Workbook()
+
+    def write_row(self, ws, data=[]):
+        ws.append(data)
+
+    def save(self, f):
+        self.wb.save(f)
+
+    # def write_row_1(self, ws, u):
+    #     ws.append(['GEDid', 'users name', 'users email', datetime.now()])
+    #     ws.append([])  # Blank row
+    #     for i in self.USER_INFO_CELLS:
+    #         ws[i].font = Font(size=16, name='Arial')
+
+    # def setup_data_cols(self, ws):
+    #     for col_num in xrange(len(self.DATA_COLS)):
+    #         offset = col_num+1
+    #         cell = ws.cell(row=3, column=offset)
+    #         cell.value = self.DATA_COLS[col_num][1]
+    #         cell.font = Font(size=14, name='Arial')
+    #         # set column width
+    #         ws.column_dimensions[self.DATA_COLS[col_num][0]].width = self.DATA_COLS[col_num][2]
 
 class UnicodeWriter:
     """
@@ -50,6 +84,19 @@ def logout_clean(request):
     return redirect('https://accounts.google.com/Logout?&continue=https://www.google.com')
 
 
+class GGVAuthForbidden(SocialAuthBaseException):
+    """Auth process exception."""
+    def __init__(self, backend, response, gaccount, *args, **kwargs):
+        self.backend = backend
+        self.gaccount = gaccount
+        self.response = response
+        super(GGVAuthForbidden, self).__init__(*args, **kwargs)
+
+    def __str__(self):
+        m = 'The google account in use in this browser ' + self.gaccount + ' is not allowed on this site. Please see instructions below. '
+        return m
+
+
 def auth_allowed(response, details, *args, **kwargs):
     """
     Return the ggv user object if authenticated email matches a user email.
@@ -62,6 +109,7 @@ def auth_allowed(response, details, *args, **kwargs):
     except:
         return None
 
+
 def ggv_auth_allowed(backend, details, response, *args, **kwargs):
     """
     If auth_allowed returns a user object, set the user variable for the pipeline.
@@ -70,7 +118,7 @@ def ggv_auth_allowed(backend, details, response, *args, **kwargs):
     """
     ggv_user = auth_allowed(response, details)
     if not ggv_user:
-        raise AuthForbidden(backend)
+        raise GGVAuthForbidden(backend, response, details['username'])
     else:
         return {'user': ggv_user}
 
@@ -87,10 +135,11 @@ def ggv_social_user(backend, uid, user=None, *args, **kwargs):
     if user:
         provider = backend.name
         social = backend.strategy.storage.user.get_social_auth(provider, uid)
-        if not social: # user has not logged in previously (e.g., no social auth obj exists) -- make their account active.
+        if not social:  # user has not logged in previously (e.g., no social auth obj exists) -- make their account active.
             user.is_active = True
     else:
         raise AuthForbidden(backend)
+
     return {'social': social,
             'user': user,
             'is_new': user is None,

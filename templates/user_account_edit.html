@@ -1,14 +1,15 @@
-<!-- user_edit.html -->
+<!-- user_account_edit.html -->
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
 {% block content %}
     <div class="col-md-12">
-        <h3>Modify Preferences for {{ object.first_name }} {{ object.last_name }}</h3>
+        <h3>Modify account info for {{ object.first_name }} {{ object.last_name }}</h3>
         <form method="post" action=".">{% csrf_token %}
             {{ form|crispy }}
             <button class="btn btn-sm btn-success" type="submit">Save</button>
         </form>
+
     </div>
 {% endblock content %}

@@ -154,6 +154,15 @@ class ActivityLogAdmin(admin.ModelAdmin):
     list_filter = ('timestamp', 'user', 'action')
 
 
+class GGVUserInline(admin.TabularInline):
+    """ Will be inserted in admin panel for user (at bottom)"""
+    model = GGVUser
+
+
+class UserAdmin(UserAdmin):
+    inlines = [GGVUserInline, ]
+
+
 class GGVUserAdmin(admin.ModelAdmin):
     list_display = ('user', 'language_pref', 'clean_logout', )
     list_editable = ('user', 'language_pref', 'clean_logout', )

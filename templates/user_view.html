@@ -1,16 +1,17 @@
 <!-- user_view.html -->
 {% extends "base.html" %}
 {% load staticfiles %}
+{% load crispy_forms_tags %}
 
 {% block content %}
-    <div class="col-md-12">{{ object }}</div>
-
-    {% if object_list %}
     <div class="col-md-12">
-        {% for i in object_list %}
-            <p>user {{ i }} </p>
-        {% endfor %}
-    </div>
-    {% endif %}
+        <h3>Account information for {{ object.first_name }} {{ object.last_name }}</h3>
+        <p>Account role(s): {% for i in roles %} {{ i }} {% endfor %}</p>
+        <p>Username: {{ object.username }}</p>
+        {% if ggvuser.program_id %}<p>Program ID: {{ ggvuser.program_id }}</p>{% endif %}
+        <p>Language preference: {{ ggvuser.language_pref }}</p>
+        <p>Secure Google logout: {{ ggvuser.clean_logout }}</p>
+        <p>Is active: {{ ggvuser.is_active }}</p>
 
+    </div>
 {% endblock content %}

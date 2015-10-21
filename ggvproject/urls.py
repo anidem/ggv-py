@@ -11,7 +11,7 @@ from core.views import (
     IndexView, HomeView,
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView, ActivateView,
-    CreateGgvUserView, ListGgvUserView, GgvUserView, UpdateGgvUserView, GgvUserActivationView,
+    CreateGgvUserView, UpdateGgvUserAccountView, GgvUserView, UpdateGgvUserView, GgvUserActivationView,
     SendEmailToInstructorsView, SendEmailMessageView, FaqView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
@@ -80,7 +80,6 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet-completed/(?P<pk>\d+)/$', WorksheetCompletedView.as_view(), name='worksheet_completed'),
 
 
-
     url(r'^ggv/worksheet/(?P<pk>\d+)/$', WorksheetHomeView.as_view(), name='worksheet'),
     url(r'^ggv/worksheet/edit/(?P<pk>\d+)/$', WorksheetUpdateView.as_view(), name='worksheet_update'),
 
@@ -95,7 +94,6 @@ urlpatterns = patterns('',
 
     url(r'^ggv/(?P<crs_slug>[-\w]+)/questions/(?P<asset>.+)/$', QuestionAssetHandlerView.as_view(), name='question_asset'),
 
-
 # GGV components
     url(r'^ggv/(?P<crs_slug>[-\w]+)/note/(?P<pk>\d+)/$', NoteView.as_view(), name='view_note'),
     url(r'^ggv/note/add/$', NoteCreateView.as_view(), name='create_note'),
@@ -106,13 +104,15 @@ urlpatterns = patterns('',
     url(r'^ggv/bookmark/update/(?P<pk>\d+)/$', BookmarkAjaxUpdateView.as_view(), name='update_bookmark'),
     url(r'^ggv/bookmark/delete/(?P<pk>\d+)/$', BookmarkAjaxDeleteView.as_view(), name='delete_bookmark'),
 
-
 # Users
     url(r'^ggv/(?P<crs_slug>[-\w]+)/user/add/$', CreateGgvUserView.as_view(), name='create_user'),
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/user/list/$', ListGgvUserView.as_view(), name='list_users'),
-    url(r'^ggv/user/(?P<pk>[-\d]+)/$', GgvUserView.as_view(), name='view_user'),
-    url(r'^ggv/user/edit/(?P<pk>[-\d]+)/', UpdateGgvUserView.as_view(), name='edit_user'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/user/edit-account/(?P<pk>[-\d]+)/$', UpdateGgvUserAccountView.as_view(), name='edit_user_account'),
     url(r'^ggv/user/deactivate/(?P<pk>[-\d]+)/$', GgvUserActivationView.as_view(), name='update_user_activation'),
+
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/user/(?P<pk>[-\d]+)/$', GgvUserView.as_view(), name='view_user'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/user/edit/(?P<pk>[-\d]+)/$', UpdateGgvUserView.as_view(), name='edit_user'),
+
+    # deprecate => url(r'^ggv/(?P<crs_slug>[-\w]+)/user/list/$', ListGgvUserView.as_view(), name='list_users'),
 
 # Login urls
 

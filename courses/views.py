@@ -3,6 +3,10 @@ from pytz import timezone
 from datetime import datetime
 import csv
 
+from openpyxl import Workbook
+from openpyxl.cell import get_column_letter
+from openpyxl.styles import Font
+from braces.views import LoginRequiredMixin
 
 from django.views.generic import TemplateView, DetailView, UpdateView, CreateView, DeleteView
 from django.http import HttpResponse
@@ -11,11 +15,9 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils import html, text
 
-from braces.views import LoginRequiredMixin
-
 from core.models import Notification, SiteMessage
-from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin
-from core.utils import UnicodeWriter
+from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin, CourseContextMixin
+from core.utils import UnicodeWriter, GGVExcelWriter
 from questions.models import QuestionSet
 from slidestacks.models import SlideStack
 from .models import Course
@@ -132,9 +134,9 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
             response['Content-Disposition'] = 'attachment; filename=' + filename
 
             writer = UnicodeWriter(response)
-            writer.writerow([('%s'%context['student_user'].id), context['student_user'].first_name + ' ' + context['student_user'].last_name, context['student_user'].email, ' Report date: ' + daystr])
+            writer.writerow([('%s' % context['student_user'].id), context['student_user'].first_name + ' ' + context['student_user'].last_name, context['student_user'].email, ' Report date: ' + daystr])
             writer.writerow([' '])
-            writer.writerow(['Date', 'Total Time on Curriculum', 'Date & Time', 'Activity', 'More Details', 'Results', 'Subject'])
+            writer.writerow(['Date', 'Total Time on Curriculum', 'Date & Time', 'Activity', 'More Details', 'Subject'])
             for i, j in context['activity_log'].items():
                 e = j[0]['activity'].timestamp - j[len(j)-1]['activity'].timestamp
                 e = '%s hours %s minutes' % (e.seconds/3600, (e.seconds % 3600)/60)
@@ -142,9 +144,63 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
                 # print i, e
                 for k in j:
                     a = k['activity']
-                    writer.writerow(['', '', a.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), a.action, html.strip_tags(a.message), '', a.message_detail or ' '])
+                    writer.writerow(['', '', a.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), a.action, html.strip_tags(a.message), a.message_detail or ' ', ''])
                     # print '\t', a.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), ':',  a.action, ':',  html.strip_tags(a.message), ':',  a.message_detail
             return response
+
+        elif 'xlsx' in self.request.GET.get('export', ''):
+
+            USER_INFO_CELLS = ['A1', 'B1', 'C1', 'D1']
+
+            DATA_COLS = [
+                ('A1', u'Date', 30),
+                ('B1', u'Total Time on Curriculum', 30),
+                ('C1', u'Date & Time', 30),
+                ('D1', u'Activity', 30),
+                ('E1', u'More Details', 30),
+                ('F1', u'Subject', 30),
+                ('G1', u'Results', 15),
+            ]
+
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            daystr = datetime.now().strftime('%Y-%m-%d-%I_%M_%p ')
+            userstr = context['student_user'].last_name + '-' + context['student_user'].first_name
+            filename = userstr + '-' + daystr + '-activity-report.xlsx'
+            response['Content-Disposition'] = 'attachment; filename=' + filename
+
+            # Openpyxl writer
+            writer = Workbook()
+            ws = writer.get_active_sheet()
+            ws.title = userstr
+
+            # Write user information row and format
+            ws.append([context['student_user'].ggvuser.program_id or '', context['student_user'].first_name + ' ' + context['student_user'].last_name, context['student_user'].email, ' Report date: ' + daystr])
+            ws.append([])  # Blank row
+            for i in USER_INFO_CELLS:
+                ws[i].font = Font(size=18, name='Arial', bold=True)
+
+            # Write data column header and format
+            for col_num in xrange(len(DATA_COLS)):
+                offset = col_num+1
+                cell = ws.cell(row=3, column=offset)
+                cell.value = DATA_COLS[col_num][1]
+                cell.font = Font(size=14, name='Arial')
+                # set column width
+                ws.column_dimensions[get_column_letter(col_num+1)].width = DATA_COLS[col_num][2]
+
+            # Write data rows
+            for i, j in context['activity_log'].items():
+                e = j[0]['activity'].timestamp - j[len(j)-1]['activity'].timestamp
+                e = '%s hours %s minutes' % (e.seconds/3600, (e.seconds % 3600)/60)
+                ws.append([i, e])
+                # print i, e
+                for k in j:
+                    a = k['activity']
+                    ws.append(['', '', a.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), a.action, html.strip_tags(a.message), a.message_detail or ' ', ''])
+
+            writer.save(response)
+            return response
+
         else:
             return super(UserManageView, self).render_to_response(context, **response_kwargs)
 

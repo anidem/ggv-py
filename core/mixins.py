@@ -1,5 +1,5 @@
 # core/mixins.py
-from django.core.exceptions import PermissionDenied
+from django.core.exceptions import PermissionDenied, ImproperlyConfigured
 
 from guardian.shortcuts import get_perms
 
@@ -36,6 +36,45 @@ class AccessRequiredMixin(object):
         return super(AccessRequiredMixin, self).dispatch(*args, **kwargs)
 
 
+class GGVUserViewRestrictedAccessMixin(object):
+    """
+    Intended to limit access to requested content to users that are either staff or
+    have indicated privileges for the requested course.
+    This mixin requires a crs_slug keyword argument in request.
+
+    Requires CBV property required_privileges (as a list) to be set in requesting VIEW
+    required_privileges = ['user', 'instructor', 'manage']
+
+    Expected object type: User
+    """
+
+    def dispatch(self, *args, **kwargs):
+
+        if self.request.user.is_staff:
+            return super(GGVUserViewRestrictedAccessMixin, self).dispatch(*args, **kwargs)
+
+        curr_course = Course.objects.get(slug=self.kwargs['crs_slug'])
+        perms = get_perms(self.request.user, curr_course)
+
+        # Does requestor have access to course (through crs_slug)?
+        if not perms:
+            raise PermissionDenied(self.request, 'access_forbidden.html')
+
+        # Can managers see this content?
+        if 'manage' in self.required_privileges and 'manage' in perms:
+            return super(GGVUserViewRestrictedAccessMixin, self).dispatch(*args, **kwargs)
+
+        # Can instructors see this content?
+        if 'instructor' in self.required_privileges and 'instructor' in perms:
+            return super(GGVUserViewRestrictedAccessMixin, self).dispatch(*args, **kwargs)
+
+        # Can requesting user see this content (e.g., edit their own preferences)?
+        if 'user' in self.required_privileges and self.get_object().id == self.request.user.id:
+            return super(GGVUserViewRestrictedAccessMixin, self).dispatch(*args, **kwargs)
+
+        raise PermissionDenied(self.request, 'access_forbidden.html')
+
+
 class RestrictedAccessZoneMixin(object):
 
     """
@@ -60,7 +99,6 @@ class RestrictedAccessZoneMixin(object):
             return super(RestrictedAccessZoneMixin, self).dispatch(*args, **kwargs)
 
         raise PermissionDenied
-        # return super(RestrictedAccessZoneMixin, self).dispatch(*args, **kwargs)
 
 
 class PrivelegedAccessMixin(object):

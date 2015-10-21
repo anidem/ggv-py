@@ -156,7 +156,7 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
                 ('A1', u'Date', 15),
                 ('B1', u'Total Time on Curriculum', 40),
                 ('C1', u'Date & Time', 40),
-                ('D1', u'Activity', 40),
+                ('D1', u'Activity', 50),
                 ('E1', u'More Details', 40),
                 ('F1', u'Subject', 30),
                 ('G1', u'Results', 15),

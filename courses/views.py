@@ -176,15 +176,15 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
             # Write user information row and format
             ws.append([context['student_user'].ggvuser.program_id or '', context['student_user'].first_name + ' ' + context['student_user'].last_name, context['student_user'].email, ' Report date: ' + daystr])
             ws.append([])  # Blank row
-            for i in USER_INFO_CELLS:
-                ws[i].font = Font(size=18, name='Arial', bold=True)
+            # for i in USER_INFO_CELLS:
+            #     ws[i].font = Font(size=18, name='Arial', bold=True)
 
             # Write data column header and format
             for col_num in xrange(len(DATA_COLS)):
                 offset = col_num+1
                 cell = ws.cell(row=3, column=offset)
                 cell.value = DATA_COLS[col_num][1]
-                cell.font = Font(size=14, name='Arial')
+                # cell.font = Font(size=14, name='Arial')
                 # set column width
                 ws.column_dimensions[get_column_letter(col_num+1)].width = DATA_COLS[col_num][2]
 

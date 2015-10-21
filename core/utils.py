@@ -118,7 +118,7 @@ def ggv_auth_allowed(backend, details, response, *args, **kwargs):
     """
     ggv_user = auth_allowed(response, details)
     if not ggv_user:
-        raise GGVAuthForbidden(backend, response, details['username'])
+        raise GGVAuthForbidden(backend, response, details['email'])
     else:
         return {'user': ggv_user}
 

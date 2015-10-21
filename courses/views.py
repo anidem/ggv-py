@@ -153,11 +153,11 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
             USER_INFO_CELLS = ['A1', 'B1', 'C1', 'D1']
 
             DATA_COLS = [
-                ('A1', u'Date', 30),
-                ('B1', u'Total Time on Curriculum', 30),
-                ('C1', u'Date & Time', 30),
-                ('D1', u'Activity', 30),
-                ('E1', u'More Details', 30),
+                ('A1', u'Date', 15),
+                ('B1', u'Total Time on Curriculum', 40),
+                ('C1', u'Date & Time', 40),
+                ('D1', u'Activity', 40),
+                ('E1', u'More Details', 40),
                 ('F1', u'Subject', 30),
                 ('G1', u'Results', 15),
             ]
@@ -176,15 +176,15 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
             # Write user information row and format
             ws.append([context['student_user'].ggvuser.program_id or '', context['student_user'].first_name + ' ' + context['student_user'].last_name, context['student_user'].email, ' Report date: ' + daystr])
             ws.append([])  # Blank row
-            # for i in USER_INFO_CELLS:
-            #     ws[i].font = Font(size=18, name='Arial', bold=True)
+            for i in USER_INFO_CELLS:
+                ws[i].font = Font(size=18, name='Arial', bold=True)
 
             # Write data column header and format
             for col_num in xrange(len(DATA_COLS)):
                 offset = col_num+1
                 cell = ws.cell(row=3, column=offset)
                 cell.value = DATA_COLS[col_num][1]
-                # cell.font = Font(size=14, name='Arial')
+                cell.font = Font(size=14, name='Arial')
                 # set column width
                 ws.column_dimensions[get_column_letter(col_num+1)].width = DATA_COLS[col_num][2]
 

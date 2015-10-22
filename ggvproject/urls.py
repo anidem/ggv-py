@@ -1,16 +1,13 @@
 from django.conf.urls import patterns, include, url
 from django.contrib import admin
 
-from django.conf import settings
-from django.conf.urls.static import static
-
 from filebrowser.sites import site
 
 from utils.wsutil import csvutil, csvutilslides, worksheetvalidator
 from core.views import (
     IndexView, HomeView,
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
-    AccessForbiddenView, ActivateView,
+    AccessForbiddenView,
     CreateGgvUserView, UpdateGgvUserAccountView, GgvUserView, UpdateGgvUserView, GgvUserActivationView,
     SendEmailToInstructorsView, SendEmailMessageView, FaqView
     )
@@ -32,7 +29,6 @@ from questions.views import (
 from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView, slide_view
 
 urlpatterns = patterns('',
-
     url('', include('social.apps.django_app.urls', namespace='social')),
     url('', include('django.contrib.auth.urls', namespace='auth')),
     # url('', include('social.apps.django_app.urls', namespace='disconnect_individual')),
@@ -114,7 +110,7 @@ urlpatterns = patterns('',
 
     # deprecate => url(r'^ggv/(?P<crs_slug>[-\w]+)/user/list/$', ListGgvUserView.as_view(), name='list_users'),
 
-# Login urls
+    # Login urls
 
     url(r'^login/$', include('social.apps.django_app.urls')),
     url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
@@ -129,7 +125,7 @@ urlpatterns = patterns('',
 
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^ggvadmin/filebrowser/', include(site.urls)),
-    url(r'^grappelli/', include('grappelli.urls')), # grappelli URLS
+    url(r'^grappelli/', include('grappelli.urls')),  # grappelli URLS
     url(r'^ggvadmin',  include(admin.site.urls)),  # admin site
 
 
@@ -140,5 +136,3 @@ urlpatterns = patterns('',
 
 # if settings.DEBUG:
 #     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-
-

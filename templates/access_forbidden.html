@@ -29,25 +29,46 @@
     <!-- Begin page content -->
     <div class="container-fluid">
         <div class="row center-block" style="padding-top: 50px">
-            <div class="col-md-8 col-md-offset-2 text-center">
-            <p>
-            {% for i in messages %}
-                <h2><span class="label label-lg label-danger">{{ i }}</span> <br><br>is not registered with GGV Interactive</h2>
-            {% endfor %}
-            </p>
-            <p class="lead">
-                Sorry, you do not have required permissions to view this site. The current Google account used in this browser does not have access to GGV Interactive. Please log out of the current Google account then login with the credentials that were given to you by your Program.
+            <div class="col-md-6 col-md-offset-3">
+                <p>
+                {% for i in messages %}
+                    <h2><span class="label label-lg label-danger">{{ i }}</span> <br><br>is not registered with GGV Interactive (no está registrado con GGV Interactivo)</h2>
+                {% endfor %}
+                </p>
+            </div>
+            <div class="col-md-6">
+                <p class="lead">
+                    Sorry, you do not have the required permissions to view this site. The current Google email account used in this browser does not have access to GGV Interactive. Please log out of the current Google email account then login with the credentials that were given to you by your Program.
 
-                <h2 class="text-center">Click the following button to logout of the current Google account<p></p>
-                    <p class="text-center"><a href="https://accounts.google.com/Logout?&continue=https://www.google.com" class="btn btn-warning btn-lg text-center">Logout of Google Services</a></p>
-                    <strong>Remember to navigate back to http://www.ggvinteractive.com and login with correct Google account. Thanks!</strong>
-                </h2>
-            </p>
+                    <h2 class="text-center">Click the following button to logout of the current Google account:
+                        <p></p>
+                        <p class="text-center"><a href="https://accounts.google.com/Logout?&continue=https://www.google.com" class="btn btn-warning btn-lg text-center">Logout of Google Services</a></p>
+                    </h2>
+                    <p class="lead">
+                        Remember to navigate back to http://www.ggvinteractive.com and login with correct Google email account. Thanks!
+                    </p>
+                </p>
+            </div>
+
+            <div class="col-md-6">
+                <p class="lead">
+                    Lo sentimos, usted no tiene los permisos requeridos para ver este sitio. La cuenta corriente del correo electrónico de Google utilizado en este navegador no tiene acceso a GGV Interactivo. Por favor, cierre la sesión de la cuenta de correo electrónico actual de Google a continuación, inicie la sesión con las credenciales que fueron dadas a usted por su programa.
+
+                    <h2 class="text-center">Haga clic en el siguiente botón para cerrar la sesión en la cuenta de correo electrónico corriente de Google:
+                        <p></p>
+                        <p><a href="https://accounts.google.com/Logout?&continue=https://www.google.com" class="btn btn-warning btn-lg text-center">Salir de los Servicios de Google</a></p>
+
+
+                    </h2>
+                    <p class="lead">
+                        Recuerde que debe navegar de vuelta a http://www.ggvinteractive.com y iniciar con la correcta cuenta de correo electrónico de Google. ¡Gracias!
+                    </p>
+
+                </p>
             </div>
         </div>
     </div>
     <!-- End page content -->
-
 
 </body>
 </html>

@@ -134,6 +134,7 @@ class CourseContextMixin(object):
             context['course'] = Course.objects.get(
                 slug=self.kwargs['crs_slug'])
         except Exception as e:
-            print e
+            pass
+            # print e
 
         return context

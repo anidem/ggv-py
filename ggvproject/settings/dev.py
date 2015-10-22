@@ -5,7 +5,7 @@ from .base import *
 # Stored in environment variable -- not here.
 SECRET_KEY = os.environ['SECRET_KEY']
 
-DEBUG = True
+DEBUG = False
 
 TEMPLATE_DEBUG = True
 

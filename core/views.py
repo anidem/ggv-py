@@ -142,7 +142,6 @@ class UpdateGgvUserAccountView(LoginRequiredMixin, GGVUserViewRestrictedAccessMi
         # Change the user's course?.
         if not self.course.id == course.id:
 
-            print 'Changing the course to', course
             for i in curr_permissions:
                 assign_perm(i, self.object, course)
                 remove_perm(i, self.object, self.course)

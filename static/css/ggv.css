@@ -131,7 +131,9 @@ form ul {
 
 }
 
-.section_heading{ background-color:  #F8F8F8; }
+.section_heading{ background-color: #fff ; padding-top: 50px; }
+
+/*#F8F8F8*/
 
 .media-heading { color: black;}
 

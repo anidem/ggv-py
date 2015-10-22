@@ -50,6 +50,7 @@ class Lesson(models.Model):
 
 class Section(models.Model):
     title = models.CharField(max_length=256)
+    subtitle = models.TextField(blank=True)
     display_order = models.IntegerField(default=0)
     lesson = models.ForeignKey(Lesson, related_name='sections')
 

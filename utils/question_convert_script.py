@@ -32,7 +32,7 @@ for q in questions:
   for r in q.responses.all():
     r.delete()
 
-# convert all questions in worksheet from text to multiple choice
+# convert all questions in worksheet (or in question list) from text to multiple choice
 for q in questions:
   newq = convert_text_to_option(source_pk=q.id)
   print newq.get_question_type(), newq.question_set

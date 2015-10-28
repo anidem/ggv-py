@@ -4,7 +4,7 @@ questions app -- notes
 
 For questionsetview, i need to try using formview instead of detailview. will need to figure out how to initialize the question set from request (url) parameter. -- This may be the proper way to customize a form for worksheets.
 
-for study: 
+for study:
 http://ccbv.co.uk/projects/Django/1.6/django.views.generic.edit/FormMixin/
 http://lgiordani.github.io/blog/2014/02/14/digging-up-django-class-based-views-3/
 
@@ -32,7 +32,7 @@ csvcut -c "SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","optio
 
 # THIS outputs the question list as json object
 
-csvcut -c "QUESTION DISPLAY ORDER","QUESTION","SELECT TYPE"  | csvjson -i 4 
+csvcut -c "QUESTION DISPLAY ORDER","QUESTION","SELECT TYPE"  | csvjson -i 4
 
 
 
@@ -61,14 +61,6 @@ csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","IMAGE","SELECT TYPE","CORRE
 
 csvcut -c "WID","QUESTION DISPLAY ORDER","QUESTION","IMAGE","SELECT TYPE","CORRECT ANSWER","option 1","option 2","option 3","option 4" /Users/rmedina/Desktop/ggvworksheet-conversion/worksheet-downloads/worksheets-social/csvdir/SOCIAL-ENG-QUESTIONS-INPUT | csvjson -i 4
 
-login duration - measurement
-measure by section
-measure by activity
-
-* force sequence
-* everyone can put note 
-* everyone can flag
-* students can see results after completion
 
 march 1st
 

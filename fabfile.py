@@ -48,6 +48,7 @@ def tester(args='default arguments'):
     print args
 
 
+# This reads all csv files in a directory at dirpath and generates them as json -- for building questions from spreadsheet.
 def readfiles(dirpath):
     files = []
     for fstr in os.listdir(dirpath):

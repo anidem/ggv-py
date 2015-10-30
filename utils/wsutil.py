@@ -218,8 +218,8 @@ def import_json_questions(json_dir=None):
                     worksheet_obj = QuestionSet.objects.get(pk=idmap[WID])
                 except:
                     # This need to be configured for the desination lesson and section.
-                    # lesson = Lesson.objects.get(pk=1)
-                    # section = Section.objects.get(pk=131)
+                    lesson = Lesson.objects.get(pk=1)
+                    section = Section.objects.get(pk=131)
                     worksheet_obj =  QuestionSet(lesson=lesson, section=section,title=WID, instructions='Add instructions here.', display_order=0, activity_type='worksheet')
                     worksheet_obj.save()
                     print 'Worksheet does not exist: Worksheet ADDED: ', worksheet_obj

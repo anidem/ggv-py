@@ -23,6 +23,7 @@ from sendfile import sendfile
 from core.models import ActivityLog, Notification
 from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import PresetBookmarkForm
+from core.emails import SendWorksheetNotificationEmailToInstructors
 from notes.forms import UserNoteForm
 from lessons.models import Lesson, Section
 from courses.models import Course
@@ -153,22 +154,13 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
                             message=msg, message_detail=msg_detail)
                 logged.save()
 
-                """ Create notification for instructor(s) """
+                """ Create notification for instructor(s) that the user has completed the worksheet """
                 for i in course.instructor_list():
                     notification = Notification(user_to_notify=i, context='worksheet', event=self.worksheet.notify_text(crs_slug=course.slug, user=self.request.user))
                     notification.save()
 
-                    """ send email to instructor(s) """
-                msg = '%s has completed worksheet: %s at %s' % (self.request.user, self.worksheet, self.worksheet.get_absolute_url(crs_slug=course.slug))
-
-                recipients = []
-                for i in course.instructor_list():
-                    if i.ggvuser.receive_notify_email:
-                        recipients.append(i.email)
-
-                if recipients:
-                    send_mail('Message from GGV2', msg, 'ggvsys@gmail.com', recipients, fail_silently=True)
-
+                """ Send email to instructor(s) that the user has completed the worksheet. """
+                SendWorksheetNotificationEmailToInstructors(self.request, course, self.worksheet)
 
                 return HttpResponseRedirect(reverse('worksheet_completed', args=(self.kwargs['crs_slug'], user_ws_status.id)))
 

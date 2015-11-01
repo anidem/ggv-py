@@ -19,7 +19,7 @@ LABELS = {
     'username': 'Username must be a valid email address managed by Google. Correspondence with user is made to this email account.',
     'is_active': 'Is activated? Uncheck this to deactivate user. User will not be able to access ggv.',
     'clean_logout': 'Google account security. Keep this CHECKED to safely log out of your Google account when signing out of GGV (recommended). UNCHECK this to stay logged in to your Google account after signing out of GGV.',
-    'receive_notifications': 'Choose to receive notifications on student activity.',
+    'receive_notifications': 'Choose to receive notifications on student activity. (E.g., worksheet completions, bookmarking, etc.)',
     'receive_email_messages': 'Choose to receive email messages from the GGV system.'
     }
 
@@ -110,16 +110,28 @@ class GgvUserStudentSettingsForm(ModelForm):
         fields = ['first_name', 'last_name', 'language', 'clean_logout']
 
 
-class GgvEmailInstructorsForm(Form):
-    message = forms.CharField(widget=forms.Textarea)
+class GgvEmailQuestionToInstructorsForm(Form):
+    message = forms.CharField(
+        widget=forms.Textarea,
+        label='Use this text area to type your question for your instructor.',
+        help_text='After pressing Send Message, your instructor will receive your message in their email.'
+        )
 
 
-class GgvEmailForm(Form):
-    recipient_name = forms.CharField(required=True)
-    recipient_email = forms.EmailField(required=True)
-    senders_name = forms.CharField(required=True)
-    subject = forms.CharField(required=True)
-    message = forms.CharField(widget=forms.Textarea)
+class GgvEmailWorksheetErrorReportToStaffForm(Form):
+    message = forms.CharField(
+        widget=forms.Textarea,
+        label='Use this text area to report a problem you encountered while using a worksheet. Examples include technical problems as well as problems with the question.',
+        help_text='After pressing Send Message, GGV Staff will receive your message in their emails.'
+        )
+
+
+class GgvEmailStaffForm(Form):
+    message = forms.CharField(
+        widget=forms.Textarea,
+        label='Use this text area to report a problem you encountered while using the GGV website. We gladly accept your error reports, comments, and feedback!',
+        help_text='After pressing Send Message, GGV Staff will receive your message in their emails.'
+        )
 
 
 class BookmarkForm(ModelForm):

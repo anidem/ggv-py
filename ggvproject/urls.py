@@ -4,12 +4,14 @@ from django.contrib import admin
 from filebrowser.sites import site
 
 from utils.wsutil import csvutil, csvutilslides, worksheetvalidator
+
+from core.emails import SendEmailWorksheetQuestionToInstructorsView, SendEmailWorksheetErrorToStaffView, SendEmailToStaff
 from core.views import (
     IndexView, HomeView,
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView,
     CreateGgvUserView, UpdateGgvUserAccountView, GgvUserView, UpdateGgvUserView, GgvUserActivationView,
-    SendEmailToInstructorsView, SendEmailMessageView, FaqView
+    FaqView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import (
@@ -33,8 +35,6 @@ urlpatterns = patterns('',
     url('', include('django.contrib.auth.urls', namespace='auth')),
     # url('', include('social.apps.django_app.urls', namespace='disconnect_individual')),
     url(r'^ggv/test/$', TestDocView.as_view(), name='util'),
-    url(r'^ggv/emailus/$', SendEmailMessageView.as_view(), name='send_email'),
-
 
 # Utility - NON Production use only!
     url(r'^ggv/utility/$', csvutil, name='util'),
@@ -54,8 +54,6 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/add/message$', CourseMessageAddView.as_view(), name='add_course_msg'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/edit/message/(?P<pk>\d+)/$', CourseMessageUpdateView.as_view(), name='edit_course_msg'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/remove/message/(?P<pk>\d+)/$', CourseMessageDeleteView.as_view(), name='delete_course_msg'),
-
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/email-instructors/$', SendEmailToInstructorsView.as_view(), name='email_instructors'),
 
 # GGV lesson activities
     # slides are independent files but protected here.
@@ -120,6 +118,12 @@ urlpatterns = patterns('',
     # url(r'^activate/(?P<backend>[^/]+)/$', ActivateView.as_view(), name='activate'),
 
     url(r'^access-forbidden/$', AccessForbiddenView.as_view(), name='access_forbidden'),
+
+# Email handling
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/email-question/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', SendEmailWorksheetQuestionToInstructorsView.as_view(), name='email_instructor_question'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/email-error/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', SendEmailWorksheetErrorToStaffView.as_view(), name='email_staff_ws_error'),
+    url(r'^ggv/email-us/$', SendEmailToStaff.as_view(), name='email_staff'),
+
 
 # Administration pages
 

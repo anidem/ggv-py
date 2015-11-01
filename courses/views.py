@@ -3,17 +3,18 @@ from pytz import timezone
 from datetime import datetime
 import csv
 
-from openpyxl import Workbook
-from openpyxl.cell import get_column_letter
-from openpyxl.styles import Font
-from braces.views import LoginRequiredMixin
-
 from django.views.generic import TemplateView, DetailView, UpdateView, CreateView, DeleteView
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils import html, text
+
+from openpyxl import Workbook
+from openpyxl.cell import get_column_letter
+from openpyxl.styles import Font
+from braces.views import LoginRequiredMixin
+# from guardian.shortcuts import has_perm
 
 from core.models import Notification, SiteMessage
 from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin, CourseContextMixin
@@ -102,6 +103,7 @@ class CourseManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
             except:
                 pass  # student[i] has no activity on record. Move on, nothing to see here.
 
+        context['is_manager'] = self.request.user.has_perm('manage', course)
         context['instructors'] = course.instructor_list()
         context['students'] = students
         context['deactivated'] = course.deactivated_list()

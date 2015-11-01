@@ -25,9 +25,33 @@
                 {{ bookmarkform|crispy }}
             </form>
 
+            {% if messages %}
+                <div class="alert alert-danger alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    {% for message in messages %} <p>{{ message }}</p>{% endfor %}
+                </div>
+            {% endif %}
+
+            <div class="col-md-12 text-right">
+                <p class="">
+                    <span class="smaller">Need help with this question?</span>
+                    <a class="btn btn-warning btn-xs" href="{% url 'email_instructor_question' course.slug worksheet.id question_position %}?q={{request.path}}">
+                         <i class="fa fa-envelope"></i> Email Instructor
+                    </a>
+
+                </p>
+                <p>
+                    <span class="smaller">Found an error or having technical problems?</span>
+                    <a class="btn btn-danger btn-xs" href="{% url 'email_staff_ws_error' course.slug worksheet.id question_position %}?q={{request.path}}">
+                        <i class="fa fa-envelope"></i> Email GGV Staff
+                    </a>
+
+                </p>
+            </div>
         <!-- LEFT panel: Question text and input for response -->
             <div class="col-md-4">
             <!-- Question header -->
+
                 <div class="lead">
                     {{ question_position }}/{{ question_list|length }}.
                     <i class="fa fa-flag flagger {% if bookmark %}bkset{% endif %}" data-target="{{ bookmark.id }}" data-form="#flag_form"></i>

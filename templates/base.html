@@ -91,11 +91,17 @@
                     <li>
                         {% if course %}
                         <a class="static nav-text" href="{% url 'edit_user' course.slug request.user.id %}">
-                            <button class="btn btn-xs btn-default"><i class="fa fa-gear"></i></button>
+                            <button class="btn btn-xs btn-default"><i class="fa fa-user"></i> <i class="fa fa-gear"></i></button>
                         </a>
                         {% endif %}
                     </li>
                     {% endif %}
+
+                    <li>
+                        <a class="static nav-text" href="{% url 'email_staff' %}">
+                            <button class="btn btn-xs btn-default"><i class="fa fa-envelope"></i> GGV</button>
+                        </a>
+                    </li>
 
                     <!-- login/logout button -->
                     <li>

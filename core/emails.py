@@ -184,22 +184,20 @@ class SendEmailToStaff(LoginRequiredMixin, FormView):
 
         html_message += "<h3>{0}</h3>".format(form.cleaned_data.get('message'))
 
-        html_message += '<p>User Info:</p><p>{email}</p><p>{courses}</p>'.format(email=user_sender.email, courses=course_titles)
+        html_message += '<p>User Info:</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)
 
-        send_mail(
-            subject='Message from a GGV user',
-            message=message,
-            from_email='ggvsys@gmail.com',
-            recipient_list=['ggvsys@gmail.com', 'drchingon7@gmail.com', 'gedgonevirtual@gmail.com'],
-        )
+        email = EmailMultiAlternatives(
+            subject=self.request.user.get_full_name() + ' has a message about GGV',
+            body=html_message,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[e.email for e in User.objects.filter(is_staff=True).filter(is_active=True)],
+            headers={'Reply-To': user_sender.email},  # this can be updated after upgrading to django 8+
+            )
 
-        return super(SendEmailToInstructorsView, self).form_valid(form)
+        email.attach_alternative(html_message, "text/html")
+        email.send(fail_silently=True)
 
-    def get_context_data(self, **kwargs):
-        context = super(SendEmailToInstructorsView, self).get_context_data(**kwargs)
-
-        return context
-
+        return super(SendEmailToStaff, self).form_valid(form)
 
 
 # BACKEND EMAIL PROCEDURES. FUNCTIONS THAT ARE INITIATED AUTOMATICALLY BY THE SYSTEM. #

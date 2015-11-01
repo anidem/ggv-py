@@ -98,7 +98,7 @@
                     {% endif %}
 
                     <li>
-                        <a class="static nav-text" href="{% url 'email_staff' %}">
+                        <a class="static nav-text" href="{% url 'email_staff' %}?q={{request.path}}">
                             <button class="btn btn-xs btn-default"><i class="fa fa-envelope"></i> GGV</button>
                         </a>
                     </li>

@@ -35,6 +35,7 @@ urlpatterns = patterns('',
     url('', include('django.contrib.auth.urls', namespace='auth')),
     # url('', include('social.apps.django_app.urls', namespace='disconnect_individual')),
     url(r'^ggv/test/$', TestDocView.as_view(), name='util'),
+    url(r'^ggv/email-us/$', SendEmailToStaff.as_view(), name='email_staff'),
 
 # Utility - NON Production use only!
     url(r'^ggv/utility/$', csvutil, name='util'),
@@ -122,7 +123,7 @@ urlpatterns = patterns('',
 # Email handling
     url(r'^ggv/(?P<crs_slug>[-\w]+)/email-question/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', SendEmailWorksheetQuestionToInstructorsView.as_view(), name='email_instructor_question'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/email-error/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', SendEmailWorksheetErrorToStaffView.as_view(), name='email_staff_ws_error'),
-    url(r'^ggv/email-us/$', SendEmailToStaff.as_view(), name='email_staff'),
+
 
 
 # Administration pages

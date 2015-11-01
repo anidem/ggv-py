@@ -5,7 +5,7 @@ from filebrowser.sites import site
 
 from utils.wsutil import csvutil, csvutilslides, worksheetvalidator
 
-from core.emails import SendEmailWorksheetQuestionToInstructorsView, SendEmailWorksheetErrorToStaffView, SendEmailToStaff
+from core.emails import SendEmailWorksheetQuestionToInstructorsView, SendEmailWorksheetErrorToStaffView, SendEmailToStaff, SendEmailToInstructor
 from core.views import (
     IndexView, HomeView,
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
@@ -123,6 +123,7 @@ urlpatterns = patterns('',
 # Email handling
     url(r'^ggv/(?P<crs_slug>[-\w]+)/email-question/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', SendEmailWorksheetQuestionToInstructorsView.as_view(), name='email_instructor_question'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/email-error/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', SendEmailWorksheetErrorToStaffView.as_view(), name='email_staff_ws_error'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/email-instructor/$', SendEmailToInstructor.as_view(), name='email_instructor'),
 
 
 

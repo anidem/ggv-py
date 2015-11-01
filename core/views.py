@@ -200,7 +200,7 @@ class UpdateGgvUserView(LoginRequiredMixin, GGVUserViewRestrictedAccessMixin, Co
         self.ggvuser.clean_logout = form.cleaned_data['clean_logout']
         try:
             self.ggvuser.receive_notify_email = form.cleaned_data['receive_notify_email']
-            self.ggvuser.language_pref = form.cleaned_data['receive_email_messages']
+            self.ggvuser.receive_email_messages = form.cleaned_data['receive_email_messages']
         except:
             pass
 

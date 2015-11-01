@@ -17,6 +17,7 @@
     </li>
 {% endblock page_crumb %}
 
+
 {% block content %}
     <div class="col-md-12">
         <div class="row " style="padding-top: 10px">
@@ -25,12 +26,7 @@
                 {{ bookmarkform|crispy }}
             </form>
 
-            {% if messages %}
-                <div class="alert alert-danger alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                    {% for message in messages %} <p>{{ message }}</p>{% endfor %}
-                </div>
-            {% endif %}
+
 
             <div class="col-md-12 text-right">
                 <p class="">

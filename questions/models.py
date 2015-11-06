@@ -54,10 +54,18 @@ class QuestionSet(AbstractActivity):
         questions = self.get_ordered_question_list()
         index = 1
         for i in questions:
-            if not i.user_response_object(user):
+            if not i.user_response_object(user) and i.response_required:
                 return {'index': index, 'question': i}
             index = index + 1
         return None
+
+    def get_prev_question(self, current):
+        try:
+            questions = self.get_ordered_question_list()
+            return questions[current-1]
+
+        except:
+            return None
 
     def get_user_responses(self, user, questions, course):
         report = []
@@ -123,9 +131,11 @@ class QuestionSet(AbstractActivity):
     def delete_user_responses(self, user, course):
         questions = self.get_ordered_question_list()
         for i in questions:
-            i.user_response_object(user).delete()
-
-        status = user.completed_worksheets.filter(completed_worksheet=ws).get() or None
+            try:
+                i.user_response_object(user).delete()
+            except:
+                pass
+        status = user.completed_worksheets.filter(completed_worksheet=self).get() or None
         if status:
             status.delete()
 

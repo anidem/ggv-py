@@ -124,7 +124,7 @@ class SendEmailWorksheetQuestionToInstructorsView(LoginRequiredMixin, CourseCont
                 quest=self.question,
                 sender=user_sender)
 
-            question_url = self.request.META['HTTP_ORIGIN'] + reverse('question_response', args=[self.course.slug, self.worksheet.id, self.question])
+            question_url = 'http://' + request.get_host() + reverse('question_response', args=[self.course.slug, self.worksheet.id, self.question])
 
             html_message += "<p>Question: <a href=\"{q_url}\">{q_url}</a></p>".format(q_url=question_url)
 
@@ -188,7 +188,7 @@ class SendEmailWorksheetErrorToStaffView(LoginRequiredMixin, CourseContextMixin,
             quest=self.question,
             sender=self.request.user.get_full_name())
 
-        question_url = self.request.META['HTTP_ORIGIN'] + reverse('question_response', args=[self.course.slug, self.worksheet.id, self.question])
+        question_url = 'http://' + request.get_host() + reverse('question_response', args=[self.course.slug, self.worksheet.id, self.question])
 
         html_message += "<p>View question: <a href=\"{q_url}\">{q_url}</a></p>".format(q_url=question_url)
 
@@ -278,7 +278,7 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
         if i.ggvuser.receive_notify_email:
             instructor_list.append(i.email)
 
-    worksheet_results_url = request.META['HTTP_ORIGIN'] + reverse('worksheet_user_report', args=[course.slug, worksheet.id, request.user.id])
+    worksheet_results_url = 'http://' + request.get_host() + reverse('worksheet_user_report', args=[course.slug, worksheet.id, request.user.id])
 
     html_message = "<p><b>Replies to this message will be sent to: {usr_email}</b></p>".format(usr_email=request.user.email)
 

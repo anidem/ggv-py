@@ -175,7 +175,7 @@ class UpdateGgvUserView(LoginRequiredMixin, GGVUserViewRestrictedAccessMixin, Co
     template_name = "user_edit.html"
     form_class = GgvUserStudentSettingsForm
     success_url = reverse_lazy('ggvhome')
-    required_privileges = ['manage']
+    required_privileges = ['access', 'instructor', 'manage']
 
     def dispatch(self, request, *args, **kwargs):
         if get_objects_for_user(self.get_object(), ['instructor', 'manage'], Course, any_perm=True):

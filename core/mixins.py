@@ -43,7 +43,7 @@ class GGVUserViewRestrictedAccessMixin(object):
     This mixin requires a crs_slug keyword argument in request.
 
     Requires CBV property required_privileges (as a list) to be set in requesting VIEW
-    required_privileges = ['user', 'instructor', 'manage']
+    required_privileges = ['access', 'instructor', 'manage']
 
     Expected object type: User
     """
@@ -69,7 +69,7 @@ class GGVUserViewRestrictedAccessMixin(object):
             return super(GGVUserViewRestrictedAccessMixin, self).dispatch(*args, **kwargs)
 
         # Can requesting user see this content (e.g., edit their own preferences)?
-        if 'user' in self.required_privileges and self.get_object().id == self.request.user.id:
+        if 'access' in self.required_privileges and self.get_object().id == self.request.user.id:
             return super(GGVUserViewRestrictedAccessMixin, self).dispatch(*args, **kwargs)
 
         raise PermissionDenied(self.request, 'access_forbidden.html')

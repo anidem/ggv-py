@@ -88,42 +88,64 @@
                         {% endif %}
 
 
-                    <li>
-                        {% if course %}
-                        <a class="static nav-text" href="{% url 'edit_user' course.slug request.user.id %}">
-                            <button class="btn btn-xs btn-default"><i class="fa fa-user"></i> <i class="fa fa-gear"></i></button>
-                        </a>
-                        {% endif %}
-                    </li>
+                        <!-- email / help dropdown menu -->
+                        <li class="dropdown">
+                            {% if course %}
+
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                <i class="fa fa-question-circle text-warning"></i> Help <i class="fa fa-caret-down"></i>
+                            </a>
+                            <ul class="dropdown-menu section_drop scrollable-menu">
+                                <li>
+                                    <a class="static nav-text" href="{% url 'email_instructor' course.slug %}?q={{request.path}}">
+                                    <i class="fa fa-envelope text-warning"></i> Instructor
+                                    </a>
+                                </li>
+                                <li role="separator" class="divider"></li>
+                                <li>
+                                    <a class="static nav-text" href="{% url 'email_staff' %}?q={{request.path}}">
+                                    <i class="fa fa-envelope text-danger"></i> GGV Technical Staff
+                                    </a>
+                                </li>
+
+                            </ul>
+                            {% endif %}
+                        </li> <!-- end email / help dropdown menu -->
+
                     {% endif %}
 
-                    <li>
-                        {% if course %}
-                        <a class="static nav-text" href="{% url 'email_instructor' course.slug %}?q={{request.path}}">
-                            <button class="btn btn-xs btn-default"><i class="fa fa-envelope"></i> instructor</button>
-                        </a>
-                        {% endif %}
-                    </li>
 
-                    <li>
-                        <a class="static nav-text" href="{% url 'email_staff' %}?q={{request.path}}">
-                            <button class="btn btn-xs btn-default"><i class="fa fa-envelope"></i> GGV</button>
-                        </a>
-                    </li>
 
-                    <!-- login/logout button -->
-                    <li>
-                    {% if user.is_authenticated %}
-                        {% if user.ggvuser.clean_logout %}
-                            <a href="{% url 'logout_clean'  %}">Logout {{ user }}</a>
+                    <!-- login/logout / settings dropdown menu -->
+                    <li class="dropdown">
+                        {% if user.is_authenticated %}
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-user text-primary"></i> {{user.email}} <i class="fa fa-caret-down"></i>
+                        </a>
+
+                        <ul class="dropdown-menu section_drop scrollable-menu">
+                            {% if course %}
+                            <li>
+                                <a class="static nav-text" href="{% url 'edit_user' course.slug user.id %}">
+                                    <i class="fa fa-gear"></i> Preferences
+                                </a>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            {% endif %}
+                            <li>
+                                {% if user.ggvuser.clean_logout %}
+                                    <a href="{% url 'logout_clean'  %}"> <i class="fa fa-sign-out"></i> Logout</a>
+                                {% else %}
+                                    <a href="{% url 'logout' %}"> <i class="fa fa-sign-out"></i> Logout</a>
+                                {% endif %}
+                            </li>
+
+                        </ul>
                         {% else %}
-                            <a href="{% url 'logout' %}">Logout {{ user }}</a>
+                        <a href="/login/google-oauth2/">Signin</a>
                         {% endif %}
-                    {% else %}
-                      <a href="/login/google-oauth2/">Signin</a>
-                    {% endif %}
                     </li>
-                    <!-- End login/logout button -->
+                    <!-- end login/logout / settings dropdown menu -->
                 </ul>
 
             </div><!--/.nav-collapse -->

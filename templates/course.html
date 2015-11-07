@@ -31,6 +31,7 @@
 {% block page_header %}{% endblock page_header %}
 
 {% block content %}
+    {% if is_manager or is_instructor%}
     <div class="row">
         <div class="col-md-8 col-md-offset-2 text-center">
             {% if not site_message %}
@@ -42,6 +43,8 @@
             {% endif %}
         </div>
     </div>
+    {% endif %}
+
     {% if site_message and site_message.show %}
     <div class="row">
         <div class="col-md-8 col-md-offset-2 text-center well">

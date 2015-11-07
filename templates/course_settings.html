@@ -10,16 +10,18 @@
 
 {% block content %}
 <div class="col-md-12">
-    <h2 class="lead">Settings for {{ object }}. <span class="small">(applies to all students in the course)</span></h2>
+    <h1>Worksheet Settings for {{ object }}. <span class="small">(applies to all students in the course)</span></h1>
 
-    <h2>Worksheet Report Settings</h2>
-    <p>The following setting controls whether or not students are allowed to view the results/score after completing a worksheet. </p>
-    <p class="page-lead"> Example Scenario: You would like to review/monitor student responses to worksheets before allowing them to make corrections.</p>
-    <p>1. CHECK the checkbox below to ON.</p>
+    <p class="lead">The following setting controls whether or not students are allowed to view the results/score after completing a worksheet. </p>
+
+    <h3>Example Scenario: You would like to review/monitor student responses to worksheets before allowing them to make corrections.</h3>
+    <p>1. <b>CHECK</b> the checkbox below.</p>
     <p>2. When students complete a quiz, you will receive an email notification (check your email preferences <a target="_blank"href="{% url 'edit_user' object.slug request.user.id %}"> here</a>).</p>
-    <p>3. After reviewing the student's responses/scores, you check the button next to their name in the worksheet report to allow them to view their results/scores and possibly make corrections.</p>
+    <p>3. After reviewing the student's results/scores, you can check the button next to their name in the worksheet report to <b>ALLOW</b> them to view their results/scores and possibly make corrections.</p>
 
-    <p class="page-lead">If you do not wish to restrict students from viewing their results/scores immediately after completing a worksheet, please UNCHECK the setting below.</p>
+    <h3><b>Alternativey,</b> if you do not wish to restrict students from viewing their results/scores immediately after completing a worksheet, then <b>UNCHECK</b> the setting below.</h3>
+
+    <hr>
 
     <form method="post" action=".">{% csrf_token %}
         {{ form|crispy }}

@@ -124,7 +124,7 @@ class SendEmailWorksheetQuestionToInstructorsView(LoginRequiredMixin, CourseCont
                 quest=self.question,
                 sender=user_sender)
 
-            question_url = 'http://' + request.get_host() + reverse('question_response', args=[self.course.slug, self.worksheet.id, self.question])
+            question_url = 'http://' + self.request.get_host() + reverse('question_response', args=[self.course.slug, self.worksheet.id, self.question])
 
             html_message += "<p>Question: <a href=\"{q_url}\">{q_url}</a></p>".format(q_url=question_url)
 
@@ -188,7 +188,7 @@ class SendEmailWorksheetErrorToStaffView(LoginRequiredMixin, CourseContextMixin,
             quest=self.question,
             sender=self.request.user.get_full_name())
 
-        question_url = 'http://' + request.get_host() + reverse('question_response', args=[self.course.slug, self.worksheet.id, self.question])
+        question_url = 'http://' + self.request.get_host() + reverse('question_response', args=[self.course.slug, self.worksheet.id, self.question])
 
         html_message += "<p>View question: <a href=\"{q_url}\">{q_url}</a></p>".format(q_url=question_url)
 

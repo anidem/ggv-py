@@ -27,7 +27,7 @@ from .forms import CourseUpdateForm
 tz = timezone(settings.TIME_ZONE)
 
 
-class CourseUpdateView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, UpdateView):
+class CourseUpdateView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, UpdateView):
     model = Course
     template_name = 'course_settings.html'
     slug_url_kwarg = 'crs_slug'
@@ -35,7 +35,7 @@ class CourseUpdateView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
     access_object = None
 
 
-class CourseView(LoginRequiredMixin, AccessRequiredMixin, PrivelegedAccessMixin, DetailView):
+class CourseView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, PrivelegedAccessMixin, DetailView):
     model = Course
     template_name = 'course.html'
     slug_url_kwarg = 'crs_slug'
@@ -76,7 +76,7 @@ class CourseView(LoginRequiredMixin, AccessRequiredMixin, PrivelegedAccessMixin,
         return context
 
 
-class CourseManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
     """
         Displays an overview of student status and activity. Student status is
         either active, deactivated, or not validated (student account is created
@@ -111,7 +111,7 @@ class CourseManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
         return context
 
 
-class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
     """
         Displays a detailed or raw dump of user activity from activity log table. Data is displayed
         sequentially ordered with most recent activity listed first.
@@ -244,7 +244,7 @@ class UserManageView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZo
         return context
 
 
-class UserProgressView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
     """
         Displays progress data for a user/student. This data is filtered here to display
         sequential activity related to a users access and completion of worksheets as well
@@ -315,7 +315,7 @@ class UserProgressView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccess
         return context
 
 
-class CourseMessageAddView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, CreateView):
+class CourseMessageAddView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, CreateView):
     model = SiteMessage
     template_name = 'ggv_create_page_msg.html'
     course = None
@@ -337,7 +337,7 @@ class CourseMessageAddView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAc
         return self.initial
 
 
-class CourseMessageUpdateView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, UpdateView):
+class CourseMessageUpdateView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, UpdateView):
     model = SiteMessage
     template_name = 'ggv_update_page_msg.html'
     course = None
@@ -355,7 +355,7 @@ class CourseMessageUpdateView(LoginRequiredMixin, AccessRequiredMixin, Restricte
         return reverse('course', kwargs={'crs_slug': self.course.slug})
 
 
-class CourseMessageDeleteView(LoginRequiredMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, DeleteView):
+class CourseMessageDeleteView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, DeleteView):
     model = SiteMessage
     template_name = 'ggv_delete_page_msg.html'
     course = None

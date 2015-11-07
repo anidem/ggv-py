@@ -13,6 +13,13 @@
 {% endblock page_crumb %}
 
 {% block local_nav %}
+    {% if is_manager %}
+    <li>
+        <a class="static nav-text" href="{% url 'create_user' course.slug %}">
+            <i class="fa fa-user-plus text-primary"></i>
+        </a>
+    </li>
+    {% endif %}
 {% endblock local_nav %}
 
 {% block page_header %}

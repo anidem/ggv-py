@@ -128,11 +128,32 @@ class CourseContextMixin(object):
         """
         Intended to set context variable -- course -- based on request parameter crs_slug.
         Used in views to determine the course context for a request.
+
+        Also sets context variable -- roles -- to provide the current role of the user in the course.
+        This accesses the object permissions.
         """
         context = super(CourseContextMixin, self).get_context_data(**kwargs)
         try:
             context['course'] = Course.objects.get(
                 slug=self.kwargs['crs_slug'])
+            roles = get_perms(self.request.user, context['course'])
+
+            if self.request.user.is_staff:
+                context['role'] = 'GGV Staff'
+                context['role_icon'] = 'fa fa-lock'
+
+            elif 'manage' in roles:
+                context['role'] = 'Course Manager'
+                context['role_icon'] = 'fa fa-user-secret'
+
+            elif 'instructor' in roles:
+                context['role'] = 'Instructor'
+                context['role_icon'] = 'fa fa-graduation-cap'
+
+            elif 'access' in roles:
+                context['role'] = 'Student'
+                context['role_icon'] = 'fa fa-user'
+
         except Exception as e:
             pass
             # print e

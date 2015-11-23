@@ -11,6 +11,7 @@ from courses.models import Course, CourseLesson
 from lessons.models import Lesson, Section
 from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option, UserWorksheetStatus
 from slidestacks.models import SlideStack
+from supportmedia.models import ExternalMedia
 from notes.models import UserNote
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
@@ -177,6 +178,7 @@ admin.site.register(QuestionSet, QuestionSetAdmin, Media=ExtraMedia)
 admin.site.register(OptionQuestion, OptionQuestionAdmin, Media=ExtraMedia)
 admin.site.register(TextQuestion, TextQuestionAdmin, Media=ExtraMedia)
 admin.site.register(QuestionResponse)
+admin.site.register(ExternalMedia)
 admin.site.register(UserWorksheetStatus)
 admin.site.register(ActivityLog, ActivityLogAdmin)
 admin.site.register(GGVUser, GGVUserAdmin)

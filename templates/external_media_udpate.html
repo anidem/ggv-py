@@ -1,0 +1,13 @@
+<!-- external_media_udpate.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block content %}
+<div class="col-md-12">
+    <form action="." method="post">{% csrf_token %}
+        {{ form|crispy }}
+        <input type="submit" value="Update">
+    </form>
+</div>
+{% endblock content %}

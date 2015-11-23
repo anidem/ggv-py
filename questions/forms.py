@@ -4,7 +4,7 @@ from django.conf import settings
 from django import forms
 from django.forms import ModelForm
 from django.forms.models import inlineformset_factory
-from .models import QuestionResponse, OptionQuestion, TextQuestion, Option, QuestionSet
+from .models import QuestionResponse, OptionQuestion, TextQuestion, Option, QuestionSet, UserWorksheetStatus
 
 from filebrowser.widgets import FileInput, ClearableFileInput
 
@@ -55,11 +55,19 @@ class QuestionResponseForm(ModelForm):
         except:
             pass
 
+        correct = question.check_answer(submitted_form)
+
         if previous_response:
             previous_response.response = submitted_form.response
+            previous_response.iscorrect = correct
             previous_response.save()
         else:
+            submitted_form.iscorrect = correct
             submitted_form.save()
+
+# trigger a grade recalculation = write to worksheet score sheet for user.
+        # report = question.question_set.get_user_responses(user)  # .update_score(user)
+
 
         return submitted_form
 

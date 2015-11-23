@@ -1,6 +1,7 @@
 from collections import OrderedDict
 from pytz import timezone
 from datetime import datetime
+import time
 import csv
 
 from django.views.generic import TemplateView, DetailView, UpdateView, CreateView, DeleteView
@@ -19,7 +20,7 @@ from braces.views import LoginRequiredMixin
 from core.models import Notification, SiteMessage
 from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin, CourseContextMixin
 from core.utils import UnicodeWriter, GGVExcelWriter
-from questions.models import QuestionSet
+from questions.models import QuestionSet, UserWorksheetStatus
 from slidestacks.models import SlideStack
 from .models import Course
 from .forms import CourseUpdateForm
@@ -258,16 +259,17 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
     access_object = None
 
     def get(self, request, *args, **kwargs):
-        # course = Course.objects.get(slug=self.kwargs['crs_slug'])
         return super(UserProgressView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(UserProgressView, self).get_context_data(**kwargs)
         user = User.objects.get(pk=self.kwargs['user'])
+        course = self.get_object()
 
         """
         (activitylog entry, score)
         """
+        a=time.time()
         activity = OrderedDict()
         for i in user.activitylog.all():
             activity_info = []
@@ -280,22 +282,23 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
             if i.action == 'completed-worksheet':
                 try:
                     crs, ws_id = activity_info[0], activity_info[2]
-                    course = Course.objects.get(slug=crs)
 
                     worksheet = QuestionSet.objects.get(pk=ws_id)
                     report_url = reverse('worksheet_user_report', args=[course.slug, worksheet.id, user.id])
-                    report = worksheet.get_user_responses(user, worksheet.get_ordered_question_list(), course)
-                    score = report['grade']
-
+                    # report = None
+                    # score = None
+                    # report = worksheet.get_user_responses(user, worksheet.get_ordered_question_list(), course)
+                    # score = report['grade']
+                    score = UserWorksheetStatus.objects.filter(user=user).get(completed_worksheet=worksheet)
+                    print 'Score==>>', score.score
                     activity_dict = {'activity': i, 'access_time': None, 'completed_time': i.timestamp, 'report_url': report_url, 'course': course,  'content': worksheet, 'score': score}
-                except:
-                    pass  # malformed log message. proceed silently...
+                except Exception as e:
+                    print e  # malformed log message. proceed silently...
 
             elif i.action == 'access-presentation':
                 try:
                     crs, stack_id = activity_info[0], activity_info[2]
                     stack = SlideStack.objects.get(pk=stack_id)
-                    course = Course.objects.get(slug=crs)
                     activity_dict = {'activity': i, 'access_time': i.timestamp, 'completed_time': None, 'report_url': i.message, 'course': self.get_object(), 'content': stack, 'score': None}
                 except:
                     pass
@@ -309,6 +312,8 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
                     activity[tkey] = []
                     activity[tkey].append(activity_dict)
 
+        b=time.time()
+        print 'ELAPSED: ', b-a
         context['student_user'] = user
         context['activity_log'] = activity
 

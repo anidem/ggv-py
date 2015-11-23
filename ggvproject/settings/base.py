@@ -51,6 +51,7 @@ INSTALLED_APPS = (
     'lessons',
     'slidestacks',
     'questions',
+    'supportmedia',
     'notes',
     'core',
 

@@ -151,7 +151,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         if not self.next_question:
             if not self.completion_status:
                 user_ws_status = UserWorksheetStatus(
-                    user=self.request.user, completed_worksheet=self.worksheet)
+                    user=self.request.user, completed_worksheet=self.worksheet, score=self.worksheet.get_user_score(self.request.user))
                 user_ws_status.save()
                 self.completion_status = True
 
@@ -214,7 +214,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             try:
                 response = i.user_response_object(
                     self.request.user).json_response()
-                if i.check_answer(response):
+                if i.check_answer_json(response):
                     tally[i] = 'success'
                 else:
                     tally[i] = 'danger'

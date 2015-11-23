@@ -29,6 +29,7 @@ from questions.views import (
     LessonKeyView, WorksheetKeyView, WorksheetCompletedView, RestrictResultsUpdateView, TestDocView
     )
 from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView, slide_view
+from supportmedia.views import ExternalMediaView, ExternalMediaCreateView, ExternalMediaUpdateView
 
 urlpatterns = patterns('',
     url('', include('social.apps.django_app.urls', namespace='social')),
@@ -74,7 +75,6 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/status-update/(?P<pk>\d+)/$', RestrictResultsUpdateView.as_view(), name='worksheet_report_access'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet-completed/(?P<pk>\d+)/$', WorksheetCompletedView.as_view(), name='worksheet_completed'),
 
-
     url(r'^ggv/worksheet/(?P<pk>\d+)/$', WorksheetHomeView.as_view(), name='worksheet'),
     url(r'^ggv/worksheet/edit/(?P<pk>\d+)/$', WorksheetUpdateView.as_view(), name='worksheet_update'),
 
@@ -88,6 +88,10 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/questions/optionquestions/edit/(?P<pk>\d+)/$', OptionQuestionUpdateView.as_view(), name='option_question_update'),
 
     url(r'^ggv/(?P<crs_slug>[-\w]+)/questions/(?P<asset>.+)/$', QuestionAssetHandlerView.as_view(), name='question_asset'),
+
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/support-media/external-media/(?P<pk>\d+)/$', ExternalMediaView.as_view(), name='external_media_view'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/support-media/external-media/add$', ExternalMediaCreateView.as_view(), name='external_media_add'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/support-media/external-media/edit(?P<pk>\d+)/$', ExternalMediaUpdateView.as_view(), name='external_media_update'),
 
 # GGV components
     url(r'^ggv/(?P<crs_slug>[-\w]+)/note/(?P<pk>\d+)/$', NoteView.as_view(), name='view_note'),

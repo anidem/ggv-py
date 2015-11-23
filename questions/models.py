@@ -67,18 +67,51 @@ class QuestionSet(AbstractActivity):
         except:
             return None
 
-    def get_user_responses(self, user, questions, course):
+    def get_user_response_objects(self, user):
+        """
+        Returns a list of QuestionResponse objects related to this worksheet and user.
+        This list may contain None values where a response to question has not been submitted.
+        """
+        responses = []
+        for i in self.get_ordered_question_list():
+            resp = i.user_response_object(user)
+            responses.append(resp)
+
+        return responses
+
+    def get_user_score(self, user):
+        """
+        Calculates and returns a score based on responses to this worksheet by user.
+        Score is computed as a percentage (0.00 - 100.00)
+        Uses get_user_response_objects()
+        """
+        responses = self.get_user_response_objects(user)
+        num_correct = 0
+        for i in responses:
+            if i and i.iscorrect:
+                num_correct = num_correct + 1
+
+        return num_correct/100.0
+
+    def get_user_responses(self, user, questions=None, course=None):
         report = []
-        bookmarks = Bookmark.objects.filter(
-            creator=user).filter(course_context=course)
+        bookmarks = None
+        bk = None
+
+        if course:
+            bookmarks = Bookmark.objects.filter(creator=user).filter(course_context=course)
+
+        if not questions:
+            questions = self.get_ordered_question_list()
+
         numcorrect = 0
         for i in questions:
             question_type = ContentType.objects.get_for_model(i)
-            bookmark = bookmarks.filter(
-                content_type=question_type.id).filter(object_id=i.id)
-            bk = None
-            if bookmark:
-                bk = bookmark[0]
+            if bookmarks:
+                bookmark = bookmarks.filter(content_type=question_type.id).filter(object_id=i.id)
+                if bookmark:
+                    bk = bookmark[0]
+
             response = None
             respobj = i.user_response_object(user)
             if respobj:
@@ -86,17 +119,17 @@ class QuestionSet(AbstractActivity):
                 resp = json.loads(respobj.response)
 
                 if question_type.name == 'option question':
-                    if i.input_select == 'checkbox': # dealing with a list of responses/answers
+                    if i.input_select == 'checkbox':  # dealing with a list of responses/answers
                         try:
-                            r = {int(x) for x in resp} # create response list as a set
-                            a = {int(x) for x in i.correct_answer()} # retrieve the answer list as a set
+                            r = {int(x) for x in resp}  # create response list as a set
+                            a = {int(x) for x in i.correct_answer()}  # retrieve the answer list as a set
 
                             score = True
-                            if a - r: # find diff between sets. if not empty (diffs exist) score is false
+                            if a - r:  # find diff between sets. if not empty (diffs exist) score is false
                                 score = False
 
                                 # Build a string out of the response list
-                            respstr = [str('(%s)')%Option.objects.get(pk=x).display_text for x in list(r)]
+                            respstr = [str('(%s)') % Option.objects.get(pk=x).display_text for x in list(r)]
                             resp = ', '.join(respstr)
                         except:
                             score = False
@@ -202,7 +235,6 @@ class AbstractQuestion(models.Model):
 # class NoResponseQuestion(AbstractQuestion):
 
 
-
 class TextQuestion(AbstractQuestion):
 
     """
@@ -236,8 +268,13 @@ class TextQuestion(AbstractQuestion):
     def correct_answer(self):
         return self.correct
 
-    def check_answer(self, json_str):
+    def check_answer_json(self, json_str):
         return json_str == self.correct
+
+    def check_answer(self, question_response):
+        if self.correct:  # Check if question has a correct answer specified.
+            return question_response.json_response == self.correct
+        return True  # If correct answer not specified return True
 
     def user_response_object(self, user):
         """
@@ -284,12 +321,21 @@ class OptionQuestion(AbstractQuestion):
         return [(i.id, i.display_text) for i in self.options.all()]
 
     def correct_answer(self):
-        if self.input_select == 'checkbox':
-            return [i.id for i in self.options.filter(correct=True)]
-        else:
-            return [i.id for i in self.options.filter(correct=True)]
+        return [i.id for i in self.options.filter(correct=True)]
 
-    def check_answer(self, json_str):
+    def check_answer_json(self, json_str):
+        """
+        a = self.correct_answer()
+        if self.input_select == 'checkbox':
+            # will need to do something like this:
+            b = repsonse_list # (json_str)
+            c = set(a).intersection(b)
+            if len(c) == len(a):
+                return True
+            return False
+        else:
+            return json_str in a
+        """
         # Need to process option responses as lists. json used to coerce
         # string representation to list.
         try:
@@ -297,13 +343,22 @@ class OptionQuestion(AbstractQuestion):
         except:
             print 'error doing json compare check'
 
+    def check_answer(self, question_response):
+        correct_ans = self.correct_answer()
+
+        if correct_ans:   # Check if question has a correct answer specified.
+            if self.input_select == 'checkbox':
+                return question_response.response in correct_ans
+
+            return int(json.loads(question_response.response)) in correct_ans
+
+        return True  # If correct answer not specified return True
+
     def user_response_object(self, user):
         """
         Returns a QuestionResponse object related to user.
         """
         try:
-            # optresponse = self.responses.get(user=user).response.replace('"','')
-            # return Option.objects.get(pk=int(optresponse)).display_text
             return self.responses.get(user=user)
 
         except:
@@ -344,6 +399,7 @@ class QuestionResponse(TimeStampedModel):
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
+    iscorrect = models.BooleanField(blank=True, default=True)
 
     def json_response(self):
         try:
@@ -366,8 +422,10 @@ class UserWorksheetStatus(TimeStampedModel):
     Additionally, this object maintains whether a user can view their
     results. This property is checked if instructor as indicated they
     want to control/filter access to worksheet results.
+    A completed worksheet also indicates a score (for fast retrieval in reporting)
     """
     user = models.ForeignKey(User, related_name='completed_worksheets')
     completed_worksheet = models.ForeignKey(QuestionSet)
     can_check_results = models.BooleanField(default=False)
+    score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
 

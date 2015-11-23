@@ -91,7 +91,7 @@ class QuestionSet(AbstractActivity):
             if i and i.iscorrect:
                 num_correct = num_correct + 1
 
-        return num_correct/100.0
+        return (float(num_correct)/len(responses))*100
 
     def get_user_responses(self, user, questions=None, course=None):
         report = []
@@ -428,4 +428,10 @@ class UserWorksheetStatus(TimeStampedModel):
     completed_worksheet = models.ForeignKey(QuestionSet)
     can_check_results = models.BooleanField(default=False)
     score = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
+
+    def update_score(self):
+        self.score = self.completed_worksheet.get_user_score(self.user)
+        self.save()
+
+
 

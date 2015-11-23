@@ -269,7 +269,7 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         """
         (activitylog entry, score)
         """
-        a=time.time()
+        # a=time.time()
         activity = OrderedDict()
         for i in user.activitylog.all():
             activity_info = []
@@ -285,15 +285,10 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
 
                     worksheet = QuestionSet.objects.get(pk=ws_id)
                     report_url = reverse('worksheet_user_report', args=[course.slug, worksheet.id, user.id])
-                    # report = None
-                    # score = None
-                    # report = worksheet.get_user_responses(user, worksheet.get_ordered_question_list(), course)
-                    # score = report['grade']
-                    score = UserWorksheetStatus.objects.filter(user=user).get(completed_worksheet=worksheet)
-                    print 'Score==>>', score.score
-                    activity_dict = {'activity': i, 'access_time': None, 'completed_time': i.timestamp, 'report_url': report_url, 'course': course,  'content': worksheet, 'score': score}
-                except Exception as e:
-                    print e  # malformed log message. proceed silently...
+                    status = UserWorksheetStatus.objects.filter(user__id=user.id).get(completed_worksheet=worksheet)
+                    activity_dict = {'activity': i, 'access_time': None, 'completed_time': i.timestamp, 'report_url': report_url, 'course': course,  'content': worksheet, 'score': status.score}
+                except:
+                    pass  # malformed log message. or inconsistent log entry proceed silently
 
             elif i.action == 'access-presentation':
                 try:
@@ -312,8 +307,8 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
                     activity[tkey] = []
                     activity[tkey].append(activity_dict)
 
-        b=time.time()
-        print 'ELAPSED: ', b-a
+        # b = time.time()
+        # print 'ELAPSED: ', b-a
         context['student_user'] = user
         context['activity_log'] = activity
 

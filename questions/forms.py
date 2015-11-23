@@ -65,9 +65,13 @@ class QuestionResponseForm(ModelForm):
             submitted_form.iscorrect = correct
             submitted_form.save()
 
-# trigger a grade recalculation = write to worksheet score sheet for user.
-        # report = question.question_set.get_user_responses(user)  # .update_score(user)
-
+        #  Update worksheet status score field if user has completed.
+        try:
+            worksheet_status = UserWorksheetStatus.objects.filter(user__id=user.id).get(completed_worksheet=question.question_set)
+            worksheet_status.update_score()
+        except Exception as e:  # worksheet status does not exist for the current user (they have not completed it).
+            print e
+            pass
 
         return submitted_form
 

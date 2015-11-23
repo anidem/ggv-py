@@ -286,7 +286,7 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
                     worksheet = QuestionSet.objects.get(pk=ws_id)
                     report_url = reverse('worksheet_user_report', args=[course.slug, worksheet.id, user.id])
                     status = UserWorksheetStatus.objects.filter(user__id=user.id).get(completed_worksheet=worksheet)
-                    activity_dict = {'activity': i, 'access_time': None, 'completed_time': i.timestamp, 'report_url': report_url, 'course': course,  'content': worksheet, 'score': status.score}
+                    activity_dict = {'activity': i, 'access_time': None, 'completed_time': i.timestamp, 'report_url': report_url, 'course': course,  'content': worksheet, 'score': None}
                 except:
                     pass  # malformed log message. or inconsistent log entry proceed silently
 

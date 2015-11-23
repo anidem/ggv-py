@@ -2,14 +2,15 @@ from django.contrib.auth.models import User
 from .models import *
 
 
-# resps = QuestionResponse.objects.filter(user__id=36)
-
-# for r in resps:
-#     try:
-#         r.iscorrect = r.content_object.check_answer(r)
-#         r.save()
-#     except TypeError:
-#         print 'ERROR -- could not update correct answer for: ==> ', r.id
+# for i in clist:
+#     print i
+#     resps = QuestionResponse.objects.filter(user__email=i)
+#     for r in resps:
+#         try:
+#             r.iscorrect = r.content_object.check_answer(r)
+#             r.save()
+#         except TypeError:
+#             print 'ERROR -- could not update correct answer for: ==> ', r.id
 
 def populate_iscorrect_field():
     """

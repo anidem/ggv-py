@@ -91,7 +91,7 @@ urlpatterns = patterns('',
 
     url(r'^ggv/(?P<crs_slug>[-\w]+)/support-media/external-media/(?P<pk>\d+)/$', ExternalMediaView.as_view(), name='external_media_view'),
     # url(r'^ggv/(?P<crs_slug>[-\w]+)/support-media/external-media/add$', ExternalMediaCreateView.as_view(), name='external_media_add'),
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/support-media/external-media/edit(?P<pk>\d+)/$', ExternalMediaUpdateView.as_view(), name='external_media_update'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/support-media/external-media/edit/(?P<pk>\d+)/$', ExternalMediaUpdateView.as_view(), name='external_media_update'),
 
 # GGV components
     url(r'^ggv/(?P<crs_slug>[-\w]+)/note/(?P<pk>\d+)/$', NoteView.as_view(), name='view_note'),

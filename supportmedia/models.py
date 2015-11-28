@@ -22,4 +22,4 @@ class ExternalMedia(AbstractActivity):
         return self.media_link
 
     def get_absolute_url(self, **kwargs):
-        return reverse('external_media_view', args=[kwargs['crs_slug'], self.id])
+        return reverse('external_media_view', args=[self.id])

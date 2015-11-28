@@ -64,7 +64,7 @@
 
                 {% if is_staff %}
                     <a href="{% url 'section_update' course.slug i.act.section.id %}" class="btn btn-xs btn-success">edit</a>
-
+                    <a href="{% url 'external_media_add' course.slug %}?l={{object.id}}&s={{i.act.section.id}}" class="btn btn-xs btn-success">add video</a>
                 {% endif %}
 
             </h2>
@@ -87,8 +87,8 @@
                             {% if is_staff %}<a href="{% url 'worksheet_update' i.act.id %}" class="btn btn-xs btn-success">edit</a>{% endif %}
                             {% if instructor %}<a href="{% url 'worksheet_key' course.slug i.act.id %}"><i class="fa fa-key fa-2"></i></a>{% endif %}
                         {% else %}
-                            <i class="fa fa-book fa-2x icon-external_media"></i></i>
-                            {{ forloop.counter }}.<a class="btn btn-lg media-heading" href="{% url 'external_media_view' course.slug i.act.id %}">{{ i.act.title }}</a>
+                            <i class="fa fa-youtube fa-2x icon-external_media"></i></i>
+                            {{ forloop.counter }}.<a class="btn btn-lg media-heading" href="{% url 'external_media_view_crs' course.slug i.act.id %}">{{ i.act.title }}</a>
                             {% if is_staff %}<a class="btn btn-xs btn-success" href="{% url 'external_media_update' course.slug i.act.id %}">edit</a>{% endif %}
                         {% endif %}
                       </h4>

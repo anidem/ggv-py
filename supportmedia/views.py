@@ -7,6 +7,7 @@ from core.mixins import AccessRequiredMixin, CourseContextMixin
 from core.models import ActivityLog
 
 from .models import ExternalMedia
+from .forms import UpdateExternalMediaForm
 
 
 class ExternalMediaView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
@@ -29,7 +30,7 @@ class ExternalMediaCreateView(LoginRequiredMixin, AccessRequiredMixin, CreateVie
     section = None
     access_object = 'activity'
     template_name = 'external_media_create.html'
-    fields = ['title', 'instructions', 'lesson', 'section', 'display_order', 'media_link', 'media_embed']
+    form_class = UpdateExternalMediaForm
 
     def get(self, request, *args, **kwargs):
         self.lesson = request.GET.get('l') or None
@@ -48,5 +49,5 @@ class ExternalMediaUpdateView(LoginRequiredMixin, AccessRequiredMixin, UpdateVie
     lesson = None
     access_object = 'activity'
     template_name = 'external_media_update.html'
-    fields = ['title', 'instructions', 'lesson', 'section', 'display_order', 'media_link', 'media_embed']
+    form_class = UpdateExternalMediaForm
 

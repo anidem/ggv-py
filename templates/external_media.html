@@ -6,7 +6,7 @@
 {% block content %}
 <div class="col-md-12">
     <h2>{{ object.title }}</h2>
-    <div>{{ object.instructions }}</div>
+    <div>{{ object.instructions | safe }}</div>
 </div>
 <div class="col-md-12">
     {% if object.media_link %}<a href="{{ object.media_link }}">{{ object.media_link }}</a>{% endif %}

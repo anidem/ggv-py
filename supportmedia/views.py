@@ -50,6 +50,3 @@ class ExternalMediaUpdateView(LoginRequiredMixin, AccessRequiredMixin, UpdateVie
     template_name = 'external_media_update.html'
     fields = ['title', 'instructions', 'lesson', 'section', 'display_order', 'media_link', 'media_embed']
 
-    def get_success_url(self):
-        course = self.kwargs['crs_slug']
-        return reverse('external_media_view', args=[course, self.get_object().id])

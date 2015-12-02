@@ -5,9 +5,9 @@
 from questions.models import *
 from utils.wsutil import convert_text_to_option
 
-def convert_questions_to_option():
+def convert_questions_to_option(ws_id=None):
     # UNCOMMENT AND MODIFTY THIS ACCORDINGLY
-    ws = QuestionSet.objects.get(pk=129)
+    ws = QuestionSet.objects.get(pk=ws_id)
 
     # clear all status objects for the worksheet
     for status in UserWorksheetStatus.objects.filter(completed_worksheet=ws):

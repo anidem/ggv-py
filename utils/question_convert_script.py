@@ -5,36 +5,37 @@
 from questions.models import *
 from utils.wsutil import convert_text_to_option
 
-# UNCOMMENT AND MODIFTY THIS ACCORDINGLY
-ws = QuestionSet.objects.get(pk=129)
+def convert_questions_to_option():
+    # UNCOMMENT AND MODIFTY THIS ACCORDINGLY
+    ws = QuestionSet.objects.get(pk=129)
 
-# clear all status objects for the worksheet
-for status in UserWorksheetStatus.objects.filter(completed_worksheet=ws):
-  status.delete()
+    # clear all status objects for the worksheet
+    for status in UserWorksheetStatus.objects.filter(completed_worksheet=ws):
+      status.delete()
 
-# Either retrieve all questions from a worksheet:
-questions = ws.get_ordered_question_list()
+    # Either retrieve all questions from a worksheet:
+    questions = ws.get_ordered_question_list()
 
-# or specify pks for each question to convert:
-# pks = []
-# questions = []
-# for i in pks:
-#     questions.append(TextQuestion.objects.get(pk=i))
+    # or specify pks for each question to convert:
+    # pks = []
+    # questions = []
+    # for i in pks:
+    #     questions.append(TextQuestion.objects.get(pk=i))
 
 
-# clear all bookmarks for each question
-for q in questions:
-  for b in q.bookmarks.all():
-    b.delete()
+    # clear all bookmarks for each question
+    for q in questions:
+      for b in q.bookmarks.all():
+        b.delete()
 
-# clear all responses for each question
-for q in questions:
-  for r in q.responses.all():
-    r.delete()
+    # clear all responses for each question
+    for q in questions:
+      for r in q.responses.all():
+        r.delete()
 
-# convert all questions in worksheet (or in question list) from text to multiple choice
-for q in questions:
-  newq = convert_text_to_option(source_pk=q.id)
-  print newq.get_question_type(), newq.question_set
+    # convert all questions in worksheet (or in question list) from text to multiple choice
+    for q in questions:
+      newq = convert_text_to_option(source_pk=q.id)
+      print newq.get_question_type(), newq.question_set
 
 

@@ -6,20 +6,20 @@ from questions.models import *
 from utils.wsutil import convert_text_to_option
 
 # UNCOMMENT AND MODIFTY THIS ACCORDINGLY
-# ws = QuestionSet.objects.get(pk=)
+ws = QuestionSet.objects.get(pk=129)
 
 # clear all status objects for the worksheet
-# for status in UserWorksheetStatus.objects.filter(completed_worksheet=ws):
-#   status.delete()
+for status in UserWorksheetStatus.objects.filter(completed_worksheet=ws):
+  status.delete()
 
 # Either retrieve all questions from a worksheet:
-## questions = ws.get_ordered_question_list()
+questions = ws.get_ordered_question_list()
 
 # or specify pks for each question to convert:
-pks = []
-questions = []
-for i in pks:
-    questions.append(TextQuestion.objects.get(pk=i))
+# pks = []
+# questions = []
+# for i in pks:
+#     questions.append(TextQuestion.objects.get(pk=i))
 
 
 # clear all bookmarks for each question

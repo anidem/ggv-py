@@ -15,7 +15,7 @@ from .models import *
 def populate_iscorrect_field():
     """
     Script used to calculate and update the correct/incorrect status of response. The result is added
-    to the iscorrect field which as added to the response objects in november 2015.
+    to the iscorrect field which was added to the response objects in november 2015.
     """
     resps = QuestionResponse.objects.all().order_by('user')
     u = resps[0].user.email

@@ -23,15 +23,14 @@ class AccessRequiredMixin(object):
         if not course_access:
             # early exit -- user accessing non assigned course
             raise PermissionDenied
+
         if self.access_object == 'lesson':
             course_access = self.get_object().id in self.request.session[
                 'user_lessons']
+
         elif self.access_object == 'activity':
             course_access = self.lesson.id in self.request.session[
                 'user_lessons']
-
-        if not course_access:
-            raise PermissionDenied
 
         return super(AccessRequiredMixin, self).dispatch(*args, **kwargs)
 

@@ -10,17 +10,16 @@ from .models import ExternalMedia
 from .forms import UpdateExternalMediaForm
 
 
-class ExternalMediaView(LoginRequiredMixin, AccessRequiredMixin, DetailView):
+class ExternalMediaView(LoginRequiredMixin, DetailView):
+    """ This method is defined to handle get absolute class methods..."""
     model = ExternalMedia
-    lesson = None
-    access_object = 'activity'
+    access_object = None
     template_name = 'external_media.html'
 
 
 class ExternalMediaCourseView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, DetailView):
     model = ExternalMedia
-    lesson = None
-    access_object = 'activity'
+    access_object = None
     template_name = 'external_media.html'
 
 

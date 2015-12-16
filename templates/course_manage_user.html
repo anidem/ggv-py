@@ -62,8 +62,8 @@
                 <td>{{ j.action }}</td>
                 <td>
                     {% if j.action == 'completed-worksheet' %}
-                        <a href="{{ j.report_url }}"> {{j.worksheet }}</a>
-                        {% comment %} {{ i.message|safe }} {% endcomment %}
+                        {% comment %}<a href="{{ j.report_url }}"> {{j.worksheet }}</a>{% endcomment %}
+                         {{ j.message|safe }} 
                     {% elif j.action == 'access-presentation'  or j.action == 'access-worksheet' %}
                         {{ j.message|safe }}
                     {% else %}

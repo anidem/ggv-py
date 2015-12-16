@@ -19,7 +19,7 @@ from braces.views import LoginRequiredMixin
 
 from core.models import Notification, SiteMessage
 from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin, CourseContextMixin
-from core.utils import UnicodeWriter, GGVExcelWriter
+from core.utils import UnicodeWriter, GGVExcelWriter, get_daily_log_times
 from questions.models import QuestionSet, UserWorksheetStatus
 from slidestacks.models import SlideStack
 from .models import Course
@@ -140,15 +140,10 @@ class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin
             writer.writerow([('%s' % context['student_user'].id), context['student_user'].first_name + ' ' + context['student_user'].last_name, context['student_user'].email, ' Report date: ' + daystr])
             writer.writerow([' '])
             writer.writerow(['Date', 'Total Time on Curriculum', 'Date & Time', 'Activity', 'More Details', 'Subject'])
-            for i, j in context['activity_log'].items():
-                e = j[0]['activity'].timestamp - j[len(j)-1]['activity'].timestamp
-                e = '%s hours %s minutes' % (e.seconds/3600, (e.seconds % 3600)/60)
-                writer.writerow([i, e])
-                # print i, e
-                for k in j:
-                    a = k['activity']
-                    writer.writerow(['', '', a.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), a.action, html.strip_tags(a.message), a.message_detail or ' ', ''])
-                    # print '\t', a.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), ':',  a.action, ':',  html.strip_tags(a.message), ':',  a.message_detail
+            for i in reversed(context['activity_log']):
+                writer.writerow([i['day'], i['duration']])
+                for j in reversed(i['events']):
+                    writer.writerow(['', '', j.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), j.action, html.strip_tags(j.message), j.message_detail or ' ', ''])
             return response
 
         elif 'xlsx' in self.request.GET.get('export', ''):
@@ -192,14 +187,10 @@ class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin
                 ws.column_dimensions[get_column_letter(col_num+1)].width = DATA_COLS[col_num][2]
 
             # Write data rows
-            for i, j in context['activity_log'].items():
-                e = j[0]['activity'].timestamp - j[len(j)-1]['activity'].timestamp
-                e = '%s hours %s minutes' % (e.seconds/3600, (e.seconds % 3600)/60)
-                ws.append([i, e])
-                # print i, e
-                for k in j:
-                    a = k['activity']
-                    ws.append(['', '', a.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), a.action, html.strip_tags(a.message), a.message_detail or ' ', ''])
+            for i in reversed(context['activity_log']):
+                ws.append([i['day'], i['duration']])
+                for j in reversed(i['events']):
+                    ws.append(['', '', j.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), j.action, html.strip_tags(j.message), j.message_detail or ' ', ''])
 
             writer.save(response)
             return response
@@ -210,39 +201,50 @@ class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin
     def get_context_data(self, **kwargs):
         context = super(UserManageView, self).get_context_data(**kwargs)
         user = User.objects.get(pk=self.kwargs['user'])
-        """
-        (activitylog entry, score)
-        """
-        activity = OrderedDict()  # {'day': {'duration': n, 'activity_list':[dicts]}
-        for i in user.activitylog.all():
-            tkey = i.timestamp.astimezone(tz).strftime('%b-%d-%Y')
-
-            try:
-                activity[tkey]
-            except:
-                activity[tkey] = []
-
-            if i.action == 'completed-worksheet':
-                try:
-                    wurl = i.message.split('/')
-                    course = Course.objects.get(slug=wurl[2])
-                    worksheet = QuestionSet.objects.get(pk=wurl[4])
-                    report_url = reverse('worksheet_user_report', args=[course.slug, worksheet.id, user.id])
-
-                    activity[tkey].append({'activity': i, 'report_url': report_url, 'worksheet': worksheet})
-                except:
-                    pass  # malformed log message. proceed silently...
-
-            elif i.action == 'access-presentation' or i.action == 'access-worksheet':
-                activity[tkey].append({'activity': i, 'report_url': i.message, 'worksheet': None, 'score': None})
-
-            else:
-                activity[tkey].append({'activity': i, 'report_url': i.message, 'worksheet': None, 'score': None})
+        
+        activity = get_daily_log_times(user)
 
         context['student_user'] = user
         context['activity_log'] = activity
 
         return context
+
+    # def get_context_data(self, **kwargs):
+    #     context = super(UserManageView, self).get_context_data(**kwargs)
+    #     user = User.objects.get(pk=self.kwargs['user'])
+    #     """
+    #     (activitylog entry, score)
+    #     """
+    #     activity = OrderedDict()  # {'day': {'duration': n, 'activity_list':[dicts]}
+    #     for i in user.activitylog.all():
+    #         tkey = i.timestamp.astimezone(tz).strftime('%b-%d-%Y')
+
+    #         try:
+    #             activity[tkey]
+    #         except:
+    #             activity[tkey] = []
+
+    #         if i.action == 'completed-worksheet':
+    #             try:
+    #                 wurl = i.message.split('/')
+    #                 course = Course.objects.get(slug=wurl[2])
+    #                 worksheet = QuestionSet.objects.get(pk=wurl[4])
+    #                 report_url = reverse('worksheet_user_report', args=[course.slug, worksheet.id, user.id])
+
+    #                 activity[tkey].append({'activity': i, 'report_url': report_url, 'worksheet': worksheet})
+    #             except:
+    #                 pass  # malformed log message. proceed silently...
+
+    #         elif i.action == 'access-presentation' or i.action == 'access-worksheet':
+    #             activity[tkey].append({'activity': i, 'report_url': i.message, 'worksheet': None, 'score': None})
+
+    #         else:
+    #             activity[tkey].append({'activity': i, 'report_url': i.message, 'worksheet': None, 'score': None})
+
+    #     context['student_user'] = user
+    #     context['activity_log'] = activity
+
+    #     return context
 
 
 class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):

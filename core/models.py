@@ -1,6 +1,7 @@
 # core/models.py
 import json
 
+
 from django.db import models
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
@@ -111,6 +112,7 @@ class SitePage(models.Model):
 
     def __unicode__(self):
         return self.title
+
 
 
 

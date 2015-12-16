@@ -47,31 +47,31 @@
           </tr>
         </thead>
         <tbody>
-        {% for i, j in activity_log.items %}
+        {% for i in activity_log reversed %}
         <tr>
             <td>
-                <h3>{{ i }}
-                    <small>{% with f=j|first l=j|last %}{{ l.activity.timestamp|timesince:f.activity.timestamp }}{% endwith %}</small>
+                <h3>{{ i.day }}
+                    <small>{{ i.duration }}</small>
                 </h3>
 
             </td>
         </tr>
-            {% for adict in j %}
+            {% for j in i.events reversed %}
             <tr class="hoverpad">
-                <th scope="row">{{ adict.activity.timestamp|time}}</th>
-                <td>{{ adict.activity.action }}</td>
+                <th scope="row">{{ j.timestamp|time}}</th>
+                <td>{{ j.action }}</td>
                 <td>
-                    {% if adict.activity.action == 'completed-worksheet' %}
-                        <a href="{{ adict.report_url }}"> {{adict.worksheet }}</a>
-                        {% comment %} {{ i.activity.message|safe }} {% endcomment %}
-                    {% elif adict.activity.action == 'access-presentation'  or adict.activity.action == 'access-worksheet' %}
-                        {{ adict.activity.message|safe }}
+                    {% if j.action == 'completed-worksheet' %}
+                        <a href="{{ j.report_url }}"> {{j.worksheet }}</a>
+                        {% comment %} {{ i.message|safe }} {% endcomment %}
+                    {% elif j.action == 'access-presentation'  or j.action == 'access-worksheet' %}
+                        {{ j.message|safe }}
                     {% else %}
-                        {{ adict.activity.message }}
+                        {{ j.message }}
                     {% endif %}
                 </td>
 
-                <td>{{ adict.activity.message_detail }}</td>
+                <td>{{ j.message_detail }}</td>
             </tr>
             {% endfor %}
         {% empty %}

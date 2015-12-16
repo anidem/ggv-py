@@ -3,6 +3,7 @@ import csv
 import codecs
 import cStringIO
 from datetime import datetime
+from pytz import timezone
 
 from openpyxl import Workbook
 from openpyxl.cell import get_column_letter
@@ -11,10 +12,13 @@ from openpyxl.styles import Font
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
+from django.conf import settings
 
 from social.exceptions import SocialAuthBaseException, AuthException, AuthForbidden
 
 from .models import ActivityLog
+
+tz = timezone(settings.TIME_ZONE)
 
 
 class GGVExcelWriter:
@@ -144,3 +148,40 @@ def ggv_social_user(backend, uid, user=None, *args, **kwargs):
             'user': user,
             'is_new': user is None,
             'new_association': False}
+
+
+def get_daily_log_times(user=None):
+    """
+    Method should return a dictionary keyed by date (Month-Day-Year) with value 
+    set to number of seconds of accrued activity by user on keyed date.
+    
+    [{'day': date, 'duration': seconds, 'events': [event_list]}, ... {'day': date, 'duration': seconds, 'events': [event_list]}]
+    """
+    
+    a = ActivityLog.objects.filter(user__id=user.id).order_by('timestamp')
+    acts = []
+    act_log = {}
+
+    act_secs = 0
+    act_day = None
+    for i in range(len(a)-1):
+        curr_act_ts = a[i].timestamp.astimezone(tz).strftime('%b-%d-%Y')
+
+        if act_day != curr_act_ts:
+            if act_log:
+                act_log['duration'] = '%s hours %s minutes' % (act_log['duration']/3600, (act_log['duration']%3600)/60)
+                acts.append(act_log)  # Append previous daily log dict if exists
+            act_day = curr_act_ts
+            act_log = {}  
+            act_log['day'] = act_day
+            act_log['duration'] = 0  
+            act_log['events'] = []          
+            
+        if a[i].action != 'logout':
+            act_log['duration'] = act_log['duration'] + (a[i+1].timestamp.astimezone(tz)-a[i].timestamp.astimezone(tz)).seconds
+
+        act_log['events'].append(a[i])
+
+    act_log['duration'] = '%s hours %s minutes' % (act_log['duration']/3600, (act_log['duration']%3600)/60)
+    acts.append(act_log)
+    return acts

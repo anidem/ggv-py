@@ -44,10 +44,11 @@
             <th>Assignment</th>
             <th>Content Area</th>
             <th>Subject</th>
+            <th>Current Score</th>
           </tr>
         </thead>
         <tbody>
-        {% for i in activity_log reversed %}
+        {% for i in activity_log %}
         <tr>
             <td>
                 <h3>{{ i.day }}
@@ -56,22 +57,23 @@
 
             </td>
         </tr>
-            {% for j in i.events reversed %}
+            {% for j in i.events %}
             <tr class="hoverpad">
-                <th scope="row">{{ j.timestamp|time}}</th>
-                <td>{{ j.action }}</td>
+                <th scope="row">{{ j.activity.timestamp|time}}</th>
+                <td>{{ j.activity.action }}</td>
                 <td>
-                    {% if j.action == 'completed-worksheet' %}
-                        {% comment %}<a href="{{ j.report_url }}"> {{j.worksheet }}</a>{% endcomment %}
-                         {{ j.message|safe }} 
-                    {% elif j.action == 'access-presentation'  or j.action == 'access-worksheet' %}
-                        {{ j.message|safe }}
+                    {% if j.activity.action == 'completed-worksheet' %}
+                        <a href="{{ j.report_url }}"> {{j.worksheet }}</a>
+                         {{ j.activity.message|safe }} 
+                    {% elif j.activity.action == 'access-presentation'  or j.activity.action == 'access-worksheet' %}
+                        {{ j.activity.message|safe }}
                     {% else %}
-                        {{ j.message }}
+                        {{ j.activity.message }}
                     {% endif %}
                 </td>
 
-                <td>{{ j.message_detail }}</td>
+                <td>{{ j.activity.message_detail }}</td>
+                <td>{% if j.score %}<strong>{{ j.score|floatformat:"0" }}%</strong>{% endif %}</td>
             </tr>
             {% endfor %}
         {% empty %}

@@ -37,43 +37,60 @@
 
 
           <div class="row">
-            <div class="col-xs-1">Accessed</div>
-            <div class="col-xs-1">Completed</div>
+            <div class="col-xs-1">Time</div>
             <div class="col-xs-3">Subject</div>
-            <div class="col-xs-5">Content</div>
-            <div class="col-xs-1">Result</div>
+            <div class="col-xs-1">Activity</div>
+            <div class="col-xs-6">Content</div>
+            <div class="col-xs-1">Current Score</div>
           </div>
 
-        {% for i, j in activity_log.items %}
+        {% for i in activity_log %}
+            {% if i.events %}
             <div class="row">
-                <h3>{{ i }} <sup><small>MST</small></h3>
+                
+                <h3>{{ i.day }}<sup><small>MST</small></h3>
+           
             </div>
 
-            {% for adict in j %}
+            {% for j in i.events %}
+            
             <div class="row hoverpad text-left">
-                <div class="col-xs-1">{{ adict.access_time|time }}</div>
-                <div class="col-xs-1">{{ adict.completed_time|time }}</div>
+
+
+                <div class="col-xs-1">{{ j.event_time|time }}</div>
                 <div class="col-xs-3">
-                    {{ adict.content.lesson }} <a href="{% url 'lesson' adict.course.slug adict.content.lesson.id %}#{{ adict.content.section|title }}">(view lesson)</a>
+                    {% if  j.event_target.lesson %}
+                    {{ j.event_target.lesson }} <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">(view lesson)</a>
+                    {% else %}
+                        {{ j.activity.action }}
+                    {% endif %}
 
                 </div>
 
-                <div class="col-xs-5">
-                    {% if adict.activity.action == 'completed-worksheet' %}
-                        <i class="fa fa-pencil-square-o fa-2x icon-worksheet"></i>
-                        {{adict.content }} <a href="{{ adict.report_url }}">(view report)</a>
-                        {% comment %} {{ i.activity.message|safe }} {% endcomment %}
-                    {% elif adict.activity.action == 'access-presentation' %}
-                        <i class="fa fa-desktop fa-2x icon-slidestack"></i>
-                        {{ adict.activity.message|safe }}
+                {% if j.activity.action == 'completed-worksheet' %}
+                    <div class="col-xs-1">completed</div>
+                {% else %}
+                    <div class="col-xs-1">viewed</div>
+                {% endif %}
+
+                <div class="col-xs-6">
+                    {% if j.activity.action == 'completed-worksheet' or j.activity.action == 'access-worksheet'%}
+                        <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
+                        {{j.event_target }} <a href="{{ j.report_url }}">(view report)</a>
+                    {% elif j.activity.action == 'access-presentation' %}
+                        <i class="fa fa-desktop fa-1x icon-slidestack"></i>
+                        {{ j.activity.message|safe }}
                     {% endif %}
                 </div>
 
 
-                <div class="col-xs-1">{% if adict.score %} <strong>{{ adict.score|floatformat:"0" }}%</strong> {% endif %}</div>
+                <div class="col-xs-1">{% if j.score %} <strong>{{ j.score|floatformat:"0" }}%</strong> {% endif %}</div>
 
             </div>
+            {% empty %}
+                <div class="col-xs-12"></div>
             {% endfor %}
+            {% endif %}
         {% empty %}
             <div class="panel-body">{{ student_user.first_name }} does not appear to have any activity.</div>
         {% endfor %}

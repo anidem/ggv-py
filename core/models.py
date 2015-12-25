@@ -1,13 +1,17 @@
 # core/models.py
 import json
-
+from pytz import timezone
 
 from django.db import models
+from django.conf import settings
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes import generic
 
 from courses.models import Course
+
+tz = timezone(settings.TIME_ZONE)
 
 ACTIONS = (
     ('login', 'login'),
@@ -49,8 +53,52 @@ class ActivityLog(models.Model):
     message_detail = models.CharField(max_length=512, null=True, blank=True)
     timestamp = models.DateTimeField(auto_now_add=True)
 
+    def as_dict(self, course=None, exclusions=[]):
+        from questions.models import QuestionSet, UserWorksheetStatus
+        from slidestacks.models import SlideStack
+        if self.action in exclusions:
+            return None
+        e = {
+            'activity': self, 
+            'report_url': self.message, 
+            'event_time': self.timestamp_tz(), 
+            'course': course, 
+            'event_target': None, 
+            'score': None
+        }
+        event_target_id = None
+        try:
+            activity_info = [j for j in self.message.split('/ggv/')[1].split('/')]
+            event_target_id = activity_info[2]
+        except:
+            pass
+        
+        if self.action == 'completed-worksheet' or self.action == 'access-worksheet':
+            try:
+                worksheet = QuestionSet.objects.get(pk=event_target_id)
+                e['event_target'] = worksheet 
+                
+                status = UserWorksheetStatus.objects.filter(user__id=self.user.id).get(completed_worksheet=worksheet)
+                if status:
+                    e['score'] = status.score
+                    e['report_url'] = reverse('worksheet_user_report', args=[course.slug, worksheet.id, self.user.id])
+                
+            except Exception as exp:
+                pass  # malformed log message. proceed silently...
+
+        elif self.action == 'access-presentation':
+            try:
+                e['event_target'] = SlideStack.objects.get(pk=event_target_id)
+            except Exception as exp:
+                pass
+
+        return e
+
+    def timestamp_tz(self):
+        return self.timestamp.astimezone(tz)
+
     def __unicode__(self):
-        return self.timestamp.strftime('%b %d, %Y %-I:%M %p')
+        return self.timestamp.astimezone(tz).strftime('%b %d, %Y %-I:%M %p')
 
     class Meta:
         ordering = ['user', '-timestamp']

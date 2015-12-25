@@ -10,10 +10,10 @@ from django import forms
 import json
 
 from model_utils.models import TimeStampedModel
-
 from lessons.models import Lesson, AbstractActivity
 from notes.models import UserNote
 from core.models import Bookmark
+
 
 
 class QuestionSet(AbstractActivity):

@@ -117,7 +117,7 @@ class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin
         Displays a detailed or raw dump of user activity from activity log table. Data is displayed
         sequentially ordered with most recent activity listed first.
 
-        If request contains query parameter export=csv, then response will be a download of csv
+        If request contains query parameter export=csv|xlsx, then response will be a download of csv
         file containing user activity.
 
         Visibility: sysadmin, staff, instructor
@@ -139,7 +139,7 @@ class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin
             writer = UnicodeWriter(response)
             writer.writerow([('%s' % context['student_user'].id), context['student_user'].first_name + ' ' + context['student_user'].last_name, context['student_user'].email, ' Report date: ' + daystr])
             writer.writerow([' '])
-            writer.writerow(['Date', 'Total Time on Curriculum', 'Date & Time', 'Activity', 'More Details', 'Subject'])
+            writer.writerow(['Date', 'Total Time on Curriculum', 'Date & Time', 'Activity', 'More Details', 'Subject', 'Current Score'])
             for i in reversed(context['activity_log']):
                 writer.writerow([i['day'], i['duration']])
                 for j in reversed(i['events']):
@@ -157,7 +157,7 @@ class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin
                 ('D1', u'Activity', 50),
                 ('E1', u'More Details', 40),
                 ('F1', u'Subject', 30),
-                ('G1', u'Results', 15),
+                ('G1', u'Current Score', 15),
             ]
 
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -187,10 +187,10 @@ class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin
                 ws.column_dimensions[get_column_letter(col_num+1)].width = DATA_COLS[col_num][2]
 
             # Write data rows
-            for i in reversed(context['activity_log']):
+            for i in context['activity_log']:
                 ws.append([i['day'], i['duration']])
-                for j in reversed(i['events']):
-                    ws.append(['', '', j.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), j.action, html.strip_tags(j.message), j.message_detail or ' ', ''])
+                for j in i['events']:
+                    ws.append(['', '', j['event_time'], j['activity'].action, html.strip_tags(j['activity'].message), j['activity'].message_detail or ' ', j['score'] or ' '])
 
             writer.save(response)
             return response
@@ -200,12 +200,11 @@ class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin
 
     def get_context_data(self, **kwargs):
         context = super(UserManageView, self).get_context_data(**kwargs)
+        course = self.get_object()
         user = User.objects.get(pk=self.kwargs['user'])
         
-        activity = get_daily_log_times(user)
-
         context['student_user'] = user
-        context['activity_log'] = activity
+        context['activity_log'] = get_daily_log_times(user, course)
 
         return context
 
@@ -261,58 +260,58 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
     access_object = None
 
     def get(self, request, *args, **kwargs):
+
         return super(UserProgressView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(UserProgressView, self).get_context_data(**kwargs)
         user = User.objects.get(pk=self.kwargs['user'])
         course = self.get_object()
-
+        context['student_user'] = user
+        context['activity_log'] = get_daily_log_times(user, course, ['login', 'logout', 'access-worksheet']) # 'login', 'logout', 'access-worksheet'
+        
         """
         (activitylog entry, score)
         """
-        # a=time.time()
-        activity = OrderedDict()
-        for i in user.activitylog.all():
-            activity_info = []
-            try:
-                activity_info = [j for j in i.message.split('/ggv/')[1].split('/')]
-            except:
-                pass
+        # activity = OrderedDict()
+        # for i in user.activitylog.all():
+        #     activity_info = []
+        #     try:
+        #         activity_info = [j for j in i.message.split('/ggv/')[1].split('/')]
+        #     except:
+        #         pass
 
-            activity_dict = None
-            if i.action == 'completed-worksheet':
-                try:
-                    crs, ws_id = activity_info[0], activity_info[2]
+        #     activity_dict = None
+        #     if i.action == 'completed-worksheet':
+        #         try:
+        #             crs, ws_id = activity_info[0], activity_info[2]
 
-                    worksheet = QuestionSet.objects.get(pk=ws_id)
-                    report_url = reverse('worksheet_user_report', args=[course.slug, worksheet.id, user.id])
-                    status = UserWorksheetStatus.objects.filter(user__id=user.id).get(completed_worksheet=worksheet)
-                    activity_dict = {'activity': i, 'access_time': None, 'completed_time': i.timestamp, 'report_url': report_url, 'course': course,  'content': worksheet, 'score': None}
-                except:
-                    pass  # malformed log message. or inconsistent log entry proceed silently
+        #             worksheet = QuestionSet.objects.get(pk=ws_id)
+        #             report_url = reverse('worksheet_user_report', args=[course.slug, worksheet.id, user.id])
+        #             status = UserWorksheetStatus.objects.filter(user__id=user.id).get(completed_worksheet=worksheet)
+        #             activity_dict = {'activity': i, 'access_time': None, 'completed_time': i.timestamp, 'report_url': report_url, 'course': course,  'content': worksheet, 'score': status.score}
+        #         except:
+        #             pass  # malformed log message. or inconsistent log entry proceed silently
 
-            elif i.action == 'access-presentation':
-                try:
-                    crs, stack_id = activity_info[0], activity_info[2]
-                    stack = SlideStack.objects.get(pk=stack_id)
-                    activity_dict = {'activity': i, 'access_time': i.timestamp, 'completed_time': None, 'report_url': i.message, 'course': self.get_object(), 'content': stack, 'score': None}
-                except:
-                    pass
+        #     elif i.action == 'access-presentation':
+        #         try:
+        #             crs, stack_id = activity_info[0], activity_info[2]
+        #             stack = SlideStack.objects.get(pk=stack_id)
+        #             activity_dict = {'activity': i, 'access_time': i.timestamp, 'completed_time': None, 'report_url': i.message, 'course': self.get_object(), 'content': stack, 'score': None}
+        #         except:
+        #             pass
 
-            if activity_dict:
+        #     if activity_dict:
 
-                tkey = i.timestamp.astimezone(tz).strftime('%b-%d-%Y')
-                try:
-                    activity[tkey].append(activity_dict)
-                except:
-                    activity[tkey] = []
-                    activity[tkey].append(activity_dict)
+        #         tkey = i.timestamp.astimezone(tz).strftime('%b-%d-%Y')
+        #         try:
+        #             activity[tkey].append(activity_dict)
+        #         except:
+        #             activity[tkey] = []
+        #             activity[tkey].append(activity_dict)
 
-        # b = time.time()
-        # print 'ELAPSED: ', b-a
-        context['student_user'] = user
-        context['activity_log'] = activity
+        # context['student_user'] = user
+        # context['activity_log'] = activity
 
         return context
 

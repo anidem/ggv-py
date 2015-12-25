@@ -9,6 +9,7 @@ from openpyxl import Workbook
 from openpyxl.cell import get_column_letter
 from openpyxl.styles import Font
 
+from django.core.urlresolvers import reverse
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
 from django.shortcuts import redirect
@@ -17,6 +18,7 @@ from django.conf import settings
 from social.exceptions import SocialAuthBaseException, AuthException, AuthForbidden
 
 from .models import ActivityLog
+# from questions.models import QuestionSet, UserWorksheetStatus
 
 tz = timezone(settings.TIME_ZONE)
 
@@ -82,9 +84,7 @@ class UnicodeWriter:
 
 
 def logout_clean(request):
-    ActivityLog(user=request.user, action='logout', message='user logged out').save()
     logout(request)
-
     return redirect('https://accounts.google.com/Logout?&continue=https://www.google.com')
 
 
@@ -150,15 +150,17 @@ def ggv_social_user(backend, uid, user=None, *args, **kwargs):
             'new_association': False}
 
 
-def get_daily_log_times(user=None):
+def get_daily_log_times(user=None, course=None, exclusions=[]):
     """
-    Method should return a dictionary keyed by date (Month-Day-Year) with value 
-    set to number of seconds of accrued activity by user on keyed date.
-    
-    [{'day': date, 'duration': seconds, 'events': [event_list]}, ... {'day': date, 'duration': seconds, 'events': [event_list]}]
+    Method should return a list containing dicts described as follows:
+    [
+        {'day': date, 'duration': seconds, 'events': [event_dict_list]}, 
+        ... 
+        {'day': date, 'duration': seconds, 'events': [event_dict_list]}
+    ]
     """
     
-    a = ActivityLog.objects.filter(user__id=user.id).order_by('timestamp')
+    a = ActivityLog.objects.filter(user__id=user.id)
     acts = []
     act_log = {}
 
@@ -167,21 +169,25 @@ def get_daily_log_times(user=None):
     for i in range(len(a)-1):
         curr_act_ts = a[i].timestamp.astimezone(tz).strftime('%b-%d-%Y')
 
+        # new date encountered in list, save and reset to new act_log
         if act_day != curr_act_ts:
             if act_log:
                 act_log['duration'] = '%s hours %s minutes' % (act_log['duration']/3600, (act_log['duration']%3600)/60)
-                acts.append(act_log)  # Append previous daily log dict if exists
+                acts.append(act_log)  # Before resetting, append previous daily log dict if exists
             act_day = curr_act_ts
             act_log = {}  
             act_log['day'] = act_day
             act_log['duration'] = 0  
             act_log['events'] = []          
             
-        if a[i].action != 'logout':
-            act_log['duration'] = act_log['duration'] + (a[i+1].timestamp.astimezone(tz)-a[i].timestamp.astimezone(tz)).seconds
-
-        act_log['events'].append(a[i])
+        if a[i].action != 'login': # don't compute duration. login indicates entry event.
+            act_log['duration'] = act_log['duration'] + (a[i].timestamp.astimezone(tz)-a[i+1].timestamp.astimezone(tz)).seconds
+        
+        event_dict = a[i].as_dict(course, exclusions)
+        if event_dict:
+            act_log['events'].append(event_dict)
 
     act_log['duration'] = '%s hours %s minutes' % (act_log['duration']/3600, (act_log['duration']%3600)/60)
     acts.append(act_log)
+
     return acts

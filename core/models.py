@@ -84,7 +84,7 @@ class ActivityLog(models.Model):
                     e['report_url'] = reverse('worksheet_user_report', args=[course.slug, worksheet.id, self.user.id])
                 
             except Exception as exp:
-                pass  # malformed log message. proceed silently...
+                pass  # malformed log message or non-existent objects -- proceed silently...
 
         elif self.action == 'access-presentation':
             try:

@@ -48,7 +48,7 @@ class QuestionSet(AbstractActivity):
         return questions
 
     def get_num_questions(self):
-        return len(self.get_ordered_question_list())
+        return self.option_questions.all().count() + self.text_questions.all().count()
 
     def get_next_question(self, user):
         questions = self.get_ordered_question_list()
@@ -70,12 +70,11 @@ class QuestionSet(AbstractActivity):
     def get_user_response_objects(self, user):
         """
         Returns a list of QuestionResponse objects related to this worksheet and user.
-        This list may contain None values where a response to question has not been submitted.
+        This list may contain None values where a response to a question has not been submitted.
         """
         responses = []
         for i in self.get_ordered_question_list():
-            resp = i.user_response_object(user)
-            responses.append(resp)
+            responses.append(i.user_response_object(user))
 
         return responses
 
@@ -90,8 +89,10 @@ class QuestionSet(AbstractActivity):
         for i in responses:
             if i and i.iscorrect:
                 num_correct = num_correct + 1
-
-        return (float(num_correct)/len(responses))*100
+        try:
+            return (float(num_correct)/len(responses))*100
+        except:
+            return None
 
     def get_user_responses(self, user, questions=None, course=None):
         report = []
@@ -115,7 +116,6 @@ class QuestionSet(AbstractActivity):
             response = None
             respobj = i.user_response_object(user)
             if respobj:
-                # resp = respobj.response.replace('"', '')
                 resp = json.loads(respobj.response)
 
                 if question_type.name == 'option question':
@@ -154,23 +154,12 @@ class QuestionSet(AbstractActivity):
                 if score:
                     numcorrect = numcorrect + 1
 
-                response = (bk, i, resp, score)  # str(i.correct_answer())
+                response = (bk, i, resp, score)
                 report.append(response)
 
         grade = float(numcorrect)/len(questions)*100
 
         return {'report': report, 'correct': numcorrect, 'grade': grade}
-
-    def delete_user_responses(self, user, course):
-        questions = self.get_ordered_question_list()
-        for i in questions:
-            try:
-                i.user_response_object(user).delete()
-            except:
-                pass
-        status = user.completed_worksheets.filter(completed_worksheet=self).get() or None
-        if status:
-            status.delete()
 
     def get_all_responses(self, course):
         members = course.member_list()
@@ -190,15 +179,25 @@ class QuestionSet(AbstractActivity):
 
         return report
 
+    def delete_user_responses(self, user, course):
+        questions = self.get_ordered_question_list()
+        for i in questions:
+            try:
+                i.user_response_object(user).delete()
+            except:
+                pass
+        status = user.completed_worksheets.filter(completed_worksheet=self).get() or None
+        if status:
+            status.delete()
+
     def notify_text(self, **kwargs):
         """ Expected kwargs: crs_slug, user associated with worksheet completion """
         target_url = self.get_absolute_url(crs_slug=kwargs['crs_slug'])
-
         text = '%s %s completed worksheet %s' % (kwargs['user'].first_name, kwargs['user'].last_name, target_url)
+        
         return text
 
     def get_absolute_url(self, **kwargs):
-
         return reverse('worksheet_launch', args=[kwargs['crs_slug'], self.id])
 
     def __unicode__(self):
@@ -231,8 +230,6 @@ class AbstractQuestion(models.Model):
     class Meta:
         abstract = True
         ordering = ['display_order']
-
-# class NoResponseQuestion(AbstractQuestion):
 
 
 class TextQuestion(AbstractQuestion):
@@ -273,7 +270,7 @@ class TextQuestion(AbstractQuestion):
 
     def check_answer(self, question_response):
         if self.correct:  # Check if question has a correct answer specified.
-            return question_response.json_response == self.correct
+            return question_response.response == self.correct
         return True  # If correct answer not specified return True
 
     def user_response_object(self, user):
@@ -325,32 +322,24 @@ class OptionQuestion(AbstractQuestion):
 
     def check_answer_json(self, json_str):
         """
-        a = self.correct_answer()
-        if self.input_select == 'checkbox':
-            # will need to do something like this:
-            b = repsonse_list # (json_str)
-            c = set(a).intersection(b)
-            if len(c) == len(a):
-                return True
-            return False
-        else:
-            return json_str in a
-        """
-        # Need to process option responses as lists. json used to coerce
-        # string representation to list.
+        Need to process option responses as lists. json used to coerce string representation to list.        
+        """        
         try:
             return self.correct_answer() == json_str
         except:
             print 'error doing json compare check'
 
     def check_answer(self, question_response):
-        correct_ans = self.correct_answer()
+        correct_ans_listing = self.correct_answer()
+        
+        if correct_ans_listing:   # Check if question has a correct answer specified.
+            
+            if self.input_select == 'checkbox':  # compare lists if question has multiple selections
+                response_listing = [int(i) for i in question_response.json_response()]
+                return response_listing == correct_ans_listing
 
-        if correct_ans:   # Check if question has a correct answer specified.
-            if self.input_select == 'checkbox':
-                return question_response.response in correct_ans
-
-            return int(json.loads(question_response.response)) in correct_ans
+            # Implies a single selection option.
+            return int(question_response.json_response()) in correct_ans_listing
 
         return True  # If correct answer not specified return True
 
@@ -372,7 +361,6 @@ class OptionQuestion(AbstractQuestion):
 
 
 class Option(models.Model):
-
     """
     Stores a single option to list as a choice for a :model:`questions.OptionQuestion`.
     """
@@ -389,7 +377,6 @@ class Option(models.Model):
 
 
 class QuestionResponse(TimeStampedModel):
-
     """
     Generic question response container.
     Designed to reference objects derived from AbstractQuestion (e.g., OptionQuestion, TextQuestion)
@@ -407,8 +394,19 @@ class QuestionResponse(TimeStampedModel):
         except:
             return None
 
+    def get_question_object(self):
+        return self.content_object
+
     def save(self, *args, **kwargs):
-        self.response = json.dumps(self.response)
+        """
+        The response is always stored as a json string. Any read operation must decode the response:
+        E.g., json.loads(response) See: self.json_response() method
+        """
+        try:  # verify that response in not already encoded in json
+            json.loads(self.response)
+        except:
+            self.response = json.dumps(self.response)
+
         super(QuestionResponse, self).save(*args, **kwargs)
 
     # Fix this to construct arguments relative to question sequence object

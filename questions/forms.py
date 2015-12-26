@@ -56,7 +56,7 @@ class QuestionResponseForm(ModelForm):
             pass
 
         correct = question.check_answer(submitted_form)
-
+        
         if previous_response:
             previous_response.response = submitted_form.response
             previous_response.iscorrect = correct
@@ -69,8 +69,8 @@ class QuestionResponseForm(ModelForm):
         try:
             worksheet_status = UserWorksheetStatus.objects.filter(user__id=user.id).get(completed_worksheet=question.question_set)
             worksheet_status.update_score()
+        
         except Exception as e:  # worksheet status does not exist for the current user (they have not completed it).
-            print e
             pass
 
         return submitted_form

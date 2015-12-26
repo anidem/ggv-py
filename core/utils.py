@@ -168,8 +168,9 @@ def get_daily_log_times(user=None, course=None, exclusions=[]):
     act_day = None
     for i in range(len(a)-1):
         curr_act_ts = a[i].timestamp.astimezone(tz).strftime('%b-%d-%Y')
+        next_act_ts = a[i+1].timestamp.astimezone(tz).strftime('%b-%d-%Y')
 
-        # new date encountered in list, save and reset to new act_log
+        # new date encountered in list, save and reset to a new act_log
         if act_day != curr_act_ts:
             if act_log:
                 act_log['duration'] = '%s hours %s minutes' % (act_log['duration']/3600, (act_log['duration']%3600)/60)
@@ -180,14 +181,16 @@ def get_daily_log_times(user=None, course=None, exclusions=[]):
             act_log['duration'] = 0  
             act_log['events'] = []          
             
-        if a[i].action != 'login': # don't compute duration. login indicates entry event.
+        if a[i].action != 'login' and curr_act_ts == next_act_ts: # don't compute duration, login indicates entry event.
             act_log['duration'] = act_log['duration'] + (a[i].timestamp.astimezone(tz)-a[i+1].timestamp.astimezone(tz)).seconds
         
         event_dict = a[i].as_dict(course, exclusions)
         if event_dict:
             act_log['events'].append(event_dict)
 
-    act_log['duration'] = '%s hours %s minutes' % (act_log['duration']/3600, (act_log['duration']%3600)/60)
-    acts.append(act_log)
+    # Save tail end of activity list
+    if act_log:
+        act_log['duration'] = '%s hours %s minutes' % (act_log['duration']/3600, (act_log['duration']%3600)/60)
+        acts.append(act_log)
 
     return acts

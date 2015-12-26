@@ -208,43 +208,6 @@ class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin
 
         return context
 
-    # def get_context_data(self, **kwargs):
-    #     context = super(UserManageView, self).get_context_data(**kwargs)
-    #     user = User.objects.get(pk=self.kwargs['user'])
-    #     """
-    #     (activitylog entry, score)
-    #     """
-    #     activity = OrderedDict()  # {'day': {'duration': n, 'activity_list':[dicts]}
-    #     for i in user.activitylog.all():
-    #         tkey = i.timestamp.astimezone(tz).strftime('%b-%d-%Y')
-
-    #         try:
-    #             activity[tkey]
-    #         except:
-    #             activity[tkey] = []
-
-    #         if i.action == 'completed-worksheet':
-    #             try:
-    #                 wurl = i.message.split('/')
-    #                 course = Course.objects.get(slug=wurl[2])
-    #                 worksheet = QuestionSet.objects.get(pk=wurl[4])
-    #                 report_url = reverse('worksheet_user_report', args=[course.slug, worksheet.id, user.id])
-
-    #                 activity[tkey].append({'activity': i, 'report_url': report_url, 'worksheet': worksheet})
-    #             except:
-    #                 pass  # malformed log message. proceed silently...
-
-    #         elif i.action == 'access-presentation' or i.action == 'access-worksheet':
-    #             activity[tkey].append({'activity': i, 'report_url': i.message, 'worksheet': None, 'score': None})
-
-    #         else:
-    #             activity[tkey].append({'activity': i, 'report_url': i.message, 'worksheet': None, 'score': None})
-
-    #     context['student_user'] = user
-    #     context['activity_log'] = activity
-
-    #     return context
-
 
 class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
     """
@@ -270,49 +233,6 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         context['student_user'] = user
         context['activity_log'] = get_daily_log_times(user, course, ['login', 'logout', 'access-worksheet']) # 'login', 'logout', 'access-worksheet'
         
-        """
-        (activitylog entry, score)
-        """
-        # activity = OrderedDict()
-        # for i in user.activitylog.all():
-        #     activity_info = []
-        #     try:
-        #         activity_info = [j for j in i.message.split('/ggv/')[1].split('/')]
-        #     except:
-        #         pass
-
-        #     activity_dict = None
-        #     if i.action == 'completed-worksheet':
-        #         try:
-        #             crs, ws_id = activity_info[0], activity_info[2]
-
-        #             worksheet = QuestionSet.objects.get(pk=ws_id)
-        #             report_url = reverse('worksheet_user_report', args=[course.slug, worksheet.id, user.id])
-        #             status = UserWorksheetStatus.objects.filter(user__id=user.id).get(completed_worksheet=worksheet)
-        #             activity_dict = {'activity': i, 'access_time': None, 'completed_time': i.timestamp, 'report_url': report_url, 'course': course,  'content': worksheet, 'score': status.score}
-        #         except:
-        #             pass  # malformed log message. or inconsistent log entry proceed silently
-
-        #     elif i.action == 'access-presentation':
-        #         try:
-        #             crs, stack_id = activity_info[0], activity_info[2]
-        #             stack = SlideStack.objects.get(pk=stack_id)
-        #             activity_dict = {'activity': i, 'access_time': i.timestamp, 'completed_time': None, 'report_url': i.message, 'course': self.get_object(), 'content': stack, 'score': None}
-        #         except:
-        #             pass
-
-        #     if activity_dict:
-
-        #         tkey = i.timestamp.astimezone(tz).strftime('%b-%d-%Y')
-        #         try:
-        #             activity[tkey].append(activity_dict)
-        #         except:
-        #             activity[tkey] = []
-        #             activity[tkey].append(activity_dict)
-
-        # context['student_user'] = user
-        # context['activity_log'] = activity
-
         return context
 
 

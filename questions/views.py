@@ -109,15 +109,13 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         return super(QuestionResponseView, self).dispatch(*args, **kwargs)
 
     def get(self, request, *args, **kwargs):
-        # print 'VIEWING: ', self.next_question['index']
         course = Course.objects.get(slug=self.kwargs['crs_slug'])
         is_instructor = 'instructor' in get_perms(self.request.user, course)
         is_student = 'access' in get_perms(self.request.user, course)
 
         """ User has previously completed or is staff. No viewing restrictions enforced. """
         if self.request.user.is_staff or is_instructor or self.completion_status.count():
-            # or (not self.next_question['question'].response_required)
-            # print "LINE 119"
+            
             if not self.next_question:
                 """ No more questions. Show student user the worksheet completion page. """
                 if is_student:
@@ -131,15 +129,10 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
 
         """ User is not staff but viewing restrictions are not enforced if response not required. """
         if self.next_question:
-            # print "LINE 133", self.next_question['question'].response_required
             if not self.next_question['question'].response_required:
-                # print 'PROVIDING', self.next_question['index']
                 return super(QuestionResponseView, self).get(request, *args, **kwargs)
 
-            # prev_question = self.worksheet.get_prev_question(self.next_question['index'])
-            # if prev_question and (not prev_question.response_required):
-            #     print 'PROVIDING', self.next_question['index']
-            #     return super(QuestionResponseView, self).get(request, *args, **kwargs)
+            
 
         """ Viewing restrictions enforced. """
         self.next_question = self.worksheet.get_next_question(
@@ -448,8 +441,7 @@ class FullReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         context['worksheet'] = worksheet
         context['numquestions'] = worksheet.get_num_questions()
         context['reports'] = worksheet.get_all_responses(context['course'])
-        # context['grade'] = correct/context['numquestions']
-        # print context['reports'][4]
+        
         return context
 
 
@@ -479,7 +471,7 @@ class LessonKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
                     if answer:
                         k_items.append((question.display_text, answer))
                 except Exception as e:
-                    print e
+                    pass
             key.append((i, k_items))
         context['worksheets'] = key
         return context
@@ -510,7 +502,7 @@ class WorksheetKeyView(LoginRequiredMixin, CourseContextMixin, DetailView):
                 if answer:
                     k_items.append((question.display_text, answer))
             except Exception as e:
-                print e
+                pass
 
         key.append((self.get_object(), k_items))
 

@@ -73,7 +73,7 @@
                 </td>
 
                 <td>{{ j.activity.message_detail }}</td>
-                <td>{% if j.score %}<strong>{{ j.score|floatformat:"0" }}%</strong>{% endif %}</td>
+                <td>{% if j.score >= 0 %}<strong>{{ j.score|floatformat:"0" }}%</strong>{% endif %}</td>
             </tr>
             {% endfor %}
         {% empty %}

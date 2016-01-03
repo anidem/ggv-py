@@ -33,7 +33,7 @@ def fix_response_fields():
     mc_responses = QuestionResponse.objects.filter(content_type_id=15)
     radio_responses = []
     for i in mc_responses:
-        if i.content_object.input_select='radio':
+        if i.content_object.input_select=='radio':
             radio_responses.append(i)
 
     print 'Radio responses ==>', len(radio_responses)

@@ -15,7 +15,6 @@ from notes.models import UserNote
 from core.models import Bookmark
 
 
-
 class QuestionSet(AbstractActivity):
     lesson = models.ForeignKey(
         Lesson, null=True, blank=True, related_name='worksheets')
@@ -32,45 +31,111 @@ class QuestionSet(AbstractActivity):
         return self.lesson in user_session['user_lessons']
 
     def get_question_at_index(self, index):
+        """
+        Should return a dict with an index and question object indicated by index.
+        Index is question order. E.g., index 0 is the first question in the worksheet.
+
+        UNIT TEST ==> test_worksheet_question_listing()
+        """
         try:
             question = self.get_ordered_question_list()[index]
             return {'index': index, 'question': question}
         except:
             return None
 
-    def get_ordered_question_list(self):
-        option_questions = self.option_questions.all()
-        text_questions = self.text_questions.all()
+    def get_next_question(self, user):
+        """
+        Should return dict with an index and question object indicating the 
+        relative index of the next unanswered question for user.
+
+        NOTE: this is returning the logical ordering. E.g., first item begins ordering at 1.
+        Will need to normalize this. The logical ordering is used for the request url?
+        
+        If this is the last question, None will be returned.
+        
+        UNIT TEST ==> test_worksheet_question_listing()
+        """
+        questions = self.get_ordered_question_list(required_questions=True)
+        index = 1
+        for i in questions:
+            if not i.user_response_object(user):
+                return {'index': index, 'question': i}
+            index = index + 1
+        return None
+
+    def get_ordered_question_list(self, required_questions=False):
+        """
+        Should return a list of questions (text and option) in specified display order.
+        
+        If required_questions filter is True, only questions that require a response are returned.
+        This particular case is used when scoring (we don't score a question that does not require a response).
+
+        UNIT TEST ==> test_worksheet_question_listing()
+        """
+        if required_questions:
+            option_questions = self.option_questions.filter(response_required=True)
+            text_questions = self.text_questions.filter(response_required=True)
+        else:
+            option_questions = self.option_questions.all()
+            text_questions = self.text_questions.all()
+        
         questions = sorted(
             chain(option_questions, text_questions),
             key=attrgetter('display_order')
         )
         return questions
 
-    def get_num_questions(self):
+    def get_num_questions(self, required_questions=False):
+        """
+        Should return an integer indicating the number of questions assigned to this worksheet.
+
+        If required_questions filter is True, the count reflects only those questions that require a response.
+
+        UNIT TEST ==> test_worksheet_question_listing()
+        """
+        if required_questions:
+            return self.option_questions.filter(response_required=True).count() + self.text_questions.filter(response_required=True).count()
         return self.option_questions.all().count() + self.text_questions.all().count()
 
-    def get_next_question(self, user):
-        questions = self.get_ordered_question_list()
-        index = 1
-        for i in questions:
-            if not i.user_response_object(user) and i.response_required:
-                return {'index': index, 'question': i}
-            index = index + 1
-        return None
-
     def get_prev_question(self, current):
-        try:
+        """
+        Should return a question object ordered directly before index indicated current.
+        Returns None if index out of range.
+
+        UNIT TEST ==> test_worksheet_question_listing()
+        """
+        if current > 0:
             questions = self.get_ordered_question_list()
             return questions[current-1]
+        return None
 
+    def get_user_score(self, user):
+        """
+        Calculates and returns a score based on responses to this worksheet by user.
+        Score is computed as a percentage (0.00 - 100.00). Null responses indicate that user
+        has not submitted a response to that question.
+
+        Uses get_ordered_question_list(required_questions=True) to only score responses for questions 
+        that require a response.
+        """
+        responses = []
+        for i in self.get_ordered_question_list(required_questions=True):
+            responses.append(i.user_response_object(user))
+        
+        num_correct = 0
+        for i in responses:
+            if i and i.iscorrect:
+                num_correct = num_correct + 1 
+        try:
+            return (float(num_correct)/len(responses))*100
         except:
             return None
 
     def get_user_response_objects(self, user):
         """
         Returns a list of QuestionResponse objects related to this worksheet and user.
-        This list may contain None values where a response to a question has not been submitted.
+        This list may contain None values where a response to a question has not been submitted OR 
+        the question does not require a response.
         """
         responses = []
         for i in self.get_ordered_question_list():
@@ -78,23 +143,8 @@ class QuestionSet(AbstractActivity):
 
         return responses
 
-    def get_user_score(self, user):
-        """
-        Calculates and returns a score based on responses to this worksheet by user.
-        Score is computed as a percentage (0.00 - 100.00)
-        Uses get_user_response_objects()
-        """
-        responses = self.get_user_response_objects(user)
-        num_correct = 0
-        for i in responses:
-            if i and i.iscorrect:
-                num_correct = num_correct + 1
-        try:
-            return (float(num_correct)/len(responses))*100
-        except:
-            return None
-
     def get_user_responses(self, user, questions=None, course=None):
+
         report = []
         bookmarks = None
         bk = None
@@ -105,61 +155,51 @@ class QuestionSet(AbstractActivity):
         if not questions:
             questions = self.get_ordered_question_list()
 
+        question_result = 0
         numcorrect = 0
         for i in questions:
+            respobj = i.user_response_object(user)
+            respstr = ''
+            if respobj:
+                question_type = respobj.content_object.get_question_type()
+                resp = respobj.response
+                if question_type == 'option':
+                    if i.input_select == 'checkbox':
+                        resplist = json.loads(resp)
+                        for j in resplist:
+                            respstr = respstr + ' (' + Option.objects.get(pk=j).display_text + ') '
+                    else:
+                        respstr = Option.objects.get(pk=resp).display_text
+
+                elif question_type == 'text':
+                    respstr = resp
+
+                question_result = respobj.iscorrect
+                if question_result:
+                    numcorrect = numcorrect + 1
+
+            elif not i.response_required:
+                respstr = 'Response not required'
+
+            else:
+                respstr = 'Not answered'
+                question_result = False
+            
             question_type = ContentType.objects.get_for_model(i)
             if bookmarks:
                 bookmark = bookmarks.filter(content_type=question_type.id).filter(object_id=i.id)
                 if bookmark:
-                    bk = bookmark[0]
+                    bk = bookmark[0]            
+            
+            response = (bk, i, respstr, question_result)
+            report.append(response)
 
-            response = None
-            respobj = i.user_response_object(user)
-            if respobj:
-                resp = json.loads(respobj.response)
+        try:
+            grade = UserWorksheetStatus.objects.filter(completed_worksheet=self).filter(user=user)[0].score
+        except:
+            grade = None
 
-                if question_type.name == 'option question':
-                    if i.input_select == 'checkbox':  # dealing with a list of responses/answers
-                        try:
-                            r = {int(x) for x in resp}  # create response list as a set
-                            a = {int(x) for x in i.correct_answer()}  # retrieve the answer list as a set
-
-                            score = True
-                            if a - r:  # find diff between sets. if not empty (diffs exist) score is false
-                                score = False
-
-                                # Build a string out of the response list
-                            respstr = [str('(%s)') % Option.objects.get(pk=x).display_text for x in list(r)]
-                            resp = ', '.join(respstr)
-                        except:
-                            score = False
-                            resp = 'This question may have been modified. Please re-answer or report problem to instructor.'
-
-                    else:
-                        try:
-                            r = int(resp)
-                            score = r in i.correct_answer()
-                            resp = Option.objects.get(pk=r).display_text
-                        except:
-                            score = False
-                            resp = 'This question may have been modified. Please re-answer or report problem to instructor.'
-
-                else:
-                    # Check if text question has correct answer specified. count it if null.
-                    if not i.correct:
-                        score = True
-                    else:
-                        score = i.correct_answer() == resp
-
-                if score:
-                    numcorrect = numcorrect + 1
-
-                response = (bk, i, resp, score)
-                report.append(response)
-
-        grade = float(numcorrect)/len(questions)*100
-
-        return {'report': report, 'correct': numcorrect, 'grade': grade}
+        return {'report': report, 'correct': numcorrect, 'numquestions': self.get_num_questions(required_questions=True), 'grade': grade}
 
     def get_all_responses(self, course):
         members = course.member_list()
@@ -237,6 +277,7 @@ class TextQuestion(AbstractQuestion):
     """
     A question type that accepts text input.
     """
+
     question_set = models.ForeignKey(
         QuestionSet, related_name='text_questions')
     input_size = models.CharField(max_length=64, choices=[
@@ -288,6 +329,9 @@ class TextQuestion(AbstractQuestion):
     def get_absolute_url(self):
         return reverse('text_question', args=[self.id])
 
+    class Meta:
+        unique_together = (('display_text', 'question_set'),)
+
 
 class OptionQuestion(AbstractQuestion):
 
@@ -303,6 +347,7 @@ class OptionQuestion(AbstractQuestion):
     notes = GenericRelation(UserNote)
     bookmarks = GenericRelation(Bookmark)
 
+    
     def get_question_type(self):
         return 'option'
 
@@ -327,7 +372,7 @@ class OptionQuestion(AbstractQuestion):
         try:
             return self.correct_answer() == json_str
         except:
-            print 'error doing json compare check'
+            pass
 
     def check_answer(self, question_response):
         correct_ans_listing = self.correct_answer()
@@ -339,7 +384,7 @@ class OptionQuestion(AbstractQuestion):
                 return response_listing == correct_ans_listing
 
             # Implies a single selection option.
-            return int(question_response.json_response()) in correct_ans_listing
+            return int(question_response.response) in correct_ans_listing
 
         return True  # If correct answer not specified return True
 
@@ -359,6 +404,9 @@ class OptionQuestion(AbstractQuestion):
     def get_absolute_url(self):
         return reverse('option_question', args=[self.id])
 
+    class Meta:
+        unique_together = (('display_text', 'question_set'),)
+
 
 class Option(models.Model):
     """
@@ -377,10 +425,12 @@ class Option(models.Model):
 
 
 class QuestionResponse(TimeStampedModel):
+
     """
     Generic question response container.
     Designed to reference objects derived from AbstractQuestion (e.g., OptionQuestion, TextQuestion)
     """
+
     user = models.ForeignKey(User, related_name='question_responses')
     response = models.TextField()
     content_type = models.ForeignKey(ContentType)
@@ -392,27 +442,40 @@ class QuestionResponse(TimeStampedModel):
         try:
             return json.loads(self.response)
         except:
-            return None
+            return self.response
 
     def get_question_object(self):
         return self.content_object
 
     def save(self, *args, **kwargs):
         """
-        The response is always stored as a json string. Any read operation must decode the response:
-        E.g., json.loads(response) See: self.json_response() method
+        The response is always stored as a json string if its a checkbox input. Any read operation must decode the response:
+        E.g., json.loads(response) See: self.json_response() method.
+
+        Every save operation will update the iscorrect field.
         """
-        try:  # verify that response in not already encoded in json
-            json.loads(self.response)
-        except:
-            self.response = json.dumps(self.response)
+        if self.content_object.get_question_type() == 'option' and self.content_object.input_select == 'checkbox':
+            try:  # verify that response is not already encoded in json
+                json.loads(self.response)
+            except:
+                self.response = json.dumps(self.response)
+
+        self.iscorrect = self.content_object.check_answer(self)
 
         super(QuestionResponse, self).save(*args, **kwargs)
+
+# Disabling this during data validation jan 2 2016        
+        # try:
+        #     status = UserWorksheetStatus.objects.filter(completed_worksheet=self.content_object.question_set).get(user=self.user)
+        #     status.update_score()
+        # except Exception as e:
+        #     pass  # status object null, user has not completed all questions.
+
+        
 
     # Fix this to construct arguments relative to question sequence object
     def get_absolute_url(self):
         return reverse('home')
-
 
 class UserWorksheetStatus(TimeStampedModel):
     """
@@ -430,6 +493,3 @@ class UserWorksheetStatus(TimeStampedModel):
     def update_score(self):
         self.score = self.completed_worksheet.get_user_score(self.user)
         self.save()
-
-
-

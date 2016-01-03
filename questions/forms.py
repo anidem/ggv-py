@@ -32,9 +32,7 @@ class QuestionResponseForm(ModelForm):
 
         # Check for previous response to question by user
         try:
-            response = question.user_response_object(user).json_response()
-            self.initial['response'] = response
-
+            self.initial['response'] = question.user_response_object(user).json_response()
         except:
             pass
 
@@ -45,7 +43,7 @@ class QuestionResponseForm(ModelForm):
 
         question = submitted_form.content_object
         user = submitted_form.user
-        previous_response = question.user_response_object(user)
+        
 
         try:
             # Hack to strip whitespace from text question responses.
@@ -54,24 +52,13 @@ class QuestionResponseForm(ModelForm):
                 submitted_form.response = submitted_form.response.strip()
         except:
             pass
-
-        correct = question.check_answer(submitted_form)
-        
+            
+        previous_response = question.user_response_object(user)
         if previous_response:
             previous_response.response = submitted_form.response
-            previous_response.iscorrect = correct
             previous_response.save()
         else:
-            submitted_form.iscorrect = correct
             submitted_form.save()
-
-        #  Update worksheet status score field if user has completed.
-        try:
-            worksheet_status = UserWorksheetStatus.objects.filter(user__id=user.id).get(completed_worksheet=question.question_set)
-            worksheet_status.update_score()
-        
-        except Exception as e:  # worksheet status does not exist for the current user (they have not completed it).
-            pass
 
         return submitted_form
 

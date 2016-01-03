@@ -91,6 +91,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
     model = QuestionResponse
     template_name = 'question_sequence.html'
     form_class = QuestionResponseForm
+    
     worksheet = None
     lesson = None
     next_question = None
@@ -98,13 +99,10 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
     access_object = 'activity'
 
     def dispatch(self, *args, **kwargs):
-        self.worksheet = get_object_or_404(
-            QuestionSet, pk=self.kwargs['i'])
-        self.next_question = self.worksheet.get_question_at_index(
-            int(self.kwargs['j']) - 1)
+        self.worksheet = get_object_or_404(QuestionSet, pk=self.kwargs['i'])
         self.lesson = self.worksheet.lesson
-        self.completion_status = self.request.user.completed_worksheets.filter(
-            completed_worksheet=self.worksheet)
+        self.next_question = self.worksheet.get_question_at_index(int(self.kwargs['j']) - 1)
+        self.completion_status = self.request.user.completed_worksheets.filter(completed_worksheet=self.worksheet)
 
         return super(QuestionResponseView, self).dispatch(*args, **kwargs)
 
@@ -118,7 +116,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             
             if not self.next_question:
                 """ No more questions. Show student user the worksheet completion page. """
-                if is_student:
+                if is_student and not is_instructor:
                     user_ws_status = UserWorksheetStatus.objects.filter(user=self.request.user).get(completed_worksheet=self.worksheet)
                     return HttpResponseRedirect(reverse('worksheet_completed', args=(self.kwargs['crs_slug'], user_ws_status.id)))
 
@@ -135,8 +133,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             
 
         """ Viewing restrictions enforced. """
-        self.next_question = self.worksheet.get_next_question(
-            self.request.user)
+        self.next_question = self.worksheet.get_next_question(self.request.user)
 
         """ If user's response queue is empty, user has completed worksheet, write completion status.
             Send user to worksheet report.
@@ -280,10 +277,6 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
                 'calculator'] = '/media/img/eng/ti-30xs-calculator-english.pdf'
             context['formula'] = '/media/pdf/span-formula-page.pdf'
 
-        # actionstr = 'access-question-' + current_question.get_question_type()
-        # ActivityLog(
-        # user=self.request.user, action=actionstr,
-        # message=self.request.path).save()
         return context
 
 
@@ -414,10 +407,11 @@ class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         user = User.objects.get(pk=self.kwargs['user'])
         worksheet = self.get_object()
         context['worksheet'] = worksheet
-        context['numquestions'] = worksheet.get_num_questions()
+        # context['numquestions'] = worksheet.get_num_questions()
 
         report = worksheet.get_user_responses(
             user, worksheet.get_ordered_question_list(), context['course'])
+        context['numquestions'] = worksheet.get_num_questions(required_questions=True)
         context['report'] = report['report']
         context['correct'] = report['correct']
         context['grade'] = report['grade']
@@ -439,7 +433,7 @@ class FullReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         context = super(FullReportView, self).get_context_data(**kwargs)
         worksheet = self.get_object()
         context['worksheet'] = worksheet
-        context['numquestions'] = worksheet.get_num_questions()
+        context['numquestions'] = worksheet.get_num_questions(required_questions=True)
         context['reports'] = worksheet.get_all_responses(context['course'])
         
         return context

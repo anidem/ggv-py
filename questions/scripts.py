@@ -1,6 +1,55 @@
 from django.contrib.auth.models import User
 from .models import *
 
+"""
+System maintenance procedure jan 2 1016:
+a. Repair response table with fix_response_fields().
+b. Update response table iscorrect field with update_iscorrect_field()
+c. Update worksheet score field with update_worksheet_scores()
+d. Uncomment the update score procedure in QuestionResponse.save() method.
+e. Recommit and pull to production.
+"""
+
+
+def fix_response_fields():
+    """
+    maintenance script that converts radio button responses and text responses to non-json encoded strings.
+    Checkbox responses are designed to be stored as json encoded list. these must remain json encoded.
+    """
+    text_responses = QuestionResponse.objects.filter(content_type_id=14)
+    print 'Text responses ==>', text_responses.count()
+    count = 0
+    for i in text_responses:
+        try:
+            i.response = json.loads(i.response)
+            i.save()
+            count = count + 1
+        except:
+            pass # Don't modify, response is not json encoded.
+
+    print 'Decoded JSON strings ==>', count
+
+
+    mc_responses = QuestionResponse.objects.filter(content_type_id=15)
+    radio_responses = []
+    for i in mc_responses:
+        if i.content_object.input_select='radio':
+            radio_responses.append(i)
+
+    print 'Radio responses ==>', len(radio_responses)
+
+    count = 0
+    for i in radio_responses:
+        try:
+            i.response = json.loads(i.response)
+            i.save()
+            count = count + 1
+        except:
+            pass  # Don't modify, response is not json encoded.
+
+    print 'Decoded JSON strings ==>', count
+
+
 
 # for i in clist:
 #     print i
@@ -12,7 +61,10 @@ from .models import *
 #         except TypeError:
 #             print 'ERROR -- could not update correct answer for: ==> ', r.id
 
-def populate_iscorrect_field():
+
+
+
+def update_iscorrect_field():
     """
     Script used to calculate and update the correct/incorrect status of response. The result is added
     to the iscorrect field which was added to the response objects in november 2015.
@@ -24,8 +76,7 @@ def populate_iscorrect_field():
             u = r.user.email
             print 'Processing: ', u
         try:
-            r.iscorrect = r.content_object.check_answer(r)
-            r.save()
+            r.save()  # Saving updates iscorrect field
         except TypeError:
             print 'ERROR -- could not update correct answer for: ==> ', r.id
 
@@ -72,3 +123,13 @@ def fix_malformed_multiple_choice_responses():
             # r.iscorrect = r.content_object.check_answer(r)
             # r.save()
             print 'FIX==>', r.response
+
+# serialization
+from questions.models import *
+from django.core import serializers
+
+JSONSerializer =  serializers.get_serializer("json")
+jserializer = JSONSerializer()
+with open('zd.json', 'w') as out:
+    jserializer.serialize(QuestionResponse.objects.filter(user__id=12), indent=2, use_natural_foreign_keys=True, use_natural_primary_keys=True stream=out)
+

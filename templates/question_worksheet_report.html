@@ -47,14 +47,14 @@
               {% endif %}
             </thead>
             {% for h,i,j,k in report %}
-
                     {% if j %}
                     <tr class="hoverpad {% cycle 'row1' 'row2' %}">
                         <td> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</td>
                         <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">{{ i.display_text | safe }}</a></td>
                         <td>{{ j | safe }}</td>
                         <td>
-                            {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
+                            {% if j == 'Response not required' %} <span>n/a</span>
+                            {% elif k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
                             {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
                             {% endif %}
                         </td>
@@ -97,19 +97,20 @@
                 </thead>
                 {% for h,i,j,k in report.1 %}
 
-                        {% if j %}
+                    {% if j %}
 
-                        <tr class=" {% cycle 'row1' 'row2' %}">
-                            <td> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</td>
-                            <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">{{ i.display_text | safe }}</a></td>
-                            <td>{{ j | safe }}</td>
-                            <td>
-                                {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
-                                {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
-                                {% endif %}
-                            </td>
-                        </tr>
-                        {% endif %}
+                    <tr class=" {% cycle 'row1' 'row2' %}">
+                        <td> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</td>
+                        <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static"><small>{{ i.display_text | striptags | safe }}</small></a></td>
+                        <td>{{ j | safe }}</td>
+                        <td>
+                            {% if j == 'Response not required' %} <span>n/a</span>
+                            {% elif k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
+                            {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endif %}
 
                 {% endfor %}
             </tbody>

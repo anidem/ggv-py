@@ -77,7 +77,8 @@ def update_iscorrect_field():
             print 'Processing: ', u
         try:
             r.save()  # Saving updates iscorrect field
-        except TypeError:
+        except Exception as e:
+            print e
             print 'ERROR -- could not update correct answer for: ==> ', r.id
 
 

@@ -124,12 +124,5 @@ def fix_malformed_multiple_choice_responses():
             # r.save()
             print 'FIX==>', r.response
 
-# serialization
-from questions.models import *
-from django.core import serializers
 
-JSONSerializer =  serializers.get_serializer("json")
-jserializer = JSONSerializer()
-with open('zd.json', 'w') as out:
-    jserializer.serialize(QuestionResponse.objects.filter(user__id=12), indent=2, use_natural_foreign_keys=True, use_natural_primary_keys=True stream=out)
 

@@ -464,12 +464,11 @@ class QuestionResponse(TimeStampedModel):
 
         super(QuestionResponse, self).save(*args, **kwargs)
 
-# Disabling this during data validation jan 2 2016        
-        # try:
-        #     status = UserWorksheetStatus.objects.filter(completed_worksheet=self.content_object.question_set).get(user=self.user)
-        #     status.update_score()
-        # except Exception as e:
-        #     pass  # status object null, user has not completed all questions.
+        try:
+            status = UserWorksheetStatus.objects.filter(completed_worksheet=self.content_object.question_set).get(user=self.user)
+            status.update_score()
+        except Exception as e:
+            pass  # status object null, user has not completed all questions.
 
         
 

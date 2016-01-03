@@ -1,0 +1,1362 @@
+[
+{
+    "fields": {
+        "subject": "math",
+        "icon_class": "calculator",
+        "language": "eng",
+        "title": "Mathematics"
+    },
+    "model": "lessons.lesson",
+    "pk": 1
+},
+{
+    "fields": {
+        "subject": "science",
+        "icon_class": "flask",
+        "language": "eng",
+        "title": "Science"
+    },
+    "model": "lessons.lesson",
+    "pk": 2
+},
+{
+    "fields": {
+        "subject": "socialstudies",
+        "icon_class": "globe",
+        "language": "eng",
+        "title": "Social Studies"
+    },
+    "model": "lessons.lesson",
+    "pk": 3
+},
+{
+    "fields": {
+        "subject": "writing",
+        "icon_class": "pencil",
+        "language": "eng",
+        "title": "Language Arts"
+    },
+    "model": "lessons.lesson",
+    "pk": 4
+},
+{
+    "fields": {
+        "subject": "math",
+        "icon_class": "calculator",
+        "language": "span",
+        "title": "Matem\u00e1ticas"
+    },
+    "model": "lessons.lesson",
+    "pk": 5
+},
+{
+    "fields": {
+        "subject": "science",
+        "icon_class": "flask",
+        "language": "span",
+        "title": "Ciencia"
+    },
+    "model": "lessons.lesson",
+    "pk": 6
+},
+{
+    "fields": {
+        "subject": "socialstudies",
+        "icon_class": "globe",
+        "language": "span",
+        "title": "Estudios Sociales"
+    },
+    "model": "lessons.lesson",
+    "pk": 7
+},
+{
+    "fields": {
+        "subject": "writing",
+        "icon_class": "pencil",
+        "language": "span",
+        "title": "Las Artes del Lenguaje"
+    },
+    "model": "lessons.lesson",
+    "pk": 8
+},
+{
+    "fields": {
+        "display_order": 2,
+        "subtitle": "",
+        "lesson": 3,
+        "title": "Extended Responses"
+    },
+    "model": "lessons.section",
+    "pk": 10
+},
+{
+    "fields": {
+        "display_order": 1,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "Short Answer Extended Response Topics"
+    },
+    "model": "lessons.section",
+    "pk": 11
+},
+{
+    "fields": {
+        "display_order": 1,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "RESPUESTAS EXTENDIDAS"
+    },
+    "model": "lessons.section",
+    "pk": 12
+},
+{
+    "fields": {
+        "display_order": 1,
+        "subtitle": "",
+        "lesson": 7,
+        "title": "RESPUESTAS EXTENDIDAS"
+    },
+    "model": "lessons.section",
+    "pk": 13
+},
+{
+    "fields": {
+        "display_order": 999,
+        "subtitle": "",
+        "lesson": 3,
+        "title": "Social Studies Final Reviews"
+    },
+    "model": "lessons.section",
+    "pk": 14
+},
+{
+    "fields": {
+        "display_order": 999,
+        "subtitle": "",
+        "lesson": 7,
+        "title": "Pruebas de Estudios Sociales "
+    },
+    "model": "lessons.section",
+    "pk": 15
+},
+{
+    "fields": {
+        "display_order": 999,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "Ciencia Pruebas"
+    },
+    "model": "lessons.section",
+    "pk": 16
+},
+{
+    "fields": {
+        "display_order": 999,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "Science Final Reviews"
+    },
+    "model": "lessons.section",
+    "pk": 17
+},
+{
+    "fields": {
+        "display_order": 999,
+        "subtitle": "",
+        "lesson": 8,
+        "title": "Pruebas Las Artes del Lenguaje "
+    },
+    "model": "lessons.section",
+    "pk": 18
+},
+{
+    "fields": {
+        "display_order": 999,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "Language Arts Final Reviews"
+    },
+    "model": "lessons.section",
+    "pk": 19
+},
+{
+    "fields": {
+        "display_order": 999,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "Pruebas Matem\u00e1ticas Finales"
+    },
+    "model": "lessons.section",
+    "pk": 20
+},
+{
+    "fields": {
+        "display_order": 999,
+        "subtitle": "This is the end of the GGV2 math curriculum. The following math quizzes will determine your readiness to take the official GED test. Please see your instructor.",
+        "lesson": 1,
+        "title": "Final Math Quizzes"
+    },
+    "model": "lessons.section",
+    "pk": 21
+},
+{
+    "fields": {
+        "display_order": 24,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "Trigonometry"
+    },
+    "model": "lessons.section",
+    "pk": 22
+},
+{
+    "fields": {
+        "display_order": 24,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "Trigonometria"
+    },
+    "model": "lessons.section",
+    "pk": 23
+},
+{
+    "fields": {
+        "display_order": 1,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "PLACE VALUE"
+    },
+    "model": "lessons.section",
+    "pk": 109
+},
+{
+    "fields": {
+        "display_order": 2,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "ROUNDING"
+    },
+    "model": "lessons.section",
+    "pk": 110
+},
+{
+    "fields": {
+        "display_order": 3,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "PATTERNS"
+    },
+    "model": "lessons.section",
+    "pk": 111
+},
+{
+    "fields": {
+        "display_order": 4,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "WORD PROBLEMS"
+    },
+    "model": "lessons.section",
+    "pk": 112
+},
+{
+    "fields": {
+        "display_order": 5,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "AVERAGE"
+    },
+    "model": "lessons.section",
+    "pk": 113
+},
+{
+    "fields": {
+        "display_order": 6,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "MEDIAN"
+    },
+    "model": "lessons.section",
+    "pk": 114
+},
+{
+    "fields": {
+        "display_order": 7,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "AVERAGE/MEDIAN  REVIEW"
+    },
+    "model": "lessons.section",
+    "pk": 115
+},
+{
+    "fields": {
+        "display_order": 8,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "ORDER OF OPERATIONS"
+    },
+    "model": "lessons.section",
+    "pk": 116
+},
+{
+    "fields": {
+        "display_order": 9,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "EXPRESSIONS"
+    },
+    "model": "lessons.section",
+    "pk": 117
+},
+{
+    "fields": {
+        "display_order": 10,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "FRACTIONS"
+    },
+    "model": "lessons.section",
+    "pk": 118
+},
+{
+    "fields": {
+        "display_order": 11,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "RATIOS"
+    },
+    "model": "lessons.section",
+    "pk": 119
+},
+{
+    "fields": {
+        "display_order": 12,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "DECIMALS"
+    },
+    "model": "lessons.section",
+    "pk": 120
+},
+{
+    "fields": {
+        "display_order": 13,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "PERCENTS"
+    },
+    "model": "lessons.section",
+    "pk": 121
+},
+{
+    "fields": {
+        "display_order": 14,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "PROBABILITY"
+    },
+    "model": "lessons.section",
+    "pk": 122
+},
+{
+    "fields": {
+        "display_order": 15,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "PROPORTIONS"
+    },
+    "model": "lessons.section",
+    "pk": 123
+},
+{
+    "fields": {
+        "display_order": 16,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "GEOMETRY AND ALGEBRA"
+    },
+    "model": "lessons.section",
+    "pk": 124
+},
+{
+    "fields": {
+        "display_order": 17,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "SCIENTIFIC NOTATION"
+    },
+    "model": "lessons.section",
+    "pk": 125
+},
+{
+    "fields": {
+        "display_order": 18,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "PYTHAGOREAN"
+    },
+    "model": "lessons.section",
+    "pk": 126
+},
+{
+    "fields": {
+        "display_order": 19,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "NUMBER LINE and SIGNED NUMBERS"
+    },
+    "model": "lessons.section",
+    "pk": 127
+},
+{
+    "fields": {
+        "display_order": 20,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "COORDINATES and SLOPE"
+    },
+    "model": "lessons.section",
+    "pk": 128
+},
+{
+    "fields": {
+        "display_order": 21,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "CALENDAR"
+    },
+    "model": "lessons.section",
+    "pk": 129
+},
+{
+    "fields": {
+        "display_order": 22,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "CLOCK"
+    },
+    "model": "lessons.section",
+    "pk": 130
+},
+{
+    "fields": {
+        "display_order": 23,
+        "subtitle": "",
+        "lesson": 1,
+        "title": "Expressions and Equations"
+    },
+    "model": "lessons.section",
+    "pk": 131
+},
+{
+    "fields": {
+        "display_order": 0,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "TEST INFO"
+    },
+    "model": "lessons.section",
+    "pk": 132
+},
+{
+    "fields": {
+        "display_order": 2,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "Human Body"
+    },
+    "model": "lessons.section",
+    "pk": 133
+},
+{
+    "fields": {
+        "display_order": 3,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "SCIENTIFIC METHOD"
+    },
+    "model": "lessons.section",
+    "pk": 134
+},
+{
+    "fields": {
+        "display_order": 4,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "WATER CYCLE"
+    },
+    "model": "lessons.section",
+    "pk": 135
+},
+{
+    "fields": {
+        "display_order": 5,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "PHOTOSYNTHESIS"
+    },
+    "model": "lessons.section",
+    "pk": 136
+},
+{
+    "fields": {
+        "display_order": 6,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "GERMS"
+    },
+    "model": "lessons.section",
+    "pk": 137
+},
+{
+    "fields": {
+        "display_order": 7,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "CLASSIFICATION"
+    },
+    "model": "lessons.section",
+    "pk": 138
+},
+{
+    "fields": {
+        "display_order": 8,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "REPRODUCTION"
+    },
+    "model": "lessons.section",
+    "pk": 139
+},
+{
+    "fields": {
+        "display_order": 9,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "ECOSYSTEMS"
+    },
+    "model": "lessons.section",
+    "pk": 140
+},
+{
+    "fields": {
+        "display_order": 10,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "GEOLOGY"
+    },
+    "model": "lessons.section",
+    "pk": 141
+},
+{
+    "fields": {
+        "display_order": 11,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "ENERGY"
+    },
+    "model": "lessons.section",
+    "pk": 142
+},
+{
+    "fields": {
+        "display_order": 12,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "FOOD CHAIN"
+    },
+    "model": "lessons.section",
+    "pk": 143
+},
+{
+    "fields": {
+        "display_order": 13,
+        "subtitle": "",
+        "lesson": 2,
+        "title": "Discussion Notes"
+    },
+    "model": "lessons.section",
+    "pk": 144
+},
+{
+    "fields": {
+        "display_order": 1,
+        "subtitle": "",
+        "lesson": 3,
+        "title": "Test Info"
+    },
+    "model": "lessons.section",
+    "pk": 163
+},
+{
+    "fields": {
+        "display_order": 3,
+        "subtitle": "",
+        "lesson": 3,
+        "title": "Mapping"
+    },
+    "model": "lessons.section",
+    "pk": 164
+},
+{
+    "fields": {
+        "display_order": 4,
+        "subtitle": "",
+        "lesson": 3,
+        "title": "Colonization"
+    },
+    "model": "lessons.section",
+    "pk": 165
+},
+{
+    "fields": {
+        "display_order": 5,
+        "subtitle": "",
+        "lesson": 3,
+        "title": "Geography"
+    },
+    "model": "lessons.section",
+    "pk": 166
+},
+{
+    "fields": {
+        "display_order": 7,
+        "subtitle": "",
+        "lesson": 3,
+        "title": "Politics"
+    },
+    "model": "lessons.section",
+    "pk": 167
+},
+{
+    "fields": {
+        "display_order": 13,
+        "subtitle": "",
+        "lesson": 3,
+        "title": "Economics"
+    },
+    "model": "lessons.section",
+    "pk": 173
+},
+{
+    "fields": {
+        "display_order": 16,
+        "subtitle": "",
+        "lesson": 3,
+        "title": "Cartoons"
+    },
+    "model": "lessons.section",
+    "pk": 176
+},
+{
+    "fields": {
+        "display_order": 17,
+        "subtitle": "",
+        "lesson": 3,
+        "title": "Social Studies Discussion Notes"
+    },
+    "model": "lessons.section",
+    "pk": 177
+},
+{
+    "fields": {
+        "display_order": 1,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "VALOR DE POSICI\u00d3N"
+    },
+    "model": "lessons.section",
+    "pk": 193
+},
+{
+    "fields": {
+        "display_order": 2,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "REDONDEAR"
+    },
+    "model": "lessons.section",
+    "pk": 194
+},
+{
+    "fields": {
+        "display_order": 3,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "MODELOS"
+    },
+    "model": "lessons.section",
+    "pk": 195
+},
+{
+    "fields": {
+        "display_order": 4,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "PROBLEMAS DE PALABRA"
+    },
+    "model": "lessons.section",
+    "pk": 196
+},
+{
+    "fields": {
+        "display_order": 5,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "PROMEDIO"
+    },
+    "model": "lessons.section",
+    "pk": 197
+},
+{
+    "fields": {
+        "display_order": 6,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "MEDIANA"
+    },
+    "model": "lessons.section",
+    "pk": 198
+},
+{
+    "fields": {
+        "display_order": 7,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "PROMEDIO/MEDIANA EXAMEN"
+    },
+    "model": "lessons.section",
+    "pk": 199
+},
+{
+    "fields": {
+        "display_order": 8,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "ORDEN DE OPERACIONES"
+    },
+    "model": "lessons.section",
+    "pk": 200
+},
+{
+    "fields": {
+        "display_order": 9,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "EXPRESIONES"
+    },
+    "model": "lessons.section",
+    "pk": 201
+},
+{
+    "fields": {
+        "display_order": 10,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "FRACCIONES"
+    },
+    "model": "lessons.section",
+    "pk": 202
+},
+{
+    "fields": {
+        "display_order": 11,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "RAZON"
+    },
+    "model": "lessons.section",
+    "pk": 203
+},
+{
+    "fields": {
+        "display_order": 12,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "DECIMALES"
+    },
+    "model": "lessons.section",
+    "pk": 204
+},
+{
+    "fields": {
+        "display_order": 13,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "PORCIENTOS"
+    },
+    "model": "lessons.section",
+    "pk": 205
+},
+{
+    "fields": {
+        "display_order": 14,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "PROBABILIDAD"
+    },
+    "model": "lessons.section",
+    "pk": 206
+},
+{
+    "fields": {
+        "display_order": 15,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "PROPORCIONES"
+    },
+    "model": "lessons.section",
+    "pk": 207
+},
+{
+    "fields": {
+        "display_order": 16,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "GEOMETR\u00cdA Y \u00c1LGEBRA"
+    },
+    "model": "lessons.section",
+    "pk": 208
+},
+{
+    "fields": {
+        "display_order": 17,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "NOTACI\u00d3N CIENT\u00cdFICA"
+    },
+    "model": "lessons.section",
+    "pk": 209
+},
+{
+    "fields": {
+        "display_order": 18,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "RELACI\u00d3N PIT\u00c1GORA"
+    },
+    "model": "lessons.section",
+    "pk": 210
+},
+{
+    "fields": {
+        "display_order": 19,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "RECTA NUM\u00c9RICA, N\u00daMEROS NEGATIVOS, Y POSITIVOS"
+    },
+    "model": "lessons.section",
+    "pk": 211
+},
+{
+    "fields": {
+        "display_order": 20,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "COORDENADAS"
+    },
+    "model": "lessons.section",
+    "pk": 212
+},
+{
+    "fields": {
+        "display_order": 21,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "CALENDARIO"
+    },
+    "model": "lessons.section",
+    "pk": 213
+},
+{
+    "fields": {
+        "display_order": 22,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "RELOJ"
+    },
+    "model": "lessons.section",
+    "pk": 214
+},
+{
+    "fields": {
+        "display_order": 23,
+        "subtitle": "",
+        "lesson": 5,
+        "title": "Expresiones y Ecuaciones"
+    },
+    "model": "lessons.section",
+    "pk": 215
+},
+{
+    "fields": {
+        "display_order": 0,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "PRUEBA DE CIENCIAs INFORMACI\u00d3N"
+    },
+    "model": "lessons.section",
+    "pk": 216
+},
+{
+    "fields": {
+        "display_order": 2,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "EL CUERPO HUMANO"
+    },
+    "model": "lessons.section",
+    "pk": 217
+},
+{
+    "fields": {
+        "display_order": 3,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "HECHO, HIP\u00f3TESIS, OPINI\u00d3N"
+    },
+    "model": "lessons.section",
+    "pk": 218
+},
+{
+    "fields": {
+        "display_order": 4,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "EL CICLO DE AGUA"
+    },
+    "model": "lessons.section",
+    "pk": 219
+},
+{
+    "fields": {
+        "display_order": 5,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "FOTOS\u00cdNTESIS"
+    },
+    "model": "lessons.section",
+    "pk": 220
+},
+{
+    "fields": {
+        "display_order": 6,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "GERMENES"
+    },
+    "model": "lessons.section",
+    "pk": 221
+},
+{
+    "fields": {
+        "display_order": 7,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "CLASIFICACI\u00d3N"
+    },
+    "model": "lessons.section",
+    "pk": 222
+},
+{
+    "fields": {
+        "display_order": 8,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "REPRODUCCION"
+    },
+    "model": "lessons.section",
+    "pk": 223
+},
+{
+    "fields": {
+        "display_order": 9,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "ECOSISTEMAS"
+    },
+    "model": "lessons.section",
+    "pk": 224
+},
+{
+    "fields": {
+        "display_order": 10,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "TERREMOTOS, TSUNAMIS"
+    },
+    "model": "lessons.section",
+    "pk": 225
+},
+{
+    "fields": {
+        "display_order": 11,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "ENERGIA"
+    },
+    "model": "lessons.section",
+    "pk": 226
+},
+{
+    "fields": {
+        "display_order": 12,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "CADENA ALIMENTICIA"
+    },
+    "model": "lessons.section",
+    "pk": 227
+},
+{
+    "fields": {
+        "display_order": 13,
+        "subtitle": "",
+        "lesson": 6,
+        "title": "APUNTES DE DISCUSI\u00d3N - Ciencia"
+    },
+    "model": "lessons.section",
+    "pk": 228
+},
+{
+    "fields": {
+        "display_order": 0,
+        "subtitle": "",
+        "lesson": 7,
+        "title": "Prueba de Estudios Sociales Ged 2014 "
+    },
+    "model": "lessons.section",
+    "pk": 247
+},
+{
+    "fields": {
+        "display_order": 2,
+        "subtitle": "",
+        "lesson": 7,
+        "title": "Mapas"
+    },
+    "model": "lessons.section",
+    "pk": 248
+},
+{
+    "fields": {
+        "display_order": 4,
+        "subtitle": "",
+        "lesson": 7,
+        "title": "Colonizaci\u00f3n"
+    },
+    "model": "lessons.section",
+    "pk": 250
+},
+{
+    "fields": {
+        "display_order": 5,
+        "subtitle": "",
+        "lesson": 7,
+        "title": "Continentes"
+    },
+    "model": "lessons.section",
+    "pk": 251
+},
+{
+    "fields": {
+        "display_order": 7,
+        "subtitle": "",
+        "lesson": 7,
+        "title": "Pol\u00edticas"
+    },
+    "model": "lessons.section",
+    "pk": 253
+},
+{
+    "fields": {
+        "display_order": 13,
+        "subtitle": "",
+        "lesson": 7,
+        "title": "Economia"
+    },
+    "model": "lessons.section",
+    "pk": 259
+},
+{
+    "fields": {
+        "display_order": 16,
+        "subtitle": "",
+        "lesson": 7,
+        "title": "Caricaturas Pol\u00edticas"
+    },
+    "model": "lessons.section",
+    "pk": 262
+},
+{
+    "fields": {
+        "display_order": 17,
+        "subtitle": "",
+        "lesson": 7,
+        "title": "APUNTES DE DISCUSI\u00d3N - Estudios Sociales"
+    },
+    "model": "lessons.section",
+    "pk": 263
+},
+{
+    "fields": {
+        "display_order": 1,
+        "subtitle": "",
+        "lesson": 8,
+        "title": "ORACIONES"
+    },
+    "model": "lessons.section",
+    "pk": 279
+},
+{
+    "fields": {
+        "display_order": 2,
+        "subtitle": "",
+        "lesson": 8,
+        "title": "PRONOMBRES"
+    },
+    "model": "lessons.section",
+    "pk": 280
+},
+{
+    "fields": {
+        "display_order": 4,
+        "subtitle": "",
+        "lesson": 8,
+        "title": "VERBOS"
+    },
+    "model": "lessons.section",
+    "pk": 282
+},
+{
+    "fields": {
+        "display_order": 5,
+        "subtitle": "",
+        "lesson": 8,
+        "title": "PARTICIPIO & TIEMPO"
+    },
+    "model": "lessons.section",
+    "pk": 283
+},
+{
+    "fields": {
+        "display_order": 6,
+        "subtitle": "",
+        "lesson": 8,
+        "title": "ANTECEDENTES"
+    },
+    "model": "lessons.section",
+    "pk": 284
+},
+{
+    "fields": {
+        "display_order": 7,
+        "subtitle": "",
+        "lesson": 8,
+        "title": "VERBOS & ANTECEDENTES  REVISA"
+    },
+    "model": "lessons.section",
+    "pk": 285
+},
+{
+    "fields": {
+        "display_order": 8,
+        "subtitle": "",
+        "lesson": 8,
+        "title": "COMAS"
+    },
+    "model": "lessons.section",
+    "pk": 286
+},
+{
+    "fields": {
+        "display_order": 9,
+        "subtitle": "",
+        "lesson": 8,
+        "title": "CONSTRUCCION PARALELA"
+    },
+    "model": "lessons.section",
+    "pk": 287
+},
+{
+    "fields": {
+        "display_order": 10,
+        "subtitle": "",
+        "lesson": 8,
+        "title": "MODIFICADORES"
+    },
+    "model": "lessons.section",
+    "pk": 288
+},
+{
+    "fields": {
+        "display_order": 11,
+        "subtitle": "",
+        "lesson": 8,
+        "title": "MAYUSCULA"
+    },
+    "model": "lessons.section",
+    "pk": 289
+},
+{
+    "fields": {
+        "display_order": 12,
+        "subtitle": "",
+        "lesson": 8,
+        "title": "RESPUESTAS EXTENDIDAS"
+    },
+    "model": "lessons.section",
+    "pk": 290
+},
+{
+    "fields": {
+        "display_order": 13,
+        "subtitle": "",
+        "lesson": 8,
+        "title": "REGLAS"
+    },
+    "model": "lessons.section",
+    "pk": 291
+},
+{
+    "fields": {
+        "display_order": 1,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "SENTENCES"
+    },
+    "model": "lessons.section",
+    "pk": 292
+},
+{
+    "fields": {
+        "display_order": 2,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "PLURAL NOUNS"
+    },
+    "model": "lessons.section",
+    "pk": 293
+},
+{
+    "fields": {
+        "display_order": 3,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "POSSESSIVE PLURAL AND CONTRACTIONS"
+    },
+    "model": "lessons.section",
+    "pk": 294
+},
+{
+    "fields": {
+        "display_order": 4,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "PRONOUNS"
+    },
+    "model": "lessons.section",
+    "pk": 295
+},
+{
+    "fields": {
+        "display_order": 5,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "SPELLING AND HOMONYMS"
+    },
+    "model": "lessons.section",
+    "pk": 296
+},
+{
+    "fields": {
+        "display_order": 6,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "VERBS"
+    },
+    "model": "lessons.section",
+    "pk": 297
+},
+{
+    "fields": {
+        "display_order": 7,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "PARTICIPLE AND TENSE"
+    },
+    "model": "lessons.section",
+    "pk": 298
+},
+{
+    "fields": {
+        "display_order": 8,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "ANTECEDENTS"
+    },
+    "model": "lessons.section",
+    "pk": 299
+},
+{
+    "fields": {
+        "display_order": 9,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "VERB AND  ANTECEDENT  REVIEW"
+    },
+    "model": "lessons.section",
+    "pk": 300
+},
+{
+    "fields": {
+        "display_order": 10,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "COMMAS"
+    },
+    "model": "lessons.section",
+    "pk": 301
+},
+{
+    "fields": {
+        "display_order": 12,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "PARALLEL CONSTRUCTION"
+    },
+    "model": "lessons.section",
+    "pk": 302
+},
+{
+    "fields": {
+        "display_order": 13,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "DANGLING AND MISPLACED  MODIFIERS"
+    },
+    "model": "lessons.section",
+    "pk": 303
+},
+{
+    "fields": {
+        "display_order": 14,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "CAPITALIZATION"
+    },
+    "model": "lessons.section",
+    "pk": 304
+},
+{
+    "fields": {
+        "display_order": 15,
+        "subtitle": "",
+        "lesson": 4,
+        "title": "EXTENDED RESPONSES"
+    },
+    "model": "lessons.section",
+    "pk": 305
+}
+]

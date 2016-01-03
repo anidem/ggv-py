@@ -1,0 +1,429 @@
+[
+{
+  "fields": {
+    "username": "student@ggv2.dev",
+    "first_name": "Worksheet",
+    "last_name": "User",
+    "is_active": true,
+    "is_superuser": false,
+    "is_staff": false,
+    "last_login": "2015-12-30T19:05:18.354Z",
+    "groups": [],
+    "user_permissions": [],
+    "password": "pbkdf2_sha256$15000$e3h4io7TWwXM$TLaR333tYL2XfBjtG9W6cba+VW6x+xHV7UaqZrC+NCE=",
+    "email": "student@ggv2.dev",
+    "date_joined": "2015-03-31T23:18:00.801Z"
+  },
+  "model": "auth.user"
+},
+{
+  "fields": {
+    "subject": "math",
+    "icon_class": "calculator",
+    "language": "eng",
+    "title": "Mathematics"
+  },
+  "model": "lessons.lesson",
+  "pk": 1
+},
+{
+  "fields": {
+    "display_order": 1,
+    "subtitle": "",
+    "lesson": 1,
+    "title": "PLACE VALUE"
+  },
+  "model": "lessons.section",
+  "pk": 109
+},
+{
+  "fields": {
+    "title": "Demo Quiz",
+    "section": 109,
+    "display_pdf": "",
+    "lesson": 1,
+    "activity_type": "worksheet",
+    "display_order": -5,
+    "instructions": ""
+  },
+  "model": "questions.questionset",
+  "pk": 143
+},
+{
+  "fields": {
+    "display_text": "A text question. Short answer with image. Response required. Please type your favorite color (red, blue, or green)",
+    "question_set": 143,
+    "display_order": -1,
+    "correct": "blue",
+    "response_required": true,
+    "display_image": "img/diamond-head.jpg",
+    "input_size": "1",
+    "display_key_file": "",
+    "display_pdf": ""
+  },
+  "model": "questions.textquestion",
+  "pk": 1022
+},
+{
+  "fields": {
+    "display_text": "A text question. Long/paragraph answer (essay). Response required. Lucky number? ",
+    "question_set": 143,
+    "display_order": 1,
+    "correct": "7",
+    "response_required": true,
+    "display_image": "",
+    "input_size": "15",
+    "display_key_file": "",
+    "display_pdf": ""
+  },
+  "model": "questions.textquestion",
+  "pk": 1023
+},
+{
+  "fields": {
+    "display_text": "Text question. Sentence input. Response required. Displays a pdf. Complete the sentence: Now is the ________ for all good men.",
+    "question_set": 143,
+    "display_order": 2,
+    "correct": "time",
+    "response_required": true,
+    "display_image": "",
+    "input_size": "5",
+    "display_key_file": "",
+    "display_pdf": "pdf/output.pdf"
+  },
+  "model": "questions.textquestion",
+  "pk": 1024
+},
+{
+  "fields": {
+    "display_text": "A text question that does not require a response. Displays an image.",
+    "question_set": 143,
+    "display_order": 2,
+    "correct": "",
+    "response_required": false,
+    "display_image": "img/IMG_1109_GiFrMFf.JPG",
+    "input_size": "1",
+    "display_key_file": "",
+    "display_pdf": ""
+  },
+  "model": "questions.textquestion",
+  "pk": 1025
+},
+{
+  "fields": {
+    "display_text": "Text question for \"essays\". Correct answer NOT specified. Response required. Write an essay!",
+    "question_set": 143,
+    "display_order": 0,
+    "correct": "",
+    "response_required": true,
+    "display_image": "",
+    "input_size": "5",
+    "display_key_file": "",
+    "display_pdf": ""
+  },
+  "model": "questions.textquestion",
+  "pk": 1026
+},
+{
+  "fields": {
+    "display_text": "Checkbox question. Response required. Favorite food? Must select at least two items from the list.",
+    "question_set": 143,
+    "display_order": 5,
+    "response_required": true,
+    "display_image": "img/IMG_1109.JPG",
+    "display_key_file": "",
+    "display_pdf": "",
+    "input_select": "checkbox"
+  },
+  "model": "questions.optionquestion",
+  "pk": 12795
+},
+{
+  "fields": {
+    "display_text": "Multiple choice - single response. Response required. Lucky number? See pdf for examples.",
+    "question_set": 143,
+    "display_order": 4,
+    "response_required": true,
+    "display_image": "",
+    "display_key_file": "",
+    "display_pdf": "pdf/output_QVjcpiT.pdf",
+    "input_select": "radio"
+  },
+  "model": "questions.optionquestion",
+  "pk": 12794
+},
+{
+  "fields": {
+    "display_text": "Multiple choice - single response. Response required. Favorite color?",
+    "question_set": 143,
+    "display_order": 3,
+    "response_required": true,
+    "display_image": "",
+    "display_key_file": "",
+    "display_pdf": "",
+    "input_select": "radio"
+  },
+  "model": "questions.optionquestion",
+  "pk": 12793
+},
+{
+  "fields": {
+    "display_text": "red",
+    "display_order": 0,
+    "question": 12793,
+    "correct": false
+  },
+  "model": "questions.option",
+  "pk": 51792
+},
+{
+  "fields": {
+    "display_text": "0",
+    "display_order": 0,
+    "question": 12794,
+    "correct": false
+  },
+  "model": "questions.option",
+  "pk": 51795
+},
+{
+  "fields": {
+    "display_text": "ice cream",
+    "display_order": 0,
+    "question": 12795,
+    "correct": false
+  },
+  "model": "questions.option",
+  "pk": 51799
+},
+{
+  "fields": {
+    "display_text": "green",
+    "display_order": 1,
+    "question": 12793,
+    "correct": false
+  },
+  "model": "questions.option",
+  "pk": 51793
+},
+{
+  "fields": {
+    "display_text": "2",
+    "display_order": 1,
+    "question": 12794,
+    "correct": false
+  },
+  "model": "questions.option",
+  "pk": 51796
+},
+{
+  "fields": {
+    "display_text": "sandwich",
+    "display_order": 1,
+    "question": 12795,
+    "correct": false
+  },
+  "model": "questions.option",
+  "pk": 51800
+},
+{
+  "fields": {
+    "display_text": "blue",
+    "display_order": 2,
+    "question": 12793,
+    "correct": true
+  },
+  "model": "questions.option",
+  "pk": 51794
+},
+{
+  "fields": {
+    "display_text": "7",
+    "display_order": 2,
+    "question": 12794,
+    "correct": true
+  },
+  "model": "questions.option",
+  "pk": 51797
+},
+{
+  "fields": {
+    "display_text": "burrito",
+    "display_order": 2,
+    "question": 12795,
+    "correct": true
+  },
+  "model": "questions.option",
+  "pk": 51801
+},
+{
+  "fields": {
+    "display_text": "8",
+    "display_order": 3,
+    "question": 12794,
+    "correct": false
+  },
+  "model": "questions.option",
+  "pk": 51798
+},
+{
+  "fields": {
+    "display_text": "tostada",
+    "display_order": 3,
+    "question": 12795,
+    "correct": false
+  },
+  "model": "questions.option",
+  "pk": 51802
+},
+{
+  "fields": {
+    "display_text": "pizza",
+    "display_order": 4,
+    "question": 12795,
+    "correct": true
+  },
+  "model": "questions.option",
+  "pk": 51803
+},
+{
+  "fields": {
+    "created": "2015-12-31T17:57:37.932Z",
+    "iscorrect": true,
+    "modified": "2015-12-31T18:00:27.950Z",
+    "object_id": 12795,
+    "user": [
+      "student@ggv2.dev"
+    ],
+    "content_type": [
+      "questions",
+      "optionquestion"
+    ],
+    "response": "[\"51801\", \"51803\"]"
+  },
+  "model": "questions.questionresponse",
+  "pk": 133799
+},
+{
+  "fields": {
+    "created": "2015-12-31T17:57:28.371Z",
+    "iscorrect": true,
+    "modified": "2015-12-31T17:57:28.477Z",
+    "object_id": 12794,
+    "user": [
+      "student@ggv2.dev"
+    ],
+    "content_type": [
+      "questions",
+      "optionquestion"
+    ],
+    "response": "51797"
+  },
+  "model": "questions.questionresponse",
+  "pk": 133798
+},
+{
+  "fields": {
+    "created": "2015-12-31T17:57:25.178Z",
+    "iscorrect": true,
+    "modified": "2015-12-31T17:57:25.282Z",
+    "object_id": 12793,
+    "user": [
+      "student@ggv2.dev"
+    ],
+    "content_type": [
+      "questions",
+      "optionquestion"
+    ],
+    "response": "51794"
+  },
+  "model": "questions.questionresponse",
+  "pk": 133797
+},
+{
+  "fields": {
+    "created": "2015-12-31T17:56:35.928Z",
+    "iscorrect": true,
+    "modified": "2015-12-31T17:56:36.015Z",
+    "object_id": 1022,
+    "user": [
+      "student@ggv2.dev"
+    ],
+    "content_type": [
+      "questions",
+      "textquestion"
+    ],
+    "response": "blue"
+  },
+  "model": "questions.questionresponse",
+  "pk": 133793
+},
+{
+  "fields": {
+    "created": "2015-12-31T17:57:12.148Z",
+    "iscorrect": true,
+    "modified": "2015-12-31T17:57:12.233Z",
+    "object_id": 1023,
+    "user": [
+      "student@ggv2.dev"
+    ],
+    "content_type": [
+      "questions",
+      "textquestion"
+    ],
+    "response": "7"
+  },
+  "model": "questions.questionresponse",
+  "pk": 133795
+},
+{
+  "fields": {
+    "created": "2015-12-31T17:57:18.631Z",
+    "iscorrect": true,
+    "modified": "2015-12-31T17:57:18.717Z",
+    "object_id": 1024,
+    "user": [
+      "student@ggv2.dev"
+    ],
+    "content_type": [
+      "questions",
+      "textquestion"
+    ],
+    "response": "time"
+  },
+  "model": "questions.questionresponse",
+  "pk": 133796
+},
+{
+  "fields": {
+    "created": "2015-12-31T17:57:06.907Z",
+    "iscorrect": true,
+    "modified": "2015-12-31T17:57:06.994Z",
+    "object_id": 1026,
+    "user": [
+      "student@ggv2.dev"
+    ],
+    "content_type": [
+      "questions",
+      "textquestion"
+    ],
+    "response": "any old text"
+  },
+  "model": "questions.questionresponse",
+  "pk": 133794
+},
+{
+  "fields": {
+    "created": "2015-12-31T17:57:38.621Z",
+    "can_check_results": true,
+    "completed_worksheet": 143,
+    "modified": "2015-12-31T18:00:28.207Z",
+    "score": "100.00",
+    "user": [
+      "student@ggv2.dev"
+    ]
+  },
+  "model": "questions.userworksheetstatus",
+  "pk": 6685
+}
+]

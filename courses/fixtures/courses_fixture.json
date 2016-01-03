@@ -1,0 +1,964 @@
+[
+{
+    "fields": {
+        "control_worksheet_results": false,
+        "access_code": "",
+        "slug": "sample-course",
+        "title": "Developers Only"
+    },
+    "model": "courses.course",
+    "pk": 1
+},
+{
+    "fields": {
+        "control_worksheet_results": false,
+        "access_code": "",
+        "slug": "las-animas-ggv",
+        "title": "Las Animas - GGV"
+    },
+    "model": "courses.course",
+    "pk": 3
+},
+{
+    "fields": {
+        "control_worksheet_results": false,
+        "access_code": "",
+        "slug": "pueblo-pjd2",
+        "title": "Pueblo - PJD2 / SUMMIT"
+    },
+    "model": "courses.course",
+    "pk": 4
+},
+{
+    "fields": {
+        "control_worksheet_results": true,
+        "access_code": "",
+        "slug": "colosprings-pjd2",
+        "title": "Colorado Springs - PJD2 / SUMMIT"
+    },
+    "model": "courses.course",
+    "pk": 5
+},
+{
+    "fields": {
+        "control_worksheet_results": false,
+        "access_code": "",
+        "slug": "monte-vista-pjd2",
+        "title": "Monte Vista - PJD2"
+    },
+    "model": "courses.course",
+    "pk": 6
+},
+{
+    "fields": {
+        "control_worksheet_results": false,
+        "access_code": "",
+        "slug": "eads-ggv",
+        "title": "Eads - GGV"
+    },
+    "model": "courses.course",
+    "pk": 7
+},
+{
+    "fields": {
+        "control_worksheet_results": false,
+        "access_code": "",
+        "slug": "la-junta-pjd2",
+        "title": "La Junta - PJD2 / SUMMIT"
+    },
+    "model": "courses.course",
+    "pk": 8
+},
+{
+    "fields": {
+        "control_worksheet_results": false,
+        "access_code": "",
+        "slug": "greeley-pjd2",
+        "title": "Greeley - PJD2 / SUMMIT"
+    },
+    "model": "courses.course",
+    "pk": 9
+},
+{
+    "fields": {
+        "control_worksheet_results": false,
+        "access_code": "",
+        "slug": "westminster-pjd2",
+        "title": "Westminster - PJD2 / SUMMIT"
+    },
+    "model": "courses.course",
+    "pk": 10
+},
+{
+    "fields": {
+        "control_worksheet_results": false,
+        "access_code": "",
+        "slug": "lamar-pjd2",
+        "title": "Lamar - PJD2 / SUMMIT"
+    },
+    "model": "courses.course",
+    "pk": 11
+},
+{
+    "fields": {
+        "control_worksheet_results": false,
+        "access_code": "",
+        "slug": "longmont-pjd2",
+        "title": "Longmont - PJD2 / SUMMIT"
+    },
+    "model": "courses.course",
+    "pk": 12
+},
+{
+    "fields": {
+        "control_worksheet_results": false,
+        "access_code": "",
+        "slug": "denver-pjd2",
+        "title": "Denver - PJD2 / SUMMIT"
+    },
+    "model": "courses.course",
+    "pk": 13
+},
+{
+    "fields": {
+        "control_worksheet_results": false,
+        "access_code": "",
+        "slug": "alamosa-pjd2",
+        "title": "Alamosa - PJD2 "
+    },
+    "model": "courses.course",
+    "pk": 14
+},
+{
+    "fields": {
+        "course": 1,
+        "lesson": 1
+    },
+    "model": "courses.courselesson",
+    "pk": 1
+},
+{
+    "fields": {
+        "course": 1,
+        "lesson": 8
+    },
+    "model": "courses.courselesson",
+    "pk": 3
+},
+{
+    "fields": {
+        "course": 1,
+        "lesson": 7
+    },
+    "model": "courses.courselesson",
+    "pk": 4
+},
+{
+    "fields": {
+        "course": 1,
+        "lesson": 6
+    },
+    "model": "courses.courselesson",
+    "pk": 5
+},
+{
+    "fields": {
+        "course": 1,
+        "lesson": 5
+    },
+    "model": "courses.courselesson",
+    "pk": 6
+},
+{
+    "fields": {
+        "course": 1,
+        "lesson": 4
+    },
+    "model": "courses.courselesson",
+    "pk": 7
+},
+{
+    "fields": {
+        "course": 1,
+        "lesson": 3
+    },
+    "model": "courses.courselesson",
+    "pk": 8
+},
+{
+    "fields": {
+        "course": 1,
+        "lesson": 2
+    },
+    "model": "courses.courselesson",
+    "pk": 9
+},
+{
+    "fields": {
+        "course": 3,
+        "lesson": 1
+    },
+    "model": "courses.courselesson",
+    "pk": 11
+},
+{
+    "fields": {
+        "course": 3,
+        "lesson": 3
+    },
+    "model": "courses.courselesson",
+    "pk": 12
+},
+{
+    "fields": {
+        "course": 3,
+        "lesson": 2
+    },
+    "model": "courses.courselesson",
+    "pk": 13
+},
+{
+    "fields": {
+        "course": 3,
+        "lesson": 4
+    },
+    "model": "courses.courselesson",
+    "pk": 14
+},
+{
+    "fields": {
+        "course": 4,
+        "lesson": 7
+    },
+    "model": "courses.courselesson",
+    "pk": 15
+},
+{
+    "fields": {
+        "course": 4,
+        "lesson": 6
+    },
+    "model": "courses.courselesson",
+    "pk": 16
+},
+{
+    "fields": {
+        "course": 4,
+        "lesson": 5
+    },
+    "model": "courses.courselesson",
+    "pk": 17
+},
+{
+    "fields": {
+        "course": 4,
+        "lesson": 8
+    },
+    "model": "courses.courselesson",
+    "pk": 18
+},
+{
+    "fields": {
+        "course": 4,
+        "lesson": 1
+    },
+    "model": "courses.courselesson",
+    "pk": 19
+},
+{
+    "fields": {
+        "course": 4,
+        "lesson": 4
+    },
+    "model": "courses.courselesson",
+    "pk": 20
+},
+{
+    "fields": {
+        "course": 4,
+        "lesson": 2
+    },
+    "model": "courses.courselesson",
+    "pk": 21
+},
+{
+    "fields": {
+        "course": 4,
+        "lesson": 3
+    },
+    "model": "courses.courselesson",
+    "pk": 22
+},
+{
+    "fields": {
+        "course": 13,
+        "lesson": 7
+    },
+    "model": "courses.courselesson",
+    "pk": 23
+},
+{
+    "fields": {
+        "course": 13,
+        "lesson": 6
+    },
+    "model": "courses.courselesson",
+    "pk": 24
+},
+{
+    "fields": {
+        "course": 13,
+        "lesson": 5
+    },
+    "model": "courses.courselesson",
+    "pk": 25
+},
+{
+    "fields": {
+        "course": 13,
+        "lesson": 8
+    },
+    "model": "courses.courselesson",
+    "pk": 26
+},
+{
+    "fields": {
+        "course": 13,
+        "lesson": 3
+    },
+    "model": "courses.courselesson",
+    "pk": 27
+},
+{
+    "fields": {
+        "course": 13,
+        "lesson": 2
+    },
+    "model": "courses.courselesson",
+    "pk": 28
+},
+{
+    "fields": {
+        "course": 13,
+        "lesson": 1
+    },
+    "model": "courses.courselesson",
+    "pk": 29
+},
+{
+    "fields": {
+        "course": 13,
+        "lesson": 4
+    },
+    "model": "courses.courselesson",
+    "pk": 30
+},
+{
+    "fields": {
+        "course": 12,
+        "lesson": 7
+    },
+    "model": "courses.courselesson",
+    "pk": 31
+},
+{
+    "fields": {
+        "course": 12,
+        "lesson": 6
+    },
+    "model": "courses.courselesson",
+    "pk": 32
+},
+{
+    "fields": {
+        "course": 12,
+        "lesson": 5
+    },
+    "model": "courses.courselesson",
+    "pk": 33
+},
+{
+    "fields": {
+        "course": 12,
+        "lesson": 3
+    },
+    "model": "courses.courselesson",
+    "pk": 34
+},
+{
+    "fields": {
+        "course": 12,
+        "lesson": 2
+    },
+    "model": "courses.courselesson",
+    "pk": 35
+},
+{
+    "fields": {
+        "course": 12,
+        "lesson": 1
+    },
+    "model": "courses.courselesson",
+    "pk": 36
+},
+{
+    "fields": {
+        "course": 12,
+        "lesson": 8
+    },
+    "model": "courses.courselesson",
+    "pk": 37
+},
+{
+    "fields": {
+        "course": 12,
+        "lesson": 4
+    },
+    "model": "courses.courselesson",
+    "pk": 38
+},
+{
+    "fields": {
+        "course": 11,
+        "lesson": 7
+    },
+    "model": "courses.courselesson",
+    "pk": 39
+},
+{
+    "fields": {
+        "course": 11,
+        "lesson": 6
+    },
+    "model": "courses.courselesson",
+    "pk": 40
+},
+{
+    "fields": {
+        "course": 11,
+        "lesson": 5
+    },
+    "model": "courses.courselesson",
+    "pk": 41
+},
+{
+    "fields": {
+        "course": 11,
+        "lesson": 3
+    },
+    "model": "courses.courselesson",
+    "pk": 42
+},
+{
+    "fields": {
+        "course": 11,
+        "lesson": 2
+    },
+    "model": "courses.courselesson",
+    "pk": 43
+},
+{
+    "fields": {
+        "course": 11,
+        "lesson": 1
+    },
+    "model": "courses.courselesson",
+    "pk": 44
+},
+{
+    "fields": {
+        "course": 11,
+        "lesson": 8
+    },
+    "model": "courses.courselesson",
+    "pk": 45
+},
+{
+    "fields": {
+        "course": 11,
+        "lesson": 4
+    },
+    "model": "courses.courselesson",
+    "pk": 46
+},
+{
+    "fields": {
+        "course": 5,
+        "lesson": 7
+    },
+    "model": "courses.courselesson",
+    "pk": 47
+},
+{
+    "fields": {
+        "course": 5,
+        "lesson": 6
+    },
+    "model": "courses.courselesson",
+    "pk": 48
+},
+{
+    "fields": {
+        "course": 5,
+        "lesson": 5
+    },
+    "model": "courses.courselesson",
+    "pk": 49
+},
+{
+    "fields": {
+        "course": 5,
+        "lesson": 3
+    },
+    "model": "courses.courselesson",
+    "pk": 50
+},
+{
+    "fields": {
+        "course": 5,
+        "lesson": 2
+    },
+    "model": "courses.courselesson",
+    "pk": 51
+},
+{
+    "fields": {
+        "course": 5,
+        "lesson": 1
+    },
+    "model": "courses.courselesson",
+    "pk": 52
+},
+{
+    "fields": {
+        "course": 5,
+        "lesson": 8
+    },
+    "model": "courses.courselesson",
+    "pk": 53
+},
+{
+    "fields": {
+        "course": 5,
+        "lesson": 4
+    },
+    "model": "courses.courselesson",
+    "pk": 54
+},
+{
+    "fields": {
+        "course": 10,
+        "lesson": 7
+    },
+    "model": "courses.courselesson",
+    "pk": 55
+},
+{
+    "fields": {
+        "course": 10,
+        "lesson": 6
+    },
+    "model": "courses.courselesson",
+    "pk": 56
+},
+{
+    "fields": {
+        "course": 10,
+        "lesson": 5
+    },
+    "model": "courses.courselesson",
+    "pk": 57
+},
+{
+    "fields": {
+        "course": 10,
+        "lesson": 3
+    },
+    "model": "courses.courselesson",
+    "pk": 58
+},
+{
+    "fields": {
+        "course": 10,
+        "lesson": 2
+    },
+    "model": "courses.courselesson",
+    "pk": 59
+},
+{
+    "fields": {
+        "course": 10,
+        "lesson": 1
+    },
+    "model": "courses.courselesson",
+    "pk": 60
+},
+{
+    "fields": {
+        "course": 10,
+        "lesson": 8
+    },
+    "model": "courses.courselesson",
+    "pk": 61
+},
+{
+    "fields": {
+        "course": 10,
+        "lesson": 4
+    },
+    "model": "courses.courselesson",
+    "pk": 62
+},
+{
+    "fields": {
+        "course": 9,
+        "lesson": 7
+    },
+    "model": "courses.courselesson",
+    "pk": 63
+},
+{
+    "fields": {
+        "course": 9,
+        "lesson": 6
+    },
+    "model": "courses.courselesson",
+    "pk": 64
+},
+{
+    "fields": {
+        "course": 9,
+        "lesson": 5
+    },
+    "model": "courses.courselesson",
+    "pk": 65
+},
+{
+    "fields": {
+        "course": 9,
+        "lesson": 3
+    },
+    "model": "courses.courselesson",
+    "pk": 66
+},
+{
+    "fields": {
+        "course": 9,
+        "lesson": 2
+    },
+    "model": "courses.courselesson",
+    "pk": 67
+},
+{
+    "fields": {
+        "course": 9,
+        "lesson": 1
+    },
+    "model": "courses.courselesson",
+    "pk": 68
+},
+{
+    "fields": {
+        "course": 9,
+        "lesson": 8
+    },
+    "model": "courses.courselesson",
+    "pk": 69
+},
+{
+    "fields": {
+        "course": 9,
+        "lesson": 4
+    },
+    "model": "courses.courselesson",
+    "pk": 70
+},
+{
+    "fields": {
+        "course": 8,
+        "lesson": 7
+    },
+    "model": "courses.courselesson",
+    "pk": 71
+},
+{
+    "fields": {
+        "course": 8,
+        "lesson": 6
+    },
+    "model": "courses.courselesson",
+    "pk": 72
+},
+{
+    "fields": {
+        "course": 8,
+        "lesson": 5
+    },
+    "model": "courses.courselesson",
+    "pk": 73
+},
+{
+    "fields": {
+        "course": 8,
+        "lesson": 3
+    },
+    "model": "courses.courselesson",
+    "pk": 74
+},
+{
+    "fields": {
+        "course": 8,
+        "lesson": 2
+    },
+    "model": "courses.courselesson",
+    "pk": 75
+},
+{
+    "fields": {
+        "course": 8,
+        "lesson": 1
+    },
+    "model": "courses.courselesson",
+    "pk": 76
+},
+{
+    "fields": {
+        "course": 8,
+        "lesson": 8
+    },
+    "model": "courses.courselesson",
+    "pk": 77
+},
+{
+    "fields": {
+        "course": 8,
+        "lesson": 4
+    },
+    "model": "courses.courselesson",
+    "pk": 78
+},
+{
+    "fields": {
+        "course": 7,
+        "lesson": 7
+    },
+    "model": "courses.courselesson",
+    "pk": 79
+},
+{
+    "fields": {
+        "course": 7,
+        "lesson": 6
+    },
+    "model": "courses.courselesson",
+    "pk": 80
+},
+{
+    "fields": {
+        "course": 7,
+        "lesson": 5
+    },
+    "model": "courses.courselesson",
+    "pk": 81
+},
+{
+    "fields": {
+        "course": 7,
+        "lesson": 3
+    },
+    "model": "courses.courselesson",
+    "pk": 82
+},
+{
+    "fields": {
+        "course": 7,
+        "lesson": 2
+    },
+    "model": "courses.courselesson",
+    "pk": 83
+},
+{
+    "fields": {
+        "course": 7,
+        "lesson": 1
+    },
+    "model": "courses.courselesson",
+    "pk": 84
+},
+{
+    "fields": {
+        "course": 7,
+        "lesson": 8
+    },
+    "model": "courses.courselesson",
+    "pk": 85
+},
+{
+    "fields": {
+        "course": 7,
+        "lesson": 4
+    },
+    "model": "courses.courselesson",
+    "pk": 86
+},
+{
+    "fields": {
+        "course": 6,
+        "lesson": 7
+    },
+    "model": "courses.courselesson",
+    "pk": 87
+},
+{
+    "fields": {
+        "course": 6,
+        "lesson": 6
+    },
+    "model": "courses.courselesson",
+    "pk": 88
+},
+{
+    "fields": {
+        "course": 6,
+        "lesson": 5
+    },
+    "model": "courses.courselesson",
+    "pk": 89
+},
+{
+    "fields": {
+        "course": 6,
+        "lesson": 3
+    },
+    "model": "courses.courselesson",
+    "pk": 90
+},
+{
+    "fields": {
+        "course": 6,
+        "lesson": 2
+    },
+    "model": "courses.courselesson",
+    "pk": 91
+},
+{
+    "fields": {
+        "course": 6,
+        "lesson": 1
+    },
+    "model": "courses.courselesson",
+    "pk": 92
+},
+{
+    "fields": {
+        "course": 6,
+        "lesson": 8
+    },
+    "model": "courses.courselesson",
+    "pk": 93
+},
+{
+    "fields": {
+        "course": 6,
+        "lesson": 4
+    },
+    "model": "courses.courselesson",
+    "pk": 94
+},
+{
+    "fields": {
+        "course": 3,
+        "lesson": 5
+    },
+    "model": "courses.courselesson",
+    "pk": 95
+},
+{
+    "fields": {
+        "course": 3,
+        "lesson": 7
+    },
+    "model": "courses.courselesson",
+    "pk": 96
+},
+{
+    "fields": {
+        "course": 3,
+        "lesson": 6
+    },
+    "model": "courses.courselesson",
+    "pk": 97
+},
+{
+    "fields": {
+        "course": 3,
+        "lesson": 8
+    },
+    "model": "courses.courselesson",
+    "pk": 98
+},
+{
+    "fields": {
+        "course": 14,
+        "lesson": 7
+    },
+    "model": "courses.courselesson",
+    "pk": 100
+},
+{
+    "fields": {
+        "course": 14,
+        "lesson": 6
+    },
+    "model": "courses.courselesson",
+    "pk": 101
+},
+{
+    "fields": {
+        "course": 14,
+        "lesson": 5
+    },
+    "model": "courses.courselesson",
+    "pk": 102
+},
+{
+    "fields": {
+        "course": 14,
+        "lesson": 8
+    },
+    "model": "courses.courselesson",
+    "pk": 103
+},
+{
+    "fields": {
+        "course": 14,
+        "lesson": 3
+    },
+    "model": "courses.courselesson",
+    "pk": 104
+},
+{
+    "fields": {
+        "course": 14,
+        "lesson": 1
+    },
+    "model": "courses.courselesson",
+    "pk": 105
+},
+{
+    "fields": {
+        "course": 14,
+        "lesson": 2
+    },
+    "model": "courses.courselesson",
+    "pk": 106
+},
+{
+    "fields": {
+        "course": 14,
+        "lesson": 4
+    },
+    "model": "courses.courselesson",
+    "pk": 107
+}
+]

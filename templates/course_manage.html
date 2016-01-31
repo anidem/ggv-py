@@ -89,35 +89,37 @@
 <div class="col-md-12"><h1></h1></div>
 
 <div class="col-md-12">
-    <h1></h1>
-    <h2>{{ deactivated|length}} Deactivated  Student Accounts</h2>
-    <div class="panel panel-danger">
+    <div class="row"><div class="col-md-12"><h2>{{ deactivated|length}} Deactivated  Student Accounts</h2></div></div>
+    <div class="row">
+        <div id="deactivated_sorts" class="col-xs-12">
+            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+            <div class="col-xs-3"><button class="btn btn-block btn-sm btn-primary" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
+            <div class="col-xs-2"><button class="btn btn-sm">activate selected</button></div>
+            <div class="col-xs-1"><button class="btn btn-sm" data-sort-by="original-order"><i class="fa fa-refresh"></i></button></div>
+        </div>
+        <div id="container_00" class="col-xs-12">
+            {% for i in deactivated %}
+            <div class="item hoverpad col-xs-12" data-login="{{ i.last_login|date:'U' }}" data-recent="{{ i.recent_time|date:'U' }}">
+                <a href="" class="static">
 
-        <div class="panel-heading"></div>
-        <!-- <div class="panel-body"></div> -->
-        <table class="table">
-        <thead>
-          <tr>
-            <th>Last Login</th>
-            <th>First Name</th>
-            <th>Last Name</th>
-            <th>Username</th>
-          </tr>
-        </thead>
-        <tbody>
-        {% for i in deactivated %}
-        <tr>
-            <th scope="row">{{ i.last_login }}</th>
-            <td>{{ i.first_name }}</td>
-            <td>{{ i.last_name }}</td>
-            <td>{{ i.username }}</td>
-            <td>{% if is_manager %}<a href="{% url 'update_user_activation' i.id %}?q={{object.slug}}">activate</a>{% endif %}</td>
-        </tr>
-        {% empty %}
-            <div class="panel-body">There are no deactivated accounts.</div>
-        {% endfor %}
-        </tbody>
-        </table>
+                <div class="col-xs-2 firstname">{{ i.first_name }}</div>
+                <div class="col-xs-2 lastname">{{ i.last_name }}</div>
+                <div class="col-xs-3 username">{{ i.username }}</div>
+                <div class="col-xs-2 login">{{ i.last_login|date:"M d, g:i A" }}</div>
+                <div class="col-xs-2">
+                    {% if is_manager %}<a href="{% url 'update_user_activation' i.id %}?q={{object.slug}}">activate</a>{% endif %}
+                </div>
+                <div class="col-xs-1"></div>
+                </a>
+            </div>
+            {% empty %}
+                
+                <div class="panel-body">There are no deactivated accounts.</div>
+
+            {% endfor %}
+        </div>
     </div>
 </div>
 
@@ -186,6 +188,16 @@
 
             });
 
+            var $container00 = $('#container_00').isotope({
+                getSortData: {
+                    login: '[data-login] parseInt',
+                    firstname: '.firstname',
+                    lastname: '.lastname',
+                    username: '.username'
+                },
+
+            });
+
             var $container1 = $('#container_1').isotope({
                 getSortData: {
                     firstname: '.firstname',
@@ -212,6 +224,26 @@
                 $(this).addClass("btn-primary");
 
                 $container0.isotope({
+                    sortBy: sortByValue,
+                    sortAscending: order
+                });
+            });
+
+            $('#deactivated_sorts').on( 'click', 'button', function() {
+                var sortByValue = $(this).attr('data-sort-by');
+                var order = "";
+                if ($(this).attr("data-order")==="asc") {
+                    order = true;
+                    $(this).attr("data-order", "");
+
+                } else {
+                    order = false;
+                    $(this).attr("data-order", "asc");
+                }
+                $('.btn-primary').removeClass('btn-primary');
+                $(this).addClass("btn-primary");
+
+                $container00.isotope({
                     sortBy: sortByValue,
                     sortAscending: order
                 });

@@ -29,10 +29,11 @@ class IndexView(TemplateView):
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'ggvhome.html'
+    courses = None
 
     def get(self, request, *args, **kwargs):
         try:
-            courses = self.request.session['user_courses']
+            self.courses = self.request.session['user_courses']
 
             if len(courses) == 1:
                 return redirect('course', crs_slug=courses[0])
@@ -43,9 +44,17 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-        context['courses'] = [
-            Course.objects.get(slug=i) for i in self.request.session['user_courses']]
+        context['courses'] = []
+        for i in self.courses:
+            course = Course.objects.get(slug=i)
+            crs_data = (
+                course,
+                len(course.student_list()),
+                len(course.deactivated_list()),
+                len(course.unvalidated_list())
+            )
 
+            context['courses'].append(crs_data)
         return context
 
 

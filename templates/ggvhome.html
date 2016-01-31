@@ -13,13 +13,23 @@
 {% endif %}
 
     <div class="col-md-12"><h3 class="lead">Your courses:</h3></div>
+
+	<div class="col-md-6">Course Site</div>
+	<div class="col-md-2"><i class="fa fa-users icon-green"></i> Active</div>
+	<div class="col-md-2"><i class="fa fa-users icon-orange"></i> Deactivated</div>
+	<div class="col-md-2"><i class="fa fa-users icon-gray"></i> Un Accessed</div>
+
 {% for i in courses %}
-	<a href="{{ i.get_absolute_url }}" class="">
-		<div class="hoverpad col-md-10 col-md-offset-1">
-			<p class="lead"><i class="fa fa-home"></i> {{ i.title }} {{i.get_user_role}}</p>
-			<div class="center-block" style=""></div>
-		</div>
-	</a>
+
+	<div class="col-md-6 hoverpad">
+		<a href="{{ i.0.get_absolute_url }}">
+			<p class=""><i class="fa fa-home"></i> {{ i.0.title }}</p>
+		</a>	
+	</div>
+	<div class="col-md-2 hoverpad" title="active users"><p> <i class="fa fa-users icon-green"></i> {{ i.1 }} </p></div>
+	<div class="col-md-2 hoverpad" title="deactivated users"><p><i class="fa fa-users icon-orange"></i> {{ i.2 }} </p></div>
+	<div class="col-md-2 hoverpad" title="unaccessed accounts"><p><i class="fa fa-users icon-gray"></i> {{ i.3 }} </p></div>
+		
 {% empty %}
 
     <h3>Hi, you don't appear to have any courses.</h3>

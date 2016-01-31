@@ -191,6 +191,10 @@ form ul {
   /* No colors */
 /*.icon i { color: #A0A0A0; }*/
 
+.icon-green { color: green }
+.icon-gray { color: gray }
+.icon-orange { color: orange }
+
 /* Scrollable columns */
 @media (min-width: 768px){
   .leftscroll {

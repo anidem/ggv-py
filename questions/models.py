@@ -329,10 +329,6 @@ class TextQuestion(AbstractQuestion):
     def get_absolute_url(self):
         return reverse('text_question', args=[self.id])
 
-    class Meta:
-        unique_together = (('display_text', 'question_set'),)
-
-
 class OptionQuestion(AbstractQuestion):
 
     """
@@ -403,9 +399,6 @@ class OptionQuestion(AbstractQuestion):
 
     def get_absolute_url(self):
         return reverse('option_question', args=[self.id])
-
-    class Meta:
-        unique_together = (('display_text', 'question_set'),)
 
 
 class Option(models.Model):

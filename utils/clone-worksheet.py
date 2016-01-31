@@ -1,8 +1,8 @@
 from questions.models import *
 from lessons.models import *
 
-lesson = Lesson.objects.get(pk=5)
-section = Section.objects.get(pk=215)
+lesson = Lesson.objects.get(pk=)
+section = Section.objects.get(pk=)
 
 ws_ids = []
 

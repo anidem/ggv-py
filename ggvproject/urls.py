@@ -11,7 +11,7 @@ from core.views import (
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView,
     CreateGgvUserView, UpdateGgvUserAccountView, GgvUserView, UpdateGgvUserView, GgvUserActivationView,
-    FaqView
+    FaqView, GgvUsersDeactivationView, GgvUsersActivationView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import (
@@ -107,6 +107,8 @@ urlpatterns = patterns('',
 # Users
     url(r'^ggv/(?P<crs_slug>[-\w]+)/user/add/$', CreateGgvUserView.as_view(), name='create_user'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/user/edit-account/(?P<pk>[-\d]+)/$', UpdateGgvUserAccountView.as_view(), name='edit_user_account'),
+    url(r'^ggv/users/deactivate/$', GgvUsersDeactivationView.as_view(), name='deactivate_users'),
+    url(r'^ggv/users/activate/$', GgvUsersActivationView.as_view(), name='activate_users'),
     url(r'^ggv/user/deactivate/(?P<pk>[-\d]+)/$', GgvUserActivationView.as_view(), name='update_user_activation'),
 
     url(r'^ggv/(?P<crs_slug>[-\w]+)/user/(?P<pk>[-\d]+)/$', GgvUserView.as_view(), name='view_user'),

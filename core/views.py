@@ -1,13 +1,14 @@
 # core/views.py
-from django.views.generic import FormView, TemplateView, CreateView, UpdateView, ListView, DetailView
+from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
+import json
 
 
-from braces.views import CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, LoginRequiredMixin
+from braces.views import CsrfExemptMixin, JSONResponseMixin, JsonRequestResponseMixin, AjaxResponseMixin, LoginRequiredMixin
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_perms, remove_perm
 
 from courses.models import Course
@@ -230,6 +231,37 @@ class GgvUserActivationView(LoginRequiredMixin, UpdateView):
             return reverse('manage_course', args=[str])
         except:
             return reverse('ggvhome')
+
+
+class GgvUsersDeactivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):
+    
+    def post(self, request, *args, **kwargs):
+        try:   
+            deactivate_list = request.POST.getlist('deactivate_list')   
+            urlstr = request.GET['q']
+            for i in deactivate_list:
+                u = User.objects.get(pk=i)
+                u.is_active = False
+                u.save()
+        except:
+            pass  # silently fail
+
+        return redirect('manage_course', crs_slug=urlstr)
+
+class GgvUsersActivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):
+    
+    def post(self, request, *args, **kwargs):
+        try:   
+            activate_list = request.POST.getlist('activate_list')   
+            urlstr = request.GET['q']
+            for i in activate_list:
+                u = User.objects.get(pk=i)
+                u.is_active = True
+                u.save()
+        except:
+            pass  # silently fail
+
+        return redirect('manage_course', crs_slug=urlstr)
 
 
 class ActivateView(LoginRequiredMixin, TemplateView):

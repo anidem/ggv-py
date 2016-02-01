@@ -33,97 +33,99 @@
     <a href="{% url 'edit_course' object.slug %}"><button class="btn btn-xs btn-primary"><i class="fa fa-gear fa-2x"></i> Course Settings</button></a>
 </div>
 
+
 <div class="col-md-12">
+
+<!-- Instructors  -->
     <div class="row"><div class="col-md-12">
         <h2>{{ instructors|length}} Instructors</h2>
         {% for i in instructors %}
         {{ i.first_name }} {{ i.last_name }},
         {% endfor %}
     </div></div>
+
+<!-- Active students -->
     <div class="row"><div class="col-md-12"><h2>{{ students|length}} Active Students</h2></div></div>
 
     <div class="row">
-        <div id="sorts" class="col-xs-12">
+        <div  id="sorts"  class="col-xs-12">
             <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
-
             <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
             <div class="col-xs-3"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="recent_timestamp" data-order="asc"><i class="fa fa-sort"></i> last activity</button></div>
+            <div class="col-xs-1"><button id="deactivate-btn" class="btn btn-sm">deactivate</button></div>
+        </div>  
+        <form id="deactivate-form" method="post" action="{% url 'deactivate_users' %}?q={{object.slug}}">{% csrf_token %}
+            <div id="container_0" class="col-xs-12">                
+                {% for i in students %}
+                <div class="item hoverpad col-xs-12" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
+                    <a href="{% url 'user_progress' course.slug i.0.id %}" class="static">
 
-            <div class="col-xs-2">
-                <button class="btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button>
-            </div>
-
-            <div class="col-xs-2">
-                <button class="btn btn-block btn-sm" data-sort-by="recent_timestamp" data-order="asc"><i class="fa fa-sort"></i> last activity</button>
-            </div>
-            <div class="col-xs-1"><button class="btn btn-sm" data-sort-by="original-order"><i class="fa fa-refresh"></i></button></div>
-
-        </div>
-        <div id="container_0" class="col-xs-12">
-            {% for i in students %}
-
-
-            <div class="item hoverpad col-xs-12" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
-                <a href="{% url 'user_progress' course.slug i.0.id %}" class="static">
-
-                <div class="col-xs-2 firstname">{{ i.0.first_name }}</div>
-                <div class="col-xs-2 lastname">{{ i.0.last_name }}</div>
-                <div class="col-xs-3 username">{{ i.0.username }}</div>
-                <div class="col-xs-2 login">{{ i.0.last_login|date:"M d, g:i A" }}</div>
-                <div class="col-xs-2 recent">{{ i.1.recent_time|date:"M d, g:i A" }}</div>
-
-                <div class="col-xs-1">
-                    {% if is_manager %}<a href="{% url 'update_user_activation' i.0.id %}?q={{object.slug}}">deactivate</a>{% endif %}
+                        <div class="col-xs-2 firstname">{{ i.0.first_name }}</div>
+                        <div class="col-xs-2 lastname">{{ i.0.last_name }}</div>
+                        <div class="col-xs-3 username">{{ i.0.username }}</div>
+                        <div class="col-xs-2 login">{{ i.0.last_login|date:"M d, g:i A" }}</div>
+                        <div class="col-xs-2 recent">{{ i.1.recent_time|date:"M d, g:i A" }}</div>
+                    </a>
+                    <div class="col-xs-1">
+                        {% if is_manager %}
+                            {% if not i.0.is_superuser and not i.0.is_staff %} <input type="checkbox" name="deactivate_list" value="{{ i.0.id }}"> {% endif %}
+                        {% endif %}
+                    </div>                    
                 </div>
 
-                </a>
+                {% empty %}
+                    <div class="panel-body">No students are assigned to this course.</div>
+                {% endfor %}
+            
             </div>
-
-            {% empty %}
-                <div class="panel-body">No students are assigned to this course.</div>
-            {% endfor %}
-        </div>
+        </form>
     </div>
 </div>
 
 <div class="col-md-12"><h1></h1></div>
+
+<!-- Deactivated students -->
 
 <div class="col-md-12">
     <div class="row"><div class="col-md-12"><h2>{{ deactivated|length}} Deactivated  Student Accounts</h2></div></div>
     <div class="row">
-        <div id="deactivated_sorts" class="col-xs-12">
+        <div  id="deactivated_sorts"  class="col-xs-12">
             <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
-            <div class="col-xs-3"><button class="btn btn-block btn-sm btn-primary" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
-            <div class="col-xs-2"><button class="btn btn-sm">activate selected</button></div>
-            <div class="col-xs-1"><button class="btn btn-sm" data-sort-by="original-order"><i class="fa fa-refresh"></i></button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+            <div class="col-xs-3"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
+            <div class="col-xs-3"><button id="activate-btn" class="btn btn-sm">activate</button></div>
         </div>
-        <div id="container_00" class="col-xs-12">
-            {% for i in deactivated %}
-            <div class="item hoverpad col-xs-12" data-login="{{ i.last_login|date:'U' }}" data-recent="{{ i.recent_time|date:'U' }}">
-                <a href="" class="static">
-
-                <div class="col-xs-2 firstname">{{ i.first_name }}</div>
-                <div class="col-xs-2 lastname">{{ i.last_name }}</div>
-                <div class="col-xs-3 username">{{ i.username }}</div>
-                <div class="col-xs-2 login">{{ i.last_login|date:"M d, g:i A" }}</div>
-                <div class="col-xs-2">
-                    {% if is_manager %}<a href="{% url 'update_user_activation' i.id %}?q={{object.slug}}">activate</a>{% endif %}
-                </div>
-                <div class="col-xs-1"></div>
-                </a>
-            </div>
-            {% empty %}
+        <form id="activate-form" method="post" action="{% url 'activate_users' %}?q={{object.slug}}">{% csrf_token %}
+            <div id="container_00" class="col-xs-12">
                 
-                <div class="panel-body">There are no deactivated accounts.</div>
+                
+                {% for i in deactivated %}
+                <div class="item hoverpad col-xs-12" data-login="{{ i.last_login|date:'U' }}">
+                    <a href="" class="static">
+                    <div class="col-xs-2 firstname">{{ i.first_name }}</div>
+                    <div class="col-xs-2 lastname">{{ i.last_name }}</div>
+                    <div class="col-xs-3 username">{{ i.username }}</div>
+                    <div class="col-xs-2 login">{{ i.last_login|date:"M d, g:i A" }}</div>
+                    </a>
+                    <div class="col-xs-3">{% if is_manager %}<input type="checkbox" name="activate_list" value="{{ i.id }}">{% endif %}</div>
+                
+                </div>
+                {% empty %}
+                    
+                    <div class="panel-body">There are no deactivated accounts.</div>
 
-            {% endfor %}
-        </div>
+                {% endfor %}
+            </div>
+        </form>
     </div>
 </div>
 
 <div class="col-md-12"><h1></h1></div>
+
+<!-- Unaccessed accounts -->
 
 <div class="col-md-12">
     <div class="row"><div class="col-md-12"><h2>{{ unvalidated|length}} Unaccessed Student Accounts</h2></div></div>
@@ -169,6 +171,7 @@
     </div>
 </div>
 
+<!-- END all listings -->
 
 {% endblock content %}
 
@@ -209,7 +212,7 @@
             });
 
             // sort items on button click
-            $('#sorts').on( 'click', 'button', function() {
+            $('#sorts .btn-block').on( 'click', function() {
                 var sortByValue = $(this).attr('data-sort-by');
                 var order = "";
                 if ($(this).attr("data-order")==="asc") {
@@ -220,7 +223,7 @@
                     order = false;
                     $(this).attr("data-order", "asc");
                 }
-                $('.btn-primary').removeClass('btn-primary');
+                $('#sorts .btn-primary').removeClass('btn-primary');
                 $(this).addClass("btn-primary");
 
                 $container0.isotope({
@@ -229,7 +232,7 @@
                 });
             });
 
-            $('#deactivated_sorts').on( 'click', 'button', function() {
+            $('#deactivated_sorts .btn-block').on( 'click', function() {
                 var sortByValue = $(this).attr('data-sort-by');
                 var order = "";
                 if ($(this).attr("data-order")==="asc") {
@@ -240,7 +243,7 @@
                     order = false;
                     $(this).attr("data-order", "asc");
                 }
-                $('.btn-primary').removeClass('btn-primary');
+                $('#deactivated_sorts .btn-primary').removeClass('btn-primary');
                 $(this).addClass("btn-primary");
 
                 $container00.isotope({
@@ -252,7 +255,7 @@
 
 
             // sort items on button click
-            $('#unvalidatedsorts').on( 'click', 'button', function() {
+            $('#unvalidatedsorts .btn-block').on( 'click', function() {
                 var sortByValue = $(this).attr('data-sort-by');
                 var order = "";
                 if ($(this).attr("data-order")==="asc") {
@@ -263,7 +266,7 @@
                     order = false;
                     $(this).attr("data-order", "asc");
                 }
-                $('.btn-primary').removeClass('btn-primary');
+                $('#unvalidatedsorts .btn-primary').removeClass('btn-primary');
                 $(this).addClass("btn-primary");
 
                 $container1.isotope({
@@ -272,6 +275,15 @@
                 });
             });
 
+            $('#deactivate-btn').on('click', function () {
+                if ($('#container_0 input:checked').length)
+                    $('#deactivate-form').submit();
+            });
+
+            $('#activate-btn').on('click', function () {
+                if ($('#container_00 input:checked').length)
+                    $('#activate-form').submit();
+            });
 
             $(document).ready(function() {
 

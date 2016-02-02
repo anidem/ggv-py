@@ -236,7 +236,7 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         return context
 
 
-class CourseMessageAddView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, CreateView):
+class CourseMessageAddView(LoginRequiredMixin, CourseContextMixin, RestrictedAccessZoneMixin, CreateView):
     model = SiteMessage
     template_name = 'ggv_create_page_msg.html'
     course = None
@@ -258,11 +258,11 @@ class CourseMessageAddView(LoginRequiredMixin, CourseContextMixin, AccessRequire
         return self.initial
 
 
-class CourseMessageUpdateView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, UpdateView):
+class CourseMessageUpdateView(LoginRequiredMixin, CourseContextMixin, RestrictedAccessZoneMixin, UpdateView):
     model = SiteMessage
     template_name = 'ggv_update_page_msg.html'
     course = None
-    fields = ['message', 'url_context', 'show']
+    fields = ['message', 'show']
 
     def dispatch(self, request, *args, **kwargs):
         try:
@@ -276,11 +276,11 @@ class CourseMessageUpdateView(LoginRequiredMixin, CourseContextMixin, AccessRequ
         return reverse('course', kwargs={'crs_slug': self.course.slug})
 
 
-class CourseMessageDeleteView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, DeleteView):
+class CourseMessageDeleteView(LoginRequiredMixin, CourseContextMixin, RestrictedAccessZoneMixin, DeleteView):
     model = SiteMessage
     template_name = 'ggv_delete_page_msg.html'
     course = None
-    fields = ['message', 'url_context', 'show']
+    fields = ['message', 'show']
 
     def dispatch(self, request, *args, **kwargs):
         try:

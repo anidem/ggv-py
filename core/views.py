@@ -36,8 +36,8 @@ class HomeView(LoginRequiredMixin, TemplateView):
         try:
             self.courses = self.request.session['user_courses']
 
-            if len(courses) == 1:
-                return redirect('course', crs_slug=courses[0])
+            if len(self.courses) == 1:
+                return redirect('course', crs_slug=self.courses[0])
         except:
             courses = None
 
@@ -45,17 +45,35 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
+
         context['courses'] = []
+        total_active = 0
+        total_deactive = 0
+        total_nologin = 0
         for i in self.courses:
             course = Course.objects.get(slug=i)
+            
+            num_active = len(course.student_list())
+            num_deactive = len(course.deactivated_list())
+            num_nologin = len(course.unvalidated_list())
+
+            total_active = total_active + num_active
+            total_deactive = total_deactive + num_deactive
+            total_nologin = total_nologin + num_nologin
+
             crs_data = (
                 course,
-                len(course.student_list()),
-                len(course.deactivated_list()),
-                len(course.unvalidated_list())
+                num_active,
+                num_deactive,
+                num_nologin                
             )
 
             context['courses'].append(crs_data)
+        
+        context['total_active'] = total_active
+        context['total_deactive'] = total_deactive
+        context['total_nologin'] = total_nologin
+
         return context
 
 

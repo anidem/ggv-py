@@ -12,12 +12,15 @@
 	</ul>
 {% endif %}
 
-    <div class="col-md-12"><h3 class="lead">Your courses:</h3></div>
+<div class="col-md-12"><h3 class="lead">Your courses:</h3></div>
 
+{% if is_manager or user.is_staff %}
 	<div class="col-md-6">Course Site</div>
-	<div class="col-md-2"><i class="fa fa-users icon-green"></i> Active</div>
-	<div class="col-md-2"><i class="fa fa-users icon-orange"></i> Deactivated</div>
-	<div class="col-md-2"><i class="fa fa-users icon-gray"></i> Un Accessed</div>
+	<div class="col-md-2"><i class="fa fa-users icon-green"></i> {{ total_active }} Active</div>
+	<div class="col-md-2"><i class="fa fa-users icon-orange"></i> {{ total_deactive }} Deactivated</div>
+	<div class="col-md-2"><i class="fa fa-users icon-gray"></i> {{ total_nologin }} Un Accessed</div>
+	<div class="col-md-12" class="border"><p></p></div>
+{% endif %}
 
 {% for i in courses %}
 
@@ -26,9 +29,14 @@
 			<p class=""><i class="fa fa-home"></i> {{ i.0.title }}</p>
 		</a>	
 	</div>
-	<div class="col-md-2 hoverpad" title="active users"><p> <i class="fa fa-users icon-green"></i> {{ i.1 }} </p></div>
-	<div class="col-md-2 hoverpad" title="deactivated users"><p><i class="fa fa-users icon-orange"></i> {{ i.2 }} </p></div>
-	<div class="col-md-2 hoverpad" title="unaccessed accounts"><p><i class="fa fa-users icon-gray"></i> {{ i.3 }} </p></div>
+	{% if is_manager or user.is_staff %}
+		<div class="col-md-2 hoverpad" title="active users"><p> <i class="fa fa-users icon-green"></i> {{ i.1 }} </p></div>
+		<div class="col-md-2 hoverpad" title="deactivated users"><p><i class="fa fa-users icon-orange"></i> {{ i.2 }} </p></div>
+		<div class="col-md-2 hoverpad" title="unaccessed accounts"><p><i class="fa fa-users icon-gray"></i> {{ i.3 }} </p></div>
+	{% else %}
+		<div class="col-md-6"></div>
+	{% endif %}
+	
 		
 {% empty %}
 

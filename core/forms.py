@@ -141,6 +141,20 @@ class GgvEmailStaffForm(Form):
         help_text='After pressing Send Message, GGV Staff will receive your message in their emails.'
         )
 
+class GgvEmailDeactivationRequestForm(Form):
+    message = forms.CharField(
+        widget=forms.Textarea,
+        label='You are requesting that the site manager deactivate the following list of users.',
+        help_text='After pressing Send Message, the site manager will receive your request in their email.'
+        )
+
+class GgvEmailActivationRequestForm(Form):
+    message = forms.CharField(
+        widget=forms.Textarea,
+        label='You are requesting that the site manager activate the following list of users.',
+        help_text='After pressing Send Message, the site manager will receive your request in their email.'
+        )
+
 
 class BookmarkForm(ModelForm):
 

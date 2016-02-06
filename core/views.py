@@ -77,6 +77,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
         return context
 
 
+
 class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
     model = User
     template_name = 'user_create.html'
@@ -236,6 +237,7 @@ class UpdateGgvUserView(LoginRequiredMixin, GGVUserViewRestrictedAccessMixin, Co
         return super(UpdateGgvUserView, self).form_valid(form)
 
 
+
 class GgvUserActivationView(LoginRequiredMixin, UpdateView):
     model = User
     template_name = 'user_update_activation.html'
@@ -266,6 +268,7 @@ class GgvUsersDeactivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponse
 
         return redirect('manage_course', crs_slug=urlstr)
 
+
 class GgvUsersActivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):
     
     def post(self, request, *args, **kwargs):
@@ -286,13 +289,13 @@ class ActivateView(LoginRequiredMixin, TemplateView):
     template_name = 'activate.html'
 
 
+
 class AccessForbiddenView(CourseContextMixin, TemplateView):
     template_name = 'access_forbidden.html'
 
 
 class ActivityLogView(TemplateView):
     pass
-
 
 
 

@@ -14,7 +14,7 @@ from courses.models import Course
 from questions.models import QuestionSet
 
 from .models import GGVUser
-from .forms import GgvEmailStaffForm, GgvEmailQuestionToInstructorsForm, GgvEmailWorksheetErrorReportToStaffForm, GgvEmailInstructors
+from .forms import GgvEmailStaffForm, GgvEmailQuestionToInstructorsForm, GgvEmailWorksheetErrorReportToStaffForm, GgvEmailInstructors, GgvEmailDeactivationRequestForm, GgvEmailActivationRequestForm
 from .mixins import CourseContextMixin
 from .signals import *
 
@@ -256,8 +256,53 @@ class SendEmailToStaff(LoginRequiredMixin, FormView):
         return super(SendEmailToStaff, self).form_valid(form)
 
 
-# BACKEND EMAIL PROCEDURES. FUNCTIONS THAT ARE INITIATED AUTOMATICALLY BY THE SYSTEM. #
+class SendEmailToManagerDeactivationRequest(LoginRequiredMixin, CourseContextMixin, FormView):
+    """
+    A view to allow instructors to request deactivation to managers.
 
+    recipients: managers assigned to a course
+    sender: instructors
+    scope: progress report
+    """
+
+    form_class = GgvEmailStaffForm
+    template_name = "ggv_send_email.html"
+    success_url = None
+
+    def get_success_url(self):
+        try:
+            return self.request.GET['q']
+        except:
+            return reverse('ggvhome')
+
+    def form_valid(self, form):
+        user_sender = self.request.user
+        course_slugs = self.request.session['user_courses']
+        course_titles = ''
+        for i in course_slugs:
+            course_titles += Course.objects.get(slug=i).title + ', '
+
+        html_message = "<p>Hi GGV Staff, {sender} has sent you the following message:</p> ".format(sender=user_sender.get_full_name())
+
+        html_message += "<h3>{0}</h3>".format(form.cleaned_data.get('message'))
+
+        html_message += '<p>User Info:</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)
+
+        email = EmailMultiAlternatives(
+            subject=self.request.user.get_full_name() + ' has a message about GGV',
+            body=html_message,
+            from_email=settings.EMAIL_HOST_USER,
+            to=[e.email for e in User.objects.filter(is_staff=True).filter(is_active=True)],
+            headers={'Reply-To': user_sender.email},  # this can be updated after upgrading to django 8+
+            )
+
+        email.attach_alternative(html_message, "text/html")
+        email.send(fail_silently=True)
+
+        return super(SendEmailToManagerDeactivationRequest, self).form_valid(form)
+
+
+""" BACKEND EMAIL PROCEDURES. FUNCTIONS THAT ARE INITIATED AUTOMATICALLY BY THE SYSTEM. """
 
 def SendWorksheetNotificationEmailToInstructors(request=None, course=None, worksheet=None):
     """

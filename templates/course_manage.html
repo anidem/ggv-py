@@ -54,7 +54,7 @@
             <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
             <div class="col-xs-3"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
             <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
-            <div class="col-xs-2">  <button id="deactivate-btn" class="btn btn-sm btn-danger"><i class="fa fa-check-square-o"></i>{% if is_manager %} deactivate {% else %} request <br> deactivation {% endif %}</button> </div>
+            <div class="col-xs-2">  <button id="deactivate-btn" class="btn btn-sm btn-danger"><i class="fa fa-check-square-o"></i>{% if is_manager %} deactivate {% else %} request deactivation {% endif %}</button> </div>
         </div>  
         
         <form id="deactivate-form" method="post" action="{% if is_manager %} {% url 'deactivate_users' %}?q={{object.slug}} {% else %} {% url 'email_manager_deactivate' object.slug %}?q={{object.slug}} {% endif %}">{% csrf_token %}

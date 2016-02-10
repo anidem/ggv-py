@@ -5,7 +5,14 @@ from filebrowser.sites import site
 
 from utils.wsutil import csvutil, csvutilslides, worksheetvalidator
 
-from core.emails import SendEmailWorksheetQuestionToInstructorsView, SendEmailWorksheetErrorToStaffView, SendEmailToStaff, SendEmailToInstructor
+from core.emails import (
+    SendEmailWorksheetQuestionToInstructorsView, 
+    SendEmailWorksheetErrorToStaffView, 
+    SendEmailToStaff, 
+    SendEmailToInstructor,
+    SendEmailToManagerDeactivationRequest,
+    SendEmailToManagerActivationRequest
+    )
 from core.views import (
     IndexView, HomeView,
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
@@ -131,6 +138,9 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/email-question/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', SendEmailWorksheetQuestionToInstructorsView.as_view(), name='email_instructor_question'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/email-error/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', SendEmailWorksheetErrorToStaffView.as_view(), name='email_staff_ws_error'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/email-instructor/$', SendEmailToInstructor.as_view(), name='email_instructor'),
+
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/email-manager/deactivate$', SendEmailToManagerDeactivationRequest.as_view(), name='email_manager_deactivate'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/email-manager/activate$', SendEmailToManagerActivationRequest.as_view(), name='email_manager_activate'),
 
 
 

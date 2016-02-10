@@ -1,5 +1,5 @@
 # core/emails.py
-from django.views.generic import FormView, TemplateView
+from django.views.generic import FormView, TemplateView, View
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.messages import get_messages
 from django.conf import settings
 
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, CsrfExemptMixin, JSONResponseMixin
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_perms
 
 from courses.models import Course
@@ -256,50 +256,113 @@ class SendEmailToStaff(LoginRequiredMixin, FormView):
         return super(SendEmailToStaff, self).form_valid(form)
 
 
-class SendEmailToManagerDeactivationRequest(LoginRequiredMixin, CourseContextMixin, FormView):
-    """
-    A view to allow instructors to request deactivation to managers.
+class SendEmailToManagerDeactivationRequest(CsrfExemptMixin, LoginRequiredMixin, CourseContextMixin, JSONResponseMixin, View):
+    course = None
 
-    recipients: managers assigned to a course
-    sender: instructors
-    scope: progress report
-    """
+    def dispatch(self, request, *args, **kwargs):
+        self.course = Course.objects.get(slug=kwargs['crs_slug'])
+        return super(SendEmailToManagerDeactivationRequest, self).dispatch(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        try:   
+            deactivate_list = request.POST.getlist('deactivate_list')   
+            urlstr = request.GET['q']
+            users = ''
+            for i in deactivate_list:
+                u = User.objects.get(pk=i).email
+                users = users + u + ', '
 
-    form_class = GgvEmailStaffForm
-    template_name = "ggv_send_email.html"
-    success_url = None
+            user_sender = self.request.user
 
-    def get_success_url(self):
-        try:
-            return self.request.GET['q']
-        except:
-            return reverse('ggvhome')
+            manager_list = []
+            for i in self.course.manager_list():  # Bypassing user settings to control email messages from ggv system
+                manager_list.append(i.email)
+   
 
-    def form_valid(self, form):
-        user_sender = self.request.user
-        course_slugs = self.request.session['user_courses']
-        course_titles = ''
-        for i in course_slugs:
-            course_titles += Course.objects.get(slug=i).title + ', '
+            course_slugs = self.request.session['user_courses']
+            course_titles = ''
+            for i in course_slugs:
+                course_titles += Course.objects.get(slug=i).title + ', '
 
-        html_message = "<p>Hi GGV Staff, {sender} has sent you the following message:</p> ".format(sender=user_sender.get_full_name())
+            html_message = "<p>Hi GGV Site Manager, {sender} has sent you the following message:</p> ".format(sender=user_sender.get_full_name())
 
-        html_message += "<h3>{0}</h3>".format(form.cleaned_data.get('message'))
+            html_message += "<h3>Please deactivate the following accounts.</h3> <p>{0}</p>".format(users)
 
-        html_message += '<p>User Info:</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)
+            html_message += '<p>User Info:</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)
 
-        email = EmailMultiAlternatives(
-            subject=self.request.user.get_full_name() + ' has a message about GGV',
-            body=html_message,
-            from_email=settings.EMAIL_HOST_USER,
-            to=[e.email for e in User.objects.filter(is_staff=True).filter(is_active=True)],
-            headers={'Reply-To': user_sender.email},  # this can be updated after upgrading to django 8+
-            )
+            email = EmailMultiAlternatives(
+                subject=self.request.user.get_full_name() + ' is requesting deactivation for users.',
+                body=html_message,
+                from_email=settings.EMAIL_HOST_USER,
+                to=manager_list,
+                headers={'Reply-To': user_sender.email},  # this can be updated after upgrading to django 8+
+                )
+            
+            email.attach_alternative(html_message, "text/html")
+            email.send(fail_silently=True)
+            messages.info(self.request, 'Your request to deactivate ' + users + ' has been sent to ' + ', '.join(manager_list))
+               
+        except Exception as e:
+            print e
+            pass  # silently fail
 
-        email.attach_alternative(html_message, "text/html")
-        email.send(fail_silently=True)
+        return redirect('manage_course', crs_slug=urlstr)
 
-        return super(SendEmailToManagerDeactivationRequest, self).form_valid(form)
+
+class SendEmailToManagerActivationRequest(CsrfExemptMixin, LoginRequiredMixin, CourseContextMixin, JSONResponseMixin, View):
+    course = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.course = Course.objects.get(slug=kwargs['crs_slug'])
+        return super(SendEmailToManagerActivationRequest, self).dispatch(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        try:   
+            activate_list = request.POST.getlist('activate_list')   
+            urlstr = request.GET['q']
+            users = ''
+            for i in activate_list:
+                u = User.objects.get(pk=i).email
+                users = users + u + ', '
+
+            user_sender = self.request.user
+
+            manager_list = []
+            for i in self.course.manager_list():  # Bypassing user settings to control email messages from ggv system
+                manager_list.append(i.email)
+   
+
+            course_slugs = self.request.session['user_courses']
+            course_titles = ''
+            for i in course_slugs:
+                course_titles += Course.objects.get(slug=i).title + ', '
+
+            html_message = "<p>Hi GGV Site Manager, {sender} has sent you the following message:</p> ".format(sender=user_sender.get_full_name())
+
+            html_message += "<h3>Please activate the following accounts.</h3> <p>{0}</p>".format(users)
+
+            html_message += '<p>User Info:</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)
+
+            email = EmailMultiAlternatives(
+                subject=self.request.user.get_full_name() + ' is requesting activation for users.',
+                body=html_message,
+                from_email=settings.EMAIL_HOST_USER,
+                to=manager_list,
+                headers={'Reply-To': user_sender.email},  # this can be updated after upgrading to django 8+
+                )
+
+            email.attach_alternative(html_message, "text/html")
+            email.send(fail_silently=True)
+            messages.info(self.request, 'Your request to activate '+ users + ' has been sent to ' + ', '.join(manager_list))
+
+        except Exception as e:
+            print e
+            pass  # silently fail
+
+        return redirect('manage_course', crs_slug=urlstr)
+
+
+
 
 
 """ BACKEND EMAIL PROCEDURES. FUNCTIONS THAT ARE INITIATED AUTOMATICALLY BY THE SYSTEM. """

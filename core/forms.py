@@ -142,7 +142,7 @@ class GgvEmailStaffForm(Form):
         )
 
 class GgvEmailDeactivationRequestForm(Form):
-    message = forms.CharField(
+    deactivate = forms.CharField(
         widget=forms.Textarea,
         label='You are requesting that the site manager deactivate the following list of users.',
         help_text='After pressing Send Message, the site manager will receive your request in their email.'

@@ -94,12 +94,14 @@ class RestrictedAccessZoneMixin(object):
         #     perms = get_perms(self.request.user, self.get_object())        
         # else:
         try:
-            perms = get_perms(self.request.user, self.get_object())
-        except:
             perms = get_perms(self.request.user, self.course)
+        except Exception as e:
+            print e
+            perms = get_perms(self.request.user, self.get_object())
+            
 
+        print self.course, perms
 
-        
         if 'manage' in perms:
             return super(RestrictedAccessZoneMixin, self).dispatch(*args, **kwargs)
 
@@ -145,6 +147,7 @@ class CourseContextMixin(object):
             context['course'] = Course.objects.get(
                 slug=self.kwargs['crs_slug'])
             roles = get_perms(self.request.user, context['course'])
+            self.course = context['course']
 
             if self.request.user.is_staff:
                 context['role'] = 'GGV Staff'

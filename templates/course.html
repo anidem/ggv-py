@@ -35,9 +35,9 @@
     <div class="row">
         <div class="col-md-8 col-md-offset-2 text-center">
             {% if not site_message %}
-                <a href="{% url 'add_course_msg' course.slug %}" class="btn btn-md"><i class="fa fa-plus"></i> Add a <em>Message Panel</em> to relay information to students when they visit your course.</a>
+                <a href="{% url 'add_course_msg' object.slug %}" class="btn btn-md"><i class="fa fa-plus"></i> Add a <em>Message Panel</em> to relay information to students when they visit your course.</a>
             {% elif not site_message.show %}
-                <em>Message Panel</em> is currently hidden, <a href="{% url 'edit_course_msg' course.slug site_message.id %}">unhide</a>
+                <em>Message Panel</em> is currently hidden, <a href="{% url 'edit_course_msg' object.slug site_message.id %}">unhide</a>
             {% else %}
                 <a href="{% url 'edit_course_msg' course.slug site_message.id %}" class="btn btn-md"><i class="fa fa-gear"></i> Edit or Hide <em>Course Message Panel</em></a>
             {% endif %}

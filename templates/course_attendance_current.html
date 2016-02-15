@@ -59,7 +59,7 @@
                         <td class="lastname">
                             <a href="{% url 'course_attendance_user' object.slug k.id %}">{{ k.last_name }}</a>
                         </td>
-                        {% for j in v %} {% if j %}<td><i class="fa fa-circle text-success"></i></td>{% else %}<td>&nbsp;</td>{% endif %}{% endfor %}
+                        {% for j in v %} {% if j %}<td class="text-center"> <i class="fa fa-circle text-success"></i></td>{% else %}<td>&nbsp;</td>{% endif %}{% endfor %}
                             
                     {% endfor %}
                 </tr>

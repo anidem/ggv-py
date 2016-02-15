@@ -66,7 +66,7 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/$', LessonView.as_view(), name='lesson'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/key/$', LessonKeyView.as_view(), name='lesson_key'),
 
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/add/message$', CourseMessageAddView.as_view(), name='add_course_msg'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/add/message/$', CourseMessageAddView.as_view(), name='add_course_msg'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/edit/message/(?P<pk>\d+)/$', CourseMessageUpdateView.as_view(), name='edit_course_msg'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/remove/message/(?P<pk>\d+)/$', CourseMessageDeleteView.as_view(), name='delete_course_msg'),
 

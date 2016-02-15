@@ -90,18 +90,12 @@ class RestrictedAccessZoneMixin(object):
         if self.request.user.is_staff:
             return super(RestrictedAccessZoneMixin, self).dispatch(*args, **kwargs)
 
-        # if type(self.get_object()) is Course:
-        #     perms = get_perms(self.request.user, self.get_object())        
-        # else:
+        
         try:
             perms = get_perms(self.request.user, self.course)
         except Exception as e:
-            print e
             perms = get_perms(self.request.user, self.get_object())
             
-
-        print self.course, perms
-
         if 'manage' in perms:
             return super(RestrictedAccessZoneMixin, self).dispatch(*args, **kwargs)
 

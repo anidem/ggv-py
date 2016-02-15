@@ -30,13 +30,15 @@ class Course(models.Model):
         )
 
     def member_list(self):
+
         return get_users_with_perms(self, attach_perms=True)
 
     def student_list(self, extra_details=None, sort_by='first_name', reverse_sort=False):
         # if extra_details:
         # return [{user: ActivityLog.objects.filter(user=user)} for user, perms
         # in self.member_list().items() if 'access' in perms]
-        students = [user for user, perms in self.member_list().items() if 'access' in perms]
+
+        students = [user for user, perms in self.member_list().items() if 'access' in perms and not user.is_staff and not user.is_superuser and 'instructor' not in perms]
         return sorted(students, key=attrgetter(sort_by), reverse=reverse_sort)
 
     def instructor_list(self):

@@ -4,11 +4,14 @@ import codecs
 import cStringIO
 from datetime import datetime
 from pytz import timezone
+from collections import OrderedDict
 
 from openpyxl import Workbook
 from openpyxl.cell import get_column_letter
 from openpyxl.styles import Font
 
+from django.core.exceptions import ValidationError
+from django.db import IntegrityError
 from django.core.urlresolvers import reverse
 from django.contrib.auth import logout
 from django.contrib.auth.models import User
@@ -17,7 +20,7 @@ from django.conf import settings
 
 from social.exceptions import SocialAuthBaseException, AuthException, AuthForbidden
 
-from .models import ActivityLog
+from .models import ActivityLog, AttendanceTracker
 # from questions.models import QuestionSet, UserWorksheetStatus
 
 tz = timezone(settings.TIME_ZONE)
@@ -194,3 +197,44 @@ def get_daily_log_times(user=None, course=None, exclusions=[]):
         acts.append(act_log)
 
     return acts
+
+
+
+def populate_attendance_tracker(user=None):
+    """ 
+    Purpose is to populate the attendance tracker for user. 
+    This is intended to initialize the attendance tracker table
+    installed feb 2016. After installation attendance tracker
+    objects are automatically created/updated as a side effect of
+    an activitylog creation event. 
+    """
+
+    logs = user.activitylog.all().order_by('timestamp')  # read in ascending order  
+
+    for i in logs:
+        try:
+            a = AttendanceTracker( 
+                user=user, 
+                datestamp=i.timestamp, 
+                datestr=i.timestamp.astimezone(tz).strftime('%Y-%m-%d'))
+            a.save()
+            print a.datestamp.strftime('%Y-%m-%d %-I:%M %p %Z'), '==>', a.datestr
+        
+        except IntegrityError as e:
+            pass
+        
+
+    print 'Done'
+
+def temp_attendance_report(user=None):
+    curr = datetime.now(tz)
+    report = user.attendance.all().filter(datestr__startswith=curr.strftime('%Y-%m'))
+    import calendar
+    days = calendar.monthrange(curr.year, curr.month)
+    listing = [None] * days[1]    
+
+    for i in report:
+        listing[i.day_tz()-1] = i
+
+    return listing
+

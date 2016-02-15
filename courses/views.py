@@ -1,15 +1,17 @@
 from collections import OrderedDict
 from pytz import timezone
 from datetime import datetime
+import calendar
 import time
 import csv
 
 from django.views.generic import TemplateView, DetailView, UpdateView, CreateView, DeleteView
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils import html, text
+from django.shortcuts import redirect
 
 from openpyxl import Workbook
 from openpyxl.cell import get_column_letter
@@ -294,8 +296,60 @@ class CourseMessageDeleteView(LoginRequiredMixin, CourseContextMixin, Restricted
         return reverse('course', kwargs={'crs_slug': self.course.slug})
 
 
+class CourseAttendanceMonthView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+    model = Course
+    template_name = 'course_attendance_current.html'
+    slug_url_kwarg = 'crs_slug'
+    access_object = None
+    date_range = None
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.date_range = datetime(int(kwargs['year']), int(kwargs['month']), 1)
+        except:
+            self.date_range = datetime.now(tz)
+
+        return super(CourseAttendanceMonthView, self).get(request, *args, **kwargs)        
+
+    def get_context_data(self, **kwargs):
+        context = super(CourseAttendanceMonthView, self).get_context_data(**kwargs)
+        course = self.get_object()
+        listing = []
+
+        for student in course.student_list():
+            user_attendance = student.ggvuser.attendance_by_month(self.date_range.year, self.date_range.month)
+            listing.append({ student : user_attendance })
+
+        days_in_month = range(1, calendar.monthrange(self.date_range.year, self.date_range.month)[1]+1)
+            
+        context['attendance_sheet'] = listing
+        context['month_year'] = self.date_range.strftime('%B %Y')
+        context['days'] = days_in_month
+        return context
 
 
+
+class CourseAttendanceUserView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+    model = Course
+    template_name = 'course_attendance_user.html'
+    slug_url_kwarg = 'crs_slug'
+    access_object = None
+    student = None
+
+    def get(self, request, *args, **kwargs):
+        try:
+            self.student = User.objects.get(pk=kwargs['user'])
+        except:
+            raise Http404("Student records not found.")
+
+        return super(CourseAttendanceUserView, self).get(request, *args, **kwargs)        
+
+    def get_context_data(self, **kwargs):
+        context = super(CourseAttendanceUserView, self).get_context_data(**kwargs)  
+        context['attendance_sheet'] = self.student.ggvuser.attendance_full_listing()
+        context['student'] = self.student
+        
+        return context
 
 
 

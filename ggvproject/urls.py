@@ -22,7 +22,8 @@ from core.views import (
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import (
-    CourseView, CourseUpdateView, CourseManageView,
+    CourseView, CourseUpdateView, CourseManageView, 
+    CourseAttendanceMonthView, CourseAttendanceUserView,
     UserManageView, UserProgressView,
     CourseMessageAddView, CourseMessageUpdateView, CourseMessageDeleteView
     )
@@ -56,6 +57,11 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/$', CourseManageView.as_view(), name='manage_course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/user/(?P<user>\d+)/$', UserManageView.as_view(), name='manage_user'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/progress/user/(?P<user>\d+)/$', UserProgressView.as_view(), name='user_progress'),
+
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/user/(?P<user>\d+)/$', CourseAttendanceUserView.as_view(), name='course_attendance_user'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/current/$', CourseAttendanceMonthView.as_view(), name='course_attendance_current'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/(?P<year>\d+)/(?P<month>\d+)/$', CourseAttendanceMonthView.as_view(), name='course_attendance_selected'),
+
 
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/$', LessonView.as_view(), name='lesson'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/key/$', LessonKeyView.as_view(), name='lesson_key'),

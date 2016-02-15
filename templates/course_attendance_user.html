@@ -1,0 +1,67 @@
+<!-- course_attendance_user.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load guardian_tags %}
+
+
+{% block page_crumb %}
+    <li><a href="{% url 'course' object.slug %}"><button class="btn btn-xs"><i class="fa fa-home"></i> {{ object }}</button></a></li>
+    <li><a href="{% url 'manage_course' object.slug %}"><button class="btn btn-xs">Roster Detail</button></a></li>
+    <li><a href="{% url 'course_attendance_current' object.slug %}"><button class="btn btn-xs">Course Attendance</button></a></li>
+{% endblock page_crumb %}
+
+{% block local_nav %}
+    {% if is_manager %}
+    <li>
+        <a class="static nav-text" href="{% url 'create_user' course.slug %}">
+            <i class="fa fa-user-plus text-primary"></i>
+        </a>
+    </li>
+    {% endif %}
+{% endblock local_nav %}
+
+{% block page_header %}
+
+<div class="col-md-12 center-block">
+
+</div>
+
+{% endblock page_header %}
+
+{% block content %}
+
+<div class="col-md-12">
+
+
+<!-- Active students -->
+    <div class="row"><div class="col-md-12"><h2>Attendance Report for {{ student.first_name }} {{ student.last_name }} </h2></div></div>
+
+    <div class="row"><div class="col-md-12">
+    {% for k, v in attendance_sheet.items %}
+        <table class="table table-bordered table-hover table-condensed">
+            
+                <tr>
+                    <td>{{ k }}</td>
+                    {% for a in v %} <td>{% if forloop.counter < 10 %}&nbsp;{% endif %} {{ forloop.counter }}</td> {% endfor %}  
+                </tr>
+            
+                <tr>
+                    <td></td>
+                    {% for a in v %} {% if a %}<td><i class="fa fa-circle text-success"></i></td>{% else %}<td>&nbsp;</td>{% endif %}{% endfor %}          
+                </tr>               
+            
+        </table>
+    {% empty %}
+        <th>No records. :(</th>
+    {% endfor %}
+
+    </div></div>
+</div>
+
+<!-- END all listings -->
+
+{% endblock content %}
+
+{% block local_js %}
+{% endblock local_js %}
+

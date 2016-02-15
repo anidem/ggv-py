@@ -5,7 +5,7 @@
 
 
 {% block page_crumb %}
-    <li><a href="{% url 'course' object.slug %}"><button class="btn btn-xs btn-default"><i class="fa fa-home"></i> {{ object }}</button></a></li>
+    <li><a href="{% url 'course' object.slug %}"><button class="btn btn-xs"><i class="fa fa-home"></i> {{ object }}</button></a></li>
     <li><a href="#"><button class="btn btn-xs btn-success">Roster Detail</button></a></li>
 {% endblock page_crumb %}
 
@@ -31,6 +31,9 @@
 
 <div class="col-md-12">
     <a href="{% url 'edit_course' object.slug %}"><button class="btn btn-xs btn-primary"><i class="fa fa-gear fa-2x"></i> Course Settings</button></a>
+
+    <a href="{% url 'course_attendance_current' object.slug %}"><button class="btn btn-xs btn-success"><i class="fa fa-list fa-2x"></i> Attendance</button></a>
+
 </div>
 
 
@@ -40,7 +43,7 @@
     <div class="row"><div class="col-md-12">
         <h2>{{ instructors|length}} Instructors</h2>
         {% for i in instructors %}
-        {{ i.first_name }} {{ i.last_name }},
+            {{ i.first_name }} {{ i.last_name }},
         {% endfor %}
     </div></div>
 

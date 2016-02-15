@@ -1,0 +1,93 @@
+	|day|day|day|day|...
+s1	|bit|bit|bit|
+s2	|bit|bit|bit|
+
+a [{
+	's1': [1, 0, 1, ... ], 
+	's2': [1 ,1, 0, ... ]
+}]
+
+
+d = date.today()
+d.day
+d.month
+d.year
+
+d1 = date(d.year, d.month, 1)
+d2 = date(d.year, d.month, calendar.monthrange(2016, 2)[1])
+
+or
+
+for i in xrange(1, calendar.monthrange(d.year, d.month)[1]+1):
+	print i
+
+from core.models import *
+from django.contrib.auth.models import User
+user = User.objects.get(email='onkoali@gmail.com')
+
+alog = user.activitylog.all().filter(timestamp__year=2015).filter(timestamp__month=12)
+sample = alog[0]
+
+curr = 0
+activity = []
+for a in alog:
+	if a.timestamp.day != curr:
+		curr = a.timestamp.day
+		activity.append(curr)
+		print a
+
+
+att = []
+for i in xrange(1, calendar.monthrange(2015, 12)[1]+1):
+	????
+
+
+print 'Dec 2015', xrange(1, calendar.monthrange(2015, 12)[1]+1) # in real life use: d.year, d.month
+print 'Activity Log', activity
+
+
+What about read/write
+
+option1 (heavy): create a huge ass table: 
+	
+	user|date|code
+
+class AttendanceTracker(models.Model):
+	user = models.ForeignKey(User)
+	day = models.Datetime()
+	type = models.CharField()
+
+atobj.update(????)
+
+- will require constant check and update for every activity access to keep it in sync with activitylog. this is kind of a management nightmare.
+- allows instructors to read/write/update/ attendance codes.
+- may be really slow on large page loads
+
+option2 (light): read off from the activity log as needed (on demand)
+- this is essentially a filter on activitylog for each user mapped to calendar range (all, current, or any other single month) 
+
+
+import calendar
+from core.models import *
+from core.utils import *
+from django.contrib.auth.models import User
+u = User.objects.get(email='onkoali@gmail.com')
+#populate_attendance_tracker(u)
+temp_attendance_report(u)
+
+ats = u.attendance.all()
+
+tz = timezone(settings.TIME_ZONE)
+acts = u.activitylog.all()
+al = acts[0]
+atts = u.attendance.all()
+at = atts[0]
+
+print 'activity log >>>', al.timestamp
+print 'attendan log >>>', at.datestamp
+AttendanceTracker.objects.filter(user=u).filter(datestamp__year=al.timestamp.year).filter(datestamp__month=al.timestamp.month).filter(datestamp__day=al.timestamp.day).exists()
+
+
+
+
+

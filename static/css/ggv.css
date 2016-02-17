@@ -291,13 +291,76 @@ form ul {
     -webkit-overflow-scrolling: touch;
 }
 
-/*.scrollable-menu::-webkit-scrollbar {
-    -webkit-appearance: none;
-    width: 4px;
+/*attendance sheet*/
+* {
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
 }
-.scrollable-menu::-webkit-scrollbar-thumb {
-    border-radius: 3px;
-    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.75);
+
+/* ---- ul as table ---- */
+
+.table-like-header {
+  background: #ddd;
+  max-width: 1200px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
 }
-*/
+
+.table-like {
+  background: #fff;
+  max-width: 1200px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* clear fix */
+.table-like-header:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+.table-like:after {
+  content: '';
+  display: block;
+  clear: both;
+}
+
+/* ---- vertical ul table ---- */
+
+.table-like-header__item {
+  width: 100%;
+  clear: both;
+  /*border-top: 1px solid;*/
+}
+
+.table-like__item {
+  width: 100%;
+  clear: both;
+  border-bottom: 1px solid #cccccc;
+  /*border-top: 1px solid;*/
+}
+
+.table-like-header__item > * {
+  display: inline-block;
+  padding: 4px 4px;
+}
+
+.table-like__item > * {
+  display: inline-block;
+  padding: 4px 4px;
+}
+
+.table-like-header__item .siteid { width: 8%; }
+.table-like-header__item .firstname { width: 10%; }
+.table-like-header__item .lastname { width: 10%; }
+.table-like-header__item .day { width: 20px; border-right: 1px solid #cccccc; text-align: center}
+
+.table-like__item .siteid { width: 8%; }
+.table-like__item .firstname { width: 10%; }
+.table-like__item .lastname { width: 10%; }
+.table-like__item .day { width: 20px; border-right: 1px solid #cccccc;}
 

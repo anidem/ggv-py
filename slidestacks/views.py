@@ -9,13 +9,13 @@ from django.conf import settings
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from sendfile import sendfile
 
-from core.mixins import AccessRequiredMixin
+from core.mixins import AccessRequiredMixin, CourseContextMixin
 from core.models import ActivityLog
 
 from .models import SlideStack
 
 
-class slide_view(LoginRequiredMixin, AccessRequiredMixin, DetailView):
+class slide_view(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, DetailView):
 
     """ IFrame version until SlideView is debugged. """
 
@@ -34,6 +34,21 @@ class slide_view(LoginRequiredMixin, AccessRequiredMixin, DetailView):
             user=self.request.user, action='access-presentation', message=msg, message_detail=msg_detail).save()
 
         return super(slide_view, self).dispatch(*args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(slide_view, self).get_context_data(**kwargs)
+        activities = self.get_object().section.activities()
+        context['next_act'] = ''
+        context['section'] = self.get_object().section
+        
+        for i in range(len(activities)):
+            if activities[i].id == self.get_object().id:
+                try:
+                    context['next_act'] = activities[i+1]
+                except:
+                    pass  # next activity doesn't exist. proceed silently   
+        
+        return context
 
 
 class SlideView(LoginRequiredMixin, AccessRequiredMixin, RedirectView):

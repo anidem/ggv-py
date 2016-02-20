@@ -1,5 +1,33 @@
 <!-- slidestack_view.html -->
+{% extends "base.html" %}
 {% load staticfiles %}
-<iframe seamless style="width: 100%; height: 100%" src="http://{{request.get_host}}/stacks/{{ object.asset }}/html5.html"></iframe>
 
+{% block page_header %}
+	
+	<div class="col-md-6">
+		<a href="{% url 'lesson' course.slug object.lesson.id %}#{{ section|title|urlencode }}" class="btn btn-xs btn-success">
+			<i class="fa fa-caret-left"></i> More {{ section|title }} activities.
+		</a>
+	</div>
+	<div class="col-md-6 text-right">
+	{% if next_act.activity_type == 'worksheet' %}
+		<a href="{% url 'worksheet_launch' course.slug next_act.id %}" class="btn btn-xs btn-default">
+			next activity <i class="fa fa-caret-right"></i>
+		</a>
+	{% elif next_act.activity_type == 'external_media' %}
+		<a href="{% url 'external_media' course.slug next_act.id %}" class="btn btn-xs btn-default">
+			next activity <i class="fa fa-caret-right"></i>
+		</a>
+	{% endif %}
+	</div>
+	
+{% endblock page_header %}
 
+{% block content %} 
+<div class="col-md-12">
+
+	<iframe seamless style="width: 100%; height: 1080px" src="http://{{request.get_host}}/stacks/{{ object.asset }}/html5.html"></iframe>
+
+</div>
+
+{% endblock content %}

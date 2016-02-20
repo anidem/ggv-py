@@ -1,4 +1,5 @@
 from django.db import models
+from django.db.models import Q
 from itertools import chain
 from operator import attrgetter
 from django.core.urlresolvers import reverse
@@ -56,6 +57,15 @@ class Section(models.Model):
     subtitle = models.TextField(blank=True)
     display_order = models.IntegerField(default=0)
     lesson = models.ForeignKey(Lesson, related_name='sections')
+
+    def activities(self):
+        questions = self.lesson.worksheets.filter(section=self)
+        slidestacks = self.lesson.slidestacks.filter(section=self)
+        external_media = self.lesson.external_media.filter(section=self)
+        activity_set = list(chain(questions, slidestacks, external_media))
+        activity_set = sorted(
+            activity_set, key=attrgetter('section.display_order', 'display_order'))
+        return activity_set
 
     class Meta:
         ordering = ['lesson', 'display_order', 'title']

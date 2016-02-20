@@ -1,4 +1,4 @@
-<!-- slidestack_view.html -->
+<!-- base_slide_stack.html -->
 {% load staticfiles %}
 <!DOCTYPE html>
 <html lang="en">
@@ -34,30 +34,11 @@
 
   {% block local_head %} {% endblock local_head %}
 </head>
+
 <body>
-
-	
-	<div class="pull-left">
-		<a href="{% url 'lesson' course.slug object.lesson.id %}#{{ section|title|urlencode }}" class="btn btn-xs btn-success">
-			<i class="fa fa-caret-left"></i> Back to {{ section|title }}
-		</a>
-	</div>
-	
-	<div class="pull-right text-right">
-	{% if next_act.activity_type == 'worksheet' %}
-		<a href="{% url 'worksheet_launch' course.slug next_act.id %}" class="btn btn-xs btn-default">
-			next activity <i class="fa fa-caret-right"></i>
-		</a>
-	{% elif next_act.activity_type == 'external_media' %}
-		<a href="{% url 'external_media' course.slug next_act.id %}" class="btn btn-xs btn-default">
-			next activity <i class="fa fa-caret-right"></i>
-		</a>
-	{% endif %}
-	</div>
-	
-
-
-
-	<iframe seamless style="width: 100%; height: 100%" src="http://{{request.get_host}}/stacks/{{ object.asset }}/html5.html"></iframe>
+    {% block slide_buttons %} {% endblock slide_buttons %}
+    {% block slideframe %} {% endblock slideframe %}
+    <!-- End page content -->
+{% block local_js %}{% endblock local_js %}
 </body>
 </html>

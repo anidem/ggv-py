@@ -10,6 +10,10 @@ from guardian.shortcuts import get_users_with_perms, get_perms
 
 from lessons.models import Lesson
 
+ws_control_choices = (
+    (False, 'OPTION 1: Students have full access to continue in GGV. Students are allowed to review worksheet results, make corrections, and continue in GGV.'),
+    (True, 'OPTION 2: Students have restricted access to continue in GGV. Students are not allowed to review worksheet results, make corrections, and continue in GGV without instructor permission. Instructor must follow the steps below for option 2. ')
+)
 
 class Course(models.Model):
 
@@ -19,7 +23,7 @@ class Course(models.Model):
     """
     title = models.CharField(max_length=256)
     slug = models.SlugField(max_length=128, unique=True)
-    control_worksheet_results = models.BooleanField(default=False)
+    control_worksheet_results = models.BooleanField(default=False, choices=ws_control_choices)
     access_code = models.CharField(max_length=8, null=True, blank=True)
 
     class Meta:

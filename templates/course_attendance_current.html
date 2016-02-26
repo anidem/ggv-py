@@ -5,8 +5,8 @@
 
 
 {% block page_crumb %}
-    <li><a href="{% url 'course' object.slug %}"><button class="btn btn-xs"><i class="fa fa-home"></i> {{ object }}</button></a></li>
-    <li><a href="{% url 'manage_course' object.slug %}"><button class="btn btn-xs">Roster Detail</button></a></li>
+    <li><a href="{% url 'course' object.slug %}"><button class="btn btn-xs btn-default"><i class="fa fa-home"></i> {{ object }}</button></a></li>
+    <li><a href="{% url 'manage_course' object.slug %}"><button class="btn btn-xs btn-default">Roster Detail</button></a></li>
     <li><a href="#"><button class="btn btn-xs btn-success">Attendance</button></a></li>
 {% endblock page_crumb %}
 

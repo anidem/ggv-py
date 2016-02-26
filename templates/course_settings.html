@@ -10,23 +10,24 @@
 
 {% block content %}
 <div class="col-md-12">
-    <h1>Worksheet Settings for {{ object }}. <span class="small">(applies to all students in the course)</span></h1>
+    <h2>Worksheet Settings for {{ object }}. <span class="small">(applies to all students in the course)</span></h2>
 
-    <p class="lead">The following setting controls whether or not students are allowed to view the results/score after completing a worksheet. </p>
+    <p class="lead">
+        Instructor must select one option.
+        The option the instructor selects applies to all students in the course.  
+    </p>
 
-    <h3>Example Scenario: You would like to review/monitor student responses to worksheets before allowing them to make corrections.</h3>
-    <p>1. <b>CHECK</b> the checkbox below.</p>
-    <p>2. When students complete a quiz, you will receive an email notification (check your email preferences <a target="_blank"href="{% url 'edit_user' object.slug request.user.id %}"> here</a>).</p>
-    <p>3. After reviewing the student's results/scores, you can check the button next to their name in the worksheet report to <b>ALLOW</b> them to view their results/scores and possibly make corrections.</p>
-
-    <h3><b>Alternatively,</b> if you do not wish to restrict students from viewing their results/scores immediately after completing a worksheet, then <b>UNCHECK</b> the setting below.</h3>
-
-    <hr>
 
     <form method="post" action=".">{% csrf_token %}
         {{ form|crispy }}
         <button class="btn btn-sm btn-success" type="submit">Save</button>
     </form>
+
+    <p>
+        Check your email preferences <a href={% url 'edit_user_account' object.slug user.id %}>here</a>. 
+        An email notification will be sent to the course instructor when students complete a worksheet. Worksheet results must be reviewed. 
+        In the worksheet report, check the button next to the student’s name to ALLOW the student to view his results, make corrections, and continue in GGV.
+    </p>
 </div>
 
 {% endblock content %}

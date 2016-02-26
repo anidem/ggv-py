@@ -16,7 +16,7 @@ LABELS = {
     'language': 'Preferred language:',
     'program_id': 'Please enter a unique identifier for this user if your organization assigns ids to users:',
     'access_level': 'Select access level/account type:',
-    'username': 'Username must be a valid email address managed by Google. Correspondence with user is made to this email account.',
+    'username': 'Users are identified by their gmail address/account. Please enter the user\'s complete email address.',
     'is_active': 'Is activated? Uncheck this to deactivate user. User will not be able to access ggv.',
     'clean_logout': 'Google account security. Keep this CHECKED to safely log out of your Google account when signing out of GGV (recommended). UNCHECK this to stay logged in to your Google account after signing out of GGV.',
     'receive_notifications': 'Choose to receive notifications on student activity. (E.g., worksheet completions, bookmarking, etc.)',

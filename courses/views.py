@@ -30,6 +30,8 @@ from .forms import CourseUpdateForm
 tz = timezone(settings.TIME_ZONE)
 
 
+""" Course Management """
+
 class CourseUpdateView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, UpdateView):
     model = Course
     template_name = 'course_settings.html'
@@ -113,6 +115,8 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         context['unvalidated'] = course.unvalidated_list()
         return context
 
+
+""" User Acitivity Management """
 
 class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
     """
@@ -238,6 +242,8 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         return context
 
 
+""" Course Message Management """
+
 class CourseMessageAddView(LoginRequiredMixin, CourseContextMixin, RestrictedAccessZoneMixin, CreateView):
     model = SiteMessage
     template_name = 'ggv_create_page_msg.html'
@@ -296,6 +302,8 @@ class CourseMessageDeleteView(LoginRequiredMixin, CourseContextMixin, Restricted
         return reverse('course', kwargs={'crs_slug': self.course.slug})
 
 
+""" Course Attendance Pages """
+
 class CourseAttendanceMonthView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
     model = Course
     template_name = 'course_attendance_current.html'
@@ -324,9 +332,9 @@ class CourseAttendanceMonthView(LoginRequiredMixin, CourseContextMixin, AccessRe
             
         context['attendance_sheet'] = listing
         context['month_year'] = self.date_range.strftime('%B %Y')
+        context['date_display'] = self.date_range
         context['days'] = days_in_month
         return context
-
 
 
 class CourseAttendanceUserView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):

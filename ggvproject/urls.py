@@ -18,7 +18,7 @@ from core.views import (
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView,
     CreateGgvUserView, UpdateGgvUserAccountView, GgvUserView, UpdateGgvUserView, GgvUserActivationView,
-    FaqView, GgvUsersDeactivationView, GgvUsersActivationView
+    FaqView, GgvUsersDeactivationView, GgvUsersActivationView, AttendanceAjaxCodeUpdateView, AttendanceAjaxCodeCreateView, AttendanceAjaxCodeDeleteView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import (
@@ -49,15 +49,18 @@ urlpatterns = patterns('',
 # Utility - NON Production use only!
     url(r'^ggv/utility/$', csvutil, name='util'),
     url(r'^ggv/slideutility/$', csvutilslides, name='slideutil'),
-    url(r'^ggv/utility/validator/$', worksheetvalidator.as_view(), name='worksheet_utility'),
+    # url(r'^ggv/utility/validator/$', worksheetvalidator.as_view(), name='worksheet_utility'),
 
-# GGV
+# GGV Courses
     url(r'^ggv/(?P<crs_slug>[-\w]+)/$', CourseView.as_view(), name='course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/edit/$', CourseUpdateView.as_view(), name='edit_course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/$', CourseManageView.as_view(), name='manage_course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/user/(?P<user>\d+)/$', UserManageView.as_view(), name='manage_user'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/progress/user/(?P<user>\d+)/$', UserProgressView.as_view(), name='user_progress'),
 
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/update/(?P<pk>\d+)/$', AttendanceAjaxCodeUpdateView.as_view(), name='course_attendance_update'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/delete/(?P<pk>\d+)/$', AttendanceAjaxCodeDeleteView.as_view(), name='course_attendance_delete'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/add/(?P<user>\d+)/$', AttendanceAjaxCodeCreateView.as_view(), name='course_attendance_add'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/user/(?P<user>\d+)/$', CourseAttendanceUserView.as_view(), name='course_attendance_user'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/current/$', CourseAttendanceMonthView.as_view(), name='course_attendance_current'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/(?P<year>\d+)/(?P<month>\d+)/$', CourseAttendanceMonthView.as_view(), name='course_attendance_selected'),

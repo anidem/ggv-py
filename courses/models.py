@@ -11,8 +11,8 @@ from guardian.shortcuts import get_users_with_perms, get_perms
 from lessons.models import Lesson
 
 ws_control_choices = (
-    (False, 'OPTION 1: Students have full access to continue in GGV. Students are allowed to review worksheet results, make corrections, and continue in GGV.'),
-    (True, 'OPTION 2: Students have restricted access to continue in GGV. Students are not allowed to review worksheet results, make corrections, and continue in GGV without instructor permission. Instructor must follow the steps below for option 2. ')
+    (False, 'OPTION 1: Students are allowed to immediately review the results after completing a worksheet.'),
+    (True, 'OPTION 2:  Students are NOT allowed to immediately review the results after completing a worksheet.')
 )
 
 class Course(models.Model):

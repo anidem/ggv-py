@@ -13,4 +13,4 @@ class CourseUpdateForm(forms.ModelForm):
 
         widgets = {'control_worksheet_results': forms.RadioSelect}
 
-        labels = {'control_worksheet_results': 'How students view their worksheet results:'}
+        labels = {'control_worksheet_results': 'Control what happens after a student completes a worksheet:'}

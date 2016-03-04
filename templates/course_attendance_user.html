@@ -31,27 +31,55 @@
 
 {% block content %}
 
-<div class="col-md-12">
+<div id="attendance_sheet" class="col-md-12" data-courseslug="{{ course.slug }}" data-user="{{student.id}}">
 
 
 <!-- Active students -->
     <div class="row"><div class="col-md-12"><h2>Attendance Report for {{ student.first_name }} {{ student.last_name }} </h2></div></div>
 
     <div class="row"><div class="col-md-12">
+
     {% for k, v in attendance_sheet.items %}
-        <table class="table table-bordered table-hover table-condensed">
-            
-                <tr>
-                    <td>{{ k }}</td>
-                    {% for a in v %} <td>{% if forloop.counter < 10 %}&nbsp;{% endif %} {{ forloop.counter }}</td> {% endfor %}  
-                </tr>
-            
-                <tr>
-                    <td></td>
-                    {% for a in v %} {% if a %}<td class="text-center"><i class="fa fa-circle text-success"></i></td>{% else %}<td>&nbsp;</td>{% endif %}{% endfor %}          
-                </tr>               
-            
-        </table>
+    <table id="{{forloop.counter}}_month" class="table table-bordered table-hover table-condensed">
+        <tr>
+            <td>{{ k.1 }}/{{ k.0 }}</td>
+            {% for a in v %}<td>{% if forloop.counter < 10 %}&nbsp;{% endif %} {{ forloop.counter }}</td>{% endfor %}  
+        </tr>
+    
+        <tr>
+            <td></td>
+            {% for a in v %}                
+                <td class="text-center" title="{{a.get_code_display}}">
+                    <a id="{{k|slugify}}_{{forloop.counter}}" class="btn btn-xs" href="#{{k|slugify}}_{{forloop.counter}}_form_panel" role="button" data-toggle="collapse">
+                        <i id="{{k|slugify}}_{{forloop.counter}}_label" class="fa fa-circle attlabel-{{a.code}}"></i>
+                    </a>
+                    <div id="{{k|slugify}}_{{forloop.counter}}_form_panel" class="tracker_panel panel-collapse collapse well" style="position: absolute; z-index: 1000; margin-left: -50px; width: 150px; height: 300px">
+                        
+                        <form id="{{k|slugify}}_{{forloop.counter}}_tracker_form" action="" method="post" class="trackerform text-left" data-target="{{ a.id }}" data-panel="#{{k|slugify}}_{{forloop.counter}}_form_panel" data-attlabel="#{{k|slugify}}_{{forloop.counter}}_label" data-code="{{a.code}}">{% csrf_token %}
+                            <div class="form-group">
+                                <div class="radio controls">
+                                    <label class="attlabel-0"><input class="" type="radio" {% if a.code == 0 %}checked{% endif %} name="code" id="id_code_0" value="0">Online</label>
+                                    <label class="attlabel-1"><input class="" type="radio" {% if a.code == 1 %}checked{% endif %} name="code" id="id_code_1" value="1" data-label="">Pretest</label>
+                                    <label class="attlabel-2"><input class="" type="radio" {% if a.code == 2 %}checked{% endif %} name="code" id="id_code_2" value="2" data-label="">Official Test</label>
+                                    <label class="attlabel-3"><input class="" type="radio" {% if a.code == 3 %}checked{% endif %} name="code" id="id_code_3" value="3" data-label="">Graduated</label>
+                                    <label class="attlabel-4"><input class="" type="radio" {% if a.code == 4 %}checked{% endif %} name="code" id="id_code_4" value="4" data-label="">Dropped</label>
+                                    <label class=""><input class="" type="radio" name="code" id="id_code_5" value="clear" data-label="">Clear</label>
+                                </div>
+
+                                <input id="id_user" name="user" type="hidden" value="{{ student.id }}">
+                                <input id="id_datestamp" name="datestamp" type="hidden" value="{{k.0}}-{{k.1}}-{{forloop.counter}}">
+                                
+
+                                <input type="submit" class="btn btn-primary btn-xs tracker_submit">
+                                <input type="button" class="btn btn-warning btn-xs tracker_cancel" value="Cancel">
+                            </div>
+                        </form>
+                    </div>
+                </td>
+                
+            {% endfor %}          
+        </tr>          
+    </table>
     {% empty %}
         <th>No records. :(</th>
     {% endfor %}
@@ -64,5 +92,78 @@
 {% endblock content %}
 
 {% block local_js %}
+<script type="text/javascript">
+jQuery(function($) {
+
+    $('.tracker_cancel').on('click', function() {
+        $(this).parent().parent().parent().collapse('hide');
+    });
+
+    $('.trackerform').submit(function() {
+        event.preventDefault();
+        var tracker_form = $(this);
+        var tracker_obj = tracker_form.attr("data-target");
+        var tracker_panel = $(tracker_form.attr("data-panel"));
+        var tracker_label = $(tracker_form.attr("data-attlabel"));
+        var tracker_code = tracker_form.find("input:checked").val();
+        var tracker_code_label = tracker_form.attr("data-code");
+        var tracker_user = $('#attendance_sheet').attr("data-user");
+        var course_slug = $('#attendance_sheet').attr("data-courseslug");
+
+        if (tracker_obj === '' && tracker_code === 'clear') {
+            tracker_panel.collapse('hide');
+            return
+        } else if(tracker_obj === '') {
+            // no previous tracker set, we're going to add one
+            action_handler = "/ggv/"+course_slug+"/attendance/add/"+tracker_user+"/";
+        } else if(tracker_code === "clear") {
+            // previous tracker set, we're going to clear it
+            action_handler = "/ggv/"+course_slug+"/attendance/delete/"+tracker_obj+"/";
+        } else {
+            // previous tracker set, we're going to change it
+            action_handler = "/ggv/"+course_slug+"/attendance/update/"+tracker_obj+"/";
+        }
+
+        var request = $.ajax({
+            url : action_handler,
+            type : "POST",
+            data : tracker_form.serializeArray(),
+            dataType : "json",
+        });
+
+        request.done(function(json) {
+            if (json.deleted) {             
+                tracker_label.removeClass('attlabel-'+tracker_code_label);
+                tracker_label.addClass('attlabel-');
+                tracker_form.attr("data-code", "");
+                tracker_form.attr("data-target", "");
+
+            } else if (json.added) {
+                tracker_label.removeClass('attlabel-'+tracker_code_label);
+                tracker_label.addClass('attlabel-'+json.code);
+                tracker_form.attr("data-code", json.code);
+                tracker_form.attr("data-target", json.attendance_id);
+
+            } else {
+                tracker_label.removeClass('attlabel-'+tracker_code_label);
+                tracker_label.addClass('attlabel-'+json.code);
+                tracker_form.attr("data-code", json.code);
+                // Hide the form panel.
+                
+            }
+            tracker_panel.collapse('hide');
+        });
+
+        // handle a non-successful response
+        request.fail(function(xhr, json) {
+            // console.log(xhr.status + " Tracker error: " + json );
+        });               
+    });
+
+    $(document).ready(function() {
+
+    });
+});
+</script>
 {% endblock local_js %}
 

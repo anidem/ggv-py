@@ -30,7 +30,7 @@
 
 {% block content %}
 
-<div class="col-md-12">
+<div id="attendance_sheet" class="col-md-12" data-courseslug="{{ course.slug }}">
 
 
 <!-- Active students -->
@@ -39,7 +39,7 @@
 
     <div class="row"><div class="col-xs-12">
         
-        <h3>{{ month_year }}</h3>
+        <h3>{{date_display|date:"F Y"}}</h3>
 
         <ul id="sorts" class="table-like-header">
             <li class="table-like-header__item">
@@ -62,14 +62,13 @@
                         <a href="{% url 'course_attendance_user' course.slug k.id %}"><small>{{ k.ggvuser.program_id }}</small></a>
                     </div>
                     <div class="firstname">{{ k.first_name }}</div>
-                    <div class="lastname">{{ k.last_name }}</div>
+                    <div class="lastname" style="border-right: 1px solid #cccccc;">{{ k.last_name }}</div>
                     
-                    {% for j in v %} 
-                        {% if j %}<div class="day"><i class="fa fa-circle text-success"></i></div>
-                        {% else %}<div class="day"><i class="fa fa-circle" style="color: white"></i></div>
-                        {% endif %}
+                    {% for j in v %}
+                        <div class="day" class="btn btn-xs text-center" role="button" title="{{j.get_code_display}}">
+                            <i class="fa fa-circle attlabel-{{j.code}}" style="margin-left: 0px"></i>
+                        </div>
                     {% endfor %}
-
                 {% endfor %}
             </li>
 
@@ -88,6 +87,10 @@
 
     <script type="text/javascript">
         jQuery(function($) {
+
+
+            // $('.tracker_form_container').addClass('hide');
+
             var $container00 = $('#container').isotope({
                 getSortData: {
                     siteid: '.siteid',

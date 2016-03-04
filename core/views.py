@@ -1,11 +1,14 @@
 # core/views.py
-from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView
+import json
+from pytz import timezone
+
+from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404
 from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
-import json
+from django.conf import settings
 
 
 from braces.views import CsrfExemptMixin, JSONResponseMixin, JsonRequestResponseMixin, AjaxResponseMixin, LoginRequiredMixin
@@ -13,10 +16,13 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, get_perms, rem
 
 from courses.models import Course
 
-from .models import Bookmark, GGVUser, SiteMessage, Notification, SitePage
-from .forms import BookmarkForm, GgvUserAccountCreateForm, GgvUserSettingsForm, GgvUserAccountUpdateForm, GgvUserStudentSettingsForm, GgvEmailQuestionToInstructorsForm
+from .models import Bookmark, GGVUser, SiteMessage, Notification, SitePage, AttendanceTracker
+from .forms import BookmarkForm, GgvUserAccountCreateForm, GgvUserSettingsForm, GgvUserAccountUpdateForm, GgvUserStudentSettingsForm, GgvEmailQuestionToInstructorsForm, AttendanceTrackerUpdateForm, AttendanceTrackerCreateForm
 from .mixins import CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from .signals import *
+
+tz = timezone(settings.TIME_ZONE)
+
 
 
 class IndexView(TemplateView):
@@ -77,6 +83,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
         return context
 
 
+""" GGVUser Management """
 
 class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
     model = User
@@ -237,7 +244,6 @@ class UpdateGgvUserView(LoginRequiredMixin, GGVUserViewRestrictedAccessMixin, Co
         return super(UpdateGgvUserView, self).form_valid(form)
 
 
-
 class GgvUserActivationView(LoginRequiredMixin, UpdateView):
     model = User
     template_name = 'user_update_activation.html'
@@ -289,15 +295,95 @@ class ActivateView(LoginRequiredMixin, TemplateView):
     template_name = 'activate.html'
 
 
+""" Access Forbidden Page """
 
 class AccessForbiddenView(CourseContextMixin, TemplateView):
     template_name = 'access_forbidden.html'
 
 
+""" Activity Log Page """
+
 class ActivityLogView(TemplateView):
     pass
 
 
+""" Attendance Tracker Management """
+
+class AttendanceAjaxCodeCreateView(LoginRequiredMixin, JSONResponseMixin, CreateView):
+    model = AttendanceTracker
+    require_json = True
+
+    def post(self, request, *args, **kwargs):
+        trackerform = AttendanceTrackerCreateForm(request.POST)
+
+        try:
+            trackerform.form_valid()
+
+            datestr_obj = trackerform.cleaned_data['datestamp'].astimezone(tz).strftime('%Y-%m-%d')
+
+            data = {}
+            new_tracker = AttendanceTracker(
+                user=trackerform.cleaned_data['user'],
+                datestamp=trackerform.cleaned_data['datestamp'],
+                datestr=datestr_obj,
+                code=trackerform.cleaned_data['code']
+                )
+            
+            new_tracker.save()
+
+            data['added'] = 'added'
+            data['code'] = new_tracker.code
+            data['code_label'] = new_tracker.get_code_display()
+            data['attendance_id'] = new_tracker.id
+
+        except Exception as e:
+            pass
+
+        return self.render_json_response(data)
+
+class AttendanceAjaxCodeUpdateView(LoginRequiredMixin, JSONResponseMixin, UpdateView):
+    model = AttendanceTracker
+    require_json = True
+
+    def post(self, request, *args, **kwargs):
+        trackerform = AttendanceTrackerUpdateForm(request.POST)
+
+        try:
+            trackerform.form_valid()
+            data = {}
+            updated_att = self.get_object()
+            updated_att.code = trackerform.cleaned_data['code']
+            updated_att.save()
+
+            data['code'] = updated_att.code
+            data['code_label'] = updated_att.get_code_display()
+            data['attendance_id'] = updated_att.id
+
+        except Exception as e:
+            pass
+
+        return self.render_json_response(data) 
+
+
+class AttendanceAjaxCodeDeleteView(LoginRequiredMixin, JSONResponseMixin, DeleteView):
+    model = AttendanceTracker
+
+    def post(self, request, *args, **kwargs):
+        try:
+            data = {}
+
+            self.get_object().delete()
+
+            data['deleted'] = 'deleted'
+            data['code'] = ''
+
+        except Exception as e:
+            pass
+
+        return self.render_json_response(data) 
+
+
+""" Bookmark Management """
 
 class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, CreateView):
     model = Bookmark
@@ -380,6 +466,8 @@ class BookmarkAjaxDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             # print data
             # return self.render_json_response(data)
 
+
+""" Frequently Asked Questions Page """
 
 class FaqView(TemplateView):
     template_name = 'faq.html'

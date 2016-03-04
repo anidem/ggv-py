@@ -8,26 +8,33 @@
     <li><a href="#"> <button class="btn btn-xs btn-success">Settings</button></a></li>
 {% endblock page_crumb %}
 
+{% block page_header %}<div class="col-md-12"><h3>Course Settings for {{ object }}</h3></div>{% endblock page_header %}
+
 {% block content %}
-<div class="col-md-12">
-    <h2>Worksheet Settings for {{ object }}. <span class="small">(applies to all students in the course)</span></h2>
 
-    <p class="lead">
-        Instructor must select one option.
-        The option the instructor selects applies to all students in the course.  
-    </p>
-
-
+<div class="col-md-8 well">    
+    <p class="lead">Worksheet Control <span class="small">(applies to all students in the course)</span></p>
     <form method="post" action=".">{% csrf_token %}
-        {{ form|crispy }}
-        <button class="btn btn-sm btn-success" type="submit">Save</button>
+        {{ form.as_p }}
+        <button class="btn btn-sm btn-success" type="submit">Save the course settings</button>
     </form>
-
-    <p>
-        Check your email preferences <a href={% url 'edit_user_account' object.slug user.id %}>here</a>. 
-        An email notification will be sent to the course instructor when students complete a worksheet. Worksheet results must be reviewed. 
-        In the worksheet report, check the button next to the student’s name to ALLOW the student to view his results, make corrections, and continue in GGV.
+</div>
+<div class="col-md-4 bg-info">
+    <p class="lead">About Worksheet Control:</p>
+    <p class="">
+        Many instructors prefer to review student performance after only one attempt at completing a worksheet. For example, the first attempt may help an instructor determine where to target further instruction. <b>Worksheet control gives instructors the option to specify what happens after a student has completed a worksheet.</b>
     </p>
+    <p>
+        <span class="lead">Option 1</span> indicates that students are able to immediately see their worksheet score and view which questions were answered correctly and incorrectly. The student then as the option to return to the worksheet to retry specific questions. The student can attempt to answer questions as many times as they wish.      
+    </p>
+    <p>
+        <span class="lead">Option 2</span> indicates that students are prevented from immediately reviewing their worksheet score as well as which questions were answered correctly and incorrectly. In this mode, the student cannot review their worksheet results until the instructor has explicitly granted them permission to do so. Once the restriction has been lifted, students may view their worksheet results and reattempt questions they may have answered incorrectly.
+    </p>
+    <p class="well">
+        <span class="text-danger">Getting email notifications and lifting viewing restrictions?</span> If option 2 is selected then worksheet results must be reviewed by the instructor. In the worksheet report, check the button next to the student’s name to ALLOW that student to view his or her results and make corrections to specific questions. This is the mechanism by which instructors permit students to view their results. To stay up to date when students complete worksheets, please be sure that you have <b>email notifications turned on</b>. An email notification will be sent to the course instructor(s) when a student completes a worksheet. Students may be highly motivated to see their results!
+    </p>
+    <p class="well">Check your email preferences <a href="{% url 'edit_user_account' object.slug user.id %}">here</a>.</p>
+
 </div>
 
 {% endblock content %}

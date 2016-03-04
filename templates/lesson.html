@@ -57,7 +57,7 @@
     </div>
 
 
-    	{% for i in acts %}
+	{% for i in acts %}
         {% ifchanged i.act.section %}
             <h2 id="{{ i.act.section|title }}" class="section_heading">
                 {{ i.act.section|title }}
@@ -97,6 +97,7 @@
                     <div class="col-md-1"></div>
 
                     <div class="col-md-1 bookmarkpanel">
+                    
                       <a id="{{i.act.id}}_{{i.act.activity_type}}_bkbtn" href="#{{i.act.id}}_{{i.act.activity_type}}_add_bookmark" class="bkbtn btn btn-xs" data-toggle="collapse" aria-expanded="false">
                         <i class="bookmarker fa fa-2x {% if i.bookmark %}fa-star{% else %}fa-star-o{% endif %}"></i>
                         <span class="bookmark_label">{{ i.bookmark_label }}</span>
@@ -132,10 +133,9 @@
             </div>
         </div>
         <hr>
-
-    	{% empty %}
-    		<h2>There are no activities assigned to this lesson.</h2>
-    	{% endfor %}
+	{% empty %}
+		<h2>There are no activities assigned to this lesson.</h2>
+	{% endfor %}
 </div>
 
 {% endblock content %}

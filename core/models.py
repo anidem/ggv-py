@@ -38,8 +38,10 @@ BOOKMARK_TYPES = (
 
 ATTENDANCE_CODES = (
     (0, 'Online'),
-    (1, 'In Class'),
-    (2, 'Excused'),
+    (1, 'Pretest'),
+    (2, 'Official Test'),
+    (3, 'Graduated'),
+    (4, 'Dropped')
 )
 
 
@@ -78,7 +80,8 @@ class GGVUser(models.Model):
     def attendance_full_listing(self):
         attendance_list = OrderedDict()
         for i in self.user.attendance.all().order_by('-datestamp'):
-            key = i.datestamp.astimezone(tz).strftime('%b %Y')  # Creating a printable key for template rendering
+            d = i.datestamp.astimezone(tz).date() # .strftime('%b %Y')  # Creating a printable key for template rendering
+            key = (d.year, d.month)
             if key not in attendance_list:
                 attendance_list[key] = self.attendance_by_month(i.year_tz(), i.month_tz())
 
@@ -124,6 +127,7 @@ class AttendanceTracker(models.Model):
     class Meta:
         ordering = ['user', 'datestamp']
         unique_together = (('user', 'datestr'),)
+
 
 class ActivityLog(models.Model):
     """
@@ -203,7 +207,6 @@ class ActivityLog(models.Model):
 
     class Meta:
         ordering = ['user', '-timestamp']
-
 
 
 class Bookmark(models.Model):

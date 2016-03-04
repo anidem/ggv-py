@@ -4,7 +4,7 @@ from django.forms import Form, ModelForm, ModelChoiceField, ChoiceField, Boolean
 
 from django.contrib.auth.models import User
 
-from core.models import GGVUser
+from core.models import GGVUser, AttendanceTracker
 from courses.models import Course
 from .models import Bookmark
 
@@ -71,8 +71,8 @@ class GgvUserAccountUpdateForm(ModelForm):
         fields = ['username', 'first_name', 'last_name', 'program_id', 'language', 'perms', 'course', 'receive_notify_email', 'receive_email_messages', 'clean_logout', 'is_active']
         labels = {'is_active': LABELS['is_active']}
 
-""" User accessible settings. """
 
+""" User accessible settings. """
 
 class GgvUserSettingsForm(ModelForm):
     """
@@ -141,12 +141,14 @@ class GgvEmailStaffForm(Form):
         help_text='After pressing Send Message, GGV Staff will receive your message in their emails.'
         )
 
+
 class GgvEmailDeactivationRequestForm(Form):
     deactivate = forms.CharField(
         widget=forms.Textarea,
         label='You are requesting that the site manager deactivate the following list of users.',
         help_text='After pressing Send Message, the site manager will receive your request in their email.'
         )
+
 
 class GgvEmailActivationRequestForm(Form):
     message = forms.CharField(
@@ -198,3 +200,45 @@ class PresetBookmarkForm(ModelForm):
             'object_id': forms.HiddenInput(),
             'course_context': forms.HiddenInput()
         }
+
+
+class AttendanceTrackerCreateForm(ModelForm):
+    
+    def form_valid(self):
+
+        try:
+            self.object = self.save(commit=False)
+            self.object.full_clean()
+
+        except Exception as e:
+            pass
+
+        return True
+
+    class Meta:
+        model = AttendanceTracker
+        fields = ['user', 'datestamp', 'code']
+
+
+class AttendanceTrackerUpdateForm(ModelForm):
+
+    def form_valid(self):
+
+        try:
+            self.object = self.save(commit=False)
+            self.object.full_clean()
+
+        except Exception as e:
+            pass
+
+        return True
+
+    class Meta:
+        model = AttendanceTracker
+        fields = ['code']
+
+
+
+
+
+

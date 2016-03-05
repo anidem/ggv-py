@@ -381,6 +381,11 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
     use case: System emails instructor when a student completes a quiz.
     """
     user_sender = request.user.first_name + ' ' + request.user.last_name + ' (' + request.user.email + ')'
+
+    gedid = ''
+    if request.user.ggvuser.program_id:
+        gedid = request.user.ggvuser.program_id
+
     instructor_list = []
     for i in course.instructor_list():
         if i.ggvuser.receive_notify_email:
@@ -406,7 +411,7 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
     html_message += "<p><i>You are receiving this email as a courtesy of ggvinteractive.com. You currently have your personal settings set to: <b>Choose to receive notifications on student activity</b>. Please contact your ggvinteractive administrator or ggv representative for information about these emails or turning off notifications of students worksheet activity.</i></p>"
 
     email = EmailMultiAlternatives(
-        subject=request.user.first_name + ' ' + request.user.last_name + ' in ' + course + ' has completed a worksheet',
+        subject=str(gedid) + ' - ' + request.user.first_name + ' ' + request.user.last_name + ' in ' + course.title + ' has completed a worksheet',
         body=html_message,
         from_email='ggvsys@gmail.com',
         to=instructor_list,

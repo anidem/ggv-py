@@ -207,7 +207,7 @@ class SendEmailWorksheetErrorToStaffView(LoginRequiredMixin, CourseContextMixin,
 
         email.attach_alternative(html_message, "text/html")
         email.send(fail_silently=True)
-        messages.info(self.request, 'Thank you for reporting a problem! Your message to GGV Staff has been sent. We\'ll get crackin on it soon.')
+        messages.info(self.request, 'Thank you for reporting a problem! Your message to GGV Staff has been sent. We\'ll get crackin on it soon.  Please check your email soon for an update on the problem. ')
         return super(SendEmailWorksheetErrorToStaffView, self).form_valid(form)
 
 

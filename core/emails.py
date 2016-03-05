@@ -399,14 +399,14 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
         ws_title=worksheet.title,
         )
 
-    html_message += "<p>You can view their responses here:</p><p> <a href=\"{ws_url}\">{ws_url}</a></p><p>Also note you may need to Allow students to view results if you are currently restricting this.</p>".format(
+    html_message += "<p>You can view their responses here:</p><p> <a href=\"{ws_url}\">{ws_url}</a><b>Login required.</b></p><p>Also note you may need to Allow students to view results if you are currently restricting this.</p>".format(
         ws_url=worksheet_results_url,
         )
 
     html_message += "<p><i>You are receiving this email as a courtesy of ggvinteractive.com. You currently have your personal settings set to: <b>Choose to receive notifications on student activity</b>. Please contact your ggvinteractive administrator or ggv representative for information about these emails or turning off notifications of students worksheet activity.</i></p>"
 
     email = EmailMultiAlternatives(
-        subject=request.user.first_name + ' ' + request.user.last_name + ' has completed a worksheet',
+        subject=request.user.first_name + ' ' + request.user.last_name + ' in ' + course + ' has completed a worksheet',
         body=html_message,
         from_email='ggvsys@gmail.com',
         to=instructor_list,

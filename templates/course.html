@@ -4,19 +4,7 @@
 {% load guardian_tags %}
 
 
-{% block page_crumb %}
-    <li>
-        <a href="#" class="static"><button class="btn btn-xs btn-success"><i class="fa fa-home"></i> {{ object }}</button></a>
-    </li>
-    {% if is_instructor or is_manager %}
-    <li>
-        <a href="{% url 'manage_course' course.slug %}" class="static"><button class="btn btn-xs btn-default">Roster Details</button></a>
-    </li>
-    <li>
-        <a href="{% url 'edit_course' object.slug %}" class="static"><button class="btn btn-xs btn-default"><i class="fa fa-gear"></i> Worksheet Settings</button></a>
-    </li>
-    {% endif %}
-{% endblock page_crumb %}
+{% block page_crumb %}{% endblock page_crumb %}
 
 {% block local_nav %}
     {% if is_manager %}
@@ -28,23 +16,43 @@
     {% endif %}
 {% endblock local_nav %}
 
-{% block page_header %}{% endblock page_header %}
+{% block page_header %}
+<div class="col-md-12 text-center">
+    <p class="lead">Course Home Page</p>
+    <h2>{{ course }}
+        {% if is_instructor or is_manager %}
+        <div class="btn-group">
+            <button class="btn btn-xs dropdown-toggle" data-toggle="dropdown">
+                <i class="fa fa-gear"></i> My Course <i class="fa fa-caret-down"></i>
+            </button>
+
+            <ul class="dropdown-menu">
+                <li>
+                    <a href="{% url 'manage_course' course.slug %}" class="static"><i class="fa fa-users"></i> My Roster Details</a>
+                </li>
+                <li>
+                    <a href="{% url 'course_attendance_current' course.slug %}"><i class="fa fa-list"></i> Attendance</a>
+                </li>
+                <li>
+                    <a href="{% url 'edit_course' course.slug %}" class="static"><i class="fa fa-gear"></i> Worksheet Settings</a>
+                </li>
+                <li>
+                {% if not site_message %} 
+                    <a href="{% url 'add_course_msg' object.slug %}" class="btn btn-md"><i class="fa fa-plus"></i><i class="fa fa-comments-o"></i> Add a <em>Message Panel</em></a>
+                {% elif not site_message.show %}
+                    <a href="{% url 'edit_course_msg' object.slug site_message.id %}"><i class="fa fa-comments-o"></i> Unhide <em>Message Panel</em></a> 
+                {% else %}
+                    <a href="{% url 'edit_course_msg' course.slug site_message.id %}" class="btn btn-md"><i class="fa fa-gear"></i> Edit or Hide <em>Course Message Panel</em></a>
+                {% endif %}
+                </li>
+            </ul>
+        </div>
+        {% endif %}
+    </h2>
+</div>
+{% endblock page_header %}
 
 {% block content %}
-    {% if is_manager or is_instructor%}
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2 text-center">
-            {% if not site_message %}
-                <a href="{% url 'add_course_msg' object.slug %}" class="btn btn-md"><i class="fa fa-plus"></i> Add a <em>Message Panel</em> to relay information to students when they visit your course.</a>
-            {% elif not site_message.show %}
-                <em>Message Panel</em> is currently hidden, <a href="{% url 'edit_course_msg' object.slug site_message.id %}">unhide</a>
-            {% else %}
-                <a href="{% url 'edit_course_msg' course.slug site_message.id %}" class="btn btn-md"><i class="fa fa-gear"></i> Edit or Hide <em>Course Message Panel</em></a>
-            {% endif %}
-        </div>
-    </div>
-    {% endif %}
-
     {% if site_message and site_message.show %}
     <div class="row">
         <div class="col-md-8 col-md-offset-2 text-center well">
@@ -52,6 +60,8 @@
         </div>
     </div>
     {% endif %}
+
+<div class="row" style="padding: 10px"><h1></h1></div>
 
     <div class="row" style="padding: 10px">
         <div class="col-md-12 text-center">
@@ -69,7 +79,7 @@
         </div>
     </div>
 
-    <hr>
+<div class="row" style="padding: 10px"><h1></h1></div>
 
     <div class="row icon eng {% if user.ggvuser.language_pref == 'spanish' %}collapse{% endif %}">
         {% for i in eng_lessons %}

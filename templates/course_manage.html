@@ -30,10 +30,7 @@
 {% block content %}
 
 <div class="col-md-12">
-    <a href="{% url 'edit_course' object.slug %}"><button class="btn btn-xs btn-primary"><i class="fa fa-gear"></i> Worksheet Settings</button></a>
-
     <a href="{% url 'course_attendance_current' object.slug %}"><button class="btn btn-xs btn-success"><i class="fa fa-list"></i> Attendance</button></a>
-
 </div>
 
 
@@ -48,7 +45,7 @@
     </div></div>
 
 <!-- Active students -->
-    <div class="row"><div class="col-md-12"><h2>{{ students|length}} Active Students</h2></div></div>
+    <div class="row"><div class="col-md-12"><h2>{{ students|length}} Active Student Accounts</h2></div></div>
 
     <div class="row">
         <div  id="sorts"  class="col-xs-12">

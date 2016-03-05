@@ -6,12 +6,7 @@
 
 
 {% block page_crumb %}
-    <li><a href="{% url 'course' object.slug %}"><button class="btn btn-xs btn-default"><i class="fa fa-home"></i> {{ object }}</button></a></li>
-    {% if is_instructor or is_manager %}
-        <li><a href="{% url 'manage_course' object.slug %}"><i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-default"> Roster Detail</button></a></li>
-        <li><a href="{% url 'user_progress' course.slug student_user.id %}"><i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-default"> Progress Report for {{ student_user.first_name }}</button></a></li>
-        <li><a href="#"><div class="label label-xs label-success">Activity Details for {{ student_user.first_name }}</div></a></li>
-    {% endif %}
+<h4>{{object}}</h4>
 {% endblock page_crumb %}
 
 {% block local_nav %}
@@ -25,8 +20,20 @@
 {% endblock local_nav %}
 
 {% block page_header %}
-<div class="col-md-12 center-block">
-    {% if user.is_manager %}<a class="btn btn-primary btn-xs" href="{% url 'create_user' course.slug %}">Add User</a>{% endif %}
+<div class="col-xs-12 small">
+    <a href="{% url 'course' object.slug %}"><i class="fa fa-home"></i> {{ object }}</a>
+    {% if is_instructor or is_manager %}
+        <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i> 
+        <a href="{% url 'manage_course' object.slug %}"> Roster Detail</a>
+        <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i>
+        <a href="{% url 'user_progress' course.slug student_user.id %}"> Progress Report for {{ student_user.first_name }}</a>
+    {% endif %}
+</div>
+
+<div class="row" style="padding: 10px"><h1></h1></div>
+
+<div class="col-md-12 text-center">
+    <p class="lead">Student Detailed Activity Log</p>
 </div>
 {% endblock page_header %}
 
@@ -34,7 +41,7 @@
     <div class="">
         <div class="lead">
             {{ student_user.first_name }} {{ student_user.last_name }} ({{ student_user }})
-            <a class="btn btn-primary btn-xs" href="./?export=xlsx">Download this report as an Excel file</a>
+            <a class="btn btn-primary btn-xs" href="./?export=xlsx"><i class="fa fa-download"></i> Download this report as an Excel file</a>
         </div>
         <!-- <div class="panel-body"></div> -->
         <table class="table">

@@ -5,8 +5,7 @@
 
 
 {% block page_crumb %}
-    <li><a href="{% url 'course' object.slug %}"><button class="btn btn-xs btn-default"><i class="fa fa-home"></i> {{ object }}</button></a></li>
-    <li><a href="#"><button class="btn btn-xs btn-success">Roster Detail</button></a></li>
+    <li><a href="{% url 'course' object.slug %}"><i class="fa fa-home"></i> <u>{{ course }}</u></a></li>
 {% endblock page_crumb %}
 
 {% block local_nav %}
@@ -21,18 +20,16 @@
 
 {% block page_header %}
 
-<div class="col-md-12 center-block">
-
+<div class="col-md-12 text-center">
+    <p class="lead">
+        <i class="fa fa-users"></i> Roster Detail 
+        <a href="{% url 'course_attendance_current' course.slug %}" class="btn btn-xs btn-success"><i class="fa fa-list"></i> Attendance</a>
+    </p>
 </div>
 
 {% endblock page_header %}
 
 {% block content %}
-
-<div class="col-md-12">
-    <a href="{% url 'course_attendance_current' object.slug %}"><button class="btn btn-xs btn-success"><i class="fa fa-list"></i> Attendance</button></a>
-</div>
-
 
 <div class="col-md-12">
 

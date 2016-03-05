@@ -5,11 +5,7 @@
 
 
 {% block page_crumb %}
-    <li><a href="{% url 'course' object.slug %}"><button class="btn btn-xs btn-default"><i class="fa fa-home"></i> {{ object }}</button></a></li>
-    {% if is_instructor or is_manager %}
-        <li><a href="{% url 'manage_course' object.slug %}"><i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-default"> Roster Detail</button></a></li>
-        <li><a href="#"><button class="btn btn-xs btn-success">Progress Report for {{ student_user.first_name }}</button></a></li>
-    {% endif %}
+
 {% endblock page_crumb %}
 
 {% block local_nav %}
@@ -23,67 +19,77 @@
 {% endblock local_nav %}
 
 {% block page_header %}
-<div class="col-md-12 center-block">
-    {% if user.is_manager %}<a class="btn btn-primary btn-xs" href="{% url 'create_user' course.slug %}">Add User</a>{% endif %}
+<div class="col-xs-12 small">
+    <a href="{% url 'course' object.slug %}"><i class="fa fa-home"></i> {{ object }}</a>
+    {% if is_instructor or is_manager %}
+        <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i> <a href="{% url 'manage_course' object.slug %}"> Roster Detail</a>
+    {% endif %}
+</div>
+
+<div class="row" style="padding: 10px"><h1></h1></div>
+
+<div class="col-md-12 text-center">
+    <p class="lead">
+        Student Progress Report
+        <a href="{% url 'manage_user' course.slug student_user.id %}" class="static"><button class="btn btn-xs btn-primary"> view more details</button></a>
+    </p>
 </div>
 {% endblock page_header %}
 
 {% block content %}
-    <div class="lead">
-        {{ student_user.first_name }} {{ student_user.last_name }} ({{ student_user }})
-        <a href="{% url 'manage_user' course.slug student_user.id %}" class="static"><button class="btn btn-xs btn-primary"> view more details</button></a>
-    </div>
+<div class="col-md-12 lead">
+    {{ student_user.first_name }} {{ student_user.last_name }} ({{ student_user }})
+</div>
+
+<div class="col-md-12">
     <div class="row">
-
-
-          <div class="row">
-            <div class="col-xs-1">Time</div>
-            <div class="col-xs-3">Subject</div>
-            <div class="col-xs-1">Activity</div>
-            <div class="col-xs-6">Content</div>
-            <div class="col-xs-1">Current Score</div>
-          </div>
-
-        {% for i in activity_log %}
-            {% if i.events %}
-                <div class="row"><h3>{{ i.day }}<sup><small>MST</small></h3></div>
-
-                {% for j in i.events %}                
-                    <div class="row hoverpad text-left">
-                        <div class="col-xs-1">{{ j.event_time|time }}</div>
-                        <div class="col-xs-3">
-                            {% if  j.event_target.lesson %}
-                            {{ j.event_target.lesson }} <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">(view lesson)</a>
-                            {% else %}
-                                {{ j.activity.action }}
-                            {% endif %}
-                        </div>
-
-                        {% if j.activity.action == 'completed-worksheet' %}
-                            <div class="col-xs-1">completed</div>
-                        {% else %}
-                            <div class="col-xs-1">viewed</div>
-                        {% endif %}
-
-                        <div class="col-xs-6">
-                            {% if j.activity.action == 'completed-worksheet' or j.activity.action == 'access-worksheet'%}
-                                <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
-                                {{j.event_target }} <a href="{{ j.report_url }}">(view report)</a>
-                            {% elif j.activity.action == 'access-presentation' %}
-                                <i class="fa fa-desktop fa-1x icon-slidestack"></i>
-                                {{ j.activity.message|safe }}
-                            {% endif %}
-                        </div>
-
-                        <div class="col-xs-1">{% if j.score >= 0 %} <strong>{{ j.score|floatformat:"0" }}%</strong> {% endif %}</div>
-                    </div>
-                {% empty %}
-                    <div class="col-xs-12"></div>
-                {% endfor %}
-            {% endif %}
-        {% empty %}
-            <div class="panel-body">{{ student_user.first_name }} does not appear to have any activity.</div>
-        {% endfor %}
+        <div class="col-xs-1">Time</div>
+        <div class="col-xs-3">Subject</div>
+        <div class="col-xs-1">Activity</div>
+        <div class="col-xs-6">Content</div>
+        <div class="col-xs-1">Current Score</div>
     </div>
+
+    {% for i in activity_log %}
+        {% if i.events %}
+            <div class="row"><h3>{{ i.day }}<sup><small>MST</small></h3></div>
+
+            {% for j in i.events %}                
+                <div class="row hoverpad text-left">
+                    <div class="col-xs-1">{{ j.event_time|time }}</div>
+                    <div class="col-xs-3">
+                        {% if  j.event_target.lesson %}
+                        {{ j.event_target.lesson }} <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">(view lesson)</a>
+                        {% else %}
+                            {{ j.activity.action }}
+                        {% endif %}
+                    </div>
+
+                    {% if j.activity.action == 'completed-worksheet' %}
+                        <div class="col-xs-1">completed</div>
+                    {% else %}
+                        <div class="col-xs-1">viewed</div>
+                    {% endif %}
+
+                    <div class="col-xs-6">
+                        {% if j.activity.action == 'completed-worksheet' or j.activity.action == 'access-worksheet'%}
+                            <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
+                            {{j.event_target }} <a href="{{ j.report_url }}">(view report)</a>
+                        {% elif j.activity.action == 'access-presentation' %}
+                            <i class="fa fa-desktop fa-1x icon-slidestack"></i>
+                            {{ j.activity.message|safe }}
+                        {% endif %}
+                    </div>
+
+                    <div class="col-xs-1">{% if j.score >= 0 %} <strong>{{ j.score|floatformat:"0" }}%</strong> {% endif %}</div>
+                </div>
+            {% empty %}
+                <div class="col-xs-12"></div>
+            {% endfor %}
+        {% endif %}
+    {% empty %}
+        <div class="panel-body">{{ student_user.first_name }} does not appear to have any activity.</div>
+    {% endfor %}
+</div>
 
 {% endblock content %}

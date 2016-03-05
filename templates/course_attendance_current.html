@@ -32,7 +32,15 @@
 
 <div id="attendance_sheet" class="col-md-12" data-courseslug="{{ course.slug }}">
 
-
+    <div class="row"><div class="col-md-12 text-center">
+        <span><i class="fa fa-circle-thin"></i>=Absent </span>
+        <span><i class="fa fa-circle attlabel-0"></i>=Online </span>
+        <span><i class="fa fa-circle attlabel-1"></i>=Pretest </span>
+        <span><i class="fa fa-circle attlabel-2"></i>=Official Test </span>
+        <span><i class="fa fa-circle attlabel-3"></i>=Graduated </span>
+        <span><i class="fa fa-circle attlabel-4"></i>=Dropped </span>
+        <p class="small">Click student id to view/edit a student's full attendance record.</p>
+    </div></div>
 <!-- Active students -->
     <div class="row"><div class="col-md-12"><h2>{{ attendance_sheet|length}} Active Students</h2></div></div>
 

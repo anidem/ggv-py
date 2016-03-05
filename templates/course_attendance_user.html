@@ -33,6 +33,15 @@
 
 <div id="attendance_sheet" class="col-md-12" data-courseslug="{{ course.slug }}" data-user="{{student.id}}">
 
+    <div class="row"><div class="col-md-12 text-center">
+        <span><i class="fa fa-circle-thin"></i>=Absent </span>
+        <span><i class="fa fa-circle attlabel-0"></i>=Online </span>
+        <span><i class="fa fa-circle attlabel-1"></i>=Pretest </span>
+        <span><i class="fa fa-circle attlabel-2"></i>=Official Test </span>
+        <span><i class="fa fa-circle attlabel-3"></i>=Graduated </span>
+        <span><i class="fa fa-circle attlabel-4"></i>=Dropped </span>
+        <p class="small">Click an individual mark below to edit.</p>
+    </div></div>
 
 <!-- Active students -->
     <div class="row"><div class="col-md-12"><h2>Attendance Report for {{ student.first_name }} {{ student.last_name }} </h2></div></div>
@@ -53,7 +62,7 @@
                     <a id="{{k|slugify}}_{{forloop.counter}}" class="btn btn-xs" href="#{{k|slugify}}_{{forloop.counter}}_form_panel" role="button" data-toggle="collapse">
                         <i id="{{k|slugify}}_{{forloop.counter}}_label" class="fa fa-circle attlabel-{{a.code}}"></i>
                     </a>
-                    <div id="{{k|slugify}}_{{forloop.counter}}_form_panel" class="tracker_panel panel-collapse collapse well" style="position: absolute; z-index: 1000; margin-left: -50px; width: 150px; height: 300px">
+                    <div id="{{k|slugify}}_{{forloop.counter}}_form_panel" class="tracker_panel panel-collapse collapse well" data-activatebtn="#{{k|slugify}}_{{forloop.counter}}" style="position: absolute; z-index: 1000; margin-left: -50px; width: 150px; height: 300px">
                         
                         <form id="{{k|slugify}}_{{forloop.counter}}_tracker_form" action="" method="post" class="trackerform text-left" data-target="{{ a.id }}" data-panel="#{{k|slugify}}_{{forloop.counter}}_form_panel" data-attlabel="#{{k|slugify}}_{{forloop.counter}}_label" data-code="{{a.code}}">{% csrf_token %}
                             <div class="form-group">
@@ -94,6 +103,18 @@
 {% block local_js %}
 <script type="text/javascript">
 jQuery(function($) {
+
+    $('.collapse').on('shown.bs.collapse', function () {
+        // get btn
+        var activate_btn = $($(this).attr("data-activatebtn"));
+        activate_btn.attr("style", "border: 2px dotted gray");
+    })
+
+    $('.collapse').on('hidden.bs.collapse', function () {
+      // get btn
+      var activate_btn = $($(this).attr("data-activatebtn"));
+      activate_btn.attr("style", "")
+    })
 
     $('.tracker_cancel').on('click', function() {
         $(this).parent().parent().parent().collapse('hide');

@@ -1,11 +1,20 @@
 <!-- question_worksheet_report.html -->
 {% extends "base.html" %}
 
-{% block page_crumb %}
-  <li><a href="{{ course.get_absolute_url }}"><button class="btn btn-default btn-xs"><i class="fa fa-home"></i> {{ course }} </button></a></li>
-    <li><a href="{% url 'lesson' course.slug worksheet.lesson.id %}"> <i class="fa fa-caret-left"></i> <button class="btn btn-default btn-xs"> {{ worksheet.lesson }} </button> </a></li>
-    <li><a href="#"><button class="btn btn-success btn-xs disable">{{ worksheet }}</button></a></li>
-{% endblock page_crumb %}
+{% block page_crumb %}{% endblock page_crumb %}
+
+
+{% block page_header %}
+<div class="col-xs-12 small">
+    <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i>
+    <a href="{% url 'lesson' course.slug worksheet.lesson.id %}">{{ worksheet.lesson }}</a>
+</div>
+
+<div class="col-md-12 text-center">
+    <p class="lead">{{ worksheet }} Report</p>
+</div>
+{% endblock page_header%}
+
 
 {% block content %}
 <div class="col-md-12">

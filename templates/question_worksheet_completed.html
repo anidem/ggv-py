@@ -2,20 +2,22 @@
 {% extends "base.html" %}
 {% load staticfiles %}
 
-{% block page_crumb %}
-    <li>
-        <a href="{{ course.get_absolute_url }}"><button class="btn btn-xs btn-default"><i class="fa fa-home"></i> {{ course }}</button></a>
-    </li>
-    <li>
-        <a href="{% url 'lesson' course.slug status.completed_worksheet.lesson.id %}"> <i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-default"> {{ status.completed_worksheet.lesson }}</button> </a>
-    </li>
-    <li><a href="#"> <button class="btn btn-xs btn-success">Worksheet Completed</button></a></li>
-{% endblock page_crumb %}
+{% block page_crumb %}{% endblock page_crumb %}
+
+{% block page_header %}
+<div class="col-xs-4 small">
+    <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i>
+    <a href="{% url 'lesson' course.slug status.completed_worksheet.lesson.id %}"> {{ status.completed_worksheet.lesson }}</a>
+</div>
+
+<div class="col-md-4 text-center">
+    <p class="lead">You have completed <i>{{ status.completed_worksheet }}</i>!</p>
+</div>
+{% endblock page_header%}
+
 
 {% block content %}
 <div class="col-md-6">
-    <h2 class="lead">You have completed <i>{{ status.completed_worksheet }}</i>!</h2>
-
     {% if course.control_worksheet_results %}
         {% if status.can_check_results %}
             You can check your answers <a href="{% url 'worksheet_user_report' course.slug status.completed_worksheet.id status.user.id %}">here</a>.

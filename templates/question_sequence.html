@@ -3,19 +3,37 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
-{% block page_crumb %}
-    <li>
-        <a href="{{ course.get_absolute_url }}"><button class="btn btn-xs btn-default"><i class="fa fa-home"></i> {{ course }}</button></a>
-    </li>
-    <li>
-        <a href="{% url 'lesson' course.slug worksheet.lesson.id %}"> <i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-default"> {{ worksheet.lesson }}</button> </a>
-    </li>
-    <li>
-        <a href="{% url 'lesson' course.slug worksheet.lesson.id %}#{{ worksheet.section|title }}"> <i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-default"> {{ worksheet.section|title }}</button></a></li>
-    <li>
-        <a class="static"><button class="btn btn-xs btn-success">{{ worksheet }}</button></a>
-    </li>
-{% endblock page_crumb %}
+{% block page_crumb %}{% endblock page_crumb %}
+
+
+{% block page_header %}
+<div class="col-xs-4 small">
+    <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i>
+    <a href="{% url 'lesson' course.slug worksheet.lesson.id %}"> {{ worksheet.lesson }} </a>
+    <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i>
+    <a href="{% url 'lesson' course.slug worksheet.lesson.id %}#{{ worksheet.section|title }}"> {{ worksheet.section|title }}</a></li>
+</div>
+
+<div class="col-md-4 text-center">
+    <p class="lead">{{ worksheet }}</p>
+</div>
+
+<div class="col-md-4 text-right">
+    <p class="small">
+        <span class="small">Need help with this question?</span>
+        <a class="btn btn-warning btn-xs" href="{% url 'email_instructor_question' course.slug worksheet.id question_position %}?q={{request.path}}">
+             <i class="fa fa-envelope"></i> Email Instructor
+        </a>
+    </p>
+    <p class="small">
+        <span class="small">Found an error or having technical problems?</span>
+        <a class="btn btn-danger btn-xs" href="{% url 'email_staff_ws_error' course.slug worksheet.id question_position %}?q={{request.path}}">
+            <i class="fa fa-envelope"></i> Email GGV Staff
+        </a>
+    </p>
+</div>
+
+{% endblock page_header %}
 
 
 {% block content %}
@@ -26,24 +44,6 @@
                 {{ bookmarkform|crispy }}
             </form>
 
-
-
-            <div class="col-md-12 text-right">
-                <p class="">
-                    <span class="smaller">Need help with this question?</span>
-                    <a class="btn btn-warning btn-xs" href="{% url 'email_instructor_question' course.slug worksheet.id question_position %}?q={{request.path}}">
-                         <i class="fa fa-envelope"></i> Email Instructor
-                    </a>
-
-                </p>
-                <p>
-                    <span class="smaller">Found an error or having technical problems?</span>
-                    <a class="btn btn-danger btn-xs" href="{% url 'email_staff_ws_error' course.slug worksheet.id question_position %}?q={{request.path}}">
-                        <i class="fa fa-envelope"></i> Email GGV Staff
-                    </a>
-
-                </p>
-            </div>
         <!-- LEFT panel: Question text and input for response -->
             <div class="col-md-4">
             <!-- Question header -->

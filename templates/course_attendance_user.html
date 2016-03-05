@@ -19,11 +19,13 @@
 
 {% block page_header %}
 <div class="col-xs-12 small">
-    <a href="{% url 'course' object.slug %}" class="text-info"><i class="fa fa-home"></i> {{ object }}</a>
+    {% if is_instructor or is_manager %}
     <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i>
     <a href="{% url 'manage_course' object.slug %}">Roster Detail</a>
     <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i>
     <a href="{% url 'course_attendance_current' object.slug %}"> Course Attendance</a>
+    {% endif %}
+
 </div>
 
 <div class="row" style="padding: 10px"><h1></h1></div>

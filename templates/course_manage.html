@@ -4,9 +4,7 @@
 {% load guardian_tags %}
 
 
-{% block page_crumb %}
-    <li><a href="{% url 'course' object.slug %}"><i class="fa fa-home"></i> <u>{{ course }}</u></a></li>
-{% endblock page_crumb %}
+{% block page_crumb %}{% endblock page_crumb %}
 
 {% block local_nav %}
     {% if is_manager %}

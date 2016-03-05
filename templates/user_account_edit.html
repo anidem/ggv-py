@@ -3,6 +3,18 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
+{% block page_header %}
+<div class="col-xs-12">
+    <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i>
+    <a href="{% url 'manage_course' course.slug %}">Roster Details</button></a>
+</div>
+<div class="row" style="padding: 10px"><h1></h1></div>
+
+<div class="col-md-12 text-center">
+    <p class="lead">Edit a User Account</p>
+</div>
+{% endblock page_header %}
+
 {% block content %}
     <div class="col-md-12">
         <h3>Modify account info for {{ object.first_name }} {{ object.last_name }}</h3>

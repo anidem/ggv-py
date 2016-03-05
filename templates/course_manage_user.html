@@ -5,9 +5,7 @@
 {% load tz %}
 
 
-{% block page_crumb %}
-<h4>{{object}}</h4>
-{% endblock page_crumb %}
+{% block page_crumb %}{% endblock page_crumb %}
 
 {% block local_nav %}
     {% if is_manager %}
@@ -20,8 +18,7 @@
 {% endblock local_nav %}
 
 {% block page_header %}
-<div class="col-xs-12 small">
-    <a href="{% url 'course' object.slug %}"><i class="fa fa-home"></i> {{ object }}</a>
+<div class="col-xs-12">
     {% if is_instructor or is_manager %}
         <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i> 
         <a href="{% url 'manage_course' object.slug %}"> Roster Detail</a>
@@ -41,7 +38,8 @@
     <div class="">
         <div class="lead">
             {{ student_user.first_name }} {{ student_user.last_name }} ({{ student_user }})
-            <a class="btn btn-primary btn-xs" href="./?export=xlsx"><i class="fa fa-download"></i> Download this report as an Excel file</a>
+            <a href="{% url 'edit_user_account' course.slug student_user.id %}">[ edit account ]</a>
+            <a class="btn btn-primary btn-xs" href="./?export=xlsx"> [ <i class="fa fa-download"></i> Download this report as an Excel file ]</a>
         </div>
         <!-- <div class="panel-body"></div> -->
         <table class="table">

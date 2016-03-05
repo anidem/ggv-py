@@ -3,11 +3,19 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
-{% block page_crumb %}
-    <li><a href="{% url 'course' course.slug %}"><button class="btn btn-xs btn-default"><i class="fa fa-home"></i> {{ course }}</button></a></li>
-    <li><a href="{% url 'manage_course' course.slug %}"><i class="fa fa-caret-left"></i> <button class="btn btn-xs btn-default">Roster Details</button></a></li>
-    <li><a href="#"> <button class="btn btn-xs btn-success">Add a User</button></a></li>
-{% endblock page_crumb %}
+{% block page_crumb %}{% endblock page_crumb %}
+
+{% block page_header %}
+<div class="col-xs-12">
+    <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i>
+    <a href="{% url 'manage_course' course.slug %}">Roster Details</button></a>
+</div>
+<div class="row" style="padding: 10px"><h1></h1></div>
+
+<div class="col-md-12 text-center">
+    <p class="lead">Add a New User</p>
+</div>
+{% endblock page_header %}
 
 {% block content %}
 <div class="col-md-6">

@@ -20,7 +20,6 @@
 
 {% block page_header %}
 <div class="col-xs-12 small">
-    <a href="{% url 'course' object.slug %}"><i class="fa fa-home"></i> {{ object }}</a>
     {% if is_instructor or is_manager %}
         <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i> <a href="{% url 'manage_course' object.slug %}"> Roster Detail</a>
     {% endif %}
@@ -39,6 +38,7 @@
 {% block content %}
 <div class="col-md-12 lead">
     {{ student_user.first_name }} {{ student_user.last_name }} ({{ student_user }})
+    <a href="{% url 'edit_user_account' course.slug student_user.id %}">[ edit account ]</a>
 </div>
 
 <div class="col-md-12">

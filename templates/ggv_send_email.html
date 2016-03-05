@@ -3,6 +3,12 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
+{% block page_header %}
+<div class="col-md-12 text-center">
+    <p class="lead">Send an Email Message</p>
+</div>
+{% endblock page_header %}
+
 {% block content %}
 <form action="" method="post">{% csrf_token %}
     {{ form|crispy }}

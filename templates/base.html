@@ -1,5 +1,6 @@
 <!-- base.html -->
 {% load staticfiles %}
+{% load guardian_tags %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -66,14 +67,16 @@
                             </a>
                         </li>
                         {% endif %}
-                        {% if course %}
+                        
+                        {% if course and not course_home_view %}
                         <li>
                           <a class="navbar-brand" href="{% url 'course' course.slug %}">
                             <i class="fa fa-caret-left"></i>
-                            <button class="btn btn-sm btn-primary"><i class="fa fa-home"></i> {{ course }}</button>
+                            <button class="btn btn-sm course_home_btn"><i class="fa fa-home"></i> {{ course }} Home</button>
                           </a>
                         </li>
                         {% endif %}
+
                     {% endif %}
                 </ul>
 
@@ -88,9 +91,33 @@
                     {% block local_nav %} {% endblock local_nav %}
 
                     {% if user.is_authenticated %}
+                        {% if course %}
+                        
+                          {% if is_instructor or is_manager %}
+                          <!-- course manage dropdown menu -->
+                          <li class="dropdown">
+                            
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                    <i class="fa fa-gear"></i> My Course <i class="fa fa-caret-down"></i>
+                                </a>
+
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a href="{% url 'manage_course' course.slug %}" class="static"><i class="fa fa-users"></i> Roster Details</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'course_attendance_current' course.slug %}"><i class="fa fa-list"></i> Attendance</a>
+                                    </li>
+                                    <li>
+                                        <a href="{% url 'edit_course' course.slug %}" class="static"><i class="fa fa-gear"></i> Worksheet Settings</a>
+                                    </li>
+                                </ul>
+                          </li> <!-- end course manage dropdown menu -->
+                          {% endif %}
+
                         <!-- email / help dropdown menu -->
                         <li class="dropdown">
-                            {% if course %}
+                            
 
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-question-circle text-warning"></i> Help <i class="fa fa-caret-down"></i>
@@ -109,9 +136,9 @@
                                 </li>
 
                             </ul>
-                            {% endif %}
+                            
                         </li> <!-- end email / help dropdown menu -->
-
+                        {% endif %}
                     {% endif %}
 
 

@@ -2,6 +2,13 @@
 {% extends "base.html" %}
 
 
+{% block page_header %}
+<div class="col-md-12 text-center">
+    <h2><i class="fa fa-map-marker"></i> GGV Site Page</h2>
+</div>
+{% endblock page_header %}
+
+
 {% block content %}
 
 {% if messages %}
@@ -15,10 +22,10 @@
 <div class="col-md-12"><h3 class="lead"></h3></div>
 
 {% if is_manager or user.is_staff %}
-	<div class="col-md-6">Course Site</div>
+	<div class="col-md-6">Sites</div>
 	<div class="col-md-2"><i class="fa fa-users icon-green"></i> Active</div>
 	<div class="col-md-2"><i class="fa fa-users icon-orange"></i> Deactivated</div>
-	<div class="col-md-2"><i class="fa fa-users icon-gray"></i> Un Accessed</div>
+	<div class="col-md-2"><i class="fa fa-users icon-gray"></i> Unaccessed Accounts</div>
 	<div class="col-md-12" class="border"><p></p></div>
 {% endif %}
 

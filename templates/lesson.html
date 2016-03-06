@@ -41,23 +41,24 @@
 {% endblock local_nav %}
 
 {% block page_header %}
-<div class="col-md-12 text_center"><h2 class="text-center">{{object}} Curriculum</h2></div>
+<div class="col-md-12">
+    <div class="text-center icon-{{ object.subject }}"><i class="fa fa-{{ object.icon_class }} fa-5x"></i></div>
+    <div class="text-center icon-{{ object.subject }}"><span class="icon-title">{{object}}</span></div>
+    
+    <div class="" style="opacity: 0.7;background-color: black; color: white; padding: 5px; position: absolute; top: 110px; right: 5px">Bookmarks</div>
+
+    <span class="small"><i class="fa fa-desktop icon-slidestack"></i> = presentation </span>
+    <span class="small"><i class="fa fa-pencil-square-o icon-worksheet"></i> = worksheet </span>
+    <span class="small"><i class="fa fa-youtube icon-external_media"></i> = video </span>
+
+</div>
+
+
 {% endblock page_header %}
 
 {% block content %}
 
 <div class="col-md-12 lesson_list" data-course="{{ course.id }}" data-user="{{ user }}">
-    <div class="row">
-        <div class="col-md-12">
-            <p></p>
-
-            <p style="opacity: 0.7;background-color: black; color: white; padding: 10px; position: fixed; top: 60px; right: 50px">Bookmarks</p>
-
-            <h1></h1>
-        </div>
-    </div>
-
-
 	{% for i in acts %}
         {% ifchanged i.act.section %}
             <h2 id="{{ i.act.section|title }}" class="section_heading">

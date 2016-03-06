@@ -2,19 +2,20 @@
 {% load staticfiles %}
 	<div  style="float: left">
 		<a href="{% url 'lesson' course.slug object.lesson.id %}#{{ section|title|urlencode }}" class="btn btn-xs btn-success">
-			<button> Back to {{ section|title }}</button>
+			<button style=" cursor: pointer; border: none; font-size: 16px; color: white; background-color: orange;"> Back to {{ section|title }}</button>
 		</a>
 	</div>
 	
-	<div style="float: right">
+	<div style="float: left">
 	{% if next_act.activity_type == 'worksheet' %}
 		<a href="{% url 'worksheet_launch' course.slug next_act.id %}" class="btn btn-xs btn-default">
-			<button>next activity </button>
+			<button style="cursor: pointer; border: none; font-size: 16px; color: white; background-color: green">next activity </button>
 		</a>
 	{% elif next_act.activity_type == 'external_media' %}
 		<a href="{% url 'external_media' course.slug next_act.id %}" class="btn btn-xs btn-default">
-			<button>next activity </button>
+			<button style=" cursor: pointer; border: none; font-size: 16px; color: white; background-color: green">next activity </button>
 		</a>
 	{% endif %}
 	</div>
+
 	<iframe seamless style="width: 100%; height: 100%" src="http://{{request.get_host}}/stacks/{{ object.asset }}/html5.html"></iframe>

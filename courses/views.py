@@ -78,6 +78,8 @@ class CourseView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, Pr
         except:
             context['site_message'] = None
 
+        context['course_home_view'] = True
+        
         return context
 
 

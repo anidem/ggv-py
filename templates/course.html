@@ -18,49 +18,32 @@
 
 {% block page_header %}
 <div class="col-md-12 text-center">
-    <p class="lead"><i class="fa fa-home"></i> Course Home Page</p>
-    <h2>{{ course }}
-        {% if is_instructor or is_manager %}
-        <div class="btn-group">
-            <button class="btn btn-xs dropdown-toggle" data-toggle="dropdown">
-                <i class="fa fa-gear"></i> My Course <i class="fa fa-caret-down"></i>
-            </button>
-
-            <ul class="dropdown-menu">
-                <li>
-                    <a href="{% url 'manage_course' course.slug %}" class="static"><i class="fa fa-users"></i> My Roster Details</a>
-                </li>
-                <li>
-                    <a href="{% url 'course_attendance_current' course.slug %}"><i class="fa fa-list"></i> Attendance</a>
-                </li>
-                <li>
-                    <a href="{% url 'edit_course' course.slug %}" class="static"><i class="fa fa-gear"></i> Worksheet Settings</a>
-                </li>
-                <li>
-                {% if not site_message %} 
-                    <a href="{% url 'add_course_msg' object.slug %}" class="btn btn-md"><i class="fa fa-plus"></i><i class="fa fa-comments-o"></i> Add a <em>Message Panel</em></a>
-                {% elif not site_message.show %}
-                    <a href="{% url 'edit_course_msg' object.slug site_message.id %}"><i class="fa fa-comments-o"></i> Unhide <em>Message Panel</em></a> 
-                {% else %}
-                    <a href="{% url 'edit_course_msg' course.slug site_message.id %}" class="btn btn-md"><i class="fa fa-gear"></i> Edit or Hide <em>Course Message Panel</em></a>
-                {% endif %}
-                </li>
-            </ul>
-        </div>
-        {% endif %}
-    </h2>
+    <p class="lead"><i class="fa fa-home"></i> GGV Curriculum Page</p>
+    <h2>{{ course }}</h2>
 </div>
 {% endblock page_header %}
 
 {% block content %}
     {% if site_message and site_message.show %}
-    <div class="row">
-        <div class="col-md-8 col-md-offset-2 text-center well">
+    <div class="col-md-8 col-md-offset-2 text-center well" style="background-color: #fafafa; border: none">
             {{ site_message.message|safe }}
-        </div>
     </div>
     {% endif %}
 
+    {% if is_instructor or is_manager %}
+    <div class="col-md-8 col-md-offset-2 text-center">
+        
+        {% if not site_message %} 
+            <a href="{% url 'add_course_msg' object.slug %}" class="btn btn-md"><i class="fa fa-plus"></i><i class="fa fa-comments-o"></i> Add a <em>Message Panel</em></a>
+        {% elif not site_message.show %}
+            <a href="{% url 'edit_course_msg' object.slug site_message.id %}"><i class="fa fa-comments-o"></i> Unhide <em>Message Panel</em></a> 
+        {% else %}
+            <a href="{% url 'edit_course_msg' course.slug site_message.id %}" class="btn btn-md"><i class="fa fa-gear"></i> Edit or Hide <em>Course Message Panel</em></a>
+        {% endif %}
+     
+    </div>
+    {% endif %}
+    
 <div class="row" style="padding: 10px"><h1></h1></div>
 
     <div class="row" style="padding: 10px">
@@ -86,7 +69,7 @@
         	<div class="col-md-3 icon-{{ i.lesson.subject }}">
         		<a class="static" href="{{ i.get_absolute_url }}">
         			<i class="fa fa-{{ i.lesson.icon_class }} fa-5x"></i>
-            <p class="icon-title">{{ i.lesson.title }}</p>
+                    <p class="icon-title">{{ i.lesson.title }}</p>
         		</a>
         	</div>
         {% endfor %}

@@ -38,7 +38,9 @@
 {% block content %}
 <div class="col-md-12 lead">
     {{ student_user.first_name }} {{ student_user.last_name }} ({{ student_user }})
-    <a href="{% url 'edit_user_account' course.slug student_user.id %}">[ edit account ]</a>
+    {% if is_manager %}
+        <a href="{% url 'edit_user_account' course.slug student_user.id %}">[ edit account ]</a>
+    {% endif %}
 </div>
 
 <div class="col-md-12">

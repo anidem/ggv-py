@@ -141,6 +141,7 @@ class CourseContextMixin(object):
             context['course'] = Course.objects.get(
                 slug=self.kwargs['crs_slug'])
             roles = get_perms(self.request.user, context['course'])
+            context['roles'] = roles
             self.course = context['course']
 
             if self.request.user.is_staff:

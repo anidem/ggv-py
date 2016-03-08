@@ -8,7 +8,7 @@ from django.core.urlresolvers import reverse_lazy
 
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 
-from core.mixins import CourseContextMixin, AccessRequiredMixin
+from core.mixins import CourseContextMixin, AccessRequiredMixin, PrivelegedAccessMixin
 from core.models import Bookmark, BOOKMARK_TYPES
 from .models import Lesson, Section
 from questions.models import Option

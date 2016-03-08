@@ -68,11 +68,11 @@
                         </li>
                         {% endif %}
                         
-                        {% if course and not course_home_view %}
+                        {% if course %}
                         <li>
                           <a class="navbar-brand" href="{% url 'course' course.slug %}">
                             <i class="fa fa-caret-left"></i>
-                            <button class="btn btn-sm course_home_btn"><i class="fa fa-home"></i> {{ course }} Home</button>
+                            <button class="btn btn-sm course_home_btn"><i class="fa fa-home"></i> {{ course }} Curriculum Page</button>
                           </a>
                         </li>
                         {% endif %}
@@ -93,7 +93,7 @@
                     {% if user.is_authenticated %}
                         {% if course %}
                         
-                          {% if is_instructor or is_manager %}
+                          {% if 'instructor' in roles or 'manage' in roles %}
                           <!-- course manage dropdown menu -->
                           <li class="dropdown">
                             

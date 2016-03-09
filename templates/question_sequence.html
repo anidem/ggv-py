@@ -102,9 +102,11 @@
 
                     {%if user_completed %}
                         {% if instructor %}
+                        {% comment %}
                         <a href="{% url 'worksheet_report' course.slug worksheet.id %}" class="btn btn-xs btn-primary">
                         Full <i class="fa fa-check"></i> <i class="fa fa-th-list"></i>
                         </a>
+                        {% endcomment %}
                         {% endif %}
 
                         <a href="{% url 'worksheet_user_report' course.slug worksheet.id user.id %}"  class="btn btn-xs btn-primary">
@@ -229,6 +231,17 @@
     </div>
     {% endcomment %}
     <!-- END BOTTOM ROW -->
+
+<!-- Response processing message modal -->
+<div id="wait_msg" class="modal fade bs-example-modal-lg" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+        Please wait.
+    </div>
+  </div>
+</div>
+
+
 <!-- THE END -->
 {% endblock content %}
 
@@ -243,6 +256,7 @@
             var wh = $(window).height();
             $('body').attr('style', 'height:' + wh + 'px;');
         }
+
 
         $(document).ready(function() {
             {% if worksheet.display_pdf %}

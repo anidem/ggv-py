@@ -54,6 +54,8 @@ class QuestionResponseForm(ModelForm):
             pass
             
         previous_response = question.user_response_object(user)
+        
+        
         if previous_response:
             previous_response.response = submitted_form.response
             previous_response.save()

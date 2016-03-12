@@ -6,7 +6,7 @@ from django.views.generic import DetailView, UpdateView, CreateView, RedirectVie
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse, reverse_lazy
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -102,7 +102,10 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         self.worksheet = get_object_or_404(QuestionSet, pk=self.kwargs['i'])
         self.lesson = self.worksheet.lesson
         self.next_question = self.worksheet.get_question_at_index(int(self.kwargs['j']) - 1)
-        self.completion_status = self.request.user.completed_worksheets.filter(completed_worksheet=self.worksheet)
+        try:
+            self.completion_status = self.request.user.completed_worksheets.filter(completed_worksheet=self.worksheet)
+        except:
+            raise PermissionDenied  # return a forbidden response
 
         return super(QuestionResponseView, self).dispatch(*args, **kwargs)
 

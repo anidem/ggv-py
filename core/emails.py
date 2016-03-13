@@ -401,7 +401,7 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
 
     html_message += "<p>{ws_lesson} - {ws_title}</p>".format(
         ws_lesson=worksheet.lesson,
-        ws_title=worksheet.title,
+        ws_title=worksheet,
         )
 
     html_message += "<p>You can view their responses here:</p><p> <a href=\"{ws_url}\">{ws_url}</a><b>Login required.</b></p><p>Also note you may need to Allow students to view results if you are currently restricting this.</p>".format(

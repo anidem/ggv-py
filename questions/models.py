@@ -189,8 +189,10 @@ class QuestionSet(AbstractActivity):
             if bookmarks:
                 bookmark = bookmarks.filter(content_type=question_type.id).filter(object_id=i.id)
                 if bookmark:
-                    bk = bookmark[0]            
-            
+                    bk = bookmark[0]
+                else:
+                    bk = None          
+
             response = (bk, i, respstr, question_result)
             report.append(response)
 

@@ -51,6 +51,11 @@ urlpatterns = patterns('',
     url(r'^ggv/slideutility/$', csvutilslides, name='slideutil'),
     # url(r'^ggv/utility/validator/$', worksheetvalidator.as_view(), name='worksheet_utility'),
 
+    # slides are independent files but protected here.
+    url(r'^ggv/slidestack/(?P<pk>\d+)/$', SlideStackInfoView.as_view(), name='slide_info_view'),
+    url(r'^ggv/slidestack/edit/(?P<pk>\d+)/$', SlideStackUpdateView.as_view(), name='slide_update'),
+
+
 # GGV Courses
     url(r'^ggv/(?P<crs_slug>[-\w]+)/$', CourseView.as_view(), name='course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/edit/$', CourseUpdateView.as_view(), name='edit_course'),
@@ -74,9 +79,6 @@ urlpatterns = patterns('',
     url(r'^ggv/(?P<crs_slug>[-\w]+)/remove/message/(?P<pk>\d+)/$', CourseMessageDeleteView.as_view(), name='delete_course_msg'),
 
 # GGV lesson activities
-    # slides are independent files but protected here.
-    url(r'^ggv/slidestack/(?P<pk>\d+)/$', SlideStackInfoView.as_view(), name='slide_info_view'),
-    url(r'^ggv/slidestack/edit/(?P<pk>\d+)/$', SlideStackUpdateView.as_view(), name='slide_update'),
 
     url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<pk>[-\w]+)/$', slide_view.as_view(), name='slideview'),
     # url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<slideroot>[-\w]+)/$', 'slidestacks.views.slide_view', name='slideview'),

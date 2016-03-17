@@ -5,6 +5,7 @@
 
   <!-- Default font -->
   <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
+  <link href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
 
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -27,43 +28,91 @@
   <!-- Latest compiled and minified JavaScript -->
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
+  <style type="text/css">
+
+    .home_page_hdr {
+      background-image: url("{% static 'img/laptop-patio-01-1680.png' %}");
+      background-repeat: no-repeat;
+      background-size: cover;
+      height: 100%;
+    }
+
+    .home_page_hdr_txt {
+      font-family: 'Josefin Sans', sans-serif;
+      font-size: 4.5em;
+      color: white;
+    }
+
+    .lead_ltr { 
+      font-size: 1.5em;
+    }
+
+    .home_msg_panel {
+      background-color: white;
+      opacity: 0.3;
+      font-size: 1.3em;
+      color: black;
+    }
+
+    .home_go_btn {
+      background-color: white; 
+      color: black; 
+      opacity: 0.7; 
+      font-size: 0.5em
+    }
+
+    hr {
+      background-color: white;
+      border-top: solid 1px black;
+    }
+
+  </style>
+
 </head>
 
-<body>
-    <!-- Begin page content -->
-    <div class="container-fluid">
-        <div class="row center-block" style="padding-top: 50px">
-            <div class="col-md-6 col-md-offset-3 text-center">
-
-
-                <p class="text-center"><a href="http://www.gedgonevirtual.com"><img height="100px" src="{% static 'img/logo_laptop_black.png' %}"></a></p>
-                <p class="lead">Welcome to the GED Gone Virtual Interactive Curriculum.</p>
-                <p class="center-block">If you have an account, let's get started!</p>
-
-                {% if site_message %}
-                <div class="row">
-                    {{ site_message.message|safe }}
-                </div>
-                {% endif %}
-
-                <div class="btn-group btn-group-justified center-block" style=" padding-bottom: 50px">
-                <h2><a href="{% url 'ggvhome' %}" class="btn btn-lg btn-success" role="button">Get Started <i class="fa fa-arrow-circle-right fa-2"></i></a></h2>
-                </div>
-                <p class="lead">Visit <a href="http://www.gedgonevirtual.com" target="_blank" class="label label-default" role="button">GED Gone Virtual</a> to learn more about GED Gone Virtual Interactive for your organization.</p>
-            </div>
-        </div>
+<body class="home_page_hdr">
+  <!-- Begin page content -->
+  <div class="container-fluid">
+    {% if site_message %}
+    <div class="row" style="padding-top: 25px">
+      <div class="col-sm-5 col-sm-push-6 col-sm-pull-1 home_msg_panel home_page_hdr_txt" style="padding: 10px">
+        <strong>{{ site_message.message|safe }}</strong>
+      </div>      
     </div>
-    <!-- End page content --> 
+    {% endif %}
 
-
-    <!-- Footer -->
-<!--     <div class="navbar navbar-default navbar-fixed-bottom" style="border: none">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <p class="text-muted" style="text-align: center; "><small>gedgonevirtual.com</small></p>
+    <div class="row " style="padding-top: 30px">
+        <div class="col-md-7 col-md-push-4 col-md-pull-1">
+          <h1 class="text-right home_page_hdr_txt">
+            <span class="lead_ltr">G</span>ED <span class="lead_ltr">G</span>ONE <span class="lead_ltr">V</span>IRTUAL
+          </h1>
+          
+          <h2 class="text-right home_page_hdr_txt" style="font-size: 2.8em"> GED EXAM PREP</h2>
+          
+          <h3 class="text-right home_page_hdr_txt">
+            <a href="{% url 'ggvhome' %}" class="btn btn-lg home_go_btn" role="button"><strong>Get Started</strong> <i class="fa fa-caret-right text-success"></i></a>
+          </h3>
+        
         </div>
-      </div>
-    </div> -->
+
+        <div class="col-md-12"><h1>&nbsp;</h1></div>
+
+    </div>
+
+
+  <!-- Footer -->
+    <div class="navbar navbar-default navbar-fixed-bottom text-center" style=" opacity: 0.8">
+      <h4>
+            Learn more <i class="fa fa-caret-right"></i>  
+            <a href="http://www.gedgonevirtual.com" target="_blank">www.gedgonevirtual.com</a> or email us at <a href="mailto://gedgonevirtual@gmail.com">gedgonevirtual@gmail.com</a>
+      </h4>
+    </div>
+
+  </div>
+  <!-- End page content --> 
+
+
+
 
 
 </body>

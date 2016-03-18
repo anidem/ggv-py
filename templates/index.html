@@ -74,13 +74,7 @@
 <body class="home_page_hdr">
   <!-- Begin page content -->
   <div class="container-fluid">
-    {% if site_message %}
-    <div class="row" style="padding-top: 25px">
-      <div class="col-sm-5 col-sm-push-6 col-sm-pull-1 home_msg_panel home_page_hdr_txt" style="padding: 10px">
-        <strong>{{ site_message.message|safe }}</strong>
-      </div>      
-    </div>
-    {% endif %}
+
 
     <div class="row " style="padding-top: 30px">
         <div class="col-md-7 col-md-push-4 col-md-pull-1">
@@ -99,6 +93,13 @@
         <div class="col-md-12"><h1>&nbsp;</h1></div>
 
     </div>
+    {% if site_message %}
+    <div class="row" style="padding-top: 25px">
+      <div class="col-sm-5 col-sm-push-6 col-sm-pull-1 home_msg_panel home_page_hdr_txt" style="padding: 10px">
+        <strong>{{ site_message.message|safe }}</strong>
+      </div>      
+    </div>
+    {% endif %}
 
 
   <!-- Footer -->

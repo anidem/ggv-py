@@ -31,11 +31,12 @@
   <style type="text/css">
 
     .home_page_hdr {
-      background-image: url("{% static 'img/laptop-patio-01-full.jpg' %}");      
+      background-image: url("{% static 'img/laptop-patio-01-full-cropped.jpg' %}");      
       background-repeat: no-repeat;
-      background-position:  0px 0px;
       background-size: cover;
-      height: 100%;
+      background-origin: content-box;
+      background-color: #000;
+      /*height: 100%;*/
     }
 
     .home_page_hdr_txt {
@@ -59,7 +60,7 @@
       background-color: white; 
       color: black; 
       opacity: 0.7; 
-      font-size: 0.5em
+      /*font-size: 0.5em*/
     }
 
     hr {
@@ -76,17 +77,17 @@
   <div class="container-fluid">
 
 
-    <div class="row " style="padding-top: 30px">
+    <div class="row " style="padding-top: 0px">
         <div class="col-md-7 col-md-push-4 col-md-pull-1">
           <h1 class="text-right home_page_hdr_txt">
             <span class="lead_ltr">G</span>ED <span class="lead_ltr">G</span>ONE <span class="lead_ltr">V</span>IRTUAL
           </h1>
           
-          <h2 class="text-right home_page_hdr_txt" style="font-size: 2.8em"> GED EXAM PREP</h2>
+          <h2 class="text-right home_page_hdr_txt" style=""> GED EXAM PREP</h2>
           
-          <h3 class="text-right home_page_hdr_txt">
+          <h4 class="text-right home_page_hdr_txt">
             <a href="{% url 'ggvhome' %}" class="btn btn-lg home_go_btn" role="button"><strong>Get Started</strong> <i class="fa fa-caret-right text-success"></i></a>
-          </h3>
+          </h4>
         
         </div>
 
@@ -94,8 +95,8 @@
 
     </div>
     {% if site_message %}
-    <div class="row" style="padding-top: 25px">
-      <div class="col-sm-5 col-sm-push-6 col-sm-pull-1 home_msg_panel home_page_hdr_txt" style="padding: 10px">
+    <div class="row" style="padding-top: 0px; padding-bottom: 80px">
+      <div class="col-sm-5 col-sm-push-6 col-sm-pull-1 home_msg_panel home_page_hdr_txt" style="padding-bottom: 10px">
         <strong>{{ site_message.message|safe }}</strong>
       </div>      
     </div>

@@ -69,7 +69,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
             for course in o.organization_courses.all():
 
-                if self.request.user.has_perm('courses.instructor', course):
+                if self.request.user.has_perm('courses.instructor', course) or self.request.user.has_perm('courses.manage', course) or self.request.user.is_staff :
                     num_active = len(course.student_list())
                     num_deactive = len(course.deactivated_list())
                     num_nologin = len(course.unvalidated_list())

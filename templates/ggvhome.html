@@ -3,6 +3,9 @@
 
 
 {% block page_header %}
+{% if is_manager or user.is_staff %} 
+	<div class="col-md-12 text-right"><h6> <i class="fa fa-asterisk text-danger"></i> counts against user quota</h6></div>
+{% endif %}
 <div class="col-md-12 text-center">
     <h2><i class="fa fa-map-marker"></i> GGV Site Page</h2>
 </div>
@@ -23,9 +26,9 @@
 
 {% if is_manager or user.is_staff %}
 	<div class="col-md-6">Sites</div>
-	<div class="col-md-2"><i class="fa fa-users icon-green"></i> Active</div>
+	<div class="col-md-2"><i class="fa fa-users icon-green"></i> Active </div>
 	<div class="col-md-2"><i class="fa fa-users icon-orange"></i> Deactivated</div>
-	<div class="col-md-2"><i class="fa fa-users icon-gray"></i> Unaccessed Accounts</div>
+	<div class="col-md-2"><i class="fa fa-users icon-gray"></i> Unaccessed Accounts </div>
 	<div class="col-md-12" class="border"><p></p></div>
 {% endif %}
 {% for org, course_list in courses.items %}
@@ -39,9 +42,9 @@
 			
 			{% if is_manager or user.is_staff %}
 			
-				<div class="col-md-2 hoverpad" title="active users"><p> <i class="fa fa-users icon-green"></i> {{ i.1 }} </p></div>
-				<div class="col-md-2 hoverpad" title="deactivated users"><p><i class="fa fa-users icon-orange"></i> {{ i.2 }} </p></div>
-				<div class="col-md-2 hoverpad" title="unaccessed accounts"><p><i class="fa fa-users icon-gray"></i> {{ i.3 }} </p></div>
+				<div class="col-md-2 hoverpad" title="active users"><p> <i class="fa fa-users icon-green"></i> {{ i.1 }}</p></div>
+				<div class="col-md-2 hoverpad" title="deactivated users"><p><i class="fa fa-users icon-orange"></i> {{ i.2 }}</p></div>
+				<div class="col-md-2 hoverpad" title="unaccessed accounts"><p><i class="fa fa-users icon-gray"></i> {{ i.3 }}</p></div>
 			
 			{% else %}
 			
@@ -51,10 +54,10 @@
 	{% endfor %}
 
 	{% if is_manager or user.is_staff %}
-		<div class="col-md-6">Totals </div>
-		<div class="col-md-2">{{ course_list.1 }}</div>
-		<div class="col-md-2">{{ course_list.2 }}</div>
-		<div class="col-md-2">{{ course_list.3 }}</div>
+		<div class="col-md-6" style="border-top: 1px solid black">Totals </div>
+		<div class="col-md-2" style="border-top: 1px solid black">{{ course_list.1 }} <i class="fa fa-asterisk text-danger"></i></div>
+		<div class="col-md-2" style="border-top: 1px solid black">{{ course_list.2 }}</div>
+		<div class="col-md-2" style="border-top: 1px solid black">{{ course_list.3 }} <i class="fa fa-asterisk text-danger"></i></div>
 		<div class="col-md-12" class="border"><p></p></div>
 	{% endif %}	
 		

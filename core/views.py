@@ -68,21 +68,23 @@ class HomeView(LoginRequiredMixin, TemplateView):
             course_rows = []
 
             for course in o.organization_courses.all():
-                num_active = len(course.student_list())
-                num_deactive = len(course.deactivated_list())
-                num_nologin = len(course.unvalidated_list())
 
-                total_active = total_active + num_active
-                total_deactive = total_deactive + num_deactive
-                total_nologin = total_nologin + num_nologin
+                if self.request.user.has_perm('courses.instructor', course):
+                    num_active = len(course.student_list())
+                    num_deactive = len(course.deactivated_list())
+                    num_nologin = len(course.unvalidated_list())
 
-                crs_data = (
-                    course,
-                    num_active,
-                    num_deactive,
-                    num_nologin                
-                )
-                course_rows.append(crs_data)
+                    total_active = total_active + num_active
+                    total_deactive = total_deactive + num_deactive
+                    total_nologin = total_nologin + num_nologin
+
+                    crs_data = (
+                        course,
+                        num_active,
+                        num_deactive,
+                        num_nologin                
+                    )
+                    course_rows.append(crs_data)
 
             organizations[o] = (course_rows, total_active, total_deactive, total_nologin)
         

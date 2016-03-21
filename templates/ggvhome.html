@@ -1,4 +1,4 @@
-<!-- ggv.html -->
+<!-- ggvhome.html -->
 {% extends "base.html" %}
 
 
@@ -30,7 +30,9 @@
 {% endif %}
 
 {% for i in courses %}
-
+	{% ifchanged i.0.ggv_organization %}
+	<div class="col-md-12"><h2>{{ i.0.ggv_organization }}</h2></div>
+	{% endifchanged %}
 	<div class="col-md-6 hoverpad">
 		<a href="{{ i.0.get_absolute_url }}">
 			<p class=""><i class="fa fa-home"></i> {{ i.0.title }}</p>

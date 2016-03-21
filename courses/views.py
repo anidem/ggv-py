@@ -69,7 +69,7 @@ class CourseView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, Pr
         context['deactivated'] = course.deactivated_list()
         context['unvalidated'] = course.unvalidated_list()
 
-        # this provides access to the users full list of courses.
+        # this provides access to the user's full list of courses.
         context['courses'] = [
             Course.objects.get(slug=i) for i in self.request.session['user_courses']]
 

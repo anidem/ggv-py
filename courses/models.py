@@ -15,6 +15,22 @@ ws_control_choices = (
     (True, 'OPTION 2:  Students are NOT allowed to immediately review the results after completing a worksheet.')
 )
 
+class GGVOrganization(models.Model):
+    """
+    An organization is a top level container for courses.
+    """
+    title = models.CharField(max_length=256)
+    user_quota = models.IntegerField(default=0)
+    quota_start_date = models.DateField()
+    business_contact_email = models.EmailField()
+    business_contact_phone = models.CharField(max_length=12)
+
+    def __unicode__(self):
+        return self.title
+
+    class Meta:
+        ordering = ['title']
+
 class Course(models.Model):
 
     """
@@ -25,6 +41,7 @@ class Course(models.Model):
     slug = models.SlugField(max_length=128, unique=True)
     control_worksheet_results = models.BooleanField(default=False, choices=ws_control_choices)
     access_code = models.CharField(max_length=8, null=True, blank=True)
+    ggv_organization = models.ForeignKey(GGVOrganization, null=True)
 
     class Meta:
         permissions = (
@@ -32,6 +49,7 @@ class Course(models.Model):
             ('instructor', 'Instructor'),
             ('manage', 'Manager'),
         )
+        ordering = ['ggv_organization', 'title']
 
     def member_list(self):
 

@@ -22,7 +22,7 @@ def init_session(sender, **kwargs):
         rem_addr = request.META['REMOTE_ADDR']
 
         course_permissions = get_objects_for_user(
-            user, ['access', 'instructor', 'manage'], Course, any_perm=True).order_by('title')
+            user, ['access', 'instructor', 'manage'], Course, any_perm=True).order_by('ggv_organization','title')
 
         lesson_permissions = set()
         for i in course_permissions:

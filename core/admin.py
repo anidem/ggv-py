@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 
 from guardian.admin import GuardedModelAdmin
 
-from courses.models import Course, CourseLesson
+from courses.models import GGVOrganization, Course, CourseLesson
 from lessons.models import Lesson, Section
 from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option, UserWorksheetStatus
 from slidestacks.models import SlideStack
@@ -169,6 +169,7 @@ class GGVUserAdmin(admin.ModelAdmin):
     list_editable = ('user', 'language_pref', 'clean_logout', )
 
 
+admin.site.register(GGVOrganization)
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
 admin.site.register(CourseLesson, CourseLessonAdmin)
 admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)

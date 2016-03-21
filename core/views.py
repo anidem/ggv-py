@@ -36,6 +36,7 @@ class IndexView(TemplateView):
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'ggvhome.html'
+    orgs = []
     courses = None
 
     def get(self, request, *args, **kwargs):
@@ -44,6 +45,11 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
             if len(self.courses) == 1:
                 return redirect('course', crs_slug=self.courses[0])
+
+            for i in self.courses:
+                crs = Course.objects.get(slug=i)
+                if crs.ggv_organization not in self.orgs:
+                    self.orgs.append(crs.ggv_organization)
         except:
             courses = None
 
@@ -51,34 +57,39 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
-
         context['courses'] = []
-        total_active = 0
-        total_deactive = 0
-        total_nologin = 0
-        for i in self.courses:
-            course = Course.objects.get(slug=i)
-            
-            num_active = len(course.student_list())
-            num_deactive = len(course.deactivated_list())
-            num_nologin = len(course.unvalidated_list())
 
-            total_active = total_active + num_active
-            total_deactive = total_deactive + num_deactive
-            total_nologin = total_nologin + num_nologin
-
-            crs_data = (
-                course,
-                num_active,
-                num_deactive,
-                num_nologin                
-            )
-
-            context['courses'].append(crs_data)
+        organizations = {}
         
-        context['total_active'] = total_active
-        context['total_deactive'] = total_deactive
-        context['total_nologin'] = total_nologin
+        for o in self.orgs:      
+            total_active = 0
+            total_deactive = 0
+            total_nologin = 0
+            course_rows = []
+
+            for course in o.organization_courses.all():
+                num_active = len(course.student_list())
+                num_deactive = len(course.deactivated_list())
+                num_nologin = len(course.unvalidated_list())
+
+                total_active = total_active + num_active
+                total_deactive = total_deactive + num_deactive
+                total_nologin = total_nologin + num_nologin
+
+                crs_data = (
+                    course,
+                    num_active,
+                    num_deactive,
+                    num_nologin                
+                )
+                course_rows.append(crs_data)
+
+            organizations[o] = (course_rows, total_active, total_deactive, total_nologin)
+        
+        context['courses'] = organizations
+        # context['total_active'] = total_active
+        # context['total_deactive'] = total_deactive
+        # context['total_nologin'] = total_nologin
 
         return context
 

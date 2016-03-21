@@ -41,7 +41,7 @@ class Course(models.Model):
     slug = models.SlugField(max_length=128, unique=True)
     control_worksheet_results = models.BooleanField(default=False, choices=ws_control_choices)
     access_code = models.CharField(max_length=8, null=True, blank=True)
-    ggv_organization = models.ForeignKey(GGVOrganization, null=True)
+    ggv_organization = models.ForeignKey(GGVOrganization, null=True, related_name='organization_courses')
 
     class Meta:
         permissions = (

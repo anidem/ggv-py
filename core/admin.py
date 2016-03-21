@@ -125,10 +125,12 @@ class TextQuestionAdmin(admin.ModelAdmin):
 
 class CourseAdmin(GuardedModelAdmin):
     model = Course
-    list_display = ('title', 'slug', 'access_code', 'lesson_list')
-    inlines = [
-        LessonInlineAdmin,
-    ]
+    list_display = ('title', 'ggv_organization', 'slug')
+    list_filter = ('title', 'ggv_organization')
+    list_editable = ('ggv_organization',)
+    # inlines = [
+    #     LessonInlineAdmin,
+    # ]
 
 
 class CourseLessonAdmin(admin.ModelAdmin):

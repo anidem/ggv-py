@@ -1,0 +1,36 @@
+{% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Default font -->
+    <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Josefin+Sans:400,300,600,700' rel='stylesheet' type='text/css'>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale = 1.0, minimum-scale = 1.0, maximum-scale = 1.0, user-scalable = no, width = device-width" />
+
+    <title> GGV Interactive Error</title>
+
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+    <!-- Font Awesome for icons -->
+    <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet"> 
+</head>
+
+<body>
+    
+    <div class="container-fluid"><!-- Begin page content -->
+        <div class="row">
+            <div class="col-md-12 text-center"><img class="logo" src="{% static 'img/logo_laptop_black.png' %}"/></div>
+            <div class="col-md-8 col-md-offset-2" style="padding-top: 100px">
+                <p class="lead">Uh oh! The GGV Interactive site has encountered an error. The system administrators have been automatically alerted about this error.</p>
+
+                <p class="lead">Some errors may be solved by logging out then logging back in to this site. You can <a href="{% url 'logout' %}">logout here</a> then return to <a href="http://www.ggvinteractive.com">GGV Interactive</a> to login again.</p>
+            </div>
+        </div>
+    </div><!-- End page content --> 
+
+</body>
+</html>

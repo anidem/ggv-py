@@ -5,7 +5,8 @@ from pytz import timezone
 from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render_to_response
+from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.core.mail import send_mail
 from django.conf import settings
@@ -489,5 +490,21 @@ class FaqView(TemplateView):
         context = super(FaqView, self).get_context_data(**kwargs)
         context["sitepage"] = SitePage.objects.get(title='FAQ')
         return context
+
+""" Error Pages """
+
+def handler404(request):
+    response = render_to_response('404_custom_error.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 404
+    return response
+
+
+def handler500(request):
+    response = render_to_response('500_custom_error.html', {},
+                                  context_instance=RequestContext(request))
+    response.status_code = 500
+    return response
+
 
 

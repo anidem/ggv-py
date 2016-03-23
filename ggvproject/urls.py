@@ -1,4 +1,5 @@
 from django.conf.urls import patterns, include, url
+# from django.conf.urls.defaults import handler500, handler404
 from django.contrib import admin
 
 from filebrowser.sites import site
@@ -38,6 +39,9 @@ from questions.views import (
     )
 from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView, slide_view
 from supportmedia.views import ExternalMediaView, ExternalMediaCourseView, ExternalMediaCreateView, ExternalMediaUpdateView
+
+handler404 = 'core.views.handler404'
+handler500 = 'core.views.handler500'
 
 urlpatterns = patterns('',
     url('', include('social.apps.django_app.urls', namespace='social')),

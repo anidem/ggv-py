@@ -31,12 +31,35 @@
 <div class="col-md-12">
 
 <!-- Instructors  -->
-    <div class="row"><div class="col-md-12">
-        <h2>{{ instructors|length}} Instructors</h2>
-        {% for i in instructors %}
-            {{ i.first_name }} {{ i.last_name }},
-        {% endfor %}
-    </div></div>
+    <div class="row"><div class="col-md-12"><h2>{{ instructors|length}} Instructors</h2></div></div>
+    <div class="row">
+        <div id="instructor_sorts" class="col-xs-12"> 
+            <div class="col-xs-1"><button class="btn btn-block btn-sm" data-sort-by="siteid" data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+            <div class="col-xs-3"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
+            <div class="col-xs-2">&nbsp; </div> 
+        </div>
+        <div id="container_instructors" class="col-xs-12">                
+                {% for i in instructors %}
+                <div class="item hoverpad col-xs-12" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
+                    <a href="{% url 'user_progress' course.slug i.0.id %}" class="static">
+                        <div class="col-xs-1 siteid">{{ i.0.ggvuser.program_id }}</div>
+                        <div class="col-xs-2 firstname">{{ i.0.first_name }}</div>
+                        <div class="col-xs-2 lastname">{{ i.0.last_name }}</div>
+                        <div class="col-xs-3 username">{{ i.0.username }}</div>
+                        <div class="col-xs-2 login">{{ i.0.last_login|date:"M d, g:i A" }}</div>
+                        <div class="col-xs-2">&nbsp; </div>
+                    </a>                   
+                </div>
+
+                {% empty %}
+                    <div class="panel-body">No instructors are assigned to this course?</div>
+                {% endfor %}
+            
+        </div>        
+    </div>
 
 <!-- Active students -->
     <div class="row"><div class="col-md-12"><h2>{{ students|length}} Active Student Accounts</h2></div></div>
@@ -100,15 +123,15 @@
                 
                 
                 {% for i in deactivated %}
-                <div class="item hoverpad col-xs-12" data-login="{{ i.last_login|date:'U' }}">
-                    <a href="" class="static">
-                    <div class="col-xs-1 siteid">{{ i.ggvuser.program_id }}</div>
-                    <div class="col-xs-2 firstname">{{ i.first_name }}</div>
-                    <div class="col-xs-2 lastname">{{ i.last_name }}</div>
-                    <div class="col-xs-3 username">{{ i.username }}</div>
-                    <div class="col-xs-2 login">{{ i.last_login|date:"M d, g:i A" }}</div>
+                <div class="item hoverpad col-xs-12" data-login="{{ i.0.last_login|date:'U' }}">
+                    <a href="{% url 'user_progress' course.slug i.0.id %}" class="static">
+                    <div class="col-xs-1 siteid">{{ i.0.ggvuser.program_id }}</div>
+                    <div class="col-xs-2 firstname">{{ i.0.first_name }}</div>
+                    <div class="col-xs-2 lastname">{{ i.0.last_name }}</div>
+                    <div class="col-xs-3 username">{{ i.0.username }}</div>
+                    <div class="col-xs-2 login">{{ i.0.last_login|date:"M d, g:i A" }}</div>
                     </a>
-                    <div class="col-xs-2"><input type="checkbox" name="activate_list" value="{{ i.id }}"></div>
+                    <div class="col-xs-2"><input type="checkbox" name="activate_list" value="{{ i.0.id }}"></div>
                 
                 </div>
                 {% empty %}
@@ -179,6 +202,19 @@
 
     <script type="text/javascript">
         jQuery(function($) {
+            
+            var $container_instructors = $('#container_instructors').isotope({
+                getSortData: {
+                    login: '[data-login] parseInt',
+                    recent_timestamp: '[data-recent] parseInt',
+                    siteid: '.siteid',
+                    firstname: '.firstname',
+                    lastname: '.lastname',
+                    username: '.username'
+                },
+
+            });
+
             var $container0 = $('#container_0').isotope({
                 getSortData: {
                     login: '[data-login] parseInt',
@@ -213,6 +249,27 @@
             });
 
             // sort items on button click
+            $('#instructor_sorts .btn-block').on( 'click', function() {
+                var sortByValue = $(this).attr('data-sort-by');
+                var order = "";
+                if ($(this).attr("data-order")==="asc") {
+                    order = true;
+                    $(this).attr("data-order", "");
+
+                } else {
+                    order = false;
+                    $(this).attr("data-order", "asc");
+                }
+                $('#instructor_sorts .btn-primary').removeClass('btn-primary');
+                $(this).addClass("btn-primary");
+
+                $container_instructors.isotope({
+                    sortBy: sortByValue,
+                    sortAscending: order
+                });
+            });
+
+            // sort items on button click
             $('#sorts .btn-block').on( 'click', function() {
                 var sortByValue = $(this).attr('data-sort-by');
                 var order = "";
@@ -233,6 +290,7 @@
                 });
             });
 
+            // sort items on button click
             $('#deactivated_sorts .btn-block').on( 'click', function() {
                 var sortByValue = $(this).attr('data-sort-by');
                 var order = "";

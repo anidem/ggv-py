@@ -110,10 +110,26 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
             except:
                 pass  # student[i] has no activity on record. Move on, nothing to see here.
 
+        deactivated_students = []        
+        for i in course.deactivated_list():
+            try:
+                activity = i.activitylog.all()[0]
+                deactivated_students.append((i, {'recent_act': activity.action, 'recent_time': activity.timestamp}))
+            except:
+                pass  # deactivated_students[i] has no activity on record. Move on, nothing to see here.
+
+        instructors = []        
+        for i in course.instructor_list():
+            try:
+                activity = i.activitylog.all()[0]
+                instructors.append((i, {'recent_act': activity.action, 'recent_time': activity.timestamp}))
+            except:
+                pass  # instructor[i] has no activity on record. Move on, nothing to see here.
+
         context['is_manager'] = self.request.user.has_perm('manage', course)
-        context['instructors'] = course.instructor_list()
+        context['instructors'] = instructors
         context['students'] = students
-        context['deactivated'] = course.deactivated_list()
+        context['deactivated'] = deactivated_students
         context['unvalidated'] = course.unvalidated_list()
         return context
 

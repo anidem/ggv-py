@@ -355,6 +355,7 @@ class AttendanceAjaxCodeCreateView(LoginRequiredMixin, JSONResponseMixin, Create
 
         return self.render_json_response(data)
 
+
 class AttendanceAjaxCodeUpdateView(LoginRequiredMixin, JSONResponseMixin, UpdateView):
     model = AttendanceTracker
     require_json = True
@@ -491,6 +492,7 @@ class FaqView(TemplateView):
         context["sitepage"] = SitePage.objects.get(title='FAQ')
         return context
 
+
 """ Error Pages """
 
 def handler404(request):
@@ -498,7 +500,6 @@ def handler404(request):
                                   context_instance=RequestContext(request))
     response.status_code = 404
     return response
-
 
 def handler500(request):
     response = render_to_response('500_custom_error.html', {},

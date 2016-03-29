@@ -331,6 +331,7 @@ class TextQuestion(AbstractQuestion):
     def get_absolute_url(self):
         return reverse('text_question', args=[self.id])
 
+
 class OptionQuestion(AbstractQuestion):
 
     """
@@ -471,6 +472,7 @@ class QuestionResponse(TimeStampedModel):
     # Fix this to construct arguments relative to question sequence object
     def get_absolute_url(self):
         return reverse('home')
+
 
 class UserWorksheetStatus(TimeStampedModel):
     """

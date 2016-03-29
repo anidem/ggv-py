@@ -76,6 +76,17 @@ class QuestionResponseForm(ModelForm):
 
 class QuestionSetUpdateForm(ModelForm):
 
+    def save(self):
+        super(QuestionSetUpdateForm, self).save()
+        try:
+            pdfroot = settings.MEDIA_ROOT + '/'
+            opts = pdfroot + self.instance.display_pdf.name + ' --dest-dir ' + pdfroot + 'pdf/'
+            cmd = 'pdf2htmlEX ' + opts
+            os.system(cmd)
+        except:
+            pass
+        return self.instance
+        
     class Meta:
         model = QuestionSet
         fields = ['title', 'lesson', 'section',
@@ -121,6 +132,7 @@ class OptionUpdateForm(ModelForm):
             'display_text': forms.TextInput(attrs={'size': 40}),
             'display_order': forms.NumberInput(attrs={'min': -99, 'max': 99})
         }
+
 
 OptionFormset = inlineformset_factory(
     OptionQuestion, Option, extra=4, form=OptionUpdateForm)

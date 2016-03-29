@@ -47,7 +47,6 @@ def convert_option_to_text(source_pk=None):
         print e
         return
 
-
 class worksheetvalidator(TemplateView):
     template_name = 'question_validator.html'
     def get_context_data(self, **kwargs):

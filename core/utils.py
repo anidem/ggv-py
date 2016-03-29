@@ -55,6 +55,7 @@ class GGVExcelWriter:
     #         # set column width
     #         ws.column_dimensions[self.DATA_COLS[col_num][0]].width = self.DATA_COLS[col_num][2]
 
+
 class UnicodeWriter:
     """
     A CSV writer which will write rows to CSV file "f",
@@ -86,11 +87,6 @@ class UnicodeWriter:
             self.writerow(row)
 
 
-def logout_clean(request):
-    logout(request)
-    return redirect('https://accounts.google.com/Logout?&continue=https://www.google.com')
-
-
 class GGVAuthForbidden(SocialAuthBaseException):
     """Auth process exception."""
     def __init__(self, backend, response, gaccount, *args, **kwargs):
@@ -104,6 +100,10 @@ class GGVAuthForbidden(SocialAuthBaseException):
         return m
 
 
+def logout_clean(request):
+    logout(request)
+    return redirect('https://accounts.google.com/Logout?&continue=https://www.google.com')
+
 def auth_allowed(response, details, *args, **kwargs):
     """
     Return the ggv user object if authenticated email matches a user email.
@@ -116,7 +116,6 @@ def auth_allowed(response, details, *args, **kwargs):
     except:
         return None
 
-
 def ggv_auth_allowed(backend, details, response, *args, **kwargs):
     """
     If auth_allowed returns a user object, set the user variable for the pipeline.
@@ -128,7 +127,6 @@ def ggv_auth_allowed(backend, details, response, *args, **kwargs):
         raise GGVAuthForbidden(backend, response, details['email'])
     else:
         return {'user': ggv_user}
-
 
 def ggv_social_user(backend, uid, user=None, *args, **kwargs):
     """
@@ -151,7 +149,6 @@ def ggv_social_user(backend, uid, user=None, *args, **kwargs):
             'user': user,
             'is_new': user is None,
             'new_association': False}
-
 
 def get_daily_log_times(user=None, course=None, exclusions=[]):
     """
@@ -197,8 +194,6 @@ def get_daily_log_times(user=None, course=None, exclusions=[]):
         acts.append(act_log)
 
     return acts
-
-
 
 def populate_attendance_tracker(user=None):
     """ 

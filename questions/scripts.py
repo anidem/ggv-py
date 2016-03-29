@@ -2,7 +2,7 @@ from django.contrib.auth.models import User
 from .models import *
 
 """
-System maintenance procedure jan 2 1016:
+System maintenance procedure jan 2 2016:
 a. Repair response table with fix_response_fields().
 b. Update response table iscorrect field with update_iscorrect_field()
 c. Update worksheet score field with update_worksheet_scores()

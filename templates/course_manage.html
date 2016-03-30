@@ -153,7 +153,9 @@
     <div class="row"><div class="col-md-12"><h2>{{ unvalidated|length}} Unaccessed Student Accounts</h2></div></div>
     <div class="row">
         <div id="unvalidatedsorts" class="col-xs-12">
-
+            <div class="col-xs-1">
+                <button class="btn btn-block btn-sm" data-sort-by="siteid" data-order="asc"> <i class="fa fa-sort"></i> id</button>
+            </div>
             <div class="col-xs-2">
                 <button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button>
             </div>
@@ -179,6 +181,7 @@
 
 
             <div class="item hoverpad col-xs-12" data-created="{{ i.last_login|date:'U' }}">
+                <div class="col-xs-1 site_id">{{ i.ggvuser.program_id }}<a href=""></a></div>
                 <div class="col-xs-2 firstname">{{ i.first_name }}</div>
                 <div class="col-xs-2 lastname">{{ i.last_name }}</div>
                 <div class="col-xs-3 username">{{ i.username }} </div>
@@ -190,6 +193,7 @@
                 <div>All students have validated their accounts.</div>
             {% endfor %}
         </div>
+        <div class="col-xs-12"><h1>&nbsp;</h1></div>
     </div>
 </div>
 

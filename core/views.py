@@ -98,6 +98,11 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
 
 """ GGVUser Management """
+"""TODO!!
+create a view to update registration information. For example, to modify the username email, or change the course, etc.
+"""
+
+
 
 class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
     model = User
@@ -180,6 +185,11 @@ class UpdateGgvUserAccountView(LoginRequiredMixin, GGVUserViewRestrictedAccessMi
 
     def form_valid(self, form):
         self.object = form.save()
+
+        # Need to force lower case emails.
+        self.object.username = self.object.username.lower()
+        self.object.save()
+
         username = form.cleaned_data['username']
         language = form.cleaned_data['language']
         course = form.cleaned_data['course']

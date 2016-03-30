@@ -163,11 +163,12 @@ class GGVUserInline(admin.TabularInline):
 
 
 class UserAdmin(UserAdmin):
+    list_display = ('id', 'username', 'is_active', 'is_staff', 'last_login', 'date_joined')
     inlines = [GGVUserInline, ]
 
 
 class GGVUserAdmin(admin.ModelAdmin):
-    list_display = ('user', 'language_pref', 'clean_logout', )
+    list_display = ('id', 'user', 'language_pref', 'clean_logout', )
     list_editable = ('user', 'language_pref', 'clean_logout', )
 
 

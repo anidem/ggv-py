@@ -125,10 +125,18 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
 
     def form_valid(self, form):
         self.object = form.save()
+
+        # Need to force lower case emails.
+        self.object.username = self.object.username.lower()
+        self.object.save()
+
+        # Gather GGVUser object related data.
         language = form.cleaned_data['language']
         course = form.cleaned_data['course']
         perms = form.cleaned_data['perms']
         prog_id = form.cleaned_data['program_id']
+
+        # Make a GGVUser object linked to the User account then assign permissions to the course they are being added to.
         ggvuser = GGVUser(user=self.object, language_pref=language, program_id=prog_id)
         ggvuser.save()
         assign_perm(perms, self.object, course)

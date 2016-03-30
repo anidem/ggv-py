@@ -106,13 +106,17 @@ def logout_clean(request):
 
 def auth_allowed(response, details, *args, **kwargs):
     """
-    Return the ggv user object if authenticated email matches a user email.
+    Return the user object if authenticated email matches a user email.
     Implies that allowed users must be created in system beforehand, with an
     email that matches the gmail account used to authenticate.
     """
     try:
-        ggv_user = User.objects.get(username=details.get('email'))
+        registration_email_str = details.get('email')
+
+        # Use case insensitive lookup on the email just to be sure.       
+        ggv_user = User.objects.get(username__iexact=registration_email_str)
         return ggv_user
+
     except:
         return None
 

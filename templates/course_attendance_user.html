@@ -57,14 +57,13 @@
 
     {% for k, v in attendance_sheet.items %}
     <table id="{{forloop.counter}}_month" class="table table-bordered table-hover table-condensed">
+        <tr><h4 class="text-center">{{ k.1 }}/{{ k.0 }}</h4></tr>
         <tr>
-            <td>{{ k.1 }}/{{ k.0 }}</td>
-            {% for a in v %}<td>{% if forloop.counter < 10 %}&nbsp;{% endif %} {{ forloop.counter }}</td>{% endfor %}  
+            {% for a in v.0 %}<td>{{ a.0|slice:"2" }}<br>{{ a.1 }}</td>{% endfor %}  
         </tr>
     
         <tr>
-            <td></td>
-            {% for a in v %}                
+            {% for a in v.1 %}                
                 <td class="text-center" title="{{a.get_code_display}}">
                     <a id="{{k|slugify}}_{{forloop.counter}}" class="btn btn-xs" href="#{{k|slugify}}_{{forloop.counter}}_form_panel" role="button" data-toggle="collapse">
                         <i id="{{k|slugify}}_{{forloop.counter}}_label" class="fa fa-circle attlabel-{{a.code}}"></i>

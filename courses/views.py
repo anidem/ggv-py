@@ -346,7 +346,7 @@ class CourseAttendanceMonthView(LoginRequiredMixin, CourseContextMixin, AccessRe
             user_attendance = student.ggvuser.attendance_by_month(self.date_range.year, self.date_range.month)
             listing.append({ student : user_attendance })
 
-        days_in_month = range(1, calendar.monthrange(self.date_range.year, self.date_range.month)[1]+1)
+        # deprecated ==> days_in_month = range(1, calendar.monthrange(self.date_range.year, self.date_range.month)[1]+1)
 
         mon = calendar.Calendar()
         day_list = []
@@ -357,7 +357,7 @@ class CourseAttendanceMonthView(LoginRequiredMixin, CourseContextMixin, AccessRe
         context['attendance_sheet'] = listing
         context['month_year'] = self.date_range.strftime('%B %Y')
         context['date_display'] = self.date_range
-        context['days'] = day_list # days_in_month
+        context['days'] = day_list
         return context
 
 
@@ -379,6 +379,7 @@ class CourseAttendanceUserView(LoginRequiredMixin, CourseContextMixin, AccessReq
     def get_context_data(self, **kwargs):
         context = super(CourseAttendanceUserView, self).get_context_data(**kwargs)  
         context['attendance_sheet'] = self.student.ggvuser.attendance_full_listing()
+        print context['attendance_sheet']
         context['student'] = self.student
         
         return context

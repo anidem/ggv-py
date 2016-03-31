@@ -83,7 +83,13 @@ class GGVUser(models.Model):
             d = i.datestamp.astimezone(tz).date() # .strftime('%b %Y')  # Creating a printable key for template rendering
             key = (d.year, d.month)
             if key not in attendance_list:
-                attendance_list[key] = self.attendance_by_month(i.year_tz(), i.month_tz())
+                mon = calendar.Calendar()
+                day_list = []
+                for day in mon.itermonthdays2(d.year, d.month):
+                    if day[0] > 0:
+                        day_list.append( (calendar.day_abbr[day[1]], day[0]) )
+
+                attendance_list[key] = (day_list, self.attendance_by_month(i.year_tz(), i.month_tz()))
 
         return attendance_list
 

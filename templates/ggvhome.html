@@ -54,7 +54,8 @@
 	{% endfor %}
 
 	{% if is_manager or user.is_staff %}
-		<div class="col-md-6" style="border-top: 1px solid black">Totals </div>
+		<div class="col-md-4" style="border-top: 1px solid black"> (Using {{ course_list.4 }} / {{ org.user_quota }} licenses)</div>
+		<div class="col-md-2 text-right" style="border-top: 1px solid black">Totals:</div>
 		<div class="col-md-2" style="border-top: 1px solid black">{{ course_list.1 }} <i class="fa fa-asterisk text-danger"></i></div>
 		<div class="col-md-2" style="border-top: 1px solid black">{{ course_list.2 }}</div>
 		<div class="col-md-2" style="border-top: 1px solid black">{{ course_list.3 }} <i class="fa fa-asterisk text-danger"></i></div>

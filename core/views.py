@@ -86,8 +86,10 @@ class HomeView(LoginRequiredMixin, TemplateView):
                         num_nologin                
                     )
                     course_rows.append(crs_data)
+            
+            total_quota_used = total_active + total_nologin
 
-            organizations[o] = (course_rows, total_active, total_deactive, total_nologin)
+            organizations[o] = (course_rows, total_active, total_deactive, total_nologin, total_quota_used)
         
         context['courses'] = organizations
         # context['total_active'] = total_active

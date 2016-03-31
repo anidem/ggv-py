@@ -4,7 +4,7 @@
 
 {% block page_header %}
 {% if is_manager or user.is_staff %} 
-	<div class="col-md-12 text-right"><h6> <i class="fa fa-asterisk text-danger"></i> counts against user quota</h6></div>
+	<div class="col-md-12 text-right"><h6> <i class="fa fa-asterisk text-danger"></i> counts against user license quota</h6></div>
 {% endif %}
 <div class="col-md-12 text-center">
     <h2><i class="fa fa-map-marker"></i> GGV Site Page</h2>
@@ -54,11 +54,11 @@
 	{% endfor %}
 
 	{% if is_manager or user.is_staff %}
-		<div class="col-md-4" style="border-top: 1px solid black"> (Using {{ course_list.4 }} / {{ org.user_quota }} licenses)</div>
+		<div class="col-md-4 text-danger" style="border-top: 1px solid black"> (Using {{ course_list.4 }} / {{ org.user_quota }} licenses)</div>
 		<div class="col-md-2 text-right" style="border-top: 1px solid black">Totals:</div>
-		<div class="col-md-2" style="border-top: 1px solid black">{{ course_list.1 }} <i class="fa fa-asterisk text-danger"></i></div>
+		<div class="col-md-2" style="border-top: 1px solid black"><i class="fa fa-asterisk text-danger"></i> {{ course_list.1 }} </div>
 		<div class="col-md-2" style="border-top: 1px solid black">{{ course_list.2 }}</div>
-		<div class="col-md-2" style="border-top: 1px solid black">{{ course_list.3 }} <i class="fa fa-asterisk text-danger"></i></div>
+		<div class="col-md-2" style="border-top: 1px solid black"><i class="fa fa-asterisk text-danger"></i>{{ course_list.3 }}</div>
 		<div class="col-md-12" class="border"><p></p></div>
 	{% endif %}	
 		

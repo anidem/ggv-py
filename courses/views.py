@@ -379,7 +379,6 @@ class CourseAttendanceUserView(LoginRequiredMixin, CourseContextMixin, AccessReq
     def get_context_data(self, **kwargs):
         context = super(CourseAttendanceUserView, self).get_context_data(**kwargs)  
         context['attendance_sheet'] = self.student.ggvuser.attendance_full_listing()
-        print context['attendance_sheet']
         context['student'] = self.student
         
         return context

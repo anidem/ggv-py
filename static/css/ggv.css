@@ -354,15 +354,15 @@ form ul {
   padding: 4px 4px;
 }
 
-.table-like-header__item .siteid { width: 8%; }
-.table-like-header__item .firstname { width: 10%; }
-.table-like-header__item .lastname { width: 10%; }
-.table-like-header__item .day { width: 20px; border-right: 1px solid #cccccc; text-align: center}
+.table-like-header__item .siteid { width: 6%; }
+.table-like-header__item .firstname { width: 9%; }
+.table-like-header__item .lastname { width: 9%; }
+.table-like-header__item .day { width: 23px; border-right: 1px solid #cccccc; text-align: left; font-size: .95em}
 
-.table-like__item .siteid { width: 8%; }
-.table-like__item .firstname { width: 10%; }
-.table-like__item .lastname { width: 10%; }
-.table-like__item .day { width: 20px; border-right: 1px solid #cccccc;}
+.table-like__item .siteid { width: 6%; }
+.table-like__item .firstname { width: 9%; }
+.table-like__item .lastname { width: 9%; }
+.table-like__item .day { width: 23px; border-right: 1px solid #cccccc;}
 
 .attlabel-  { color: white; }
 .attlabel-0 { color: green; }

@@ -347,11 +347,17 @@ class CourseAttendanceMonthView(LoginRequiredMixin, CourseContextMixin, AccessRe
             listing.append({ student : user_attendance })
 
         days_in_month = range(1, calendar.monthrange(self.date_range.year, self.date_range.month)[1]+1)
-            
+
+        mon = calendar.Calendar()
+        day_list = []
+        for i in mon.itermonthdays2(self.date_range.year, self.date_range.month):
+            if i[0] > 0:
+                day_list.append( (calendar.day_abbr[i[1]], i[0]) )
+
         context['attendance_sheet'] = listing
         context['month_year'] = self.date_range.strftime('%B %Y')
         context['date_display'] = self.date_range
-        context['days'] = days_in_month
+        context['days'] = day_list # days_in_month
         return context
 
 

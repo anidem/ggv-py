@@ -60,7 +60,7 @@
                 <div class="firstname"><button class="btn btn-block btn-sm btn-primary" data-sort-value="firstname"><i class="fa fa-sort"></i> first</button></div>
                 <div class="lastname"><button class="btn btn-block btn-sm" data-sort-value="lastname"><i class="fa fa-sort"></i> last</button></div>
                 {% for i in days %}
-                    <div class="day"><small>{{ forloop.counter }}</small></div>
+                    <div class="day"><small>{{ i.0|slice:":2" }}<br>{{ i.1 }}</small></div>
                 {% endfor %}
             </li>
         </ul>

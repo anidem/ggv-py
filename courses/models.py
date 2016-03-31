@@ -19,6 +19,7 @@ class GGVOrganization(models.Model):
     """
     An organization is a top level container for courses.
     """
+    license_id = models.CharField(max_length=48, null=True)
     title = models.CharField(max_length=256)
     user_quota = models.IntegerField(default=0)
     quota_start_date = models.DateField()

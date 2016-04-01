@@ -249,7 +249,7 @@ def temp_update_bookmark_course(user_id=None, old_course_id=None, new_course_id=
                 i.course_context = c
                 i.save()
                 upd_cnt += 1
-            except Exeption as e:
+            except Exception as e:
                 print e
                 pass
 

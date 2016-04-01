@@ -20,8 +20,9 @@ from django.conf import settings
 
 from social.exceptions import SocialAuthBaseException, AuthException, AuthForbidden
 
+from courses.models import Course
+
 from .models import ActivityLog, AttendanceTracker
-# from questions.models import QuestionSet, UserWorksheetStatus
 
 tz = timezone(settings.TIME_ZONE)
 
@@ -236,4 +237,20 @@ def temp_attendance_report(user=None):
         listing[i.day_tz()-1] = i
 
     return listing
+
+def temp_update_bookmark_course(user_id=None, old_course_id=None, new_course_id=None):
+    u = User.objects.get(pk=user_id)
+    c = Course.objects.get(pk=new_course_id)
+    bks = u.bookmarker.all()
+    upd_cnt = 0
+    for i in bks:
+        if i.course_context.id == old_course_id:
+            i.course_context = c
+            i.save()
+            upd_cnt += 1
+
+    print upd_cnt, 'bookmarks updated to course', c.id, c
+
+
+
 

@@ -245,9 +245,13 @@ def temp_update_bookmark_course(user_id=None, old_course_id=None, new_course_id=
     upd_cnt = 0
     for i in bks:
         if i.course_context.id == old_course_id:
-            i.course_context = c
-            i.save()
-            upd_cnt += 1
+            try:
+                i.course_context = c
+                i.save()
+                upd_cnt += 1
+            except Exeption as e:
+                print e
+                pass
 
     print upd_cnt, 'bookmarks updated to course', c.id, c
 

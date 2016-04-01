@@ -243,17 +243,20 @@ def temp_update_bookmark_course(user_id=None, old_course_id=None, new_course_id=
     c = Course.objects.get(pk=new_course_id)
     bks = u.bookmarker.all()
     upd_cnt = 0
+    del_cnt = 0
     for i in bks:
         if i.course_context.id == old_course_id:
             try:
                 i.course_context = c
                 i.save()
                 upd_cnt += 1
-            except Exception as e:
+            except IntegrityError as e:
                 print e
-                pass
+                i.delete()
+                del_cnt += 1
 
-    print upd_cnt, 'bookmarks updated to course', c.id, c
+
+    print upd_cnt, 'bookmarks updated to course', c.id, c, del_cnt, 'deleted'
 
 
 

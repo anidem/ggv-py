@@ -1,4 +1,5 @@
 # core/emails.py
+
 from django.views.generic import FormView, TemplateView, View
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -56,7 +57,8 @@ class SendEmailToInstructor(LoginRequiredMixin, CourseContextMixin, FormView):
                 course=self.course,
                 sender=user_sender)
 
-            html_message += "<h3>{0}</h3>".format(form.cleaned_data.get('message'))
+            message_text = form.cleaned_data.get('message').encode('utf-8')
+            html_message += "<h3>{0}</h3>".format(message_text)
 
             html_message += "<p><i>You are receiving this email as a courtesy of ggvinteractive.com. You currently have your personal settings set to: <b>Choose to receive email messages from the GGV system.</b>. Please contact your ggvinteractive administrator or ggv representative for information about these emails or turning off email messages from ggv.</i></p>"
 
@@ -128,7 +130,8 @@ class SendEmailWorksheetQuestionToInstructorsView(LoginRequiredMixin, CourseCont
 
             html_message += "<p>Question: <a href=\"{q_url}\">{q_url}</a></p>".format(q_url=question_url)
 
-            html_message += "<h3>{0}</h3>".format(form.cleaned_data.get('message'))
+            message_text = form.cleaned_data.get('message').encode('utf-8')
+            html_message += "<h3>{0}</h3>".format(message_text)
 
             html_message += "<p><i>You are receiving this email as a courtesy of ggvinteractive.com. You currently have your personal settings set to: <b>Choose to receive email messages from the GGV system.</b>. Please contact your ggvinteractive administrator or ggv representative for information about these emails or turning off email messages from ggv.</i></p>"
 
@@ -192,9 +195,11 @@ class SendEmailWorksheetErrorToStaffView(LoginRequiredMixin, CourseContextMixin,
 
         html_message += "<p>View question: <a href=\"{q_url}\">{q_url}</a></p>".format(q_url=question_url)
 
+        message_text = form.cleaned_data.get('message').encode('utf-8')
+
         html_message += "<p>{sender}'s message:</p><h3>{msg}</h3>".format(
             sender=self.request.user.get_full_name(),
-            msg=form.cleaned_data.get('message'),
+            msg=message_text,
             )
 
         email = EmailMultiAlternatives(
@@ -238,7 +243,8 @@ class SendEmailToStaff(LoginRequiredMixin, FormView):
 
         html_message = "<p>Hi GGV Staff, {sender} has sent you the following message:</p> ".format(sender=user_sender.get_full_name())
 
-        html_message += "<h3>{0}</h3>".format(form.cleaned_data.get('message'))
+        message_text = form.cleaned_data.get('message').encode('utf-8')
+        html_message += "<h3>{0}</h3>".format(message_text)
 
         html_message += '<p>User Info:</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)
 

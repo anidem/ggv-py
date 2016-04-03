@@ -239,6 +239,9 @@ class QuestionSet(AbstractActivity):
         
         return text
 
+    def natural_key(self):
+        return (self.lesson.title, self.title)
+
     def get_absolute_url(self, **kwargs):
         return reverse('worksheet_launch', args=[kwargs['crs_slug'], self.id])
 
@@ -328,6 +331,9 @@ class TextQuestion(AbstractQuestion):
     def get_edit_url(self, course):
         return reverse('text_question_update', args=[course.slug, self.id])
 
+    def natural_key(self):
+        return (self.question_set.title, self.display_text, self.display_order)
+
     def get_absolute_url(self):
         return reverse('text_question', args=[self.id])
 
@@ -399,6 +405,9 @@ class OptionQuestion(AbstractQuestion):
 
     def get_edit_url(self, course):
         return reverse('option_question_update', args=[course.slug, self.id])
+
+    def natural_key(self):
+        return (self.question_set.title, self.display_text, self.display_order)
 
     def get_absolute_url(self):
         return reverse('option_question', args=[self.id])

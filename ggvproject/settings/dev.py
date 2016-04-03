@@ -42,6 +42,9 @@ MEDIA_URL = 'http://localhost/media/'
 STACKS_ROOT = '/Library/WebServer/Documents/stacks'
 STACKS_DATA_DIR = 'data'
 
+ARCHIVE_DATA_DIR = '/Users/rmedina/pythonweb/archives'
+
+
 PDF_ROOT = '/Library/WebServer/Documents/media/pdf'
 
 # sendfile.backends.xsendfile

@@ -21,10 +21,9 @@ from .models import Bookmark, GGVUser, SiteMessage, Notification, SitePage, Atte
 from .forms import BookmarkForm, GgvUserAccountCreateForm, GgvUserSettingsForm, GgvUserAccountUpdateForm, GgvUserStudentSettingsForm, GgvEmailQuestionToInstructorsForm, AttendanceTrackerUpdateForm, AttendanceTrackerCreateForm
 from .mixins import CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from .signals import *
+from archiver import serialize_user_data
 
 tz = timezone(settings.TIME_ZONE)
-
-
 
 class IndexView(TemplateView):
     template_name = 'index.html'
@@ -320,6 +319,37 @@ class GgvUsersActivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMi
                 u.is_active = True
                 u.save()
         except:
+            pass  # silently fail
+
+        return redirect('manage_course', crs_slug=urlstr)
+
+
+class GgvUserArchiveThenDeleteView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):
+    def post(self, request, *args, **kwargs):
+        try:      
+            urlstr = request.GET['q']
+            user_id = request.POST.getlist('user_id')
+            u = User.objects.get(pk=user_id)
+            serialize_user_data(u.id, settings.ARCHIVE_DATA_DIR)
+            # u.delete()
+
+        except:
+            pass  # silently fail
+
+        return redirect('manage_course', crs_slug=urlstr)
+
+
+class GgvUserDeleteUnusedAccount(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):
+    def post(self, request, *args, **kwargs):
+        try:      
+            urlstr = request.GET['q']
+            unaccessed_list = request.POST.getlist('unaccessed_list')
+            for i in unaccessed_list:
+                u = User.objects.get(pk=i)
+                if u.last_login.date() == u.date_joined.date():
+                    u.delete()
+                               
+        except Exception as e:
             pass  # silently fail
 
         return redirect('manage_course', crs_slug=urlstr)

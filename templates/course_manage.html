@@ -71,7 +71,7 @@
             <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
             <div class="col-xs-3"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
             <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
-            <div class="col-xs-2">  <button id="deactivate-btn" class="btn btn-sm btn-danger"><i class="fa fa-check-square-o"></i>{% if is_manager %} deactivate {% else %} request deactivation {% endif %}</button> </div>
+            <div class="col-xs-2">  <button id="deactivate-btn" class="btn btn-block btn-sm btn-danger"><i class="fa fa-check-square-o"></i>{% if is_manager %} deactivate {% else %} request deactivation {% endif %}</button> </div>
         </div>  
         
         <form id="deactivate-form" method="post" action="{% if is_manager %} {% url 'deactivate_users' %}?q={{object.slug}} {% else %} {% url 'email_manager_deactivate' object.slug %}?q={{object.slug}} {% endif %}">{% csrf_token %}
@@ -83,7 +83,7 @@
                         <div class="col-xs-2 firstname">{{ i.0.first_name }}</div>
                         <div class="col-xs-2 lastname">{{ i.0.last_name }}</div>
                         <div class="col-xs-3 username">{{ i.0.username }}</div>
-                        <div class="col-xs-2 login">{{ i.0.last_login|date:"M d, g:i A" }}</div>
+                        <div class="col-xs-2 login">{{ i.0.last_login|date:"Y - M d, g:i A" }}</div>
                     </a>
                     <div class="col-xs-2">
                         {% if is_manager or is_instructor %}
@@ -129,10 +129,9 @@
                     <div class="col-xs-2 firstname">{{ i.0.first_name }}</div>
                     <div class="col-xs-2 lastname">{{ i.0.last_name }}</div>
                     <div class="col-xs-3 username">{{ i.0.username }}</div>
-                    <div class="col-xs-2 login">{{ i.0.last_login|date:"M d, g:i A" }}</div>
+                    <div class="col-xs-2 login">{{ i.0.last_login|date:"Y - M d" }}</div>
                     </a>
                     <div class="col-xs-2"><input type="checkbox" name="activate_list" value="{{ i.0.id }}"></div>
-                
                 </div>
                 {% empty %}
                     
@@ -171,28 +170,30 @@
                 <button class="btn btn-block btn-sm" data-sort-by="date_created" data-order="asc"> <i class="fa fa-sort"></i> date created</button>
             </div>
 
-            <div class="col-xs-2"><button class="btn btn-sm" data-sort-by="original-order"><i class="fa fa-refresh"></i></button></div>
+            <div class="col-xs-2">{% if is_manager %}<button id="remove-unaccessed-btn" class="btn btn-block btn-sm btn-danger"><i class="fa fa-check-square-o"></i> remove access</button>{% endif %}</div>
 
         </div>
 
+        
+        <form id="remove-unaccessed-form" method="post" action="{% url 'delete_unused_user' %}?q={{object.slug}}">{% csrf_token %}
+            <div id="container_1" class="col-xs-12">
+                {% for i in unvalidated %}
 
-        <div id="container_1" class="col-xs-12 bg-warning">
-            {% for i in unvalidated %}
 
+                <div class="item hoverpad col-xs-12" data-created="{{ i.last_login|date:'U' }}">
+                    <div class="col-xs-1 site_id">{{ i.ggvuser.program_id }}<a href=""></a></div>
+                    <div class="col-xs-2 firstname">{{ i.first_name }}</div>
+                    <div class="col-xs-2 lastname">{{ i.last_name }}</div>
+                    <div class="col-xs-3 username">{{ i.username }} </div>
+                    <div class="col-xs-2 date_created">{{ i.last_login|date:"Y - M d" }}</div>
+                    <div class="col-xs-2">{% if is_manager %}<input type="checkbox" name="unaccessed_list" value="{{ i.id }}">{% endif %}</div>
+                </div>
 
-            <div class="item hoverpad col-xs-12" data-created="{{ i.last_login|date:'U' }}">
-                <div class="col-xs-1 site_id">{{ i.ggvuser.program_id }}<a href=""></a></div>
-                <div class="col-xs-2 firstname">{{ i.first_name }}</div>
-                <div class="col-xs-2 lastname">{{ i.last_name }}</div>
-                <div class="col-xs-3 username">{{ i.username }} </div>
-                <div class="col-xs-2 date_created">{{ i.last_login|date:"M d, g:i A" }}</div>
-                <div class="col-xs-2"></div>
+                {% empty %}
+                    <div class="panel-body">All students have validated their accounts.</div>
+                {% endfor %}
             </div>
-
-            {% empty %}
-                <div>All students have validated their accounts.</div>
-            {% endfor %}
-        </div>
+        </form>
         <div class="col-xs-12"><h1>&nbsp;</h1></div>
     </div>
 </div>
@@ -347,6 +348,12 @@
                 if ($('#container_00 input:checked').length)
                     $('#activate-form').submit();
             });
+
+            $('#remove-unaccessed-btn').on('click', function () {
+                if ($('#container_1 input:checked').length)
+                    $('#remove-unaccessed-form').submit();
+            });
+
 
             $(document).ready(function() {
 

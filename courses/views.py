@@ -352,7 +352,11 @@ class CourseAttendanceMonthView(LoginRequiredMixin, CourseContextMixin, AccessRe
                 oldest_login = student.date_joined.date()
 
         curr = (datetime.now().date().year, datetime.now().date().month)
-        stop = (oldest_login.year, oldest_login.month)
+        
+        if oldest_login.month == 1:
+            stop = (oldest_login.year-1, 12)
+        else: 
+            stop = (oldest_login.year, oldest_login.month-1)
 
         while curr != stop:
             listings_by_month = []

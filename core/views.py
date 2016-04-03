@@ -330,7 +330,7 @@ class GgvUserArchiveThenDeleteView(CsrfExemptMixin, LoginRequiredMixin, JSONResp
             urlstr = request.GET['q']
             user_id = request.POST.getlist('user_id')
             u = User.objects.get(pk=user_id)
-            serialize_user_data(u.id, settings.ARCHIVE_DATA_DIR)
+            # serialize_user_data(u.id, settings.ARCHIVE_DATA_DIR)
             # u.delete()
 
         except:

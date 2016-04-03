@@ -392,7 +392,6 @@ class CourseAttendanceMonthView(LoginRequiredMixin, CourseContextMixin, AccessRe
         context['month_year'] = self.date_range.strftime('%B %Y')
         context['date_display'] = self.date_range
         context['months'] = month_list
-        context['days'] = day_list
         return context
 
 

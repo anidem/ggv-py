@@ -340,24 +340,58 @@ class CourseAttendanceMonthView(LoginRequiredMixin, CourseContextMixin, AccessRe
 
     def get_context_data(self, **kwargs):
         context = super(CourseAttendanceMonthView, self).get_context_data(**kwargs)
-        course = self.get_object()
-        listing = []
+        course = self.get_object()       
+        months = []
+        month_list = []
 
-        for student in course.student_list():
-            user_attendance = student.ggvuser.attendance_by_month(self.date_range.year, self.date_range.month)
-            listing.append({ student : user_attendance })
+        students = course.student_list()
+
+        oldest_login = datetime.now().date()
+        for student in students:
+            if oldest_login > student.date_joined.date():
+                oldest_login = student.date_joined.date()
+
+        curr = (datetime.now().date().year, datetime.now().date().month)
+        stop = (oldest_login.year, oldest_login.month)
+
+        while curr != stop:
+            listings_by_month = []
+            month_list.append(curr)
+
+            # date object for current year and month
+            listings_by_month.append(datetime(curr[0], curr[1], 1))
+
+            # calendar information for current year and month
+            mon = calendar.Calendar()
+            day_list = []
+            for i in mon.itermonthdays2(curr[0], curr[1]):
+                if i[0] > 0:
+                    day_list.append( (calendar.day_abbr[i[1]], i[0]) )
+            listings_by_month.append(day_list)
+
+            # build and attach attendance sheet for current year and month
+            for student in students:
+                user_attendance = student.ggvuser.attendance_by_month(curr[0], curr[1])
+                listings_by_month.append({ student : user_attendance })
+
+            months.append(listings_by_month)
+
+            if (curr[1]-1) % 12 == 0:
+                curr = (curr[0]-1, 12)
+            else:
+                curr = (curr[0],curr[1]-1)
+
+
+
 
         # deprecated ==> days_in_month = range(1, calendar.monthrange(self.date_range.year, self.date_range.month)[1]+1)
 
-        mon = calendar.Calendar()
-        day_list = []
-        for i in mon.itermonthdays2(self.date_range.year, self.date_range.month):
-            if i[0] > 0:
-                day_list.append( (calendar.day_abbr[i[1]], i[0]) )
 
-        context['attendance_sheet'] = listing
+
+        context['attendance_sheet'] = months
         context['month_year'] = self.date_range.strftime('%B %Y')
         context['date_display'] = self.date_range
+        context['months'] = month_list
         context['days'] = day_list
         return context
 

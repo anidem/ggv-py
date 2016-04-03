@@ -170,7 +170,7 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^ggvadmin/filebrowser/', include(site.urls)),
     url(r'^grappelli/', include('grappelli.urls')),  # grappelli URLS
-    url(r'^ggvadmin',  include(admin.site.urls)),  # admin site
+    url(r'^ggvadmin',  include(admin.site.urls), name='staff_admin'),  # admin site
 
 
     url(r'^faq/$', FaqView.as_view(), name='faq'),

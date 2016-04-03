@@ -127,6 +127,7 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
                 pass  # instructor[i] has no activity on record. Move on, nothing to see here.
 
         context['is_manager'] = self.request.user.has_perm('manage', course)
+        context['managers'] = course.manager_list()
         context['instructors'] = instructors
         context['students'] = students
         context['deactivated'] = deactivated_students

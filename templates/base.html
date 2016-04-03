@@ -59,6 +59,7 @@
                     </li>
 
                     {% if user.is_authenticated %}
+
                         {% if request.session.user_courses|length > 1 %}
                         <li>
                             <a class="navbar-brand" href="{% url 'ggvhome' %}">
@@ -86,6 +87,7 @@
                     {% block page_crumb %} {% endblock page_crumb %}
                 </ul>
 
+            <!-- Header RIGHT-->
                 <ul class="nav navbar-nav navbar-right">
                     {% block local_nav %} {% endblock local_nav %}
 
@@ -153,14 +155,25 @@
                         <ul class="dropdown-menu section_drop scrollable-menu">
 
                             {% if course %}
-                            <li class="disabled"><a href="#"><i class="{{role_icon}} text-primary"></i> Current role: {{ role }}</a></li>
-                            <li role="separator" class="divider"></li>
-                            <li>
-                                <a class="" href="{% url 'edit_user' course.slug user.id %}">
-                                    <i class="fa fa-gear"></i> Preferences
-                                </a>
-                            </li>
-                            <li role="separator" class="divider"></li>
+                                <li class="disabled"><a href="#"><i class="{{role_icon}} text-primary"></i> Current role: {{ role }}</a></li>
+                                
+                                {% if user.is_staff %}
+                                    <li role="separator" class="divider"></li>
+                                    <li>
+                                        <a class="" href="/ggvadmin" target="_blank">
+                                            <i class="fa fa-lock"></i> Staff Admin
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                
+                                <li role="separator" class="divider"></li>
+                                <li>
+                                    <a class="" href="{% url 'edit_user' course.slug user.id %}">
+                                        <i class="fa fa-gear"></i> Preferences
+                                    </a>
+                                </li>
+
+                                <li role="separator" class="divider"></li>
                             {% endif %}
                             <li>
                                 {% if user.ggvuser.clean_logout %}
@@ -172,7 +185,7 @@
 
                         </ul>
                         {% else %}
-                        <a href="/login/google-oauth2/">Signin</a>
+                            <a href="/login/google-oauth2/">Signin</a>
                         {% endif %}
                     </li>
                     <!-- end login/logout / settings dropdown menu -->

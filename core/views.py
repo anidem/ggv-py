@@ -36,7 +36,6 @@ class IndexView(TemplateView):
 
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'ggvhome.html'
-    orgs = []
     courses = None
 
     def get(self, request, *args, **kwargs):
@@ -46,22 +45,25 @@ class HomeView(LoginRequiredMixin, TemplateView):
             if len(self.courses) == 1:
                 return redirect('course', crs_slug=self.courses[0])
 
-            for i in self.courses:
-                crs = Course.objects.get(slug=i)
-                if crs.ggv_organization not in self.orgs:
-                    self.orgs.append(crs.ggv_organization)
         except:
-            courses = None
+            pass
 
         return super(HomeView, self).get(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super(HomeView, self).get_context_data(**kwargs)
         context['courses'] = []
+        # build organization list from user's course list
+
+        orgs = []
+        for i in self.courses:
+            crs = Course.objects.get(slug=i)
+            if crs.ggv_organization not in orgs:
+                orgs.append(crs.ggv_organization)
 
         organizations = {}
         
-        for o in self.orgs:      
+        for o in orgs:      
             total_active = 0
             total_deactive = 0
             total_nologin = 0
@@ -69,7 +71,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
             for course in o.organization_courses.all():
 
-                if self.request.user.has_perm('courses.instructor', course) or self.request.user.has_perm('courses.manage', course) or self.request.user.is_staff :
+                if  self.request.user.has_perm('courses.manage', course) or self.request.user.is_staff :
                     num_active = len(course.student_list())
                     num_deactive = len(course.deactivated_list())
                     num_nologin = len(course.unvalidated_list())
@@ -85,16 +87,16 @@ class HomeView(LoginRequiredMixin, TemplateView):
                         num_nologin                
                     )
                     course_rows.append(crs_data)
+                
+                elif self.request.user.has_perm('courses.instructor', course):
+                    crs_data = (course,)
+                    course_rows.append(crs_data)                    
             
             total_quota_used = total_active + total_nologin
 
             organizations[o] = (course_rows, total_active, total_deactive, total_nologin, total_quota_used)
         
         context['courses'] = organizations
-        # context['total_active'] = total_active
-        # context['total_deactive'] = total_deactive
-        # context['total_nologin'] = total_nologin
-
         return context
 
 

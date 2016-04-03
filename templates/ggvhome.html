@@ -31,30 +31,36 @@
 	<div class="col-md-2"><i class="fa fa-users icon-gray"></i> Unaccessed Accounts </div>
 	<div class="col-md-12" class="border"><p></p></div>
 {% endif %}
-{% for org, course_list in courses.items %}
-	<div class="col-md-12"><h2>{{ org.title }}</h2></div>
+{% for org_key, course_list in courses.items %}
+	<div class="col-md-12"><h2>{{ org_key.title }}</h2></div>
 	{% for i in course_list.0 %}
-			<div class="col-md-6 hoverpad">
-				<a href="{{ i.0.get_absolute_url }}">
-					<p class=""><i class="fa fa-home"></i> {{ i.0 }}</p>
-				</a>	
+		<div class="col-md-12 hoverpad">
+			<div class="col-md-6">
+				<div class="row">
+					<div class="col-md-8"><i class="fa fa-home"></i> <a href="{{ i.0.get_absolute_url }}"> {{ i.0 }}</a></div>
+					<div class="col-md-4 text-right">
+					[ <a href="{% url 'manage_course' i.0.slug %}" class="small text-info">roster</a> ]
+					[ <a href="{% url 'course_attendance_current' i.0.slug %}" class="small">attendance</a> ]
+					</div>
+				</div>	
 			</div>
 			
 			{% if is_manager or user.is_staff %}
 			
-				<div class="col-md-2 hoverpad" title="active users"><p> <i class="fa fa-users icon-green"></i> {{ i.1 }}</p></div>
-				<div class="col-md-2 hoverpad" title="deactivated users"><p><i class="fa fa-users icon-orange"></i> {{ i.2 }}</p></div>
-				<div class="col-md-2 hoverpad" title="unaccessed accounts"><p><i class="fa fa-users icon-gray"></i> {{ i.3 }}</p></div>
+				<div class="col-md-2" title="active users"><p> <i class="fa fa-users icon-green"></i> {{ i.1 }}</p></div>
+				<div class="col-md-2" title="deactivated users"><p><i class="fa fa-users icon-orange"></i> {{ i.2 }}</p></div>
+				<div class="col-md-2" title="unaccessed accounts"><p><i class="fa fa-users icon-gray"></i> {{ i.3 }}</p></div>
 			
 			{% else %}
 			
 				<div class="col-md-6"><p>&nbsp;</p></div>
 			
 			{% endif %}
+		</div>
 	{% endfor %}
 
 	{% if is_manager or user.is_staff %}
-		<div class="col-md-4 text-danger" style="border-top: 1px solid black"> (Using {{ course_list.4 }} / {{ org.user_quota }} licenses)</div>
+		<div class="col-md-4 text-danger" style="border-top: 1px solid black"> (Using {{ course_list.4 }} / {{ org_key.user_quota }} licenses)</div>
 		<div class="col-md-2 text-right" style="border-top: 1px solid black">Totals:</div>
 		<div class="col-md-2" style="border-top: 1px solid black"><i class="fa fa-asterisk text-danger"></i> {{ course_list.1 }} </div>
 		<div class="col-md-2" style="border-top: 1px solid black">{{ course_list.2 }}</div>

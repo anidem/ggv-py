@@ -139,7 +139,18 @@ OptionFormset = inlineformset_factory(
 
 
 class TextQuestionUpdateForm(ModelForm):
-
+    
+    def save(self):
+        super(TextQuestionUpdateForm, self).save()
+        try:
+            pdfroot = settings.MEDIA_ROOT + '/'
+            opts = pdfroot + self.instance.display_pdf.name + ' --dest-dir ' + pdfroot + 'pdf/'
+            cmd = 'pdf2htmlEX ' + opts
+            os.system(cmd)
+        except:
+            pass
+        return self.instance
+        
     class Meta:
         model = TextQuestion
         fields = ['question_set', 'display_text', 'response_required', 'display_order', 'correct', 'input_size',

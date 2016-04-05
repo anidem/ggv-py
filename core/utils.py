@@ -238,7 +238,7 @@ def temp_attendance_report(user=None):
 
     return listing
 
-def temp_update_bookmark_course(user_id=None, old_course_id=None, new_course_id=None):
+def update_bookmark_course_context(user_id=None, old_course_id=None, new_course_id=None):
     u = User.objects.get(pk=user_id)
     c = Course.objects.get(pk=new_course_id)
     bks = u.bookmarker.all()

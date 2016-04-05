@@ -217,7 +217,18 @@ class UpdateGgvUserAccountView(LoginRequiredMixin, GGVUserViewRestrictedAccessMi
                 assign_perm(i, self.object, course)
                 remove_perm(i, self.object, self.course)
 
+            # Change course_context for user's bookmarks
+            bks = self.object.bookmarker.all().filter(course_context=self.course)
+            for i in bks:
+                try:
+                    i.course_context = course
+                    i.save()
+                except IntegrityError as e:
+                    i.delete()
+
             self.course = course
+
+
 
         # Change the user's permissions?
         if perms not in curr_permissions:

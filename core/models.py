@@ -132,7 +132,7 @@ class AttendanceTracker(models.Model):
 
     class Meta:
         ordering = ['user', 'datestamp']
-        unique_together = (('user', 'datestr'),)
+        unique_together = (('user', 'datestr'))
 
 
 class ActivityLog(models.Model):
@@ -201,14 +201,21 @@ class ActivityLog(models.Model):
         then create a new attendance tracker object with object.user, object.date, object.datestr, object.code
         """
         try:
-            a = AttendanceTracker( 
-                user=self.user, 
-                datestamp=self.timestamp, 
-                datestr=self.timestamp.astimezone(tz).strftime('%Y-%m-%d'))
-            a.save()
+            today = datetime.now(tz)
+            att = self.user.attendance.filter(datestamp__day=today.day)
+            
+            if not att: # Attempt to create a new attendance record.
+                daily = self.user.activitylog.filter(timestamp__day=today.day)
+                delta = daily[0].timestamp - daily[len(daily)-1].timestamp
+                if delta.seconds > 1800: # 30 mins
+                    a = AttendanceTracker( 
+                        user=self.user, 
+                        datestamp=self.timestamp, 
+                        datestr=self.timestamp.astimezone(tz).strftime('%Y-%m-%d'))
+                    a.save()
         
-        except IntegrityError as e:
-            # Attendance object already created for current day.
+        except:
+            # Attendance object already created for current day. This doesn't appear to be enforced through views.
             pass
 
     class Meta:

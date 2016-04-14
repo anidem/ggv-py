@@ -85,3 +85,22 @@ for sheet in worksheets:
 
 
 
+"""
+from django.contrib.auth.models import User
+from pytz import timezone
+from datetime import datetime
+
+from django.conf import settings
+
+tz = timezone(settings.TIME_ZONE)
+
+today = datetime.now(tz)
+
+u = User.objects.get(pk=397)
+
+daily = u.activitylog.filter(timestamp__day=today.day)
+
+d = daily[0].timestamp - daily[len(daily)-1].timestamp
+
+print d.seconds/60
+"""

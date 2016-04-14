@@ -16,7 +16,7 @@ from notes.models import UserNote
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
-from core.models import ActivityLog, GGVUser, Bookmark, SiteMessage, SitePage
+from core.models import ActivityLog, GGVUser, Bookmark, SiteMessage, SitePage, AttendanceTracker
 
 UserAdmin.list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_staff', 'last_login', 'date_joined')
 UserAdmin.list_editable = ('is_active',)
@@ -156,6 +156,10 @@ class ActivityLogAdmin(admin.ModelAdmin):
     list_display = ('timestamp', 'user', 'action', 'message')
     list_filter = ('timestamp', 'user', 'action')
 
+class AttendanceTrackerAdmin(admin.ModelAdmin):
+    list_display = ('user', 'datestamp', 'datestr', 'code')
+    list_filter = ('user',)
+
 
 class GGVUserInline(admin.TabularInline):
     """ Will be inserted in admin panel for user (at bottom)"""
@@ -188,6 +192,7 @@ admin.site.register(QuestionResponse)
 admin.site.register(ExternalMedia)
 admin.site.register(UserWorksheetStatus)
 admin.site.register(ActivityLog, ActivityLogAdmin)
+admin.site.register(AttendanceTracker, AttendanceTrackerAdmin)
 admin.site.register(GGVUser, GGVUserAdmin)
 admin.site.register(Bookmark)
 admin.site.register(SiteMessage)

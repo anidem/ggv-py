@@ -41,7 +41,6 @@
             {% if is_manager %}
                 <a href="{% url 'edit_user_account' course.slug student_user.id %}">[ edit account ]</a>
             {% endif %}
-            <a class="btn btn-primary btn-xs" href="./?export=xlsx"> [ <i class="fa fa-download"></i> Download this report as an Excel file ]</a>
         </div>
         <!-- <div class="panel-body"></div> -->
         <table class="table">

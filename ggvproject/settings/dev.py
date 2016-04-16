@@ -79,3 +79,4 @@ LOGIN_URL = '/login/google-oauth2/'
 LOGIN_REDIRECT_URL = '/home'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 1800  # 30 min

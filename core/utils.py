@@ -200,6 +200,69 @@ def get_daily_log_times(user=None, course=None, exclusions=[]):
 
     return acts
 
+def elapsed_daily_activity(user=None):
+    # activity = user.activitylog.filter(
+    #     timestamp__year=dateobj.year).filter(
+    #     timestamp__month=dateobj.month).filter(
+    #     timestamp__day=dateobj.day)
+    
+    elapsed = 0
+    activity = user.activitylog.all()
+    log = {} # day: [[a1, a2, ...], elapsed]
+
+    for curr_act in activity:
+        t = curr_act.timestamp_tz()
+        day = t.strftime('%Y-%m-%d')
+        try:
+            log[day][0].append(curr_act)
+            prev_act = log[day][0][ len(log[day][0])-2 ]
+            if prev_act.action != 'login':
+                delta = prev_act.timestamp_tz() - t
+                log[day][1] += delta.seconds
+            # print t, curr_act.action, delta.seconds, 'ELAPSED:', log[day][1]/60, 'mins', log[day][1]%60, 'secs' 
+        except KeyError:
+            log[day] = [[curr_act], 0]
+            # print t, curr_act.action, 0, 'LAST ACTION ON THIS DAY', 'ELAPSED:', 0   
+
+    return log
+
+
+
+
+    # log = {}
+    # try: 
+    #     for i in range(activity.count()):
+    #         curr_act = activity[i]
+    #         if i > 0:
+    #             prev_act = activity[i-1]
+    #             if prev_act.action != 'login':
+    #                 delta = prev_act.timestamp_tz() - curr_act.timestamp_tz()
+    #                 elapsed += delta.seconds
+                
+    #             # print curr_act.timestamp_tz(), curr_act.action, delta.seconds, 'ELAPSED:', elapsed/60, 'mins', elapsed%60, 'secs' 
+    # except Exception as e:
+    #     print e
+    #     pass
+
+    # return elapsed
+
+def populate_attendance_duration_field(user=None):
+    # attendance = user.attendance.all().order_by('-datestamp')
+    # for i in attendance:
+    elapsed = elapsed_daily_activity(user)
+    for i, j in elapsed.items():
+        try:
+            a = user.attendance.get(datestr=i)
+            a.duration_in_secs = j[1]
+            a.save()
+        except Exception as e:
+            print e
+
+def remove_zero_attendance_rows():
+    a = AttendanceTracker.objects.all().filter(duration_in_secs=0)
+    for i in a:
+        i.delete()
+
 def populate_attendance_tracker(user=None):
     """ 
     Purpose is to populate the attendance tracker for user. 

@@ -66,6 +66,7 @@ class GGVUser(models.Model):
             attendance_list = [None] * days[1]    
 
             users_attendance = self.user.attendance.all().filter(datestr__startswith=key)
+            # users_attendance = self.user.attendance.all().filter(datestr__startswith=key).filter(duration_in_secs__gt=1800)
             
             for i in users_attendance:
                 attendance_list[i.day_tz()-1] = i
@@ -117,6 +118,7 @@ class AttendanceTracker(models.Model):
     datestamp = models.DateTimeField()
     datestr = models.CharField(max_length=10, default='')
     code = models.PositiveIntegerField(choices=ATTENDANCE_CODES, default=0)
+    duration_in_secs = models.PositiveIntegerField(default=0)
 
     def month_tz(self):
         return self.datestamp.astimezone(tz).month
@@ -191,32 +193,47 @@ class ActivityLog(models.Model):
     def timestamp_tz(self):
         return self.timestamp.astimezone(tz)
 
-    def __unicode__(self):
-        return self.timestamp.astimezone(tz).strftime('%b %d, %Y %-I:%M %p')
-
     def save(self, *args, **kwargs):
+        secs_since_last_action = 0
+        try:
+            previous_activity = self.user.activitylog.all()[0] # most recent activity
+        except IndexError:
+            # There must not be any activity logged for this day ... yet.
+            previous_activity = None
+        
+        # now save the new (current) activity entry
         super(ActivityLog, self).save(*args, **kwargs)
+        
         """
         If an attendance tracker object does not exist for this ActivityLog object day
         then create a new attendance tracker object with object.user, object.date, object.datestr, object.code
+
+        Conditions for creating an attendance tracker object are based on at least a 30 mins of activity.
         """
-        try:
-            today = datetime.now(tz)
-            att = self.user.attendance.filter(datestamp__day=today.day)
-            
-            if not att: # Attempt to create a new attendance record.
-                daily = self.user.activitylog.filter(timestamp__day=today.day)
-                delta = daily[0].timestamp - daily[len(daily)-1].timestamp
-                if delta.seconds > 1800: # 30 mins
-                    a = AttendanceTracker( 
-                        user=self.user, 
-                        datestamp=self.timestamp, 
-                        datestr=self.timestamp.astimezone(tz).strftime('%Y-%m-%d'))
-                    a.save()
         
-        except:
-            # Attendance object already created for current day. This doesn't appear to be enforced through views.
+        try:
+            if previous_activity:
+                if self.action != 'login':
+                    secs_since_last_action = (self.timestamp_tz() - previous_activity.timestamp_tz()).seconds
+
+            today = datetime.now(tz).strftime('%Y-%m-%d')
+            att = self.user.attendance.filter(datestr=today)
+            if not att: # Attempt to create a new attendance record.
+                a = AttendanceTracker( 
+                    user=self.user, 
+                    datestamp=self.timestamp, 
+                    datestr=self.timestamp_tz().strftime('%Y-%m-%d'),
+                    duration_in_secs=secs_since_last_action)
+                a.save()
+            else: # Simply update the attendance tracker with an increased activity time
+                att[0].duration_in_secs += secs_since_last_action
+                att[0].save()
+        
+        except Exception as e:
             pass
+
+    def __unicode__(self):
+        return self.timestamp.astimezone(tz).strftime('%b %d, %Y %-I:%M %p')
 
     class Meta:
         ordering = ['user', '-timestamp']

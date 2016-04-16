@@ -135,7 +135,7 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         return context
 
 
-""" User Acitivity Management """
+""" User Activity Management """
 
 class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
     """
@@ -153,25 +153,37 @@ class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin
     slug_url_kwarg = 'crs_slug'
     access_object = None
 
+    def get_context_data(self, **kwargs):
+        context = super(UserManageView, self).get_context_data(**kwargs)
+        course = self.get_object()
+        user = User.objects.get(pk=self.kwargs['user'])
+        
+        context['student_user'] = user
+        context['activity_log'] = get_daily_log_times(user, course)
+
+        return context
+
+
+class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+    """
+        Displays progress data for a user/student. This data is filtered here to display
+        sequential activity related to a users access and completion of worksheets as well
+        as when they view presentations.
+
+        Visibility: sysadmin, staff, instructor
+    """
+    model = Course
+    template_name = 'course_user_progress.html'
+    slug_url_kwarg = 'crs_slug'
+    access_object = None
+
+    def get(self, request, *args, **kwargs):
+
+        return super(UserProgressView, self).get(request, *args, **kwargs)
+
     def render_to_response(self, context, **response_kwargs):
-        if 'csv' in self.request.GET.get('export', ''):
-            response = HttpResponse(content_type='text/csv')
-            daystr = datetime.now().strftime('%Y-%m-%d-%I_%M_%p ')
-            userstr = context['student_user'].last_name + '-' + context['student_user'].first_name
-            filename = userstr + '-' + daystr + '-activity-report.csv'
-            response['Content-Disposition'] = 'attachment; filename=' + filename
 
-            writer = UnicodeWriter(response)
-            writer.writerow([('%s' % context['student_user'].id), context['student_user'].first_name + ' ' + context['student_user'].last_name, context['student_user'].email, ' Report date: ' + daystr])
-            writer.writerow([' '])
-            writer.writerow(['Date', 'Total Time on Curriculum', 'Date & Time', 'Activity', 'More Details', 'Subject', 'Current Score'])
-            for i in reversed(context['activity_log']):
-                writer.writerow([i['day'], i['duration']])
-                for j in reversed(i['events']):
-                    writer.writerow(['', '', j.timestamp.astimezone(tz).strftime('%b-%d-%Y %I:%M %p'), j.action, html.strip_tags(j.message), j.message_detail or ' ', ''])
-            return response
-
-        elif 'xlsx' in self.request.GET.get('export', ''):
+        if 'xlsx' in self.request.GET.get('export', ''):
 
             USER_INFO_CELLS = ['A1', 'B1', 'C1', 'D1']
 
@@ -221,42 +233,14 @@ class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin
             return response
 
         else:
-            return super(UserManageView, self).render_to_response(context, **response_kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(UserManageView, self).get_context_data(**kwargs)
-        course = self.get_object()
-        user = User.objects.get(pk=self.kwargs['user'])
-        
-        context['student_user'] = user
-        context['activity_log'] = get_daily_log_times(user, course)
-
-        return context
-
-
-class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
-    """
-        Displays progress data for a user/student. This data is filtered here to display
-        sequential activity related to a users access and completion of worksheets as well
-        as when they view presentations.
-
-        Visibility: sysadmin, staff, instructor
-    """
-    model = Course
-    template_name = 'course_user_progress.html'
-    slug_url_kwarg = 'crs_slug'
-    access_object = None
-
-    def get(self, request, *args, **kwargs):
-
-        return super(UserProgressView, self).get(request, *args, **kwargs)
-
+            return super(UserProgressView, self).render_to_response(context, **response_kwargs)
+    
     def get_context_data(self, **kwargs):
         context = super(UserProgressView, self).get_context_data(**kwargs)
         user = User.objects.get(pk=self.kwargs['user'])
         course = self.get_object()
         context['student_user'] = user
-        context['activity_log'] = get_daily_log_times(user, course, ['login', 'logout', 'access-worksheet']) # 'login', 'logout', 'access-worksheet'
+        context['activity_log'] = get_daily_log_times(user, course) # 'login', 'logout', 'access-worksheet'
         
         return context
 

@@ -30,7 +30,6 @@
 <div class="col-md-12 text-center">
     <p class="lead">
         Student Progress Report
-        <a href="{% url 'manage_user' course.slug student_user.id %}" class="static"><button class="btn btn-xs btn-primary"> view more details</button></a>
     </p>
 </div>
 {% endblock page_header %}
@@ -39,29 +38,29 @@
 <div class="col-md-12 lead">
     {{ student_user.first_name }} {{ student_user.last_name }} ({{ student_user }})
     {% if is_manager %}
-        <a href="{% url 'edit_user_account' course.slug student_user.id %}">[ edit account ]</a>
+        <a href="{% url 'edit_user_account' course.slug student_user.id %}" class="btn btn-md">[ <i class="fa fa-edit"></i> edit this account ]</a>
     {% endif %}
+    <a class="btn btn-md" href="./?export=xlsx"> [ <i class="fa fa-download"></i> Download this report as an Excel file ]</a>
 </div>
 
 <div class="col-md-12">
-    <div class="row">
-        <div class="col-xs-1">Time</div>
-        <div class="col-xs-3">Subject</div>
-        <div class="col-xs-1">Activity</div>
-        <div class="col-xs-6">Content</div>
-        <div class="col-xs-1">Current Score</div>
-    </div>
 
     {% for i in activity_log %}
         {% if i.events %}
-            <div class="row"><h3>{{ i.day }}<sup><small>MST</small></h3></div>
-
+            <div class="row" style="border-bottom: 1px solid gray"><h4>{{ i.day }} <sup><small>MST</small></sup> {{ i.duration }}</h4></div>
+            <div class="row">
+                <div class="col-xs-2">Date/Time</div>
+                <div class="col-xs-2">Subject</div>
+                <div class="col-xs-1">Activity</div>
+                <div class="col-xs-6">Content</div>
+                <div class="col-xs-1">Current Score</div>
+            </div>
             {% for j in i.events %}                
                 <div class="row hoverpad text-left">
-                    <div class="col-xs-1">{{ j.event_time|time }}</div>
-                    <div class="col-xs-3">
+                    <div class="col-xs-2"><small>{{ i.day }}</small> <strong>{{ j.event_time|time }}</strong></div>
+                    <div class="col-xs-2">
                         {% if  j.event_target.lesson %}
-                        {{ j.event_target.lesson }} <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">(view lesson)</a>
+                        {{ j.event_target.lesson }} <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">(view)</a>
                         {% else %}
                             {{ j.activity.action }}
                         {% endif %}
@@ -69,21 +68,23 @@
 
                     {% if j.activity.action == 'completed-worksheet' %}
                         <div class="col-xs-1">completed</div>
-                    {% else %}
+                    {% elif j.activity.action == 'access-worksheet' or j.activity.action == 'access-presentation' %}
                         <div class="col-xs-1">viewed</div>
+                    {% else %}
+                        <div class="col-xs-1">&nbsp;</div>
                     {% endif %}
 
                     <div class="col-xs-6">
                         {% if j.activity.action == 'completed-worksheet' or j.activity.action == 'access-worksheet'%}
                             <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
-                            {{j.event_target }} <a href="{{ j.report_url }}">(view report)</a>
+                            {{j.event_target }} {% if j.activity.action == 'completed-worksheet' %}<a href="{{ j.report_url }}">(view report) {% endif %}</a>
                         {% elif j.activity.action == 'access-presentation' %}
                             <i class="fa fa-desktop fa-1x icon-slidestack"></i>
                             {{ j.activity.message|safe }}
                         {% endif %}
                     </div>
 
-                    <div class="col-xs-1">{% if j.score >= 0 %} <strong>{{ j.score|floatformat:"0" }}%</strong> {% endif %}</div>
+                    <div class="col-xs-1">{% if j.activity.action == 'completed-worksheet' and j.score >= 0 %} <strong>{{ j.score|floatformat:"0" }}%</strong> {% endif %}</div>
                 </div>
             {% empty %}
                 <div class="col-xs-12"></div>

@@ -65,8 +65,8 @@ class GGVUser(models.Model):
             days = calendar.monthrange(curr.year, curr.month)
             attendance_list = [None] * days[1]    
 
-            users_attendance = self.user.attendance.all().filter(datestr__startswith=key)
-            # users_attendance = self.user.attendance.all().filter(datestr__startswith=key).filter(duration_in_secs__gt=1800)
+            # users_attendance = self.user.attendance.all().filter(datestr__startswith=key)
+            users_attendance = self.user.attendance.all().filter(datestr__startswith=key).filter(duration_in_secs__gt=1800)
             
             for i in users_attendance:
                 attendance_list[i.day_tz()-1] = i

@@ -10,7 +10,7 @@ from openpyxl import Workbook
 from openpyxl.cell import get_column_letter
 from openpyxl.styles import Font
 
-from django.core.exceptions import ValidationError
+from django.core.exceptions import ValidationError, ObjectDoesNotExist
 from django.db import IntegrityError
 from django.core.urlresolvers import reverse
 from django.contrib.auth import logout
@@ -200,13 +200,37 @@ def get_daily_log_times(user=None, course=None, exclusions=[]):
 
     return acts
 
-def elapsed_daily_activity(user=None):
-    # activity = user.activitylog.filter(
-    #     timestamp__year=dateobj.year).filter(
-    #     timestamp__month=dateobj.month).filter(
-    #     timestamp__day=dateobj.day)
+def get_daily_log_times_v2 (user=None, course=None, exclusions=[]):
+    """
+    Method should return a list containing an ordered dict described as follows:
+    [{
+        '2016-04-16': [date, seconds, [event_dict_list]], 
+        ... 
+        '2016-01-01': [date, seconds, [event_dict_list]]
+    }]
+    """
+    acts = OrderedDict()    
     
-    elapsed = 0
+    act_list = user.activitylog.all()
+    att_list = user.attendance.all()
+
+    for event in act_list:
+        curr = event.timestamp_tz()
+        curr_datestr = curr.strftime('%Y-%m-%d')
+        try:
+            acts[curr_datestr][2].append(event.as_dict(course, exclusions))
+
+        except KeyError as e:
+            att_record = att_list.filter(datestr=curr_datestr)
+            dur = ""
+            if att_record:
+                secs = att_record[0].duration_in_secs
+                dur = '%s hours %s minutes' % (secs/3600, secs%3600/60)
+            
+            acts[curr_datestr] = [curr, dur, [event.as_dict(course, exclusions)]]
+    return acts
+
+def elapsed_daily_activity(user=None):
     activity = user.activitylog.all()
     log = {} # day: [[a1, a2, ...], elapsed]
 
@@ -226,36 +250,20 @@ def elapsed_daily_activity(user=None):
 
     return log
 
-
-
-
-    # log = {}
-    # try: 
-    #     for i in range(activity.count()):
-    #         curr_act = activity[i]
-    #         if i > 0:
-    #             prev_act = activity[i-1]
-    #             if prev_act.action != 'login':
-    #                 delta = prev_act.timestamp_tz() - curr_act.timestamp_tz()
-    #                 elapsed += delta.seconds
-                
-    #             # print curr_act.timestamp_tz(), curr_act.action, delta.seconds, 'ELAPSED:', elapsed/60, 'mins', elapsed%60, 'secs' 
-    # except Exception as e:
-    #     print e
-    #     pass
-
-    # return elapsed
-
 def populate_attendance_duration_field(user=None):
-    # attendance = user.attendance.all().order_by('-datestamp')
-    # for i in attendance:
     elapsed = elapsed_daily_activity(user)
     for i, j in elapsed.items():
         try:
             a = user.attendance.get(datestr=i)
             a.duration_in_secs = j[1]
             a.save()
-        except Exception as e:
+        except ObjectDoesNotExist as e:
+            a = AttendanceTracker( 
+                    user=user, 
+                    datestamp=j[0][0].timestamp, 
+                    datestr=j[0][0].timestamp_tz().strftime('%Y-%m-%d'),
+                    duration_in_secs=j[1])
+            a.save()
             print e
 
 def remove_zero_attendance_rows():

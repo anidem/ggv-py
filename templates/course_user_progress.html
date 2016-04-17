@@ -45,19 +45,19 @@
 
 <div class="col-md-12">
 
-    {% for i in activity_log %}
-        {% if i.events %}
-            <div class="row" style="border-bottom: 1px solid gray"><h4>{{ i.day }} <sup><small>MST</small></sup> {{ i.duration }}</h4></div>
+    {% for k, v in activity_log.items %}
+        {% if v.2 %}
+            <div class="row" style="border-bottom: 1px solid gray"><h4>{{ v.0|date }}  <span class="pull-right">{{ v.1 }}</span></h4></div>
             <div class="row">
-                <div class="col-xs-2">Date/Time</div>
+                <div class="col-xs-2">Date/Time <sup><small>MST</small></sup></div>
                 <div class="col-xs-2">Subject</div>
                 <div class="col-xs-1">Activity</div>
                 <div class="col-xs-6">Content</div>
                 <div class="col-xs-1">Current Score</div>
             </div>
-            {% for j in i.events %}                
+            {% for j in v.2 %}                
                 <div class="row hoverpad text-left">
-                    <div class="col-xs-2"><small>{{ i.day }}</small> <strong>{{ j.event_time|time }}</strong></div>
+                    <div class="col-xs-2"><small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong></div>
                     <div class="col-xs-2">
                         {% if  j.event_target.lesson %}
                         {{ j.event_target.lesson }} <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">(view)</a>

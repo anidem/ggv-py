@@ -21,7 +21,7 @@ from braces.views import LoginRequiredMixin
 
 from core.models import Notification, SiteMessage
 from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin, CourseContextMixin
-from core.utils import UnicodeWriter, GGVExcelWriter, get_daily_log_times
+from core.utils import UnicodeWriter, GGVExcelWriter, get_daily_log_times, get_daily_log_times_v2
 from questions.models import QuestionSet, UserWorksheetStatus
 from slidestacks.models import SlideStack
 from .models import Course
@@ -159,7 +159,7 @@ class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin
         user = User.objects.get(pk=self.kwargs['user'])
         
         context['student_user'] = user
-        context['activity_log'] = get_daily_log_times(user, course)
+        context['activity_log'] = get_daily_log_timesv2(user, course)
 
         return context
 
@@ -240,7 +240,7 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         user = User.objects.get(pk=self.kwargs['user'])
         course = self.get_object()
         context['student_user'] = user
-        context['activity_log'] = get_daily_log_times(user, course) # 'login', 'logout', 'access-worksheet'
+        context['activity_log'] = get_daily_log_times_v2(user, course) # 'login', 'logout', 'access-worksheet'
         
         return context
 

@@ -162,7 +162,14 @@ form ul {
 .icon-external_media { color: #235204;}
 
 /* Bookmarks */
-.bookmarker {color: #419641;}
+.bookmarker {color: black;}
+
+.bk-None  { color: black; }
+.bk-completed { color: green; }
+.bk-todo { color: red; }
+.bk-started { color: blue; }
+.bk-remember { color: purple; }
+.bk-question { color: orange; }
 
 .flagger { cursor: pointer;}
 .bkset {

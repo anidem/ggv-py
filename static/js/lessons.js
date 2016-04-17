@@ -35,16 +35,20 @@ jQuery(function($) {
                     // console.log("bk set: "+json.mark_type);
                     flagger.find('.bktarget').val(json.bookmark_id);
                     flagger.find('.bklabel').val(json.mark_type);
-                    flagged.removeClass('fa-star-o');
-                    flagged.addClass('fa-star');
+                    flagged.removeClass('fa-circle-o');
+                    flagged.addClass('fa-circle');
+                    flagged.removeClass('bk-'+json.prev_type)
+                    flagged.addClass('bk-'+bkmarktype);
                     flagbtn.find('.bookmark_label').html(json.mark_type);
                 }
                 if(json.deleted) {
                     // console.log("bk cleared");
                     flagger.find('.bktarget').val('');
                     flagger.find('.bklabel').val(' ');
-                    flagged.removeClass('fa-star');
-                    flagged.addClass('fa-star-o');
+                    flagged.removeClass('fa-circle');
+                    flagged.addClass('fa-circle-o');
+                    flagged.removeClass('bk-'+json.prev_type)
+                    flagged.addClass('bk-None');
                     flagbtn.find('.bookmark_label').html('');
                 }
                 flagpnl.collapse('hide');
@@ -67,11 +71,11 @@ jQuery(function($) {
 
             $(this).find('.bookmark_label').html(bookmark_display);
             if(bookmark) {
-                $(bookmark_star).removeClass('fa-star-o');
-                $(bookmark_star).addClass('fa-star');
+                $(bookmark_star).removeClass('fa-circle-o');
+                $(bookmark_star).addClass('fa-circle');
             } else {
-                $(bookmark_star).removeClass('fa-star');
-                $(bookmark_star).addClass('fa-star-o');
+                $(bookmark_star).removeClass('fa-circle');
+                $(bookmark_star).addClass('fa-circle-o');
             }
         });
 

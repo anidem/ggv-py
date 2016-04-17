@@ -103,8 +103,8 @@
                     <div class="col-md-1 bookmarkpanel">
                     
                       <a id="{{i.act.id}}_{{i.act.activity_type}}_bkbtn" href="#{{i.act.id}}_{{i.act.activity_type}}_add_bookmark" class="bkbtn btn btn-xs" data-toggle="collapse" aria-expanded="false">
-                        <i class="bookmarker fa fa-2x {% if i.bookmark %}fa-star{% else %}fa-star-o{% endif %}"></i>
-                        <span class="bookmark_label">{{ i.bookmark_label }}</span>
+                        <i class="bookmarker bk-{{i.bookmark }} fa {% if i.bookmark %}fa-circle{% else %}fa-circle-o{% endif %}"></i>
+                        <span class="bookmark_label" style="font-size: 1.2em">{{ i.bookmark_label }}</span>
                       </a>
 
                       <div id="{{i.act.id}}_{{i.act.activity_type}}_add_bookmark" class="panel-collapse collapse">

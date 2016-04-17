@@ -506,6 +506,7 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             bookmarkform.form_valid()
             data = {}
             updated_bk = self.get_object()
+            prev_type = updated_bk.mark_type
             updated_bk.mark_type = bookmarkform.cleaned_data['mark_type']
             updated_bk.save()
 
@@ -517,6 +518,7 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
 
             data['mark_type'] = label
             data['bookmark_id'] = updated_bk.id
+            data['prev_type'] = prev_type
 
             for i in updated_bk.course_context.instructor_list():
                 notification = Notification(user_to_notify=i, context='bookmark', event=updated_bk.notify_text())
@@ -534,8 +536,10 @@ class BookmarkAjaxDeleteView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
     def post_ajax(self, request, *args, **kwargs):
         bookmarkform = BookmarkForm(request.POST)
         # if bookmarkform.is_valid():
+        prev_type = self.get_object().mark_type
         self.get_object().delete()
         data = {}
+        data['prev_type'] = prev_type
         data['deleted'] = 'deleted'
         return self.render_json_response(data)
         # else:

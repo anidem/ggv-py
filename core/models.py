@@ -41,7 +41,8 @@ ATTENDANCE_CODES = (
     (1, 'Pretest'),
     (2, 'Official Test'),
     (3, 'Graduated'),
-    (4, 'Dropped')
+    (4, 'Dropped'),
+    (5, 'Limited Activity')
 )
 
 
@@ -66,7 +67,7 @@ class GGVUser(models.Model):
             attendance_list = [None] * days[1]    
 
             # users_attendance = self.user.attendance.all().filter(datestr__startswith=key)
-            users_attendance = self.user.attendance.all().filter(datestr__startswith=key).filter(duration_in_secs__gt=1800)
+            users_attendance = self.user.attendance.all().filter(datestr__startswith=key)
             
             for i in users_attendance:
                 attendance_list[i.day_tz()-1] = i
@@ -223,10 +224,14 @@ class ActivityLog(models.Model):
                     user=self.user, 
                     datestamp=self.timestamp, 
                     datestr=self.timestamp_tz().strftime('%Y-%m-%d'),
+                    code = 5,
                     duration_in_secs=secs_since_last_action)
                 a.save()
             else: # Simply update the attendance tracker with an increased activity time
                 att[0].duration_in_secs += secs_since_last_action
+                if att[0].duration_in_secs > 1799:
+                    att[0].code = 0 # set attendance code to 'Online'
+
                 att[0].save()
         
         except Exception as e:

@@ -224,15 +224,10 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
                 ws.column_dimensions[get_column_letter(col_num+1)].width = DATA_COLS[col_num][2]
 
             # Write data rows
-            user = User.objects.get(pk=self.kwargs['user'])
-            course = self.get_object()
-            activitylog = get_daily_log_times(user, course)
-
-            for i in activitylog:
-                # print i
-                ws.append([i['day'], i['duration']])
-                for j in i['events']:
-                    ws.append(['', '', j['event_time'], j['activity'].action, html.strip_tags(j['activity'].message), j['activity'].message_detail or ' ', j['score'] or ' '])
+            for i, j in context['activity_log'].items():
+                ws.append([j[0].date(), j[1]])
+                for k in j[2]:
+                    ws.append(['', '', k['event_time'], k['activity'].action, html.strip_tags(k['activity'].message), k['activity'].message_detail or ' ', k['score'] or ' '])
 
             writer.save(response)
             return response

@@ -473,7 +473,7 @@ class QuestionResponse(TimeStampedModel):
             status = UserWorksheetStatus.objects.filter(completed_worksheet=self.content_object.question_set).get(user=self.user)
             status.update_score()
         except Exception as e:
-            print 'model',e
+            # print 'model',e
             pass  # status object null, user has not completed all questions.
 
         

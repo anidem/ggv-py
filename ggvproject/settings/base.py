@@ -59,6 +59,7 @@ INSTALLED_APPS = (
     'django_wysiwyg',
     'guardian',
     'social.apps.django_app.default',
+    'session_security',
 )
 
 
@@ -71,6 +72,7 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 
     'social.apps.django_app.middleware.SocialAuthExceptionMiddleware',
+    'session_security.middleware.SessionSecurityMiddleware',
 )
 
 ROOT_URLCONF = 'ggvproject.urls'
@@ -103,8 +105,8 @@ AUTHENTICATION_BACKENDS = (
 
 ANONYMOUS_USER_ID = -1
 
-SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_COOKIE_AGE = 86400  # 1 day inactivity logout
+# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+# SESSION_COOKIE_AGE = 86400  # 1 day inactivity logout
 
 GRAPPELLI_INDEX_DASHBOARD = 'ggvproject.ggvadmindashboard.CustomIndexDashboard'
 

@@ -10,6 +10,35 @@ d. Uncomment the update score procedure in QuestionResponse.save() method.
 e. Recommit and pull to production.
 """
 
+"""
+a. loop through responses to content_type_id 15
+b.   if response.content_object.input_select == 'checkbox'
+        loads
+"""
+
+def update_user_scores(ws=None):
+    completions = UserWorksheetStatus.objects.filter(completed_worksheet__id=ws)
+    for i in completions:
+        i.update_score
+
+def fix_checkbox_response_fields():
+    """
+    maintenance script that converts responses previously saved as "radio" responses to "checkbox" responses. A check box response must be stored as json encoded string.
+    """
+    option_responses = QuestionResponse.objects.filter(content_type_id=15)
+    for response in option_responses:
+        if response.content_object.input_select == 'checkbox':
+            # print response.content_object.input_select
+            try:
+                obj = json.loads(response.response)
+                obj[0]
+            except Exception as e:
+                print response.content_object.question_set.id, response.id, response.response, e
+                obj = []
+                obj.append(response.response)
+                response.response = json.dumps(obj)
+                response.save()
+
 
 def fix_response_fields():
     """

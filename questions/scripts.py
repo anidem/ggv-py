@@ -21,23 +21,28 @@ def update_user_scores(ws=None):
     for i in completions:
         i.update_score
 
-def fix_checkbox_response_fields():
+def fix_checkbox_response_fields(ws_id=None):
     """
     maintenance script that converts responses previously saved as "radio" responses to "checkbox" responses. A check box response must be stored as json encoded string.
     """
-    option_responses = QuestionResponse.objects.filter(content_type_id=15)
-    for response in option_responses:
-        if response.content_object.input_select == 'checkbox':
-            # print response.content_object.input_select
-            try:
-                obj = json.loads(response.response)
-                obj[0]
-            except Exception as e:
-                print response.content_object.question_set.id, response.id, response.response, e
-                obj = []
-                obj.append(response.response)
-                response.response = json.dumps(obj)
-                response.save()
+    worksheet = QuestionSet.objects.get(pk=ws_id)
+    users = User.objects.all()
+    for user in users:
+        responses = worksheet.get_user_response_objects(user)
+        for response in responses:
+            if response.content_object.input_select == 'checkbox':
+                try:
+                    obj = json.loads(response.response)
+                    # attempts to access response text as a list. If this fails, the response text should be updated as json encoded string.
+                    obj[0]  
+                except Exception as e:
+                    print response.content_object.question_set.id, response.id, response.response, e
+                    obj = []
+                    obj.append(response.response)
+                    response.response = json.dumps(obj)
+                    response.save()
+
+    update_user_scores(ws_id)
 
 
 def fix_response_fields():

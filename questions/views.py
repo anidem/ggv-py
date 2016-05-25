@@ -221,8 +221,8 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             context['edit_url'] = current_question.get_edit_url(
                 context['course'])
 
-        question_index = self.worksheet.get_ordered_question_list().index(
-            current_question) + 1
+        # print current_question.id #, self.worksheet.get_ordered_question_list()
+        question_index = self.worksheet.get_ordered_question_list().index(current_question) + 1
 
         """ 2015-04-14 -- disabling messages in question display until further notice
         initial_note_data = {}

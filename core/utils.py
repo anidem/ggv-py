@@ -239,14 +239,25 @@ def elapsed_daily_activity(user=None):
         day = t.strftime('%Y-%m-%d')
         try:
             log[day][0].append(curr_act)
-            prev_act = log[day][0][ len(log[day][0])-2 ]
-            if prev_act.action != 'login':
-                delta = prev_act.timestamp_tz() - t
+            next_act = log[day][0][ len(log[day][0])-2 ] # previous read
+            
+            seq = (curr_act.action, next_act.action)
+            if next_act.action == 'login' or curr_act.action == 'login':
+                pass
+            elif seq == ('logout', 'login'):   #curr_act.action == 'logout' or next_act.action == 'login':
+                pass
+            elif seq == ('login', 'logout'):  # curr_act.action == 'login' and next_act.action == 'logout':
+                pass
+            else:
+                delta = next_act.timestamp_tz() - t
                 log[day][1] += delta.seconds
-            # print t, curr_act.action, delta.seconds, 'ELAPSED:', log[day][1]/60, 'mins', log[day][1]%60, 'secs' 
+            
+            print t, curr_act.action, 'ELAPSED:', log[day][1]/60, 'mins', log[day][1]%60, 'secs' 
+
+            
         except KeyError:
             log[day] = [[curr_act], 0]
-            # print t, curr_act.action, 0, 'LAST ACTION ON THIS DAY', 'ELAPSED:', 0   
+            print t, curr_act.action, 0, 'LAST ACTION ON THIS DAY', 'ELAPSED:', 0   
 
     return log
 

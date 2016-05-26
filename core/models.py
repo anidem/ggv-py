@@ -214,7 +214,11 @@ class ActivityLog(models.Model):
         
         try:
             if previous_activity:
-                if self.action != 'login':
+                if self.action == 'login' or previous_activity.action == 'login':
+                    pass
+                elif self.action == 'logout' and previous_activity.action == 'login':
+                    pass
+                else:
                     secs_since_last_action = (self.timestamp_tz() - previous_activity.timestamp_tz()).seconds
 
             today = datetime.now(tz).strftime('%Y-%m-%d')

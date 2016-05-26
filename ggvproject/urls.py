@@ -47,6 +47,7 @@ urlpatterns = patterns('',
     url('', include('social.apps.django_app.urls', namespace='social')),
     url('', include('django.contrib.auth.urls', namespace='auth')),
     # url('', include('social.apps.django_app.urls', namespace='disconnect_individual')),
+    url(r'session_security/', include('session_security.urls')),
     url(r'^ggv/test/$', TestDocView.as_view(), name='util'),
     url(r'^ggv/email-us/$', SendEmailToStaff.as_view(), name='email_staff'),
 

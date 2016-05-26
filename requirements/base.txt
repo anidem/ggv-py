@@ -3,11 +3,13 @@ dbf==0.94.3
 Django==1.7.5
 django-braces==1.4.0
 django-crispy-forms==1.4.0
+django-debug-toolbar==1.2.2
 django-filebrowser==3.5.7
 django-grappelli==2.6.3
 django-guardian==1.2.5
 django-model-utils==2.2
 django-sendfile==0.3.6
+django-session-security==2.3.2
 django-wysiwyg==0.7.0
 ecdsa==0.13
 enum34==1.0.4

@@ -55,6 +55,7 @@ SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = os.environ[
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = os.environ[
     'SOCIAL_AUTH_GOOGLE_OAUTH2_KEY']  # This is the Client ID (not a key)
 
+SOCIAL_AUTH_PROTECTED_USER_FIELDS = ['email', 'username', 'id', 'first_name', 'last_name',]
 SOCIAL_AUTH_GOOGLE_OAUTH2_WHITELISTED_EMAILS = []
 SOCIAL_AUTH_USERNAME_IS_FULL_EMAIL = True
 FIELDS_STORED_IN_SESSION = ['hash', ]
@@ -78,5 +79,5 @@ SOCIAL_AUTH_PIPELINE = (
 LOGIN_URL = '/login/google-oauth2/'
 LOGIN_REDIRECT_URL = '/home'
 
-SESSION_SECURITY_WARN_AFTER = 30 # 30 seconds to move mouse
-SESSION_SECURITY_EXPIRE_AFTER = 40 # expire after 5 mins
+SESSION_SECURITY_WARN_AFTER =  1500 # 30 seconds to move mouse
+SESSION_SECURITY_EXPIRE_AFTER = 1800 # expire after 5 mins

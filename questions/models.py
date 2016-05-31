@@ -482,6 +482,9 @@ class QuestionResponse(TimeStampedModel):
     def get_absolute_url(self):
         return reverse('home')
 
+    # class Meta:
+    #     unique_together = (("user", "object_id", "content_type"),)
+
 
 class UserWorksheetStatus(TimeStampedModel):
     """

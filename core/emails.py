@@ -387,6 +387,8 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
     use case: System emails instructor when a student completes a quiz.
     """
     user_sender = request.user.first_name + ' ' + request.user.last_name + ' (' + request.user.email + ')'
+    # print user_sender
+    # user_sender = user_sender.decode('utf-8')
 
     gedid = ''
     if request.user.ggvuser.program_id:
@@ -401,14 +403,19 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
 
     html_message = "<p><b>Replies to this message will be sent to: {usr_email}</b></p>".format(usr_email=request.user.email)
 
-    html_message += "<p>Hi {crs} Instructors,</p><p> {sndr} has completed the following worksheet:</p>".format(
-        crs=course,
-        sndr=user_sender)
+    try:
 
-    html_message += "<p>{ws_lesson} - {ws_title}</p>".format(
-        ws_lesson=worksheet.lesson,
-        ws_title=worksheet,
-        )
+        html_message += "<p>Hi {crs} Instructors,</p><p> {sndr} has completed the following worksheet:</p>".format(
+            crs=course,
+            sndr=user_sender)
+
+        html_message += "<p>{ws_lesson} - {ws_title}</p>".format(
+            ws_lesson=worksheet.lesson,
+            ws_title=worksheet)
+
+    except Exception as e:
+        # print html_message, e
+        pass
 
     html_message += "<p>You can view their responses here:</p><p> <a href=\"{ws_url}\">{ws_url}</a><b>Login required.</b></p><p>Also note you may need to Allow students to view results if you are currently restricting this.</p>".format(
         ws_url=worksheet_results_url,

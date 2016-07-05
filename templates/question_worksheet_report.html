@@ -31,9 +31,11 @@
             <thead>
               {% if report %}<tr>
               <h2>{{ student.first_name }} {{ student.last_name }}
+                {% if is_instructor or user.is_staff %}
                 <span class="pull-right">
                         <a href="{% url 'reset_worksheet_responses' course.slug worksheet.id student.id %}" class="btn btn-xs btn-danger" name="reset_responses">clear student responses</a>
                 </span>
+                {% endif %}
               </h2>
               <h2 class="">
                 <b>{{ grade|floatformat:"0" }}%</b>

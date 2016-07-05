@@ -526,3 +526,34 @@ class RestrictResultsUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateVi
         user = ws_status_obj.user.id
         return reverse_lazy('worksheet_user_report', args=[course, worksheet, user])
 
+class UserResponsesResetView(LoginRequiredMixin, CourseContextMixin, DetailView):
+    model = QuestionSet
+    template_name = ''
+
+    def get(self, request, *args, **kwargs):
+            course = Course.objects.get(slug=self.kwargs['crs_slug'])
+            is_instructor = 'instructor' in get_perms(self.request.user, course)
+            user = User.objects.get(pk=self.kwargs['user'])
+
+            if self.request.user.is_staff or is_instructor:
+                try:
+                    ws = self.get_object()
+                    responses = ws.get_user_response_objects(user)
+                    for i in responses:
+                        i.delete()
+                        
+                    status = UserWorksheetStatus.objects.filter(completed_worksheet=ws).get(user=user)
+                    status.delete()
+                except Exception as e:
+                    print e
+
+                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.get_object().id, user.id)))
+            
+            else:
+                raise PermissionDenied  # return a forbidden response
+            
+            # return super(UserResponsesResetView, self).get(request, *args, **kwargs)    
+
+
+
+

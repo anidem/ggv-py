@@ -226,14 +226,13 @@
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
   <script src="https://code.jquery.com/jquery.js"></script>
   
-  <!-- Django session security -->
-  {% include 'session_security/all.html' %}
-  <script>
-    sessionSecurity.confirmFormDiscard = undefined;
-  </script>
 
   <!-- Latest compiled and minified JavaScript -->
   <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+ <!-- Django session security -->
+  {% include 'session_security/all.html' %}
+  <!-- <script> sessionSecurity.confirmFormDiscard = undefined; </script> -->
 
   <!-- Math Fonts MathJax -->
   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>

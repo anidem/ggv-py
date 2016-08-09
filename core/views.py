@@ -2,6 +2,7 @@
 import json
 from pytz import timezone
 
+from django.db import IntegrityError
 from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404

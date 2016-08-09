@@ -79,5 +79,5 @@ SOCIAL_AUTH_PIPELINE = (
 LOGIN_URL = '/login/google-oauth2/'
 LOGIN_REDIRECT_URL = '/home'
 
-SESSION_SECURITY_WARN_AFTER =  1500 # 30 seconds to move mouse
-SESSION_SECURITY_EXPIRE_AFTER = 1800 # expire after 5 mins
+SESSION_SECURITY_WARN_AFTER =  1500 # 5 mins to move mouse
+SESSION_SECURITY_EXPIRE_AFTER = 1800 # expire after 30 mins

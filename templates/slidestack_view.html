@@ -19,6 +19,11 @@
 	{% endif %}
 	</div>
 {% endif %}
+  <script src="https://code.jquery.com/jquery.js"></script>
+
+ <!-- Django session security -->
+  {% include 'session_security/all.html' %}
+
 
 	<iframe seamless style="width: 100%; height: 100%" src="http://{{request.get_host}}/stacks/{{ object.asset }}/html5.html"></iframe>
 

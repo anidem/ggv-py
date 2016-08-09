@@ -197,43 +197,44 @@ class ActivityLog(models.Model):
         return self.timestamp.astimezone(tz)
 
     def save(self, *args, **kwargs):
-        secs_since_last_action = 0
-        try:
-            previous_activity = self.user.activitylog.all()[0] # most recent activity
-        except IndexError:
-            # There must not be any activity logged for this day ... yet.
-            previous_activity = None
-        
-        # now save the new (current) activity entry
+      
+        # save the new (current) activity entry
         super(ActivityLog, self).save(*args, **kwargs)
         
         """
         If an attendance tracker object does not exist for this ActivityLog object day
         then create a new attendance tracker object with object.user, object.date, object.datestr, object.code
-
-        Conditions for creating an attendance tracker object are based on at least a 30 mins of activity.
         """
         
         try:
-            if previous_activity:
-                if self.action == 'login' or previous_activity.action == 'login':
-                    pass
-                elif self.action == 'logout' and previous_activity.action == 'login':
-                    pass
-                else:
-                    secs_since_last_action = (self.timestamp_tz() - previous_activity.timestamp_tz()).seconds
-
             today = datetime.now(tz).strftime('%Y-%m-%d')
             att = self.user.attendance.filter(datestr=today)
-            if not att: # Attempt to create a new attendance record.
+            if not att: # Attempt to create a new attendance record. There are no prior events to include in calculation.
                 a = AttendanceTracker( 
                     user=self.user, 
                     datestamp=self.timestamp, 
                     datestr=self.timestamp_tz().strftime('%Y-%m-%d'),
                     code = 5,
-                    duration_in_secs=secs_since_last_action)
+                    duration_in_secs=0)  # this should be ZERO!
                 a.save()
+            
             else: # Simply update the attendance tracker with an increased activity time
+                secs_since_last_action = 0
+
+                try:
+                    previous_activity = self.user.activitylog.all()[0] # most recent activity
+                except IndexError:
+                    # There must not be any activity logged for this day ... yet.
+                    previous_activity = None
+
+                if previous_activity:
+                    if self.action == 'login' or previous_activity.action == 'login':
+                        pass
+                    elif self.action == 'logout' and previous_activity.action == 'login':
+                        pass
+                    else:
+                        secs_since_last_action = (self.timestamp_tz() - previous_activity.timestamp_tz()).seconds
+
                 att[0].duration_in_secs += secs_since_last_action
                 if att[0].duration_in_secs > 1799:
                     att[0].code = 0 # set attendance code to 'Online'
@@ -241,7 +242,7 @@ class ActivityLog(models.Model):
                 att[0].save()
         
         except Exception as e:
-            pass
+            print e
 
     def __unicode__(self):
         return self.timestamp.astimezone(tz).strftime('%b %d, %Y %-I:%M %p')

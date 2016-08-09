@@ -204,9 +204,9 @@ def get_daily_log_times_v2 (user=None, course=None, exclusions=[]):
     """
     Method should return a list containing an ordered dict described as follows:
     [{
-        '2016-04-16': [date, seconds, [event_dict_list]], 
+        '2016-04-16': [date, duration, [event_dict_list]], 
         ... 
-        '2016-01-01': [date, seconds, [event_dict_list]]
+        '2016-01-01': [date, duration, [event_dict_list]]
     }]
     """
     acts = OrderedDict()    
@@ -218,12 +218,16 @@ def get_daily_log_times_v2 (user=None, course=None, exclusions=[]):
         curr = event.timestamp_tz()
         curr_datestr = curr.strftime('%Y-%m-%d')
         try:
+
             acts[curr_datestr][2].append(event.as_dict(course, exclusions))
 
         except KeyError as e:
+            # print curr_datestr
+
             att_record = att_list.filter(datestr=curr_datestr)
             dur = ""
             if att_record:
+                # print curr_datestr, att_record
                 secs = att_record[0].duration_in_secs
                 dur = '%s hours %s minutes' % (secs/3600, secs%3600/60)
             
@@ -250,9 +254,14 @@ def elapsed_daily_activity(user=None):
                 pass
             else:
                 delta = next_act.timestamp_tz() - t
-                log[day][1] += delta.seconds
-            
-            print t, curr_act.action, 'ELAPSED:', log[day][1]/60, 'mins', log[day][1]%60, 'secs' 
+                """ patch auto logout glitch requires this in order to limit over calculation """
+                if delta.seconds > 3600:
+                    log[day][1] += 3600
+                else:
+                    log[day][1] += delta.seconds
+                """ END patch """
+                
+            print t, curr_act.action, next_act.action, 'ELAPSED:', log[day][1]/60, 'mins', log[day][1]%60, 'secs' 
 
             
         except KeyError:
@@ -288,7 +297,7 @@ def populate_attendance_tracker(user=None):
     This is intended to initialize the attendance tracker table
     installed feb 2016. After installation attendance tracker
     objects are automatically created/updated as a side effect of
-    an activitylog creation event. 
+    an activitylog creation event. see ActivityLog.save() method.
     """
 
     logs = user.activitylog.all().order_by('timestamp')  # read in ascending order  

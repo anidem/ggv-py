@@ -222,9 +222,9 @@ class ActivityLog(models.Model):
                 secs_since_last_action = 0
 
                 try:
-                    previous_activity = self.user.activitylog.all()[0] # most recent activity
+                    previous_activity = self.user.activitylog.all()[1] # most recent activity not counting the current activity
                 except IndexError:
-                    # There must not be any activity logged for this day ... yet.
+                    # There must not be any activity logged for this user.
                     previous_activity = None
 
                 if previous_activity:

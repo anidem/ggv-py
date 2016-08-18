@@ -172,7 +172,7 @@ class UserAdmin(UserAdmin):
 
 
 class GGVUserAdmin(admin.ModelAdmin):
-    list_display = ('id', 'user', 'language_pref', 'clean_logout', )
+    list_display = ('program_id', 'user', 'language_pref', 'clean_logout', )
     list_editable = ('user', 'language_pref', 'clean_logout', )
 
 

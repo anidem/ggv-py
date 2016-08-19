@@ -47,7 +47,7 @@
 
     {% for k, v in activity_log.items %}
         {% if v.2 %}
-            <div class="row" style="border-bottom: 1px solid gray"><h4>{{ v.0|date }}  <span class="pull-right">{{ v.1 }}</span></h4></div>
+            <div class="row" style="padding-top: 20px; border-bottom: 1px solid gray"><h4>{{ v.0|date }}  <span class="pull-right">{{ v.1 }}</span></h4></div>
             <div class="row">
                 <div class="col-xs-2">Date/Time <sup><small>MST</small></sup></div>
                 <div class="col-xs-2">Subject</div>

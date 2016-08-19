@@ -257,16 +257,17 @@ def elapsed_daily_activity(user=None):
                 """ patch auto logout glitch requires this in order to limit over calculation """
                 if delta.seconds > 3600:
                     log[day][1] += 3600
+                    # print 'Exceeded threshold==> ', delta.seconds
                 else:
                     log[day][1] += delta.seconds
                 """ END patch """
                 
-            print t, curr_act.action, next_act.action, 'ELAPSED:', log[day][1]/60, 'mins', log[day][1]%60, 'secs' 
+            # print t, curr_act.action, next_act.action, 'ELAPSED:', log[day][1]/60, 'mins', log[day][1]%60, 'secs' 
 
             
         except KeyError:
             log[day] = [[curr_act], 0]
-            print t, curr_act.action, 0, 'LAST ACTION ON THIS DAY', 'ELAPSED:', 0   
+            # print t, curr_act.action, 0, 'LAST ACTION ON THIS DAY', 'ELAPSED:', 0   
 
     return log
 

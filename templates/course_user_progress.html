@@ -52,7 +52,14 @@
 
     {% for k, v in activity_log.items %}
         {% if v.2 %}
-
+            <div class="row" style="padding-top: 20px; border-bottom: 1px solid gray"><h4>{{ v.0|date }}  <span class="pull-right">{{ v.1 }}</span></h4></div>
+            <div class="row">
+                <div class="col-xs-2">Date/Time <sup><small>MST</small></sup></div>
+                <div class="col-xs-2">Subject</div>
+                <div class="col-xs-1">Activity</div>
+                <div class="col-xs-6">Content</div>
+                <div class="col-xs-1">Current Score</div>
+            </div>
             {% for j in v.2 %}
                 {% if filter == 'completed' and j.activity.action == 'completed-worksheet' %}        
                     <div class="row hoverpad text-left" style="padding-bottom: 5px; padding-bottom: 5px">
@@ -80,14 +87,7 @@
                         </div>
                     </div>
                 {% elif not filter %}
-                    <div class="row" style="padding-top: 20px; border-bottom: 1px solid gray"><h4>{{ v.0|date }}  <span class="pull-right">{{ v.1 }}</span></h4></div>
-                    <div class="row">
-                        <div class="col-xs-2">Date/Time <sup><small>MST</small></sup></div>
-                        <div class="col-xs-2">Subject</div>
-                        <div class="col-xs-1">Activity</div>
-                        <div class="col-xs-6">Content</div>
-                        <div class="col-xs-1">Current Score</div>
-                    </div>
+
                     <div class="row hoverpad text-left ">
                         <div class="col-xs-2"><small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong></div>
                         <div class="col-xs-2">

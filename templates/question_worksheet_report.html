@@ -20,7 +20,7 @@
 <div class="col-md-12">
     <p class="lead">Worksheet Report {% if student %} {{ student.first_name }} {{ student.last_name }} {% else %} All Students {% endif %}</p>
     <span class="label label-xs label-success pull-right"><i class="fa fa-check"></i> = correct</span>
-    <span class="label label-xs label-warning pull-right"><i class="fa fa-check"></i> = incorrect</span>
+    <span class="label label-xs label-warning pull-right"><i class="fa fa-close"></i> = incorrect</span>
     <h3>{{ worksheet }}</h3>
 </div>
 <div class="col-md-10 col-md-offset-1">
@@ -70,7 +70,7 @@
                         <td>
                             {% if j == 'Response not required' %} <span>n/a</span>
                             {% elif k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
-                            {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-check"></i></span>
+                            {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-close"></i></span>
                             {% endif %}
                         </td>
                     </tr>

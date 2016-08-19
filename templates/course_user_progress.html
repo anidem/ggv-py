@@ -43,49 +43,90 @@
     <a class="btn btn-md" href="./?export=xlsx"> [ <i class="fa fa-download"></i> Download this report as an Excel file ]</a>
 </div>
 
-<div class="col-md-12">
+<div class="col-md-12 text-center">
+    <a class="btn btn-md btn-default" href="./?filter=completed">  <i class="fa fa-eye"></i> show only completed worksheets </a>
+    <a class="btn btn-md btn-default" href="./">  <i class="fa fa-eye"></i> show all activity (default) </a>
+
+</div>
+<div class="col-md-12" style="padding-top: 20px">
 
     {% for k, v in activity_log.items %}
         {% if v.2 %}
-            <div class="row" style="padding-top: 20px; border-bottom: 1px solid gray"><h4>{{ v.0|date }}  <span class="pull-right">{{ v.1 }}</span></h4></div>
-            <div class="row">
-                <div class="col-xs-2">Date/Time <sup><small>MST</small></sup></div>
-                <div class="col-xs-2">Subject</div>
-                <div class="col-xs-1">Activity</div>
-                <div class="col-xs-6">Content</div>
-                <div class="col-xs-1">Current Score</div>
-            </div>
-            {% for j in v.2 %}                
-                <div class="row hoverpad text-left">
-                    <div class="col-xs-2"><small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong></div>
-                    <div class="col-xs-2">
-                        {% if  j.event_target.lesson %}
-                        {{ j.event_target.lesson }} <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">(view)</a>
-                        {% else %}
-                            {{ j.activity.action }}
-                        {% endif %}
-                    </div>
 
-                    {% if j.activity.action == 'completed-worksheet' %}
+            {% for j in v.2 %}
+                {% if filter == 'completed' and j.activity.action == 'completed-worksheet' %}        
+                    <div class="row hoverpad text-left" style="padding-bottom: 5px; padding-bottom: 5px">
+                        <div class="col-xs-2"><small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong></div>
+                        <div class="col-xs-2">
+                            {% if  j.event_target.lesson %}
+                            {{ j.event_target.lesson }} <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">(view)</a>
+                            {% else %}
+                                {{ j.activity.action }}
+                            {% endif %}
+                        </div>
+
+                        
                         <div class="col-xs-1">completed</div>
-                    {% elif j.activity.action == 'access-worksheet' or j.activity.action == 'access-presentation' %}
-                        <div class="col-xs-1">viewed</div>
-                    {% else %}
-                        <div class="col-xs-1">&nbsp;</div>
-                    {% endif %}
+                        
 
-                    <div class="col-xs-6">
-                        {% if j.activity.action == 'completed-worksheet' or j.activity.action == 'access-worksheet'%}
-                            <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
-                            {{j.event_target }} {% if j.activity.action == 'completed-worksheet' %}<a href="{{ j.report_url }}">(view report) {% endif %}</a>
-                        {% elif j.activity.action == 'access-presentation' %}
-                            <i class="fa fa-desktop fa-1x icon-slidestack"></i>
-                            {{ j.activity.message|safe }}
-                        {% endif %}
+                        <div class="col-xs-6">
+                                <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
+                                {{j.event_target }} {% if j.activity.action == 'completed-worksheet' %}<a href="{{ j.report_url }}">(view report) {% endif %}</a>
+                        </div>
+
+                        <div class="col-xs-1">
+                            {% if j.score %} <strong>{{ j.score|floatformat:"0" }}%</strong> 
+                            {% else %} <strong><span class="text-danger">cleared</span></strong>{% endif %}
+                        </div>
                     </div>
+                {% elif not filter %}
+                    <div class="row" style="padding-top: 20px; border-bottom: 1px solid gray"><h4>{{ v.0|date }}  <span class="pull-right">{{ v.1 }}</span></h4></div>
+                    <div class="row">
+                        <div class="col-xs-2">Date/Time <sup><small>MST</small></sup></div>
+                        <div class="col-xs-2">Subject</div>
+                        <div class="col-xs-1">Activity</div>
+                        <div class="col-xs-6">Content</div>
+                        <div class="col-xs-1">Current Score</div>
+                    </div>
+                    <div class="row hoverpad text-left ">
+                        <div class="col-xs-2"><small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong></div>
+                        <div class="col-xs-2">
+                            {% if  j.event_target.lesson %}
+                            {{ j.event_target.lesson }} <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">(view)</a>
+                            {% else %}
+                                {{ j.activity.action }}
+                            {% endif %}
+                        </div>
 
-                    <div class="col-xs-1">{% if j.activity.action == 'completed-worksheet' and j.score >= 0 %} <strong>{{ j.score|floatformat:"0" }}%</strong> {% endif %}</div>
-                </div>
+                        {% if j.activity.action == 'completed-worksheet' %}
+                            <div class="col-xs-1">completed</div>
+                        {% elif j.activity.action == 'access-worksheet' or j.activity.action == 'access-presentation' %}
+                            <div class="col-xs-1">viewed</div>
+                        {% else %}
+                            <div class="col-xs-1">&nbsp;</div>
+                        {% endif %}
+
+                        <div class="col-xs-6">
+                            {% if j.activity.action == 'completed-worksheet' or j.activity.action == 'access-worksheet'%}
+                                <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
+                                {{j.event_target }} {% if j.activity.action == 'completed-worksheet' %}<a href="{{ j.report_url }}">(view report) {% endif %}</a>
+                            {% elif j.activity.action == 'access-presentation' %}
+                                <i class="fa fa-desktop fa-1x icon-slidestack"></i>
+                                {{ j.activity.message|safe }}
+                            {% endif %}
+                        </div>
+
+                        <div class="col-xs-1">
+                            {% if j.activity.action == 'completed-worksheet' %}
+                                {% if j.score %}
+                                <strong>{{ j.score|floatformat:"0" }}%</strong>
+                                {% else %}
+                                <strong><span class="text-danger">cleared</span></strong>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>                    
+                {% endif %}
             {% empty %}
                 <div class="col-xs-12"></div>
             {% endfor %}

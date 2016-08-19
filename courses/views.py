@@ -241,7 +241,8 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         course = self.get_object()
         context['student_user'] = user
         context['activity_log'] = get_daily_log_times_v2(user, course) # 'login', 'logout', 'access-worksheet'
-        
+        if 'completed' in self.request.GET.get('filter', ''):
+            context['filter'] = 'completed'       
         return context
 
 

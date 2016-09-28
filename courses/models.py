@@ -23,14 +23,47 @@ class GGVOrganization(models.Model):
     title = models.CharField(max_length=256)
     user_quota = models.IntegerField(default=0)
     quota_start_date = models.DateField()
+    quota_end_date = models.DateField(null=True)
     business_contact_email = models.EmailField()
     business_contact_phone = models.CharField(max_length=12)
+
+    def student_report(self, scope='all'):
+        courses = self.organization_courses.all()
+        rows = []
+        for i in courses:
+            rows.append(i.student_report(scope))
+        return rows
+
+    def licenses_in_use(self):
+        courses = self.organization_courses.all()
+        licenses = []
+        for i in courses:
+            licenses += i.licensed_users()
+     
+        license_data = {}
+        for i in licenses:
+            try:
+                license_data[i[0].email][1][i[1]] = i[2]
+                # license_data[i[0].email][2] += 
+            except KeyError as e:
+                license_data[i[0].email] = (i[0], {i[1]: i[2]})
+                # print license_data[i[0].email]
+            except TypeError as e:
+                print i, i.last_name, i.first_name
+                license_data[i] = (i, {None: None})
+
+        print len(licenses), licenses
+
+        print len(license_data), license_data
+
+        return license_data
 
     def __unicode__(self):
         return self.title
 
     class Meta:
         ordering = ['title']
+
 
 class Course(models.Model):
 
@@ -56,6 +89,23 @@ class Course(models.Model):
 
         return get_users_with_perms(self, attach_perms=True)
 
+    def licensed_users(self):
+        members = self.member_list()
+        unvalidated = [user for user, perms in members.items() if not perms and not user.social_auth.all()]
+        students = [(user, self, perms) for user, perms in members.items() if 'access' in perms and not user.is_staff and not user.is_superuser and 'instructor' not in perms]
+        instructors = [(user, self, perms) for user, perms in members.items() if 'instructor' in perms and not user.is_staff]
+        managers = [(user, self, perms) for user, perms in members.items() if 'manage' in perms and not user.is_staff]
+
+        return unvalidated + students + instructors + managers 
+
+    def student_list_all(self, extra_details=None, sort_by='first_name', reverse_sort=False):
+        # if extra_details:
+        # return [{user: ActivityLog.objects.filter(user=user)} for user, perms
+        # in self.member_list().items() if 'access' in perms]
+
+        students = [user for user, perms in self.member_list().items() if not user.is_staff and not user.is_superuser and 'instructor' not in perms]
+        return sorted(students, key=attrgetter(sort_by), reverse=reverse_sort)
+
     def student_list(self, extra_details=None, sort_by='first_name', reverse_sort=False):
         # if extra_details:
         # return [{user: ActivityLog.objects.filter(user=user)} for user, perms
@@ -65,10 +115,10 @@ class Course(models.Model):
         return sorted(students, key=attrgetter(sort_by), reverse=reverse_sort)
 
     def instructor_list(self):
-        return [user for user, perms in self.member_list().items() if 'instructor' in perms]
+        return [user for user, perms in self.member_list().items() if 'instructor' in perms and not user.is_staff]
 
     def manager_list(self):
-        return [user for user, perms in self.member_list().items() if 'manage' in perms]
+        return [user for user, perms in self.member_list().items() if 'manage' in perms and not user.is_staff]
 
     def deactivated_list(self):
         return [user for user, perms in self.member_list().items() if not perms and user.social_auth.all()]
@@ -78,6 +128,38 @@ class Course(models.Model):
 
     def lesson_list(self):
         return self.crs_lessons.all()
+
+    def student_report(self, scope='all'):
+        if scope == 'active':
+            student_list = self.student_list()
+        elif scope == 'deactivated':
+            student_list = self.deactivated_list()
+        elif scope == 'unvalidated':
+            student_list = self.unvalidated_list()
+        else:
+            student_list = self.student_list_all()
+        
+        rows = []
+        for i in student_list:
+            time_on_site = 0
+            for j in i.attendance.all():
+                time_on_site = time_on_site + j.duration_in_secs
+            hours = time_on_site / 3600
+            mins = time_on_site % 3600 / 60
+            row = [
+                i.ggvuser.program_id, 
+                i.first_name, 
+                i.last_name, 
+                i.username, 
+                i.last_login, 
+                i.date_joined, 
+                self.title, 
+                self.ggv_organization.title, 
+                (str(hours) + ':' + str(mins)),
+                i.is_active,
+            ]
+            rows.append(row)
+        return rows
 
     def get_user_role(self, user):
         return get_perms(user, self)

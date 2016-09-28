@@ -23,7 +23,8 @@ from core.views import (
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import (
-    CourseView, CourseUpdateView, CourseManageView, 
+    GgvOrgAdminView,
+    CourseView, CourseUpdateView, CourseManageView, CourseUserReportView, CourseUserActivityReportView,
     CourseAttendanceMonthView, CourseAttendanceUserView,
     UserManageView, UserProgressView,
     CourseMessageAddView, CourseMessageUpdateView, CourseMessageDeleteView
@@ -61,9 +62,18 @@ urlpatterns = patterns('',
     url(r'^ggv/slidestack/edit/(?P<pk>\d+)/$', SlideStackUpdateView.as_view(), name='slide_update'),
 
 
+# GGV Organizations
+    url(r'^ggv/organization/(?P<pk>\d+)/$', GgvOrgAdminView.as_view(), name='manage_org'),
+
+
 # GGV Courses
     url(r'^ggv/(?P<crs_slug>[-\w]+)/$', CourseView.as_view(), name='course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/edit/$', CourseUpdateView.as_view(), name='edit_course'),
+    
+    #  course user stats:
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/report/$', CourseUserReportView.as_view(), name='report_course'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/activity-report/$', CourseUserActivityReportView.as_view(), name='report_course_activity'),
+
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/$', CourseManageView.as_view(), name='manage_course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/user/(?P<user>\d+)/$', UserManageView.as_view(), name='manage_user'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/progress/user/(?P<user>\d+)/$', UserProgressView.as_view(), name='user_progress'),

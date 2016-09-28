@@ -15,7 +15,7 @@ from django.shortcuts import redirect
 
 from openpyxl import Workbook
 from openpyxl.cell import get_column_letter
-from openpyxl.styles import Font
+from openpyxl.styles import Font, Alignment
 from braces.views import LoginRequiredMixin
 # from guardian.shortcuts import has_perm
 
@@ -24,11 +24,34 @@ from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAc
 from core.utils import UnicodeWriter, GGVExcelWriter, get_daily_log_times, get_daily_log_times_v2
 from questions.models import QuestionSet, UserWorksheetStatus
 from slidestacks.models import SlideStack
-from .models import Course
+from .models import GGVOrganization, Course
 from .forms import CourseUpdateForm
 
 tz = timezone(settings.TIME_ZONE)
 
+""" Organization Management """
+
+class GgvOrgAdminView(LoginRequiredMixin, DetailView):
+    """
+        Displays an overview of a course. This view is intended for users assigned as managers. 
+        Information displayed includes: instructor and student list of those assigned to the course, 
+        a license information, and organization information.
+
+        Visibility: sysadmin, staff, manager(s) assigned to the course
+    """
+    model = GGVOrganization
+    template_name = 'ggvorg_manage.html'
+    access_object = None
+
+    def get_context_data(self, **kwargs):
+        context = super(GgvOrgAdminView, self).get_context_data(**kwargs)
+        org = self.get_object()
+        user_licenses_used = org.licenses_in_use()
+        context['courses'] = org.organization_courses.all()
+        context['licensees'] = user_licenses_used
+        context['num_licensees'] = len(user_licenses_used)
+
+        return context
 
 """ Course Management """
 
@@ -92,7 +115,7 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         This view also provides a Course Settings button to allow instructors to modify
         settings that apply to the course.
 
-        Visibility: sysadmin, staff, and instructor
+        Visibility: sysadmin, staff, manager, and instructor
     """
     model = Course
     template_name = 'course_manage.html'
@@ -134,6 +157,166 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         context['unvalidated'] = course.unvalidated_list()
         return context
 
+
+class CourseUserReportView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+    model = Course
+    template_name = 'course_user_progress.html'
+    slug_url_kwarg = 'crs_slug'
+    access_object = None
+
+    def get(self, request, *args, **kwargs):
+        return super(CourseUserReportView, self).get(request, *args, **kwargs)
+
+    def render_to_response(self, context, **response_kwargs):
+        scope = self.request.GET.get('scope', '')
+        if not scope:
+            scope = 'all'
+        if scope:
+
+            COURSE_INFO_CELLS = ['A1', 'B1', 'C1', 'D1']
+            # id, first, last , username, last login, date created, site, organization, deactivation date
+            DATA_COLS = [
+                ('A1', u'Program Id', 15),
+                ('B1', u'First', 20),
+                ('C1', u'Last', 20),
+                ('D1', u'Username', 30),
+                ('E1', u'Last login', 20),
+                ('F1', u'Date joined', 20),
+                ('G1', u'Course', 15),
+                ('H1', u'Organization', 15),
+                ('I1', u'On site (hours:mins)', 30),
+                ('J1', u'Active?', 15),
+            ]
+
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            daystr = datetime.now().strftime('%Y-%m-%d-%I_%M_%p ')
+            coursestr = self.get_object().title
+            filename = coursestr + '-' + daystr + '-report.xlsx'
+            response['Content-Disposition'] = 'attachment; filename=' + filename
+
+            # Openpyxl writer
+            writer = Workbook()
+            ws = writer.get_active_sheet()
+            ws.title = coursestr
+
+            # Write course information row and format
+            ws.append([self.get_object().title or '', ' Report date: ' + daystr])
+            ws.append([])  # Blank row
+            for i in COURSE_INFO_CELLS:
+                ws[i].font = Font(size=18, name='Arial', bold=True)
+
+            # Write data column header and format
+            for col_num in xrange(len(DATA_COLS)):
+                offset = col_num+1
+                cell = ws.cell(row=3, column=offset)
+                cell.value = DATA_COLS[col_num][1]
+                cell.font = Font(size=14, name='Arial')
+                # set column width
+                ws.column_dimensions[get_column_letter(col_num+1)].width = DATA_COLS[col_num][2]
+
+            # Write data rows
+            for i in self.get_object().student_report():
+                ws.append(i)
+            
+            writer.save(response)
+            
+            return response
+
+        else:
+            return super(CourseUserReportView, self).render_to_response(context, **response_kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super(CourseUserReportView, self).get_context_data(**kwargs)     
+        return context
+
+
+class CourseUserActivityReportView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+    model = Course
+    template_name = 'course_user_progress.html'
+    slug_url_kwarg = 'crs_slug'
+    access_object = None
+
+    def get(self, request, *args, **kwargs):
+        return super(CourseUserActivityReportView, self).get(request, *args, **kwargs)
+
+    def render_to_response(self, context, **response_kwargs):
+        scope = self.request.GET.get('scope', '')
+        if not scope:
+            return super(CourseUserActivityReportView, self).render_to_response(context, **response_kwargs)
+        if scope:
+
+            COURSE_INFO_CELLS = ['A1', 'B1', 'C1', 'D1']
+            # id, first, last , username, last login, date created, site, organization, deactivation date
+            DATA_COLS = [
+                ('A1', u'Program Id', 10),
+                ('B1', u'First', 10),
+                ('C1', u'Last', 10),
+                ('D1', u'Username', 30),
+                ('E1', u'Date', 15),
+                ('F1', u'On site(h:m)', 15),
+                ('G1', u'Date/Time', 10),
+                ('H1', u'Activity', 15),
+                ('I1', u'Subject', 15),
+                ('J1', u'Current Score', 5),
+
+            ]
+
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            daystr = datetime.now().strftime('%Y-%m-%d-%I_%M_%p ')
+            coursestr = self.get_object().title
+            filename = coursestr + '-' + daystr + '-report.xlsx'
+            response['Content-Disposition'] = 'attachment; filename=' + filename
+
+            # Openpyxl writer
+            writer = Workbook()
+            ws = writer.get_active_sheet()
+            ws.title = coursestr
+            ws.page_setup.orientation = ws.ORIENTATION_LANDSCAPE
+            ws.merge_cells('A1:G1')
+
+            # Write course information row and format
+            ws.append([self.get_object().title or '', ' Report date: ' + daystr])
+            ws.append([])  # Blank row
+            for i in COURSE_INFO_CELLS:
+                ws[i].font = Font(size=10, name='Arial', bold=True)
+                ws[i].alignment = Alignment(wrap_text=True)
+
+            # Write data column header and format
+            for col_num in xrange(len(DATA_COLS)):
+                offset = col_num+1
+                cell = ws.cell(row=3, column=offset)
+                cell.value = DATA_COLS[col_num][1]
+                cell.font = Font(size=10, name='Arial')
+                cell.alignment = Alignment(wrap_text=True)
+                # set column width
+                ws.column_dimensions[get_column_letter(col_num+1)].width = DATA_COLS[col_num][2]
+
+            # Write data rows
+            for i in self.get_object().student_report():                
+                user = User.objects.get(username=i[3])  # get user from username
+                activity_log = get_daily_log_times_v2(user, self.get_object())
+                
+                try:
+                    daily = activity_log[scope]
+                except:
+                    daily = [0, 0, []]
+                
+                ws.append([i[0], i[1], i[2], i[3], scope, daily[1]])
+                
+                for k in daily[2]:
+                    ws.append(['', '', '', '', '', '', k['event_time'], k['activity'].action, k['activity'].message_detail or ' ', k['score'] or ' '])
+
+            writer.save(response)
+            
+            return response
+
+        else:
+            return super(CourseUserReportView, self).render_to_response(context, **response_kwargs)
+    
+    def get_context_data(self, **kwargs):
+        context = super(CourseUserActivityReportView, self).get_context_data(**kwargs)
+   
+        return context
 
 """ User Activity Management """
 
@@ -188,13 +371,13 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
             USER_INFO_CELLS = ['A1', 'B1', 'C1', 'D1']
 
             DATA_COLS = [
-                ('A1', u'Date', 15),
-                ('B1', u'Total Time on Curriculum', 40),
-                ('C1', u'Date & Time', 40),
-                ('D1', u'Activity', 50),
-                ('E1', u'More Details', 40),
-                ('F1', u'Subject', 30),
-                ('G1', u'Current Score', 15),
+                ('A1', u'Date', 10),
+                ('B1', u'Total Time on Curriculum', 15),
+                ('C1', u'Date & Time', 17),
+                ('D1', u'Activity', 20),
+                ('E1', u'More Details', 30),
+                ('F1', u'Subject', 15),
+                ('G1', u'Current Score', 5),
             ]
 
             response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
@@ -207,19 +390,21 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
             writer = Workbook()
             ws = writer.get_active_sheet()
             ws.title = userstr
+            ws.page_setup.orientation = ws.ORIENTATION_LANDSCAPE
 
             # Write user information row and format
             ws.append([context['student_user'].ggvuser.program_id or '', context['student_user'].first_name + ' ' + context['student_user'].last_name, context['student_user'].email, ' Report date: ' + daystr])
             ws.append([])  # Blank row
             for i in USER_INFO_CELLS:
-                ws[i].font = Font(size=18, name='Arial', bold=True)
+                ws[i].font = Font(size=14, name='Arial', bold=True)
 
             # Write data column header and format
             for col_num in xrange(len(DATA_COLS)):
                 offset = col_num+1
                 cell = ws.cell(row=3, column=offset)
                 cell.value = DATA_COLS[col_num][1]
-                cell.font = Font(size=14, name='Arial')
+                cell.font = Font(size=12, name='Arial')
+                cell.alignment=Alignment(wrap_text=True)
                 # set column width
                 ws.column_dimensions[get_column_letter(col_num+1)].width = DATA_COLS[col_num][2]
 

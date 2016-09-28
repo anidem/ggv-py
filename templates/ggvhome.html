@@ -32,13 +32,16 @@
 	<div class="col-md-12" class="border"><p></p></div>
 {% endif %}
 {% for org_key, course_list in courses.items %}
-	<div class="col-md-12"><h2>{{ org_key.title }}</h2></div>
+	<div class="col-md-12"><h2><a href="">{{ org_key.title }}</a></h2></div>
 	{% for i in course_list.0 %}
 		<div class="col-md-12 hoverpad">
 			<div class="col-md-6">
 				<div class="row">
-					<div class="col-md-8"><i class="fa fa-home"></i> <a href="{{ i.0.get_absolute_url }}"> {{ i.0 }}</a></div>
+					<div class="col-md-8"><i class="fa fa-home"></i> <a href="{{ i.0.get_absolute_url }}"> {{ i.0 }} ({{ i.4 }} instructors)</a></div>
 					<div class="col-md-4 text-right">
+					{% if is_manager or user.is_staff %}
+						[ <a href="{% url 'report_course_activity' i.0.slug %}?scope={% now 'Y-m-d' %}" class="small text-info">report</a> ]
+					{% endif %}
 					[ <a href="{% url 'manage_course' i.0.slug %}" class="small text-info">roster</a> ]
 					[ <a href="{% url 'course_attendance_current' i.0.slug %}" class="small">attendance</a> ]
 					</div>

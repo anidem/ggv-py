@@ -22,6 +22,7 @@ from .models import Bookmark, GGVUser, SiteMessage, Notification, SitePage, Atte
 from .forms import BookmarkForm, GgvUserAccountCreateForm, GgvUserSettingsForm, GgvUserAccountUpdateForm, GgvUserStudentSettingsForm, GgvEmailQuestionToInstructorsForm, AttendanceTrackerUpdateForm, AttendanceTrackerCreateForm
 from .mixins import CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from .signals import *
+from .utils import update_attendance_for_all_users
 from archiver import serialize_user_data
 
 tz = timezone(settings.TIME_ZONE)
@@ -73,6 +74,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
             for course in o.organization_courses.all():
 
                 if  self.request.user.has_perm('courses.manage', course) or self.request.user.is_staff :
+                    num_instructors = len(course.instructor_list())
                     num_active = len(course.student_list())
                     num_deactive = len(course.deactivated_list())
                     num_nologin = len(course.unvalidated_list())
@@ -85,7 +87,8 @@ class HomeView(LoginRequiredMixin, TemplateView):
                         course,
                         num_active,
                         num_deactive,
-                        num_nologin                
+                        num_nologin,
+                        num_instructors                
                     )
                     course_rows.append(crs_data)
                 
@@ -93,7 +96,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
                     crs_data = (course,)
                     course_rows.append(crs_data)                    
             
-            total_quota_used = total_active + total_nologin
+            total_quota_used = len(o.licenses_in_use())
 
             organizations[o] = (course_rows, total_active, total_deactive, total_nologin, total_quota_used)
         
@@ -461,6 +464,14 @@ class AttendanceAjaxCodeDeleteView(LoginRequiredMixin, JSONResponseMixin, Delete
 
         return self.render_json_response(data) 
 
+
+class AttendanceUpdateAllView(LoginRequiredMixin, TemplateView):
+    template_name = "attendance_update_all.html"
+
+    def dispatch(self, request, *args, **kwargs):
+        if self.request.user.is_staff:
+            update_attendance_for_all_users()
+        return super(AttendanceUpdateAllView, self).dispatch(request, *args, **kwargs)
 
 """ Bookmark Management """
 

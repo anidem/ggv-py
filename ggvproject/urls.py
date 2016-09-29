@@ -19,7 +19,7 @@ from core.views import (
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView,
     CreateGgvUserView, UpdateGgvUserAccountView, GgvUserView, UpdateGgvUserView, GgvUserActivationView, GgvUserArchiveThenDeleteView, GgvUserDeleteUnusedAccount,
-    FaqView, GgvUsersDeactivationView, GgvUsersActivationView, AttendanceAjaxCodeUpdateView, AttendanceAjaxCodeCreateView, AttendanceAjaxCodeDeleteView
+    FaqView, GgvUsersDeactivationView, GgvUsersActivationView, AttendanceAjaxCodeUpdateView, AttendanceAjaxCodeCreateView, AttendanceAjaxCodeDeleteView, AttendanceUpdateAllView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import (
@@ -61,6 +61,8 @@ urlpatterns = patterns('',
     url(r'^ggv/slidestack/(?P<pk>\d+)/$', SlideStackInfoView.as_view(), name='slide_info_view'),
     url(r'^ggv/slidestack/edit/(?P<pk>\d+)/$', SlideStackUpdateView.as_view(), name='slide_update'),
 
+# AttendanceUpdateAllView
+    url(r'^ggv/update-attendance/$', AttendanceUpdateAllView.as_view(), name='update_attendance_all'),
 
 # GGV Organizations
     url(r'^ggv/organization/(?P<pk>\d+)/$', GgvOrgAdminView.as_view(), name='manage_org'),

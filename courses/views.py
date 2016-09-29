@@ -364,6 +364,8 @@ class CourseUserActivityFullReportView(LoginRequiredMixin, CourseContextMixin, A
         
         for student in self.get_object().student_report():                
             user = User.objects.get(username=student[3])  # get user from username
+            if not user.is_active:
+                continue
             userstr = user.last_name + '-' + user.first_name
             
             ws = writer.create_sheet(userstr, sheet_index)

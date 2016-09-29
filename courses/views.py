@@ -14,7 +14,7 @@ from django.utils import html, text
 from django.shortcuts import redirect
 
 from openpyxl import Workbook
-from openpyxl.cell import get_column_letter
+from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment
 from braces.views import LoginRequiredMixin
 # from guardian.shortcuts import has_perm
@@ -159,6 +159,10 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
 
 
 class CourseUserReportView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+    """
+    Summarizes total time on site and active status for all students in a course. One row for each student written to 
+    excel spreadsheet.
+    """
     model = Course
     template_name = 'course_user_progress.html'
     slug_url_kwarg = 'crs_slug'
@@ -231,6 +235,10 @@ class CourseUserReportView(LoginRequiredMixin, CourseContextMixin, AccessRequire
 
 
 class CourseUserActivityReportView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+    """
+    Summarizes all student activity in a course for a specified date (scope). Reports are arranged in
+    a single worksheet. This includes all activity for each student.
+    """
     model = Course
     template_name = 'course_user_progress.html'
     slug_url_kwarg = 'crs_slug'
@@ -317,6 +325,87 @@ class CourseUserActivityReportView(LoginRequiredMixin, CourseContextMixin, Acces
         context = super(CourseUserActivityReportView, self).get_context_data(**kwargs)
    
         return context
+
+
+
+class CourseUserActivityFullReportView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+    """
+    Summarizes all student activity for each student in a course. Student reports are arranged in separate worksheets.
+    """
+    model = Course
+    template_name = 'course_user_progress.html'
+    slug_url_kwarg = 'crs_slug'
+    access_object = None
+
+    def get(self, request, *args, **kwargs):
+        return super(CourseUserActivityFullReportView, self).get(request, *args, **kwargs)
+
+    def render_to_response(self, context, **response_kwargs):
+        USER_INFO_CELLS = ['A1', 'B1', 'C1', 'D1']
+
+        DATA_COLS = [
+            ('A1', u'Date', 10),
+            ('B1', u'Total Time on Curriculum', 15),
+            ('C1', u'Date & Time', 17),
+            ('D1', u'Activity', 20),
+            ('E1', u'More Details', 30),
+            ('F1', u'Subject', 15),
+            ('G1', u'Score', 5),
+        ]
+
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        daystr = datetime.now().strftime('%Y-%m-%d-%I_%M_%p ')
+        filename = self.get_object().slug + '-' + daystr + 'student-activity-report.xlsx'
+        response['Content-Disposition'] = 'attachment; filename=' + filename
+
+        # Openpyxl writer
+        writer = Workbook()
+        sheet_index = 0
+        
+        for student in self.get_object().student_report():                
+            user = User.objects.get(username=student[3])  # get user from username
+            userstr = user.last_name + '-' + user.first_name
+            
+            ws = writer.create_sheet(userstr, sheet_index)
+            ws.print_options.gridLines=True
+            ws.page_setup.orientation = ws.ORIENTATION_LANDSCAPE
+
+            # Write user information row and format
+            ws.append([user.ggvuser.program_id or '', user.first_name + ' ' + user.last_name, user.email, ' Report date: ' + daystr])
+            ws.append([])  # Blank row
+            for i in USER_INFO_CELLS:
+                ws[i].font = Font(size=14, name='Arial', bold=True)
+
+            # Write data column header and format
+            for col_num in xrange(len(DATA_COLS)):
+                offset = col_num+1
+                cell = ws.cell(row=3, column=offset)
+                cell.value = DATA_COLS[col_num][1]
+                cell.font = Font(size=12, name='Arial')
+                cell.alignment=Alignment(wrap_text=True)
+                # set column width
+                ws.column_dimensions[get_column_letter(col_num+1)].width = DATA_COLS[col_num][2]
+
+            activity_log = get_daily_log_times_v2(user, self.get_object())
+            # Write data rows
+            for i, j in activity_log.items():
+                ws.append([j[0].date(), j[1]])
+                for k in j[2]:
+                    print k
+                    ws.append(['', '', k['event_time'].strftime('%Y-%m-%d %-I:%M %p'), k['activity'].action, html.strip_tags(k['activity'].message), k['activity'].message_detail or ' ', k['score'] or ' '])
+
+            sheet_index += 1
+            
+            
+        writer.save(response)
+        return response
+    
+    def get_context_data(self, **kwargs):
+        context = super(CourseUserActivityFullReportView, self).get_context_data(**kwargs)
+   
+        return context
+
+
 
 """ User Activity Management """
 

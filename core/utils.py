@@ -7,7 +7,7 @@ from pytz import timezone
 from collections import OrderedDict
 
 from openpyxl import Workbook
-from openpyxl.cell import get_column_letter
+from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font
 
 from django.core.exceptions import ValidationError, ObjectDoesNotExist

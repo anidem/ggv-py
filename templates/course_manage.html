@@ -55,7 +55,12 @@
     </div>
 
 <!-- Active students -->
-    <div class="row"><div class="col-md-12"><h2>{{ students|length}} Active Student Account{{ students|length|pluralize }}</h2></div></div>
+    <div class="row"><div class="col-md-12">
+        <h2>
+            {{ students|length}} Active Student Account{{ students|length|pluralize }}
+            <span class="smaller">{% if is_manager or user.is_staff %}<a href="{% url 'report_full_course_activity' course.slug %}" class="small text-info"> download full report </a>{% endif %}</span>
+        </h2>
+    </div></div>
 
     <div class="row">
         <div  id="sorts"  class="col-xs-12">

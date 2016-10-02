@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.contrib.contenttypes import generic
+# from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.fields import GenericRelation
 
 from lessons.models import Lesson, AbstractActivity
@@ -15,7 +15,7 @@ class SlideStack(AbstractActivity):
         max_length=48, default='slidestack', null=True)
     asset = models.CharField(
         max_length=512, default='not specified', null=True, blank=True)
-    notes = generic.GenericRelation(UserNote)
+    notes = GenericRelation(UserNote)
     bookmarks = GenericRelation(Bookmark)
 
     def get_absolute_url(self, **kwargs):

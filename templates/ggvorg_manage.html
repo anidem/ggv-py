@@ -1,0 +1,225 @@
+<!-- ggvorg_manage.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load guardian_tags %}
+
+
+{% block page_crumb %}{% endblock page_crumb %}
+
+{% block local_nav %}
+    {% if is_manager %}
+    <li>
+        <a class="static nav-text" href="{% url 'create_user' course.slug %}">
+            <i class="fa fa-user-plus text-primary"></i>
+        </a>
+    </li>
+    {% endif %}
+{% endblock local_nav %}
+
+{% block page_header %}
+<div class="col-md-12 text-center"><h2 class="lead"><i class="fa fa-university"></i> {{ object }} </h2></div>
+{% endblock page_header %}
+
+{% block content %}
+
+<div class="col-md-12">
+    <dl class="dl-horizontal">
+        <dt>User quota:</dt><dd>{{ object.user_quota }}</dd>
+        <dt>Licenses used:</dt><dd>{{ num_licensees }}</dd>
+        <dt>License start date:</dt><dd>{{ object.quota_start_date }}</dd>
+        <dt>License end date:</dt><dd>{{ object.quota_end_date }}</dd>
+        <dt>License manager contact:</dt><dd>{{ object.business_contact_email }}</dd>
+        <dt>License manager phone:</dt><dd>{{ object.business_contact_phone }}</dd>
+    </dl>
+    {% for i, j in licensees.items %}
+        <p>
+            <span> {{ j.0.ggvuser.program_id }}: </span>
+            <span> {{ j.0.first_name }} </span>
+            <span> {{ j.0.last_name }} </span>
+            <span> {{ j.0.date_created }} </span>
+            <span> {{ j.0.last_login }} </span>
+            <span> {{ i }} </span>
+            {% for k, v in j.1.items %}
+                <span class={% if v.0 == 'manage' %}"fa fa-user-secret"{% elif v.0 == 'instructor' %}"fa fa-graduation-cap"{% else %}"fa fa-user"{% endif %}><b> {{ k }}</b></span> 
+                <span class="smaller">{% if not forloop.last %}, {% endif %} </span>
+            {% endfor %}
+        </p>
+
+    {% empty %}
+        There no licensees assigned for {{ object }}
+    {% endfor %}
+</div>
+
+<div class="col-md-12">
+    {% for course in courses %}
+        <h2>{{ course }}</h2>
+    {% empty %}
+        There are no courses assigned to {{ object }}.
+    {% endfor %}
+</div>
+
+{% endblock content %}
+
+{% block local_js %}
+    <script src="{% static 'js/isotope.pkgd.min.js'%}"></script>
+
+    <script type="text/javascript">
+        // jQuery(function($) {
+            
+        //     var $container_instructors = $('#container_instructors').isotope({
+        //         getSortData: {
+        //             login: '[data-login] parseInt',
+        //             recent_timestamp: '[data-recent] parseInt',
+        //             siteid: '.siteid',
+        //             firstname: '.firstname',
+        //             lastname: '.lastname',
+        //             username: '.username'
+        //         },
+
+        //     });
+
+        //     var $container0 = $('#container_0').isotope({
+        //         getSortData: {
+        //             login: '[data-login] parseInt',
+        //             recent_timestamp: '[data-recent] parseInt',
+        //             siteid: '.siteid',
+        //             firstname: '.firstname',
+        //             lastname: '.lastname',
+        //             username: '.username'
+        //         },
+
+        //     });
+
+        //     var $container00 = $('#container_00').isotope({
+        //         getSortData: {
+        //             login: '[data-login] parseInt',
+        //             siteid: '.siteid',
+        //             firstname: '.firstname',
+        //             lastname: '.lastname',
+        //             username: '.username'
+        //         },
+
+        //     });
+
+        //     var $container1 = $('#container_1').isotope({
+        //         getSortData: {
+        //             firstname: '.firstname',
+        //             lastname: '.lastname',
+        //             date_created: '[data-created] parseInt',
+        //             username: '.username'
+        //         },
+
+        //     });
+
+        //     // sort items on button click
+        //     $('#instructor_sorts .btn-block').on( 'click', function() {
+        //         var sortByValue = $(this).attr('data-sort-by');
+        //         var order = "";
+        //         if ($(this).attr("data-order")==="asc") {
+        //             order = true;
+        //             $(this).attr("data-order", "");
+
+        //         } else {
+        //             order = false;
+        //             $(this).attr("data-order", "asc");
+        //         }
+        //         $('#instructor_sorts .btn-primary').removeClass('btn-primary');
+        //         $(this).addClass("btn-primary");
+
+        //         $container_instructors.isotope({
+        //             sortBy: sortByValue,
+        //             sortAscending: order
+        //         });
+        //     });
+
+        //     // sort items on button click
+        //     $('#sorts .btn-block').on( 'click', function() {
+        //         var sortByValue = $(this).attr('data-sort-by');
+        //         var order = "";
+        //         if ($(this).attr("data-order")==="asc") {
+        //             order = true;
+        //             $(this).attr("data-order", "");
+
+        //         } else {
+        //             order = false;
+        //             $(this).attr("data-order", "asc");
+        //         }
+        //         $('#sorts .btn-primary').removeClass('btn-primary');
+        //         $(this).addClass("btn-primary");
+
+        //         $container0.isotope({
+        //             sortBy: sortByValue,
+        //             sortAscending: order
+        //         });
+        //     });
+
+        //     // sort items on button click
+        //     $('#deactivated_sorts .btn-block').on( 'click', function() {
+        //         var sortByValue = $(this).attr('data-sort-by');
+        //         var order = "";
+        //         if ($(this).attr("data-order")==="asc") {
+        //             order = true;
+        //             $(this).attr("data-order", "");
+
+        //         } else {
+        //             order = false;
+        //             $(this).attr("data-order", "asc");
+        //         }
+        //         $('#deactivated_sorts .btn-primary').removeClass('btn-primary');
+        //         $(this).addClass("btn-primary");
+
+        //         $container00.isotope({
+        //             sortBy: sortByValue,
+        //             sortAscending: order
+        //         });
+        //     });
+
+
+
+        //     // sort items on button click
+        //     $('#unvalidatedsorts .btn-block').on( 'click', function() {
+        //         var sortByValue = $(this).attr('data-sort-by');
+        //         var order = "";
+        //         if ($(this).attr("data-order")==="asc") {
+        //             order = true;
+        //             $(this).attr("data-order", "");
+
+        //         } else {
+        //             order = false;
+        //             $(this).attr("data-order", "asc");
+        //         }
+        //         $('#unvalidatedsorts .btn-primary').removeClass('btn-primary');
+        //         $(this).addClass("btn-primary");
+
+        //         $container1.isotope({
+        //             sortBy: sortByValue,
+        //             sortAscending: order
+        //         });
+        //     });
+
+        //     $('#deactivate-btn').on('click', function () {
+        //         if ($('#container_0 input:checked').length)
+        //             $('#deactivate-form').submit();
+        //     });
+
+        //     $('#activate-btn').on('click', function () {
+        //         if ($('#container_00 input:checked').length)
+        //             $('#activate-form').submit();
+        //     });
+
+        //     $('#remove-unaccessed-btn').on('click', function () {
+        //         if ($('#container_1 input:checked').length)
+        //             $('#remove-unaccessed-form').submit();
+        //     });
+
+
+        //     $(document).ready(function() {
+
+        //     });
+        // });
+    </script>
+
+
+
+{% endblock local_js %}
+

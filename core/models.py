@@ -11,7 +11,7 @@ from django.conf import settings
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.contenttypes import generic
+from django.contrib.contenttypes.fields import GenericForeignKey
 
 from courses.models import Course
 
@@ -257,7 +257,7 @@ class Bookmark(models.Model):
     creator = models.ForeignKey(User, related_name="bookmarker")
     content_type = models.ForeignKey(ContentType, related_name="bookmarks")
     object_id = models.PositiveIntegerField()
-    content_object = generic.GenericForeignKey('content_type', 'object_id')
+    content_object = GenericForeignKey('content_type', 'object_id')
     course_context = models.ForeignKey(Course, null=True, blank=True)
 
     def notify_text(self):

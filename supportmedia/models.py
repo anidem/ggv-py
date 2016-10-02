@@ -1,6 +1,6 @@
 from django.db import models
 from django.core.urlresolvers import reverse
-from django.contrib.contenttypes import generic
+# from django.contrib.contenttypes import generic
 from django.contrib.contenttypes.fields import GenericRelation
 
 from lessons.models import Lesson, AbstractActivity
@@ -15,7 +15,7 @@ class ExternalMedia(AbstractActivity):
         max_length=48, default='external_media', null=True)
     media_link = models.URLField(null=True, blank=True, help_text='copy and paste the link to the video. If you want to embed the video, please use the media embed field instead.')
     media_embed = models.TextField(null=True, blank=True, help_text='copy and paste the embed code from video service (e.g. from YouTube)')
-    notes = generic.GenericRelation(UserNote)
+    notes = GenericRelation(UserNote)
     bookmarks = GenericRelation(Bookmark)
 
     def __unicode__(self):

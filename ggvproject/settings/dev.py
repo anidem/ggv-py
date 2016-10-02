@@ -80,5 +80,5 @@ LOGIN_URL = '/login/google-oauth2/'
 LOGIN_REDIRECT_URL = '/home'
 
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_SECURITY_WARN_AFTER =  1500 # 5 mins to move mouse
-SESSION_SECURITY_EXPIRE_AFTER = 1800 # expire after 30 mins
+SESSION_SECURITY_WARN_AFTER =  3750 # 5 mins to move mouse
+SESSION_SECURITY_EXPIRE_AFTER = 3800 # expire after 30 mins

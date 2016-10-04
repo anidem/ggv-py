@@ -7,7 +7,7 @@
 	<div class="col-md-12 text-right"><h6> <i class="fa fa-asterisk text-danger"></i> counts against user license quota</h6></div>
 {% endif %}
 <div class="col-md-12 text-center">
-    <h2><i class="fa fa-map-marker"></i> GGV Site Page</h2>
+    <h2><i class="fa fa-map-marker"></i> GGV Site Page{{request.user.ggvuser.clean_logout}}GGVADMIN</h2>
 </div>
 {% endblock page_header %}
 

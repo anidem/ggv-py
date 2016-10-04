@@ -1,6 +1,7 @@
-from django.conf.urls import patterns, include, url
+from django.conf.urls import include, url
 # from django.conf.urls.defaults import handler500, handler404
 from django.contrib import admin
+from django.contrib.auth import views
 
 from filebrowser.sites import site
 
@@ -14,6 +15,7 @@ from core.emails import (
     SendEmailToManagerDeactivationRequest,
     SendEmailToManagerActivationRequest
     )
+from core.utils import logout_clean
 from core.views import (
     IndexView, HomeView,
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
@@ -44,10 +46,9 @@ from supportmedia.views import ExternalMediaView, ExternalMediaCourseView, Exter
 handler404 = 'core.views.handler404'
 handler500 = 'core.views.handler500'
 
-urlpatterns = patterns('',
+urlpatterns = [
     url('', include('social.apps.django_app.urls', namespace='social')),
     url('', include('django.contrib.auth.urls', namespace='auth')),
-    # url('', include('social.apps.django_app.urls', namespace='disconnect_individual')),
     url(r'session_security/', include('session_security.urls')),
     url(r'^ggv/test/$', TestDocView.as_view(), name='util'),
     url(r'^ggv/email-us/$', SendEmailToStaff.as_view(), name='email_staff'),
@@ -162,9 +163,9 @@ urlpatterns = patterns('',
 
     # Login urls
 
-    url(r'^login/$', include('social.apps.django_app.urls')),
-    url(r'^logout/$', 'django.contrib.auth.views.logout', name='logout'),
-    url(r'^clean-logout/$', 'core.utils.logout_clean', name='logout_clean'),
+    url(r'^login/', include('social.apps.django_app.urls')),
+    url(r'^logout/$', views.logout, name='logout'),
+    url(r'^clean-logout/$', logout_clean, name='logout_clean'),
 
     # url(r'^activate/$', ActivateView.as_view(), name='activate'),
     # url(r'^activate/(?P<backend>[^/]+)/$', ActivateView.as_view(), name='activate'),
@@ -186,13 +187,13 @@ urlpatterns = patterns('',
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^ggvadmin/filebrowser/', include(site.urls)),
     url(r'^grappelli/', include('grappelli.urls')),  # grappelli URLS
-    url(r'^ggvadmin',  include(admin.site.urls), name='staff_admin'),  # admin site
+    url(r'^ggvadmin',  admin.site.urls, name='staff_admin'),  # admin site
 
 
     url(r'^faq/$', FaqView.as_view(), name='faq'),
     url(r'^home/$', HomeView.as_view(), name='ggvhome'),
     url(r'^', IndexView.as_view(), name='splash'),
-)
+]
 
 # if settings.DEBUG:
 #     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

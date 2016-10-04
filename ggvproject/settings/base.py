@@ -22,16 +22,34 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.FileSystemFinder',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = (
-    'django.core.context_processors.request',
-    'django.contrib.auth.context_processors.auth',
-    'django.contrib.messages.context_processors.messages',
+# TEMPLATE_CONTEXT_PROCESSORS = (
+#     'django.core.context_processors.request',
+#     'django.contrib.auth.context_processors.auth',
+#     'django.contrib.messages.context_processors.messages',
 
-    'social.apps.django_app.context_processors.backends',
-    'social.apps.django_app.context_processors.login_redirect',
-)
+#     'social.apps.django_app.context_processors.backends',
+#     'social.apps.django_app.context_processors.login_redirect',
+# )
 
-TEMPLATE_DIRS = [PROJECT_DIR.child('templates')]
+# TEMPLATE_DIRS = [PROJECT_DIR.child('templates')]
+TEMPLATES = [
+    { 
+        'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        'APP_DIRS': True,
+        'DIRS':     [PROJECT_DIR.child('templates'),],
+        'OPTIONS': {
+            'context_processors': [
+                'django.template.context_processors.debug',
+                'django.template.context_processors.request',
+                'django.contrib.auth.context_processors.auth',
+                'django.contrib.messages.context_processors.messages',
+
+                'social.apps.django_app.context_processors.backends',
+                'social.apps.django_app.context_processors.login_redirect',
+            ]
+        }
+    }
+]
 
 # Application definition
 INSTALLED_APPS = (
@@ -104,9 +122,6 @@ AUTHENTICATION_BACKENDS = (
 )
 
 ANONYMOUS_USER_ID = -1
-
-# SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-# SESSION_COOKIE_AGE = 86400  # 1 day inactivity logout
 
 GRAPPELLI_INDEX_DASHBOARD = 'ggvproject.ggvadmindashboard.CustomIndexDashboard'
 

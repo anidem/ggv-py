@@ -49,12 +49,12 @@ class GGVOrganization(models.Model):
                 license_data[i[0].email] = (i[0], {i[1]: i[2]})
                 # print license_data[i[0].email]
             except TypeError as e:
-                print i, i.last_name, i.first_name
+                # print i, i.last_name, i.first_name
                 license_data[i] = (i, {None: None})
 
-        print len(licenses), licenses
+        # print len(licenses), licenses
 
-        print len(license_data), license_data
+        # print len(license_data), license_data
 
         return license_data
 

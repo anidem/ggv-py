@@ -229,7 +229,7 @@ def get_daily_log_times_v2 (user=None, course=None, exclusions=[]):
             if att_record:
                 # print curr_datestr, att_record
                 secs = att_record[0].duration_in_secs
-                dur = '%s hours %s minutes' % (secs/3600, secs%3600/60)
+                dur = '%s:%s' % (secs/3600, secs%3600/60)
             
             acts[curr_datestr] = [curr, dur, [event.as_dict(course, exclusions)]]
     return acts

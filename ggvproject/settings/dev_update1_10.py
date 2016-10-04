@@ -10,7 +10,7 @@ DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ggvdbruby-update',
+        'NAME': 'ggvdbruby',
         'USER': 'postgres',
         'PASSWORD': '1',
         'HOST': '127.0.0.1',
@@ -41,7 +41,6 @@ STACKS_ROOT = '/Library/WebServer/Documents/stacks'
 STACKS_DATA_DIR = 'data'
 
 ARCHIVE_DATA_DIR = '/Users/rmedina/pythonweb/archives'
-
 
 PDF_ROOT = '/Library/WebServer/Documents/media/pdf'
 
@@ -79,5 +78,5 @@ LOGOUT_URL = '/logout/'
 
 SESSION_SECURITY_INSECURE = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_SECURITY_WARN_AFTER =  5000 # 5 mins to move mouse
-SESSION_SECURITY_EXPIRE_AFTER = 5005 # expire after 30 mins
+SESSION_SECURITY_WARN_AFTER =  10 # 5 mins to move mouse
+SESSION_SECURITY_EXPIRE_AFTER = 15 # expire after 30 mins

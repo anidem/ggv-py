@@ -469,7 +469,7 @@ class QuestionResponse(TimeStampedModel):
             
             self.iscorrect = self.content_object.check_answer(self)
             
-            super(QuestionResponse, self).save(*args, **kwargs)
+        super(QuestionResponse, self).save(*args, **kwargs)
 
         try:
             status = UserWorksheetStatus.objects.filter(completed_worksheet=self.content_object.question_set).get(user=self.user)

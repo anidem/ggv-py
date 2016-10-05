@@ -9,6 +9,7 @@ from .models import QuestionResponse, OptionQuestion, TextQuestion, Option, Ques
 # from filebrowser.widgets import FileInput, ClearableFileInput
 
 import os
+import json
 
 
 class QuestionResponseForm(ModelForm):
@@ -43,7 +44,7 @@ class QuestionResponseForm(ModelForm):
 
         question = submitted_form.content_object
         user = submitted_form.user
-        
+         
 
         try:
             # Hack to strip whitespace from text question responses.
@@ -55,7 +56,8 @@ class QuestionResponseForm(ModelForm):
             
         previous_response = question.user_response_object(user)
         
-        
+        # print "FORM==>:", submitted_form.response #json.dumps(self.cleaned_data['response'])
+
         if previous_response:
             previous_response.response = submitted_form.response
             previous_response.save()

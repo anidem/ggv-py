@@ -7,7 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 
 from django import forms
-import json
+import json, ast
 
 from model_utils.models import TimeStampedModel
 from lessons.models import Lesson, AbstractActivity
@@ -385,7 +385,8 @@ class OptionQuestion(AbstractQuestion):
         if correct_ans_listing:   # Check if question has a correct answer specified.
             
             if self.input_select == 'checkbox':  # compare lists if question has multiple selections
-                response_listing = [int(i) for i in question_response.json_response()]
+                responsedata = question_response.json_response()
+                response_listing = [int(i) for i in responsedata]
                 return response_listing == correct_ans_listing
 
             # Implies a single selection option.
@@ -462,18 +463,19 @@ class QuestionResponse(TimeStampedModel):
         if self.content_object.get_question_type() == 'option' and self.content_object.input_select == 'checkbox':
             try:  # verify that response is not already encoded in json
                 json.loads(self.response)
-            except:
-                self.response = json.dumps(self.response)
-
-        self.iscorrect = self.content_object.check_answer(self)
-
-        super(QuestionResponse, self).save(*args, **kwargs)
+            except Exception as e:
+                # print "DUMPING TO JSON==>:", json.dumps(ast.literal_eval(self.response))
+                self.response = json.dumps(ast.literal_eval(self.response)) # previous: json.dumps(self.response)
+            
+            self.iscorrect = self.content_object.check_answer(self)
+            
+            super(QuestionResponse, self).save(*args, **kwargs)
 
         try:
             status = UserWorksheetStatus.objects.filter(completed_worksheet=self.content_object.question_set).get(user=self.user)
             status.update_score()
+        
         except Exception as e:
-            # print 'model',e
             pass  # status object null, user has not completed all questions.
 
         

@@ -467,7 +467,7 @@ class QuestionResponse(TimeStampedModel):
                 # print "DUMPING TO JSON==>:", json.dumps(ast.literal_eval(self.response))
                 self.response = json.dumps(ast.literal_eval(self.response)) # previous: json.dumps(self.response)
             
-            self.iscorrect = self.content_object.check_answer(self)
+        self.iscorrect = self.content_object.check_answer(self)
             
         super(QuestionResponse, self).save(*args, **kwargs)
 

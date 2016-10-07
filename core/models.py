@@ -234,10 +234,18 @@ class ActivityLog(models.Model):
                         pass
                     else:
                         secs_since_last_action = (self.timestamp_tz() - previous_activity.timestamp_tz()).seconds
+                        # Adjust duration if over 1 hour. This truncates to 1 hour. 
+                        # If user closes browser without logging off, a log off event is not recorded
+                        # leading to hight probability of over calculating elapsed time since last event.
+                        if secs_since_last_action > 3600:
+                            secs_since_last_action = 3600
 
                 att[0].duration_in_secs += secs_since_last_action
                 if att[0].duration_in_secs > 1799:
                     att[0].code = 0 # set attendance code to 'Online'
+
+                
+                
 
                 att[0].save()
         

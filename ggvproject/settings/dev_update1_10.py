@@ -10,7 +10,7 @@ DEBUG = True
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ggvdbruby-update',
+        'NAME': 'ggvdbruby',
         'USER': 'postgres',
         'PASSWORD': '1',
         'HOST': '127.0.0.1',

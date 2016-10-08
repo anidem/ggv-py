@@ -64,7 +64,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 orgs.append(crs.ggv_organization)
 
         organizations = {}
-        
+        permissions = []
         for o in orgs:      
             total_active = 0
             total_deactive = 0
@@ -72,7 +72,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
             course_rows = []
 
             for course in o.organization_courses.all():
-
+                permissions += course.manager_list()
                 if  self.request.user.has_perm('courses.manage', course) or self.request.user.is_staff :
                     num_instructors = len(course.instructor_list())
                     num_active = len(course.student_list())
@@ -101,6 +101,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
             organizations[o] = (course_rows, total_active, total_deactive, total_nologin, total_quota_used)
         
         context['courses'] = organizations
+        context['managers'] = permissions
         return context
 
 

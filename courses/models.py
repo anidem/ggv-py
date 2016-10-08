@@ -58,6 +58,20 @@ class GGVOrganization(models.Model):
 
         return license_data
 
+    def deactivated_users(self):
+        courses = self.organization_courses.all()
+        deactivated_list = {}
+        for i in courses:
+            deactivated_list[i] = i.deactivated_list()        
+
+        return deactivated_list
+
+    def manager_list(self):
+        courses = self.organization_courses.all()
+        managers = []
+        for i in courses:
+            managers += i.manager_list()
+
     def __unicode__(self):
         return self.title
 

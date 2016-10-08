@@ -50,6 +50,7 @@ class GgvOrgAdminView(LoginRequiredMixin, DetailView):
         context['courses'] = org.organization_courses.all()
         context['licensees'] = user_licenses_used
         context['num_licensees'] = len(user_licenses_used)
+        context['deactivated_users'] = org.deactivated_users()
 
         return context
 

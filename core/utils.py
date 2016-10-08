@@ -2,6 +2,7 @@
 import csv
 import codecs
 import cStringIO
+import time
 from datetime import datetime
 from pytz import timezone
 from collections import OrderedDict
@@ -229,7 +230,8 @@ def get_daily_log_times_v2 (user=None, course=None, exclusions=[]):
             if att_record:
                 # print curr_datestr, att_record
                 secs = att_record[0].duration_in_secs
-                dur = '%s:%s' % (secs/3600, secs%3600/60)
+                # dur = '%s:%s' % (secs/3600, secs%3600/60)
+                dur = time.strftime('%-H:%M', time.gmtime(secs))
             
             acts[curr_datestr] = [curr, dur, [event.as_dict(course, exclusions)]]
     return acts

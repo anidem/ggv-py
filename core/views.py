@@ -364,7 +364,7 @@ class GgvUserDeleteUnusedAccount(CsrfExemptMixin, LoginRequiredMixin, JSONRespon
             unaccessed_list = request.POST.getlist('unaccessed_list')
             for i in unaccessed_list:
                 u = User.objects.get(pk=i)
-                if u.last_login.date() == u.date_joined.date():
+                if not u.last_login or u.last_login.date() == u.date_joined.date():
                     u.delete()
                                
         except Exception as e:

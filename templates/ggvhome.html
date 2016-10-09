@@ -43,9 +43,6 @@
 				<div class="row">
 					<div class="col-md-8"><i class="fa fa-home"></i> <a href="{{ i.0.get_absolute_url }}"> {{ i.0 }} ({{ i.4 }} instructors)</a></div>
 					<div class="col-md-4 text-right">
-					{% if user in managers or user.is_staff %}
-						[ <a href="{% url 'report_course_activity' i.0.slug %}?scope={% now 'Y-m-d' %}" class="small text-info">report</a> ]
-					{% endif %}
 					[ <a href="{% url 'manage_course' i.0.slug %}" class="small text-info">roster</a> ]
 					[ <a href="{% url 'course_attendance_current' i.0.slug %}" class="small">attendance</a> ]
 					</div>

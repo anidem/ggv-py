@@ -314,7 +314,7 @@ class GgvUsersDeactivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponse
     
     def post(self, request, *args, **kwargs):
         try:   
-            deactivate_list = request.POST.getlist('deactivate_list')   
+            deactivate_list = request.POST.getlist('deactivate_list')
             urlstr = request.GET['q']
             for i in deactivate_list:
                 u = User.objects.get(pk=i)

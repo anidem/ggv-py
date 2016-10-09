@@ -155,17 +155,7 @@
                         <ul class="dropdown-menu section_drop scrollable-menu">
 
                             {% if course %}
-                                <li class="disabled"><a href="#"><i class="{{role_icon}} text-primary"></i> Current role: {{ role }}</a></li>
-                                
-                                {% if user.is_staff %}
-                                    <li role="separator" class="divider"></li>
-                                    <li>
-                                        <a class="" href="/ggvadmin" target="_blank">
-                                            <i class="fa fa-lock"></i> Staff Admin
-                                        </a>
-                                    </li>
-                                {% endif %}
-                                
+                                <li class="disabled"><a href="#"><i class="{{role_icon}} text-primary"></i> Current role: {{ role }}</a></li> 
                                 <li role="separator" class="divider"></li>
                                 <li>
                                     <a class="" href="{% url 'edit_user' course.slug user.id %}">
@@ -173,8 +163,26 @@
                                     </a>
                                 </li>
 
+                                {% if 'manage' in roles %}
+                                <li>
+                                    <a class="" href="{% url 'manage_org' course.ggv_organization.id %}">
+                                        <i class="fa fa-cogs"></i> Manage <small>{{ course.ggv_organization }}</small>
+                                    </a>
+                                </li>
+                                {% endif %}
+
                                 <li role="separator" class="divider"></li>
                             {% endif %}
+                            
+                            {% if user.is_staff %}
+                                <li role="separator" class="divider"></li>
+                                <li>
+                                    <a class="" href="/ggvadmin" target="_blank">
+                                        <i class="fa fa-lock"></i> Staff Admin
+                                    </a>
+                                </li>
+                            {% endif %}
+
                             <li>
                                 {% if user.ggvuser.clean_logout %}
                                     <a href="{% url 'logout_clean'  %}"> <i class="fa fa-sign-out"></i> Logout</a>
@@ -235,6 +243,8 @@
 
   <!-- Math Fonts MathJax -->
   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  <script type="text/javascript">$('[data-toggle="popover"]').popover()</script>
 
 
 {% block local_js %}{% endblock local_js %}

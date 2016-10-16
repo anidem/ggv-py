@@ -284,6 +284,10 @@ class SendEmailToManagerDeactivationRequest(CsrfExemptMixin, LoginRequiredMixin,
             for i in self.course.manager_list():  # Bypassing user settings to control email messages from ggv system
                 manager_list.append(i.email)
    
+            if not manager_list: # if not manager found. send request to staff.
+                staff = User.objects.filter(is_staff=True)
+                for i in staff:
+                    manager_list.append(i.email)
 
             course_slugs = self.request.session['user_courses']
             course_titles = ''

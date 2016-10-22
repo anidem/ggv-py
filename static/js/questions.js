@@ -1,9 +1,5 @@
 // questions.js
 jQuery(function($) {
-    $( "chk_response_btn" ).submit(function( event ) {
-        this.disabled = true;
-        console.log("disabling");
-    });
 
     $( "#noteform" ).submit(function( event ) {
         event.preventDefault();
@@ -63,7 +59,4 @@ jQuery(function($) {
 
     });
 
-	$(document).ready(function() {
-
-	});
 });

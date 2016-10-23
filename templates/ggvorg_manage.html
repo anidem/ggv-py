@@ -40,9 +40,9 @@
     {% for course in courses %} 
         <dt>{{ course }} </dt>
         <dd>
-            <a href="{% url 'manage_course' course.slug %}">manage</a>
-            [ <small><a href="{% url 'report_full_course_activity' course.slug %}" class="small text-info"> download full report </a></small> ]
-            [ <small><a href="{% url 'report_course_activity' course.slug %}?scope={% now 'Y-m-d' %}" class="small text-info">download today's summary</a></small> ]
+            [ <small><a href="{% url 'manage_course' course.slug %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="View detailed roster.">roster</a></small> ]
+            [ <small><a href="{% url 'report_full_course_activity' course.slug %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="Download full activity report for all licensed users."> full report </a></small> ]
+            [ <small><a href="{% url 'report_course_activity' course.slug %}?scope={% now 'Y-m-d' %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="Download full report only for today.">today</a></small> ]
 
         </dd>
     {% endfor %}
@@ -109,7 +109,7 @@
                 <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="d_firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
                 <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="d_lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
                 <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="d_username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
-                <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="d_login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
+                <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="d_deactivate" data-order="asc"> <i class="fa fa-sort"></i> deactivated on</button></div>
                 <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="d_course" data-order="asc"> <i class="fa fa-sort"></i> course </button></div>
         </div>
     </div>
@@ -121,7 +121,7 @@
                 <div class="col-xs-2 d_firstname"><small>{{ i.first_name }}</small></div>
                 <div class="col-xs-2 d_lastname"><small>{{ i.last_name }}</small></div>
                 <div class="col-xs-2 d_username"><small>{{ i }}</small></div>
-                <div class="col-xs-2 d_login"><small>{{ i.last_login|date:"Y - M d, g:i A" }}</small></div>
+                <div class="col-xs-2 d_deactivate"><small>{% if i.ggvuser.last_deactivation_date %} {{ i.ggvuser.last_deactivation_date|date:"Y - M d" }}{% else %} {{ i.last_login|date:"Y - M d"}} {% endif %}</small></div>
                 <div class="col-xs-2 d_course"><small>{{ course }}</small></div>
             </div>
             
@@ -140,6 +140,8 @@
     <script type="text/javascript">
         jQuery(function($) {
             $(document).ready(function() {
+                $('[data-toggle="tooltip"]').tooltip()
+
                 var $container_sorts = $('#container_sorts').isotope({
                     getSortData: {
                         login: '[data-login] parseInt',

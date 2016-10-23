@@ -54,6 +54,7 @@ class GGVUser(models.Model):
     clean_logout = models.BooleanField(default=True)
     receive_notify_email = models.BooleanField(default=False)
     receive_email_messages = models.BooleanField(default=False)
+    last_deactivation_date = models.DateTimeField(null=True)
 
     def attendance_by_month(self, year=None, month=None):
         try:
@@ -77,7 +78,6 @@ class GGVUser(models.Model):
 
 
         return attendance_list
-
 
     def attendance_full_listing(self):
         attendance_list = OrderedDict()

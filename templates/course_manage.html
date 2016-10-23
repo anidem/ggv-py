@@ -118,7 +118,7 @@
             <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
             <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
             <div class="col-xs-3"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="deactivated" data-order="asc"> <i class="fa fa-sort"></i> deactivated</button></div>
             <div class="col-xs-2"><button id="activate-btn" class="btn btn-block btn-sm btn-success"><i class="fa fa-check-square-o"></i>{% if is_manager %} activate {% else %} request activation {% endif %}</button></div>
         </div>
     </div>
@@ -132,7 +132,7 @@
             <div class="col-xs-2 firstname">{{ i.0.first_name }}</div>
             <div class="col-xs-2 lastname">{{ i.0.last_name }}</div>
             <div class="col-xs-3 username">{{ i.0.username }}</div>
-            <div class="col-xs-2 login">{{ i.0.last_login|date:"Y - M d" }}</div>
+            <div class="col-xs-2 deactivated">{{ i.0.ggvuser.last_deactivation_date|date:"Y - M d" }}</div>
             </a>
             <div class="col-xs-2"><input type="checkbox" name="activate_list" value="{{ i.0.id }}"></div>
         </div>

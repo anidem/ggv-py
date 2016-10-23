@@ -2,6 +2,7 @@
 import json
 from pytz import timezone
 
+from django import utils
 from django.db import IntegrityError
 from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -319,8 +320,11 @@ class GgvUsersDeactivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponse
             for i in deactivate_list:
                 u = User.objects.get(pk=i)
                 u.is_active = False
+                u.ggvuser.last_deactivation_date = utils.timezone.now()
+                u.ggvuser.save()
                 u.save()
-        except:
+        except Exception as e:
+            print e
             pass  # silently fail
 
         return redirect('manage_course', crs_slug=urlstr)
@@ -335,6 +339,8 @@ class GgvUsersActivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMi
             for i in activate_list:
                 u = User.objects.get(pk=i)
                 u.is_active = True
+                u.ggvuser.last_deactivation_date = None
+                u.ggvuser.save()
                 u.save()
         except:
             pass  # silently fail

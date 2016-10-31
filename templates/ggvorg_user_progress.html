@@ -25,7 +25,7 @@
 	<p class="lead">Enter date for report: <input type="text" id="reportday"></p>
 	
 	<p id="dl_phase" class="lead hidden">
-		<a id="dl_btn" href="" class="btn btn-lg btn-success"></a>
+		<a id="dl_btn" href="" class="btn btn-lg btn-success" data-toggle="tooltip" data-placement="top" title="Click to download Excel sheet to your computer."></a>
 		<p class="hidden">This may take awhile depending on number of students in organization. Check your download folder.</p>
 	</p>
 </div>
@@ -44,11 +44,11 @@
 				.html("<i class='fa fa-download'></i> Download report for " + dt);
 			$(this).val("");
 
-			$(".hidden").removeClass("hidden").fadeOut().fadeIn(2000);
-
+			$(".hidden").removeClass("hidden");
 		});
 
-		$(document).ready(function() { 
+		$(document).ready(function() {
+			$('[data-toggle="tooltip"]').tooltip()
 		});
 
 	});

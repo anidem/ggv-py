@@ -35,7 +35,7 @@
 </div>
 
 <div class="col-md-6">
-    <p class="lead">{{ courses|length }} Courses</p>
+    <p class="lead">{{ courses|length }} Courses [ <small><a href="{% url 'report_org_activity' object.id %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="Download daily activity for all courses.">download daily report</a></small> ]</p>
     <dl class="dl-horizontal">
     {% for course in courses %} 
         <dt>{{ course }} </dt>

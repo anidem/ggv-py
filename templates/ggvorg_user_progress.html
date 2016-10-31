@@ -1,0 +1,56 @@
+<!-- ggvorg_user_progress.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load guardian_tags %}
+
+{% block page_crumb %}{% endblock page_crumb %}
+
+{% block local_nav %}
+    {% if is_manager %}
+    <li>
+        <a class="static nav-text" href="">
+            <i class="fa fa-user-plus text-primary"></i>
+        </a>
+    </li>
+    {% endif %}
+{% endblock local_nav %}
+
+{% block page_header %}
+<div class="col-md-12 text-center"><h2 class="lead"><i class="fa fa-university"></i> {{ object }} </h2></div>
+{% endblock page_header %}
+
+{% block content %}
+
+<div class="col-md-12 text-center">
+	<p class="lead">Enter date for report: <input type="text" id="reportday"></p>
+	
+	<p id="dl_phase" class="lead hidden">
+		<a id="dl_btn" href="" class="btn btn-lg btn-success"></a>
+		<p class="hidden">This may take awhile depending on number of students in organization. Check your download folder.</p>
+	</p>
+</div>
+{% endblock content %}
+
+{% block local_js %}
+<script type="text/javascript">
+	$(function() {
+		$( "#reportday" ).datepicker({
+  			dateFormat: "yy-mm-dd"
+		});
+
+		$("#reportday").change(function() {
+			var dt = $(this).val();
+			$("#dl_btn").attr("href", "./?scope=" + dt)
+				.html("<i class='fa fa-download'></i> Download report for " + dt);
+			$(this).val("");
+
+			$(".hidden").removeClass("hidden").fadeOut().fadeIn(2000);
+
+		});
+
+		$(document).ready(function() { 
+		});
+
+	});
+</script>
+{% endblock local_js %}

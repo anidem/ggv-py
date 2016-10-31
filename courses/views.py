@@ -54,6 +54,97 @@ class GgvOrgAdminView(LoginRequiredMixin, DetailView):
 
         return context
 
+
+class GgvOrgUserActivityReportView(LoginRequiredMixin, DetailView):
+    """
+    Summarizes all student activity in an organization for a specified date (scope). Reports are arranged in
+    a single worksheet. This includes all activity for each student.
+    """
+    model = GGVOrganization
+    template_name = 'ggvorg_user_progress.html'
+    access_object = None
+
+    def get(self, request, *args, **kwargs):
+        return super(GgvOrgUserActivityReportView, self).get(request, *args, **kwargs)
+
+    def render_to_response(self, context, **response_kwargs):
+        scope = self.request.GET.get('scope', '')
+        if not scope:
+            return super(GgvOrgUserActivityReportView, self).render_to_response(context, **response_kwargs)
+        if scope:
+
+            COURSE_INFO_CELLS = ['A1', 'B1', 'C1', 'D1']
+            # id, first, last , username, last login, date created, site, organization, deactivation date
+            DATA_COLS = [
+                ('A1', u'Program Id', 8),
+                ('B1', u'Course', 10),
+                ('C1', u'First', 10),
+                ('D1', u'Last', 10),
+                ('E1', u'Username', 30),
+                ('F1', u'Date', 12),
+                ('G1', u'On site(h:m)', 8),
+                ('H1', u'Date/Time', 18),
+                ('I1', u'Activity', 15),
+                ('J1', u'Subject', 15),
+                ('K1', u'Current Score', 5),
+            ]
+
+            response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            daystr = datetime.now().strftime('%Y-%m-%d-%I_%M_%p ')
+            orgstr = self.get_object().title
+            filename = orgstr + '-' + scope + '-report.xlsx'
+            response['Content-Disposition'] = 'attachment; filename=' + filename
+
+            # Openpyxl writer
+            writer = Workbook()
+            ws = writer.get_active_sheet()
+            ws.title = orgstr
+            ws.page_setup.orientation = ws.ORIENTATION_LANDSCAPE
+            ws.merge_cells('A1:G1')
+
+            # Write course information row and format
+            ws.append([self.get_object().title or '', ' Report date: ' + scope])
+            ws.append([])  # Blank row
+            for i in COURSE_INFO_CELLS:
+                ws[i].font = Font(size=10, name='Arial', bold=True)
+                ws[i].alignment = Alignment(wrap_text=True)
+
+            # Write data column header and format
+            for col_num in xrange(len(DATA_COLS)):
+                offset = col_num+1
+                cell = ws.cell(row=3, column=offset)
+                cell.value = DATA_COLS[col_num][1]
+                cell.font = Font(size=10, name='Arial')
+                cell.alignment = Alignment(wrap_text=True)
+                # set column width
+                ws.column_dimensions[get_column_letter(col_num+1)].width = DATA_COLS[col_num][2]
+
+            # Write data rows
+            student_data = []
+            courses = self.get_object().organization_courses.all()
+            for c in courses:
+                for i in c.student_report():                
+                    user = User.objects.get(username=i[3])  # get user from username
+                    activity_log = get_daily_log_times_v2(user, c)
+                    
+                    try:
+                        daily = activity_log[scope]
+                    except:
+                        daily = [0, 0, []]
+                    
+                    ws.append([i[0], c.title, i[1], i[2], i[3], scope, daily[1]])
+                    
+                    for k in daily[2]:
+                        ws.append(['', '', '', '', '', '', '', k['event_time'], k['activity'].action, k['activity'].message_detail or ' ', k['score'] or ' '])
+
+            writer.save(response)
+            
+            return response
+    
+    def get_context_data(self, **kwargs):
+        context = super(GgvOrgUserActivityReportView, self).get_context_data(**kwargs)   
+        return context
+
 """ Course Management """
 
 class CourseUpdateView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, UpdateView):

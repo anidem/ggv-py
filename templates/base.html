@@ -33,7 +33,8 @@
 
   <!-- Font Awesome for icons -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
-
+  
+  <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
   <link rel="stylesheet" href="{% static 'css/ggv.css' %}">
 
   {% block local_head %} {% endblock local_head %}
@@ -232,7 +233,15 @@
     </div> -->
 
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-  <script src="https://code.jquery.com/jquery.js"></script>
+  <!-- <script src="https://code.jquery.com/jquery.js"></script> -->
+  <script
+  src="https://code.jquery.com/jquery-2.2.4.min.js"
+  integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+  crossorigin="anonymous"></script>
+  <script 
+  src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js" 
+  integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" 
+  crossorigin="anonymous"></script>
   
 
   <!-- Latest compiled and minified JavaScript -->

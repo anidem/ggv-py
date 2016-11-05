@@ -25,13 +25,14 @@
 	<p class="lead">Enter date for report: <input type="text" id="reportday"></p>
 	
 	<p id="dl_phase" class="lead hidden">
-		<a id="dl_btn" href="" class="btn btn-lg btn-success" data-toggle="tooltip" data-placement="top" title="Click to download Excel sheet to your computer."></a>
-		<p class="hidden">This may take awhile depending on number of students in organization. Check your download folder.</p>
+		<a id="dl_btn" href="" class="btn btn-lg btn-success fileDownloader"></a>
+		<p id="dl_msg" class="hidden">This may take awhile depending on number of students in organization. Check your download folder.</p>
 	</p>
 </div>
 {% endblock content %}
 
 {% block local_js %}
+<script type="text/javascript" src="{% static 'js/jquery.fileDownload.js' %}"></script>
 <script type="text/javascript">
 	$(function() {
 		$( "#reportday" ).datepicker({
@@ -44,11 +45,28 @@
 				.html("<i class='fa fa-download'></i> Download report for " + dt);
 			$(this).val("");
 
-			$(".hidden").removeClass("hidden");
+			$("#dl_phase").removeClass("hidden");
+			$("#dl_msg").addClass("hidden")
 		});
 
+		$(document).on("click", "a.fileDownloader", function() {
+	        $.fileDownload($(this).attr('href'), {
+	            preparingMessageHtml: "We are preparing your report, please wait...<p class='text-center'><i class='fa fa-spinner fa-spin fa-3x fa-fw'></i></p>",
+	            failMessageHtml: "There was a problem generating your report, please try again.",
+			
+				successCallback: function(url) {
+                	$("#dl_phase").addClass("hidden");
+                	$("#dl_msg").removeClass("hidden").html('File as been downloaded.');
+            	},
+            	failCallback: function(responseHtml, url) {
+            		$("#dl_msg").removeClass("hidden").html('File was not downloaded.');
+            	}	            
+	        });
+	        return false; //this is critical to stop the click event which will trigger a normal file download!
+    	});
+
 		$(document).ready(function() {
-			$('[data-toggle="tooltip"]').tooltip()
+			
 		});
 
 	});

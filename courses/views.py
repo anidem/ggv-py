@@ -16,7 +16,7 @@ from django.shortcuts import redirect
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, JSONResponseMixin, AjaxResponseMixin
 # from guardian.shortcuts import has_perm
 
 from core.models import Notification, SiteMessage
@@ -58,7 +58,7 @@ class GgvOrgAdminView(LoginRequiredMixin, DetailView):
 class GgvOrgUserActivityReportView(LoginRequiredMixin, DetailView):
     """
     Summarizes all student activity in an organization for a specified date (scope). Reports are arranged in
-    a single worksheet. This includes all activity for each student.
+    a single worksheet. This includes all activity for each student on specified day (scope).
     """
     model = GGVOrganization
     template_name = 'ggvorg_user_progress.html'
@@ -138,12 +138,13 @@ class GgvOrgUserActivityReportView(LoginRequiredMixin, DetailView):
                         ws.append(['', '', '', '', '', '', '', k['event_time'], k['activity'].action, k['activity'].message_detail or ' ', k['score'] or ' '])
 
             writer.save(response)
-            
+            response.set_cookie('fileDownload','true');
             return response
     
     def get_context_data(self, **kwargs):
         context = super(GgvOrgUserActivityReportView, self).get_context_data(**kwargs)   
         return context
+
 
 """ Course Management """
 

@@ -160,8 +160,14 @@ class Course(models.Model):
                 time_on_site = time_on_site + j.duration_in_secs
             hours = time_on_site / 3600
             mins = time_on_site % 3600 / 60
+            
+            try:
+                g = i.ggvuser.program_id
+            except:
+                g = None
+
             row = [
-                i.ggvuser.program_id, 
+                g, 
                 i.first_name, 
                 i.last_name, 
                 i.username, 

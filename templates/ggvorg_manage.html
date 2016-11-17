@@ -153,12 +153,12 @@
     <div id="container_deactivated" class="row text-danger">
         {% for course, user_list in deactivated_users.items %}
             {% for i in user_list %}
-            <div class="item hoverpad col-xs-12" data-d-login="{{ i.last_login|date:'U' }}">
+            <div class="item hoverpad col-xs-12" data-d-login="{{ i.last_login|date:'U' }}" data-deactivated="{% if i.ggvuser.last_deactivation_date %}{{ i.ggvuser.last_deactivation_date|date:'U' }}{% else %}{{ i.last_login|date:'U'}}{% endif %}">
                 <div class="col-xs-2 d_siteid"><small>{{ i.ggvuser.program_id }}</small></div>
                 <div class="col-xs-2 d_firstname"><small>{{ i.first_name }}</small></div>
                 <div class="col-xs-2 d_lastname"><small>{{ i.last_name }}</small></div>
                 <div class="col-xs-2 d_username"><small>{{ i }}</small></div>
-                <div class="col-xs-2 d_deactivate"><small>{% if i.ggvuser.last_deactivation_date %} {{ i.ggvuser.last_deactivation_date|date:"Y - M d" }}{% else %} {{ i.last_login|date:"Y - M d"}} {% endif %}</small></div>
+                <div class="col-xs-2 d_deactivate"><small>{% if i.ggvuser.last_deactivation_date %}{{ i.ggvuser.last_deactivation_date|date:"Y - M d" }}{% else %}{{ i.last_login|date:"Y - M d"}}{% endif %}</small></div>
                 <div class="col-xs-2 d_course"><small>{{ course }}</small></div>
             </div>
             
@@ -201,6 +201,7 @@
                         d_lastname: '.d_lastname',
                         d_username: '.d_username',
                         d_course: '.d_course',
+                        d_deactivate: '[data-deactivated] parseInt'
                     },
 
                 });

@@ -333,7 +333,7 @@ class CourseUserActivityReportView(LoginRequiredMixin, CourseContextMixin, Acces
     a single worksheet. This includes all activity for each student.
     """
     model = Course
-    template_name = 'course_user_progress.html'
+    template_name = 'ggvorg_user_progress.html' #'course_user_progress.html'
     slug_url_kwarg = 'crs_slug'
     access_object = None
 
@@ -408,7 +408,7 @@ class CourseUserActivityReportView(LoginRequiredMixin, CourseContextMixin, Acces
                     ws.append(['', '', '', '', '', '', k['event_time'], k['activity'].action, k['activity'].message_detail or ' ', k['score'] or ' '])
 
             writer.save(response)
-            
+            response.set_cookie('fileDownload','true');
             return response
 
         else:

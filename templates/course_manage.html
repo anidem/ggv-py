@@ -13,6 +13,12 @@
             <i class="fa fa-user-plus text-primary"></i>
         </a>
     </li>
+    {% elif is_instructor %}
+    <li>
+        <a class="static nav-text" href="{% url 'email_manager_request_account' course.slug %}">
+            <i class="fa fa-user-plus text-primary"></i>
+        </a>
+    </li>
     {% endif %}
 {% endblock local_nav %}
 

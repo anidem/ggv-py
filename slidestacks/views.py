@@ -105,6 +105,7 @@ class SlideStackInfoView(LoginRequiredMixin, StaffuserRequiredMixin, DetailView)
 class SlideStackUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, UpdateView):
     model = SlideStack
     template_name = 'activity_update.html'
+    fields = '__all__'
 
     def get_success_url(self):
         return reverse_lazy('slide_info_view', args=[self.get_object().id])

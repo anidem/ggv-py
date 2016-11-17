@@ -385,6 +385,15 @@ form ul {
   border: 1px #333 solid;
 }
 
+.bg-gray {
+  background-color: #ccc;
+  color: #fff;
+}
+
+.border-btm {
+  border-bottom:1px solid gray;
+}
+
 
 
 

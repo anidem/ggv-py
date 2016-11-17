@@ -13,7 +13,8 @@ from core.emails import (
     SendEmailToStaff, 
     SendEmailToInstructor,
     SendEmailToManagerDeactivationRequest,
-    SendEmailToManagerActivationRequest
+    SendEmailToManagerActivationRequest,
+    SendEmailToManagerCreateAccountRequest
     )
 from core.utils import logout_clean
 from core.views import (
@@ -178,9 +179,9 @@ urlpatterns = [
     url(r'^ggv/(?P<crs_slug>[-\w]+)/email-instructor/$', SendEmailToInstructor.as_view(), name='email_instructor'),
 
     url(r'^ggv/(?P<crs_slug>[-\w]+)/email-manager/deactivate$', SendEmailToManagerDeactivationRequest.as_view(), name='email_manager_deactivate'),
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/email-manager/activate$', SendEmailToManagerActivationRequest.as_view(), name='email_manager_activate'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/email-manager/activate$', SendEmailToManagerActivationRequest.as_view(), name='email_manager_activate'), 
 
-
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/email-manager/new-account$', SendEmailToManagerCreateAccountRequest.as_view(), name='email_manager_request_account'),
 
 # Administration pages
 

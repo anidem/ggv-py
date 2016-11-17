@@ -28,6 +28,7 @@ from archiver import serialize_user_data
 
 tz = timezone(settings.TIME_ZONE)
 
+
 class IndexView(TemplateView):
     template_name = 'index.html'
 

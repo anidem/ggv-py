@@ -82,6 +82,7 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
 class SectionUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, CourseContextMixin, UpdateView):
     model = Section
     template_name = 'activity_update.html'
+    fields = '__all__'
 
     def get_success_url(self):
         return reverse_lazy('lesson', args=[self.kwargs['crs_slug'], self.get_object().lesson.id])

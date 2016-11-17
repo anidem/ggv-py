@@ -157,6 +157,23 @@ class GgvEmailActivationRequestForm(Form):
         help_text='After pressing Send Message, the site manager will receive your request in their email.'
         )
 
+class GgvEmailManagerRequestAccountForm(Form):
+    # course = forms.ModelChoiceField(
+    #     queryset=Course.objects.all(), widget=forms.HiddenInput())
+    username = forms.EmailField(widget=forms.EmailInput(), label=LABELS['username'])
+    first_name = forms.CharField()
+    last_name = forms.CharField()
+    perms = forms.ChoiceField(widget=forms.RadioSelect(), choices=ACCESS_CHOICES, label=LABELS['access_level'])
+    program_id = forms.CharField(label=LABELS['program_id'], required=False)
+    language = forms.ChoiceField(choices=LANG_CHOICES, label=LABELS['language'], required=False)
+
+    # class Meta:
+    #     model = User
+    #     fields = ['username', 'first_name', 'last_name', 'program_id',
+    #               'language', 'perms', 'course', 'is_active']
+    #     widgets = {
+    #         'is_active': forms.HiddenInput(),
+    #     }    
 
 class BookmarkForm(ModelForm):
 

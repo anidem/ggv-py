@@ -23,28 +23,58 @@
 {% block content %}
 
 <div class="col-md-6">
-    <p class="lead">Overview</p>
-    <dl class="dl-horizontal">
-        <dt>User quota:</dt><dd>{{ object.user_quota }}</dd>
-        <dt>Licenses used:</dt><dd>{{ num_licensees }}</dd>
-        <dt>License start date:</dt><dd>{{ object.quota_start_date }}</dd>
-        <dt>License end date:</dt><dd>{{ object.quota_end_date }}</dd>
-        <dt>License manager contact:</dt><dd>{{ object.business_contact_email }}</dd>
-        <dt>License manager phone:</dt><dd>{{ object.business_contact_phone }}</dd>
-    </dl>
+    <p class="lead border-btm">License Information</p>
+    <div class="row hoverpad">
+        <div class="col-md-6"><b>User quota:</b></div><div class="col-md-6">{{ object.user_quota }}</div>
+    </div>
+    <div class="row hoverpad">
+        <div class="col-md-6"><b>Licenses used:</b></div><div class="col-md-6">{{ num_licensees }}</div>
+    </div>
+    <div class="row hoverpad">
+        <div class="col-md-6"><b>License start date:</b></div><div class="col-md-6">{{ object.quota_start_date }}</div>
+    </div>
+    <div class="row hoverpad">
+        <div class="col-md-6"><b>License end date:</b></div><div class="col-md-6">{{ object.quota_end_date }}</div>
+    </div>
+    <div class="row hoverpad">
+        <div class="col-md-6"><b>License manager contact:</b></div><div class="col-md-6">{{ object.business_contact_email }}</div>
+    </div>
+    <div class="row hoverpad">
+        <div class="col-md-6"><b>License manager phone:</b></div><div class="col-md-6">{{ object.business_contact_phone }}</div>
+    </div>
 </div>
 
 <div class="col-md-6">
-    <p class="lead">{{ courses|length }} Courses [ <small><a href="{% url 'report_org_activity' object.id %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="Download daily activity for all courses.">download daily report</a></small> ]</p>
-    <dl class="dl-horizontal">
-    {% for course in courses %} 
-        <dt>{{ course }} </dt>
-        <dd>
-            [ <small><a href="{% url 'manage_course' course.slug %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="View detailed roster.">roster</a></small> ]
-            [ <small><a href="{% url 'report_full_course_activity' course.slug %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="Download full activity report for all licensed users."> full report </a></small> ]
-            [ <small><a href="{% url 'report_course_activity' course.slug %}?scope={% now 'Y-m-d' %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="Download full report only for today.">today</a></small> ]
+    <p class="lead border-btm">
+        {{ courses|length }} Courses 
+        <small class="pull-right">
+            <i class="fa fa-download"></i>
+            <a href="{% url 'report_org_activity' object.id %}" class="small text-info"> daily report </a>
+            <a tabindex="0" class="bg-default small" role="button" data-toggle="popover" data-placement="left" data-trigger="focus" title="Activity Report" data-content="Download a daily activity report for all users that are active in all courses."> <i class="fa fa-question-circle"></i> </a>
+        </small>
 
-        </dd>
+        <small></small>
+    </p>
+    <dl class="dl">
+    {% for course in courses %} 
+        <div class="row hoverpad">
+
+            <div class="col-md-6"><b>{{ course }}</b></div>
+            <div class="col-md-6">
+            [ <small><a href="{% url 'manage_course' course.slug %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="View roster information for {{course}}.">roster</a></small> ]
+
+            [ <small>
+                <i class="fa fa-download"></i>
+                <a href="{% url 'report_course_activity' course.slug %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="Download a daily activity report for all active users in {{course}}.">daily report</a>
+            </small> ]
+
+            [ <small>
+                <i class="fa fa-download"></i>
+                <a href="{% url 'report_full_course_activity' course.slug %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="Download complete history of activity for all users in {{course}}."> full report </a>
+            </small> ]
+            </div>
+
+        </div>
     {% endfor %}
     </dl>
 </div>
@@ -52,7 +82,7 @@
 <div class="col-md-12">
     <p>
         <span class="lead">Licensed Users</span>
-        <a tabindex="0" class="btn btn-xs btn-warning" role="button" data-toggle="popover" data-trigger="focus" title="Licensed Users" data-content="Licensed users are counted against the user quota. Inactive users have an account but they have not logged in to activate.."><i class="fa fa-question-circle"></i></a>
+        <a tabindex="0" class="bg-default" role="button" data-toggle="popover" data-trigger="focus" title="Licensed Users" data-content="Licensed users are counted against the user quota. Inactive users have an account but they have not logged in to activate.."><i class="fa fa-question-circle"></i></a>
     </p>
 </div>
 <div class="col-md-12 well">
@@ -71,22 +101,29 @@
     <div id="container_sorts" class="row">
         {% for i, j in licensees.items %}
             <div class="item hoverpad col-xs-12 {% if not j.0.is_active %}bg-warning{% endif %}" data-created-login="{{ j.0.date_joined|date:'U' }}" data-login="{{ j.0.last_login|date:'U' }}">
-                <div class="col-xs-1 siteid"><small>{{ j.0.ggvuser.program_id }}</small></div>
-                <div class="col-xs-1 firstname"><small>{{ j.0.first_name }}</small></div>
-                <div class="col-xs-1 lastname"><small>{{ j.0.last_name }}</small></div>
-                <div class="col-xs-2 username"><small>{{ i }}</small></div>
-                <div class="col-xs-2 created"><small>{{ j.0.date_joined|date:"Y-M-d" }}</small></div>
-                <div class="col-xs-2 login"><small>{{ j.0.last_login|date:"Y - M d, g:i A" }}</small></div>
-                <div class="col-xs-2 courses"><small>
-                    {% for k, v in j.1.items %}
-                        {{ k }} <i class="{% if v.0 == 'manage' %}fa fa-user-secret{% elif v.0 == 'instructor' %}fa fa-graduation-cap{% else %}fa fa-user{% endif %}"></i>{% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                </small></div>
-                <div class="col-xs-1 status" data-status="{{ j.0.is_active }}"><small>
-                    {% if j.0.is_active %}<span class="label label-success">active</span>
-                    {% else %}<span  class="label label-warning">inactive</span>
-                    {% endif %}
-                </small></div>
+                <a 
+                    {% if j.1.items.0.0.id %} href="{% url 'user_progress' j.1.items.0.0.slug j.0.id %}" 
+                    {% else %} href="#" 
+                    {% endif%} 
+                    class="static">
+                    <div class="col-xs-1 siteid"><small>{{ j.0.ggvuser.program_id }}</small></div>
+                    <div class="col-xs-1 firstname"><small>{{ j.0.first_name }}</small></div>
+                    <div class="col-xs-1 lastname"><small>{{ j.0.last_name }}</small></div>
+                    <div class="col-xs-2 username"><small>{{ i }}</small></div>
+                    <div class="col-xs-2 created"><small>{{ j.0.date_joined|date:"Y-M-d" }}</small></div>
+                    <div class="col-xs-2 login"><small>{{ j.0.last_login|date:"Y - M d, g:i A" }}</small></div>
+                    <div class="col-xs-2 courses"><small>
+                        {% for k, v in j.1.items %}
+                            {{ k }} <i class="{% if v.0 == 'manage' %}fa fa-user-secret{% elif v.0 == 'instructor' %}fa fa-graduation-cap{% else %}fa fa-user{% endif %}"></i>{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </small></div>
+                    <div class="col-xs-1 status" data-status="{{ j.0.is_active }}"><small>
+                        {% if j.0.is_active %}<span class="label label-success">active</span>
+                        {% else %}<span  class="label label-warning">new</span>
+                        {% endif %}
+                    </small></div>
+                </a>
+
             </div>
         {% empty %}
             There no licensees assigned for {{ object }}
@@ -97,7 +134,7 @@
 <div class="col-md-12">
     <p>
         <span class="lead">Deactivated Users </span>
-        <a tabindex="0" class="btn btn-xs btn-warning" role="button" data-toggle="popover" data-trigger="focus" title="Deactivated Users" data-content="Deactivated users are not counted against the user quota. Deactivated users cannot login."><i class="fa fa-question-circle"></i></a>
+        <a tabindex="0" class="bg-default" role="button" data-toggle="popover" data-trigger="focus" title="Deactivated Users" data-content="Deactivated users are not counted against the user quota. Deactivated users cannot login."><i class="fa fa-question-circle"></i></a>
     </p>
 </div>
 

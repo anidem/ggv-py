@@ -15,7 +15,7 @@ from courses.models import Course
 from questions.models import QuestionSet
 
 from .models import GGVUser
-from .forms import GgvEmailStaffForm, GgvEmailQuestionToInstructorsForm, GgvEmailWorksheetErrorReportToStaffForm, GgvEmailInstructors, GgvEmailDeactivationRequestForm, GgvEmailActivationRequestForm
+from .forms import GgvEmailStaffForm, GgvEmailQuestionToInstructorsForm, GgvEmailWorksheetErrorReportToStaffForm, GgvEmailInstructors, GgvEmailDeactivationRequestForm, GgvEmailActivationRequestForm, GgvUserAccountCreateForm, GgvEmailManagerRequestAccountForm
 from .mixins import CourseContextMixin
 from .signals import *
 
@@ -372,8 +372,59 @@ class SendEmailToManagerActivationRequest(CsrfExemptMixin, LoginRequiredMixin, C
         return redirect('manage_course', crs_slug=urlstr)
 
 
+class SendEmailToManagerCreateAccountRequest(LoginRequiredMixin, CourseContextMixin, FormView):
+    """
+    A view to allow instructors to send a new account request to managers of a ggv organization.
 
+    recipients: GGV Organization Manager
+    sender: system sends but indicates the current user email in reply-to field.
+    scope: global
+    """
+    form_class = GgvEmailManagerRequestAccountForm
+    template_name = "ggv_send_account_request.html"
+    success_url = None
+    course = None
 
+    def dispatch(self, request, *args, **kwargs):
+        self.course = Course.objects.get(slug=kwargs['crs_slug'])
+        return super(SendEmailToManagerCreateAccountRequest, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('course', args=[self.course.slug])
+
+    def form_valid(self, form):
+        user_sender = self.request.user
+        perm = form.cleaned_data.get('perms')
+        if perm == 'access':
+            perm = 'student'
+
+        recipients = [i.email for i in self.course.manager_list()]
+        if not recipients:
+            recipients = [e.email for e in User.objects.filter(is_staff=True).filter(is_active=True)]
+
+        html_message = "<p>Hi, {sender} is requesting a new account on behalf of the person indicated below.</p> ".format(sender=user_sender.get_full_name())
+
+        html_message += "<h3>New user:</h3>"
+        html_message += "<p>Username (email): {0}</p>".format(form.cleaned_data.get('username'))
+        html_message += "<p>First Name: {0}</p>".format(form.cleaned_data.get('first_name'))
+        html_message += "<p>Last Name: {0}</p>".format(form.cleaned_data.get('last_name'))
+        html_message += "<p>Access Level: {0}</p>".format(perm)
+        html_message += "<p>Progam ID: {0}</p>".format(form.cleaned_data.get('program_id'))
+        html_message += "<p>Language: {0}</p>".format(form.cleaned_data.get('language'))
+        html_message += "<p>Course: {0}</p>".format(self.course)
+
+        email = EmailMultiAlternatives(
+            subject=self.request.user.get_full_name() + ' is requesting a new account',
+            body=html_message,
+            from_email=settings.EMAIL_HOST_USER,
+            to=recipients,
+            headers={'Reply-To': user_sender.email},  # this can be updated after upgrading to django 8+
+            )
+
+        email.attach_alternative(html_message, "text/html")
+        email.send(fail_silently=True)
+        messages.info(self.request, 'Your request for a new account has been sent to the managers for your account.')
+        return super(SendEmailToManagerCreateAccountRequest, self).form_valid(form)
 
 """ BACKEND EMAIL PROCEDURES. FUNCTIONS THAT ARE INITIATED AUTOMATICALLY BY THE SYSTEM. """
 

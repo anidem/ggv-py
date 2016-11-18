@@ -1,4 +1,5 @@
 # settings/dev.py
+# django v1.10
 
 from .base import *
 
@@ -6,8 +7,6 @@ from .base import *
 SECRET_KEY = os.environ['SECRET_KEY']
 
 DEBUG = True
-
-TEMPLATE_DEBUG = True
 
 DATABASES = {
     'default': {
@@ -33,8 +32,8 @@ EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']
 EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_PORT = 587
 
-# STATIC_ROOT = '/Library/WebServer/Documents/static'
-# STATIC_URL = 'http://ggv2.developers.com/static/'
+STATIC_ROOT = '/Library/WebServer/Documents/static'
+STATIC_URL = 'http://ggv2.developers.com/static/'
 
 MEDIA_ROOT = '/Library/WebServer/Documents/media'
 MEDIA_URL = 'http://localhost/media/'
@@ -43,7 +42,6 @@ STACKS_ROOT = '/Library/WebServer/Documents/stacks'
 STACKS_DATA_DIR = 'data'
 
 ARCHIVE_DATA_DIR = '/Users/rmedina/pythonweb/archives'
-
 
 PDF_ROOT = '/Library/WebServer/Documents/media/pdf'
 
@@ -75,10 +73,11 @@ SOCIAL_AUTH_PIPELINE = (
     'social.pipeline.user.user_details',
 )
 
-
 LOGIN_URL = '/login/google-oauth2/'
 LOGIN_REDIRECT_URL = '/home'
+LOGOUT_URL = '/logout/'
 
+SESSION_SECURITY_INSECURE = True
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
-SESSION_SECURITY_WARN_AFTER =  3750 # 5 mins to move mouse
-SESSION_SECURITY_EXPIRE_AFTER = 3800 # expire after 30 mins
+SESSION_SECURITY_WARN_AFTER =  5000 # 5 mins to move mouse
+SESSION_SECURITY_EXPIRE_AFTER = 5001 # expire after 30 mins

@@ -114,7 +114,7 @@
                             {% if j.activity.action == 'completed-worksheet' or j.activity.action == 'access-worksheet'%}
                                 <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
                                 {{j.event_target }}
-                                {% if event_target.id %}
+                                {% if j.event_target.id %}
                                 <a href="{% url 'worksheet_user_report' j.course.slug j.event_target.id student_user.id %}">(view report)</a>
                                 {% endif %}
                             {% elif j.activity.action == 'access-presentation' %}

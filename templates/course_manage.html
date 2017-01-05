@@ -178,7 +178,7 @@
             <div class="col-xs-2 firstname">{{ i.first_name }}</div>
             <div class="col-xs-2 lastname">{{ i.last_name }}</div>
             <div class="col-xs-3 username">{{ i.username }} </div>
-            <div class="col-xs-2 date_created">{{ i.last_login|date:"Y - M d" }}</div>
+            <div class="col-xs-2 date_created">{{ i.date_joined|date:"Y - M d" }}</div>
             <div class="col-xs-2">{% if is_manager %}<input type="checkbox" name="unaccessed_list" value="{{ i.id }}">{% endif %}</div>
         </div>
         {% empty %}

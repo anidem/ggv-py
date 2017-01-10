@@ -1,7 +1,7 @@
 # core/forms.py
 from django import forms
-from django.forms import Form, ModelForm, ModelChoiceField, ChoiceField, BooleanField, CharField, EmailField
-
+from django.forms import Form, ModelForm, ModelChoiceField, ChoiceField, BooleanField, CharField, EmailField, ValidationError
+from django.core.exceptions import NON_FIELD_ERRORS
 from django.contrib.auth.models import User
 
 from core.models import GGVUser, AttendanceTracker
@@ -41,6 +41,15 @@ class GgvUserAccountCreateForm(ModelForm):
     perms = forms.ChoiceField(widget=forms.RadioSelect(), choices=ACCESS_CHOICES, label=LABELS['access_level'])
     username = forms.EmailField(widget=forms.EmailInput(), label=LABELS['username'])
     program_id = forms.CharField(label=LABELS['program_id'], required=False)
+
+    def clean(self):
+        data = super(GgvUserAccountCreateForm, self).clean()
+        user_licenses_used = data['course'].ggv_organization.licenses_in_use()
+        if len(user_licenses_used) >= data['course'].ggv_organization.user_quota:
+            
+            raise ValidationError('Number of user licenses for this organization has been exceeded. Additional users cannot be added. Consider deactivating old accounts to free up licenses for new users.', code='quota_exceeded')        
+
+        return data
 
     class Meta:
         model = User

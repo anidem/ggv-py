@@ -10,6 +10,7 @@ from django.http import Http404
 from django.shortcuts import redirect, render_to_response
 from django.template import RequestContext
 from django.contrib.auth.models import User
+from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 
@@ -123,6 +124,7 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
     def dispatch(self, request, *args, **kwargs):
         try:
             self.course = Course.objects.get(slug=kwargs['crs_slug'])
+
         except:
             self.course = None
 
@@ -155,7 +157,7 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         ggvuser = GGVUser(user=self.object, language_pref=language, program_id=prog_id)
         ggvuser.save()
         assign_perm(perms, self.object, course)
-
+        messages.success(self.request, 'User successfully added.')
         return super(CreateGgvUserView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -163,6 +165,11 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         student_list = self.course.student_list()
         context['students'] = student_list
         context['instructors'] = self.course.instructor_list()
+        user_licenses_used = self.course.ggv_organization.licenses_in_use()
+        context['licenses'] = user_licenses_used
+        context['license_count'] = len(user_licenses_used)
+        context['license_quota'] = self.course.ggv_organization.user_quota
+
         # context['unregistered'] = User.objects.filter().filter(social_auth__user__isnull=True)
         # context['deactivated'] = User.objects.filter(social_auth__user__isnull=True)
 
@@ -305,9 +312,9 @@ class GgvUserActivationView(LoginRequiredMixin, UpdateView):
     def get_success_url(self):
         try:
             # Hack to return the user back to the course manage list.
-            str = self.request.META['HTTP_REFERER']
-            str = str[str.find('q=')+2:]
-            return reverse('manage_course', args=[str])
+            urlstr = self.request.META['HTTP_REFERER']
+            urlstr = urlstr[urlstr.find('q=')+2:]
+            return reverse('manage_course', args=[urlstr])
         except:
             return reverse('ggvhome')
 
@@ -337,12 +344,22 @@ class GgvUsersActivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMi
         try:   
             activate_list = request.POST.getlist('activate_list')   
             urlstr = request.GET['q']
+            course = Course.objects.get(slug=urlstr)
+            licenses_in_use = course.ggv_organization.licenses_in_use()
+            license_quota = course.ggv_organization.user_quota
+            license_count = len(licenses_in_use)
             for i in activate_list:
-                u = User.objects.get(pk=i)
-                u.is_active = True
-                u.ggvuser.last_deactivation_date = None
-                u.ggvuser.save()
-                u.save()
+                if license_count < license_quota:
+                    u = User.objects.get(pk=i)
+                    u.is_active = True
+                    u.ggvuser.last_deactivation_date = None
+                    u.ggvuser.save()
+                    u.save()
+                    license_count += 1
+                else:
+                    messages.warning(request, 'License quota has been exceeded. Some or all requested accounts may not have been activated.')
+                    break
+
         except:
             pass  # silently fail
 

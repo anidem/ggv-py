@@ -14,13 +14,13 @@
   <ul class="dropdown-menu scrollable-menu">
     {% for i in acts %}
       <li>
-        {% if i.act.activity_type is 'slidestack' %}
+        {% if i.act.activity_type == 'slidestack' %}
             <a href="/stacks/{{i.act.asset}}"><i class="fa fa-desktop icon-slidestack"></i> {{ i.act.title }}</a>
             {% comment %}
             <a href="{% url 'slideview' course.slug i.act.id %}"><i class="fa fa-desktop icon-slidestack"></i> {{ i.act.title }}</a>{% endcomment %}
         {% else %}
 
-            <a href="{% url 'question_response' course.slug i.act.id 1 %}"><i class="fa fa-pencil-square-o"></i> {{ i.act.title }}</a>
+            <a href="{% url 'question_response' course.slug i.act.id 1 %}"><i class="fa fa-pencil-square-o"></i> {{ i.act.title|truncatewords:5 }}</a>
         {% endif %}
       </li>
     {% endfor %}

@@ -180,13 +180,14 @@
             </div>
 
         <!-- RIGHT panel: Question media (images, pdfs) -->
-            {%if question.display_image %}
+            {% if question.display_image %}
                 <div class="col-md-8">
+                    <a href="{{ question.display_image.url }}" target="_blank">print</a>
                     <div><img class="fit" src="{{ question.display_image.url }}"></div>
                 </div>
             {% endif %}
 
-            {%if question.display_pdf %}
+            {% if question.display_pdf %}
                 <div class="col-md-8">
                         <a href="{{ question.display_pdf.url }}" target="_blank">print</a>
                     <!-- <div class="pdfframe"> -->

@@ -43,6 +43,7 @@ class slide_view(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, De
         activities = self.get_object().section.activities()
         context['next_act'] = ''
         context['section'] = self.get_object().section
+        context['stacks_url'] = settings.STACKS_URL
         
         for i in range(len(activities)):
             if activities[i].id == self.get_object().id:

@@ -2,28 +2,30 @@
 {% load staticfiles %}
 {% if course %}
 	<div  style="float: left">
+		<== Back
 		<a href="{% url 'lesson' course.slug object.lesson.id %}#{{ section|title|urlencode }}" class="btn btn-xs btn-success">
-			<button style=" cursor: pointer; border: none; font-size: 16px; color: white; background-color: orange;"> Back to {{ section|title }}</button>
+			<button style=" cursor: pointer; border: none; font-size: 16px; color: white; background-color: orange;"> {{ section|title }}</button>
 		</a>
 	</div>
 	
-	<div style="float: left">
-	{% if next_act.activity_type == 'worksheet' %}
-		<a href="{% url 'worksheet_launch' course.slug next_act.id %}" class="btn btn-xs btn-default">
-			<button style="cursor: pointer; border: none; font-size: 16px; color: white; background-color: green">next activity </button>
-		</a>
-	{% elif next_act.activity_type == 'external_media' %}
-		<a href="{% url 'external_media' course.slug next_act.id %}" class="btn btn-xs btn-default">
-			<button style=" cursor: pointer; border: none; font-size: 16px; color: white; background-color: green">next activity </button>
-		</a>
-	{% endif %}
+	<div style="float: right">
+		{% if next_act.activity_type == 'worksheet' %} 
+			Next ==>
+			<a href="{% url 'worksheet_launch' course.slug next_act.id %}" class="btn btn-xs btn-default">
+				<button style="cursor: pointer; border: none; font-size: 16px; color: white; background-color: green">  {{ next_act }} </button>
+			</a>
+		{% elif next_act.activity_type == 'external_media' %}
+			<a href="{% url 'external_media' course.slug next_act.id %}" class="btn btn-xs btn-default">
+				<button style=" cursor: pointer; border: none; font-size: 16px; color: white; background-color: green">{{ next_act }} </button>
+			</a>
+		{% endif %}
 	</div>
 {% endif %}
-  <script src="https://code.jquery.com/jquery.js"></script>
 
- <!-- Django session security -->
-  {% include 'session_security/all.html' %}
+<script src="https://code.jquery.com/jquery.js"></script>
 
+<!-- Django session security -->
+{% include 'session_security/all.html' %}
 
-	<iframe seamless style="width: 100%; height: 100%" src="http://{{request.get_host}}/stacks/{{ object.asset }}/html5.html"></iframe>
+<iframe seamless style="width: 100%; height: 100%" src="{{ stacks_url }}{{ object.asset}}/html5.html"></iframe>
 

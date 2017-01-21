@@ -38,7 +38,8 @@ STATIC_URL = 'http://ggv2.developers.com/static/'
 MEDIA_ROOT = '/Library/WebServer/Documents/ggv/media'
 MEDIA_URL = 'http://localhost/ggv/media/'
 
-STACKS_ROOT = '/Library/WebServer/Documents/stacks'
+STACKS_ROOT = '/Library/WebServer/Documents/ggv/stacks'
+STACKS_URL = 'http://localhost/ggv/stacks/'
 STACKS_DATA_DIR = 'data'
 
 ARCHIVE_DATA_DIR = '/Users/rmedina/pythonweb/archives'

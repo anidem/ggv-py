@@ -14,7 +14,7 @@ LANG_CHOICES = (('english', 'English'), ('spanish', 'Spanish'))
 ACCESS_CHOICES = (('access', 'Student Access'), ('instructor', 'Instructor Access'))
 LABELS = {
     'language': 'Preferred language:',
-    'program_id': 'Please enter a unique identifier for this user if your organization assigns ids to users:',
+    'program_id': 'Please enter a unique identifier for this user if your organization assigns ids to users. This is optional. A default identifier will generated if one is not specified.',
     'access_level': 'Select access level/account type:',
     'username': 'Users are identified by their gmail address/account. Please enter the user\'s complete email address.',
     'is_active': 'Is activated? Uncheck this to deactivate user. User will not be able to access ggv.',
@@ -35,8 +35,8 @@ class GgvUserAccountCreateForm(ModelForm):
 
     Visibility: System admins, Managers
     """
-    course = forms.ModelChoiceField(
-        queryset=Course.objects.all(), widget=forms.HiddenInput())
+
+    course = forms.ModelChoiceField(queryset=Course.objects.all(), widget=forms.HiddenInput())
     language = forms.ChoiceField(choices=LANG_CHOICES, label=LABELS['language'], required=False)
     perms = forms.ChoiceField(widget=forms.RadioSelect(), choices=ACCESS_CHOICES, label=LABELS['access_level'])
     username = forms.EmailField(widget=forms.EmailInput(), label=LABELS['username'])

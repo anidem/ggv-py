@@ -148,19 +148,16 @@ urlpatterns = [
 
 # Users
     url(r'^ggv/(?P<crs_slug>[-\w]+)/user/add/$', CreateGgvUserView.as_view(), name='create_user'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/user/(?P<pk>[-\d]+)/$', GgvUserView.as_view(), name='view_user'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/user/edit-account/(?P<pk>[-\d]+)/$', UpdateGgvUserAccountView.as_view(), name='edit_user_account'),
-    url(r'^ggv/users/deactivate/$', GgvUsersDeactivationView.as_view(), name='deactivate_users'),
-    url(r'^ggv/users/activate/$', GgvUsersActivationView.as_view(), name='activate_users'),
-
-    url(r'^ggv/users/archive-delete/$', GgvUserArchiveThenDeleteView.as_view(), name='archive_delete_user'),
-    url(r'^ggv/users/delete-unused/$', GgvUserDeleteUnusedAccount.as_view(), name='delete_unused_user'),
-
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/user/edit/(?P<pk>[-\d]+)/$', UpdateGgvUserView.as_view(), name='edit_user'),
 
     url(r'^ggv/user/deactivate/(?P<pk>[-\d]+)/$', GgvUserActivationView.as_view(), name='update_user_activation'),
 
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/user/(?P<pk>[-\d]+)/$', GgvUserView.as_view(), name='view_user'),
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/user/edit/(?P<pk>[-\d]+)/$', UpdateGgvUserView.as_view(), name='edit_user'),
-
+    url(r'^ggv/users/deactivate/$', GgvUsersDeactivationView.as_view(), name='deactivate_users'),
+    url(r'^ggv/users/activate/$', GgvUsersActivationView.as_view(), name='activate_users'),
+    url(r'^ggv/users/delete-unused/$', GgvUserDeleteUnusedAccount.as_view(), name='delete_unused_user'),
+    url(r'^ggv/users/archive-delete/$', GgvUserArchiveThenDeleteView.as_view(), name='archive_delete_user'),
 
     # deprecate => url(r'^ggv/(?P<crs_slug>[-\w]+)/user/list/$', ListGgvUserView.as_view(), name='list_users'),
 

@@ -113,8 +113,6 @@ class HomeView(LoginRequiredMixin, TemplateView):
 create a view to update registration information. For example, to modify the username email, or change the course, etc.
 """
 
-
-
 class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
     model = User
     template_name = 'user_create.html'
@@ -152,6 +150,8 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         course = form.cleaned_data['course']
         perms = form.cleaned_data['perms']
         prog_id = form.cleaned_data['program_id']
+        if not prog_id:
+            prog_id = 'GGV'+str(self.object.id)
 
         # Make a GGVUser object linked to the User account then assign permissions to the course they are being added to.
         ggvuser = GGVUser(user=self.object, language_pref=language, program_id=prog_id)
@@ -169,10 +169,23 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         context['licenses'] = user_licenses_used
         context['license_count'] = len(user_licenses_used)
         context['license_quota'] = self.course.ggv_organization.user_quota
+        context['org_courses'] = self.course.ggv_organization.organization_courses.all()
 
         # context['unregistered'] = User.objects.filter().filter(social_auth__user__isnull=True)
         # context['deactivated'] = User.objects.filter(social_auth__user__isnull=True)
 
+        return context
+
+
+class GgvUserView(LoginRequiredMixin, GGVUserViewRestrictedAccessMixin, CourseContextMixin, DetailView):
+    model = User
+    template_name = 'user_view.html'
+    required_privileges = ['user', 'manage']
+
+    def get_context_data(self, **kwargs):
+        context = super(GgvUserView, self).get_context_data(**kwargs)
+        context['ggvuser'] = GGVUser.objects.get(user=self.get_object())
+        context['roles'] = get_perms(self.get_object(), context['course'])
         return context
 
 
@@ -252,18 +265,6 @@ class UpdateGgvUserAccountView(LoginRequiredMixin, GGVUserViewRestrictedAccessMi
             assign_perm(perms, self.object, self.course)
 
         return super(UpdateGgvUserAccountView, self).form_valid(form)
-
-
-class GgvUserView(LoginRequiredMixin, GGVUserViewRestrictedAccessMixin, CourseContextMixin, DetailView):
-    model = User
-    template_name = 'user_view.html'
-    required_privileges = ['user', 'manage']
-
-    def get_context_data(self, **kwargs):
-        context = super(GgvUserView, self).get_context_data(**kwargs)
-        context['ggvuser'] = GGVUser.objects.get(user=self.get_object())
-        context['roles'] = get_perms(self.get_object(), context['course'])
-        return context
 
 
 class UpdateGgvUserView(LoginRequiredMixin, GGVUserViewRestrictedAccessMixin, CourseContextMixin, UpdateView):
@@ -366,21 +367,6 @@ class GgvUsersActivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMi
         return redirect('manage_course', crs_slug=urlstr)
 
 
-class GgvUserArchiveThenDeleteView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):
-    def post(self, request, *args, **kwargs):
-        try:      
-            urlstr = request.GET['q']
-            user_id = request.POST.getlist('user_id')
-            u = User.objects.get(pk=user_id)
-            # serialize_user_data(u.id, settings.ARCHIVE_DATA_DIR)
-            # u.delete()
-
-        except:
-            pass  # silently fail
-
-        return redirect('manage_course', crs_slug=urlstr)
-
-
 class GgvUserDeleteUnusedAccount(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):
     def post(self, request, *args, **kwargs):
         try:      
@@ -392,6 +378,21 @@ class GgvUserDeleteUnusedAccount(CsrfExemptMixin, LoginRequiredMixin, JSONRespon
                     u.delete()
                                
         except Exception as e:
+            pass  # silently fail
+
+        return redirect('manage_course', crs_slug=urlstr)
+
+
+class GgvUserArchiveThenDeleteView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):
+    def post(self, request, *args, **kwargs):
+        try:      
+            urlstr = request.GET['q']
+            user_id = request.POST.getlist('user_id')
+            u = User.objects.get(pk=user_id)
+            # serialize_user_data(u.id, settings.ARCHIVE_DATA_DIR)
+            # u.delete()
+
+        except:
             pass  # silently fail
 
         return redirect('manage_course', crs_slug=urlstr)

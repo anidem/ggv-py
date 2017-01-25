@@ -14,24 +14,25 @@ LANG_CHOICES = (('english', 'English'), ('spanish', 'Spanish'))
 ACCESS_CHOICES = (('access', 'Student Access'), ('instructor', 'Instructor Access'))
 LABELS = {
     'language': 'Preferred language:',
-    'program_id': 'Please enter a unique identifier for this user if your organization assigns ids to users. This is optional. A default identifier will generated if one is not specified.',
+    'program_id': 'Please enter a unique identifier (maximum 32 numbers or letters) for this user if your organization assigns ids to users. This is optional. A default identifier will be generated if one is not specified.',
     'access_level': 'Select access level/account type:',
-    'username': 'Users are identified by their gmail address/account. Please enter the user\'s complete email address.',
+    'username': 'Users are identified by their gmail address/account. Please enter the user\'s complete email address. Organizations that use gmail as a service are considered valid gmail accounts.',
     'is_active': 'Is activated? Uncheck this to deactivate user. User will not be able to access ggv.',
-    'clean_logout': 'Google account security. Keep this CHECKED to safely log out of your Google account when signing out of GGV (recommended). UNCHECK this to stay logged in to your Google account after signing out of GGV.',
+    'clean_logout': 'Google account security. Keep this CHECKED to ensure that this Google account is safely logged out of the browser. This is recommended. UNCHECK to ensure that this Google account remains active in the browser after signing out of GGV.',
     'receive_notifications': 'Choose to receive notifications on student activity. (E.g., worksheet completions, bookmarking, etc.)',
     'receive_email_messages': 'Choose to receive email messages from the GGV system.'
     }
 
 
 class GGVUsernameField(EmailField):
-    label = 'Please enter a complete gmail address.'
+    label = 'Please enter a complete gmail address or valid gmail account address.'
     widget = forms.EmailInput()
 
 
 class GgvUserAccountCreateForm(ModelForm):
     """
-    Form designed for creating a new user account.
+    Form designed for creating a new user account. Form based on User model with additional
+    custom fields defined as indicated.
 
     Visibility: System admins, Managers
     """
@@ -44,8 +45,9 @@ class GgvUserAccountCreateForm(ModelForm):
 
     def clean(self):
         data = super(GgvUserAccountCreateForm, self).clean()
-        user_licenses_used = data['course'].ggv_organization.licenses_in_use()
-        if len(user_licenses_used) >= data['course'].ggv_organization.user_quota:
+        ggvorg = data['course'].ggv_organization
+        user_licenses_used = ggvorg.licenses_in_use()
+        if user_licenses_used['count'] >= ggvorg.user_quota:
             
             raise ValidationError('Number of user licenses for this organization has been exceeded. Additional users cannot be added. Consider deactivating old accounts to free up licenses for new users.', code='quota_exceeded')        
 
@@ -56,7 +58,7 @@ class GgvUserAccountCreateForm(ModelForm):
         fields = ['username', 'first_name', 'last_name', 'program_id',
                   'language', 'perms', 'course', 'is_active']
         widgets = {
-            'is_active': forms.HiddenInput(),
+            'is_active': forms.HiddenInput(), 
         }
 
 
@@ -75,10 +77,24 @@ class GgvUserAccountUpdateForm(ModelForm):
     receive_email_messages = forms.BooleanField(label=LABELS['receive_email_messages'], required=False)
     clean_logout = forms.BooleanField(label=LABELS['clean_logout'], required=False)
 
+    def __init__(self, *args, **kwargs):
+        course_obj = kwargs.pop('course_obj')
+        super(GgvUserAccountUpdateForm, self).__init__(*args, **kwargs)
+
+        self.fields['course'].queryset = course_obj.ggv_organization.organization_courses.all()
+        
+        # Don't show notification options if student.
+        if 'instructor' not in kwargs['initial']['perms']:
+            self.fields['receive_notify_email'].widget = forms.HiddenInput()
+            self.fields['receive_email_messages'].widget = forms.HiddenInput()        
+
     class Meta:
         model = User
         fields = ['username', 'first_name', 'last_name', 'program_id', 'language', 'perms', 'course', 'receive_notify_email', 'receive_email_messages', 'clean_logout', 'is_active']
         labels = {'is_active': LABELS['is_active']}
+        widgets = {
+            'is_active': forms.HiddenInput(), 
+        }
 
 
 """ User accessible settings. """

@@ -23,7 +23,10 @@
 {% endblock local_nav %}
 
 {% block page_header %}
-<div class="col-md-12 text-center"><h2 class="lead"><i class="fa fa-users"></i> Roster Detail </h2></div>
+<div class="col-md-12 text-center">
+    <h2><i class="fa fa-users"></i> Roster Detail </h2>
+    <p class="lead">{{ course }}</p>
+</div>
 {% endblock page_header %}
 
 {% block content %}
@@ -43,6 +46,8 @@
         </div>
     </div>
     <form id="remove-instructors-form" method="post" action="{% if is_manager %} {% url 'deactivate_users' %}?q={{object.slug}} {% else %} {% url 'email_manager_deactivate' object.slug %}?q={{object.slug}} {% endif %}">{% csrf_token %}
+    <input type="hidden" name="org" value="{{ object.ggv_organization.id }}">
+    <input type="hidden" name="url" value="{{ request.build_absolute_uri }}">
     <div id="container_instructors" class="row">               
             {% for i in instructors %}
             <div class="item hoverpad col-xs-12" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
@@ -87,6 +92,8 @@
     </div>  
     
     <form id="deactivate-form" method="post" action="{% if is_manager %} {% url 'deactivate_users' %}?q={{object.slug}} {% else %} {% url 'email_manager_deactivate' object.slug %}?q={{object.slug}} {% endif %}">{% csrf_token %}
+    <input type="hidden" name="org" value="{{ object.ggv_organization.id }}">
+    <input type="hidden" name="url" value="{{ request.build_absolute_uri }}">
 
     <div id="container_0" class="row">                
         {% for i in students %}
@@ -116,7 +123,7 @@
 <div class="col-md-12"><h1></h1></div>
 
 <!-- Deactivated students -->
-<div class="col-md-12"><span class="lead">{{ deactivated|length}} Deactivated  Student Account{{ deactivated|length|pluralize }}</span></div>
+<div class="col-md-12"><span class="lead">{{ deactivated|length}} Deactivated Account{{ deactivated|length|pluralize }}</span></div>
 <div class="col-md-12">
     <div id="deactivated_sorts" class="row">
         <div class="col-xs-12">
@@ -129,7 +136,9 @@
         </div>
     </div>
     <form id="activate-form" method="post" action="{% if is_manager %} {% url 'activate_users' %}?q={{object.slug}} {% else %} {% url 'email_manager_activate' object.slug %}?q={{object.slug}} {% endif %}">{% csrf_token %}
-    
+    <input type="hidden" name="org" value="{{ object.ggv_organization.id }}">
+    <input type="hidden" name="url" value="{{ request.build_absolute_uri }}">
+
     <div id="container_00" class="row">
         {% for i in deactivated %}
         <div class="item hoverpad col-xs-12" data-login="{{ i.0.last_login|date:'U' }}">
@@ -171,15 +180,21 @@
     </div>
         
     <form id="remove-unaccessed-form" method="post" action="{% url 'delete_unused_user' %}?q={{object.slug}}">{% csrf_token %}
+    <input type="hidden" name="org" value="{{ object.ggv_organization.id }}">
+    <input type="hidden" name="url" value="{{ request.build_absolute_uri }}">
+
     <div id="container_1" class="row">
         {% for i in unvalidated %}
         <div class="item hoverpad col-xs-12" data-created="{{ i.last_login|date:'U' }}">
-            <div class="col-xs-1 site_id">{{ i.ggvuser.program_id }}<a href=""></a></div>
+            <a href="{% url 'view_user' course.slug i.id %}" class="static">
+            <div class="col-xs-1 site_id">{{ i.ggvuser.program_id }}</div>
             <div class="col-xs-2 firstname">{{ i.first_name }}</div>
             <div class="col-xs-2 lastname">{{ i.last_name }}</div>
             <div class="col-xs-3 username">{{ i.username }} </div>
             <div class="col-xs-2 date_created">{{ i.date_joined|date:"Y - M d" }}</div>
+            </a>
             <div class="col-xs-2">{% if is_manager %}<input type="checkbox" name="unaccessed_list" value="{{ i.id }}">{% endif %}</div>
+            
         </div>
         {% empty %}
             <div class="panel-body">All accounts haved been validated.</div>
@@ -187,6 +202,8 @@
     </div>
     </form>
 </div>
+
+<div class="col-md-12"><h1></h1></div>
 
 <!-- Managers -->
 <div class="col-md-12"><span class="lead">{{ managers|length }} Manager{{ managers|length|pluralize}}</span></div>

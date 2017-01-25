@@ -6,37 +6,34 @@
 {% block page_crumb %}{% endblock page_crumb %}
 
 {% block page_header %}
-<div class="col-xs-12">
-    <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i>
-    <a href="{% url 'manage_course' course.slug %}">Roster Details</button></a>
-</div>
-<div class="row" style="padding: 10px"><h1></h1></div>
 
 <div class="col-md-12 text-center">
-    <p class="lead">Add a New User</p>
+    <h2><i class="fa fa-user-plus"></i> Add New User</h2>
+    <p class="lead">{{ course }}</p>
+    <div class="btn-group">        
+        <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+        <span style="font-size: 0.8em">Add a user to a different course?</span> <span class="caret"></span></a>
+        <ul class="dropdown-menu">
+        {% for i in org_courses %}
+            {% if i != course %}
+                <li><a href="{% url 'create_user' i.slug %}">{{ i }}</a></li>
+            {% endif %}    
+        {% endfor %}
+        </ul>
+    </div>    
+
 </div>
 {% endblock page_header %}
 
 {% block content %}
 
 <div class="col-md-6">
-    <h2>Adding a new user to {{ course }}</h2>
-    {% if org_courses.length > 1 %}
-        <div class="btn-group">        
-            <a class="btn btn-link dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-            Add to another course? <span class="caret"></span></a>
-            
-            <ul class="dropdown-menu">
-            {% for i in org_courses %}
-                {% if i != course %}
-                    <li><a href="{% url 'create_user' i.slug %}">{{ i }}</a></li>
-                {% endif %}    
-            {% endfor %}
-            </ul>
-        </div>
-    {% endif %} 
+    <h3 class="border-btm">New User Account Info</h3>
+
+    
   
-    <h5 class="text-center"><span class="label {% if license_count >= license_quota %}label-danger{% else %}label-default{% endif %}">{{ license_count }} of {{ license_quota }} licenses used.</span></h5>
+    <h4 class="text-center"><span class="label {% if license_count >= license_quota %}label-danger{% else %}label-success{% endif %}">{{ license_count }} of {{ license_quota }} licenses used.</span></h4>
+
     <form class="well" method="post" action="." style="padding: 50px">{% csrf_token %}
         {{ form|crispy }}
         <button class="btn btn-sm btn-success" type="submit">Add User to {{ course }}</button>
@@ -46,26 +43,58 @@
 
 
 <div class="col-md-6">
-    <hr>
-    <h2 class="lead">{{ course }} Current Roster: ( <a href="{% url 'manage_course' course.slug %}" class="small text-info" title="View roster information for {{course}}."> manage roster</a> )</h2>
-    {% for i in students %}
-        <div class="row"> <div class="col-xs-4">{{ i.first_name }}</div> <div class="col-xs-4">{{ i.last_name }}</div> <div class="col-xs-4">{{ i.email }}</div></div>
+    <h3 class="border-btm">Roster and License Info</h3>
+    <h1></h1>
+    <h4 class="bg-info">{{ course }} Roster: <a href="{% url 'manage_course' course.slug %}" class="btn btn-link small" title="View roster information for {{course}}.">[manage roster]</a></h4>
+    {% for i in instructors %}
+        <div class="row small hoverpad"><a href="{% url 'view_user' course.slug i.id %}" class="static">
+            <div class="col-md-4"><i class="fa fa-graduation-cap"></i> {{ i.first_name }}</div>
+            <div class="col-md-4">{{ i.last_name }}</div>
+            <div class="col-md-4">{{ i.email }}</div>
+        </a></div>
     {% endfor %}
+    <h6><hr></h6>
+    {% for i in students %}
+        <div class="row small hoverpad"><a href="{% url 'view_user' course.slug i.id %}" class="static">
+            <div class="col-md-4"><i class="fa fa-user"></i> {{ i.first_name }}</div>
+            <div class="col-md-4">{{ i.last_name }}</div>
+            <div class="col-md-4">{{ i.email }}</div>
+        </a></div>
+    {% endfor %}
+    
 
-    <h2 class="lead">{{ course.ggv_organization }} Licenses <small>
-    {{ license_count }} of {{ license_quota }} licenses in use ( <a href="{% url 'manage_org' course.ggv_organization.id %}" class="small text-info" title="View account information for {{course.ggv_organization}}."> manage organization </a> )</small></h2>
-    {% for i, j in licenses.items %}
-        <div class="row small">
+
+    <h1></h1>
+
+    <h4 class="bg-info">All {{ course.ggv_organization }} Accounts <a href="{% url 'manage_org' course.ggv_organization.id %}" class="btn btn-link small" title="View account information for {{course.ggv_organization}}.">[manage licenses]</a></h4>
+    <h5>
+        <span class="label {% if license_count >= license_quota %}label-danger{% else %}label-success{% endif %}">{{ license_count }} of {{ license_quota }} licenses used.</span> 
+    </h5>
+
+    {% for i, j in active.items %}
+    
+        <div class="row small hoverpad"><a href="{% url 'view_user' course.slug j.0.id %}" class="static">
             <div class="col-md-4">{{ j.0 }}</div>
             <div class="col-md-4">{{ j.0.first_name }} {{ j.0.last_name }}</div>
             <div class="col-md-4">
             {% for k, v in j.1.items %}
-                {{ k }} <i class="{% if v.0 == 'manage' %}fa fa-user-secret{% elif v.0 == 'instructor' %}fa fa-graduation-cap{% else %}fa fa-user{% endif %}"></i>{% if not forloop.last %}, {% endif %}
+                <i class="{% if v.0 == 'manage' %}fa fa-user-secret{% elif v.0 == 'instructor' %}fa fa-graduation-cap{% else %}fa fa-user{% endif %}"></i> {{ k }}{% if not forloop.last %}, {% endif %}
             {% endfor %}
             </div>
-        </div>
+        </a></div>
+    
     {% endfor %}
-
+    {% for i, j in unvalidated.items %}
+        <div class="row small hoverpad"><a href="{% url 'view_user' course.slug j.0.id %}" class="static">
+            <div class="col-md-4">{{ j.0 }}</div>
+            <div class="col-md-4">{{ j.0.first_name }} {{ j.0.last_name }}</div>
+            <div class="col-md-4">
+            {% for k, v in j.1.items %}
+                <i class="{% if v.0 == 'manage' %}fa fa-user-secret{% elif v.0 == 'instructor' %}fa fa-graduation-cap{% else %}fa fa-user{% endif %}"></i> {{ k }}{% if not forloop.last %}, {% endif %}
+            {% endfor %}
+            </div>
+        </a></div>
+    {% endfor %}
     <!-- <h2 class="lead">{{ course }} Unregistered users:</h2> -->
     {% for i in unregistered %}
         <p> {{ i }} </p>

@@ -7,25 +7,26 @@ from django.db import IntegrityError
 from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404
-from django.shortcuts import redirect, render_to_response
+from django.shortcuts import redirect, render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.contrib.auth.models import User
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 
-
 from braces.views import CsrfExemptMixin, JSONResponseMixin, JsonRequestResponseMixin, AjaxResponseMixin, LoginRequiredMixin
-from guardian.shortcuts import assign_perm, get_objects_for_user, get_perms, remove_perm
+from guardian.models import UserObjectPermission
+from guardian.shortcuts import assign_perm, get_objects_for_user, get_perms, get_user_perms, remove_perm
+from social.exceptions import SocialAuthBaseException, AuthException, AuthForbidden
 
-from courses.models import Course
+from courses.models import Course, GGVOrganization
+from archiver import serialize_user_data
 
 from .models import Bookmark, GGVUser, SiteMessage, Notification, SitePage, AttendanceTracker
 from .forms import BookmarkForm, GgvUserAccountCreateForm, GgvUserSettingsForm, GgvUserAccountUpdateForm, GgvUserStudentSettingsForm, GgvEmailQuestionToInstructorsForm, AttendanceTrackerUpdateForm, AttendanceTrackerCreateForm
 from .mixins import CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from .signals import *
 from .utils import update_attendance_for_all_users
-from archiver import serialize_user_data
 
 tz = timezone(settings.TIME_ZONE)
 
@@ -77,6 +78,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
             for course in o.organization_courses.all():
                 permissions += course.manager_list()
                 if  self.request.user.has_perm('courses.manage', course) or self.request.user.is_staff :
+                    context['roles'] = ['manage']
                     num_instructors = len(course.instructor_list())
                     num_active = len(course.student_list())
                     num_deactive = len(course.deactivated_list())
@@ -105,6 +107,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
         
         context['courses'] = organizations
         context['managers'] = permissions
+       
         return context
 
 
@@ -120,12 +123,7 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
     course = None
 
     def dispatch(self, request, *args, **kwargs):
-        try:
-            self.course = Course.objects.get(slug=kwargs['crs_slug'])
-
-        except:
-            self.course = None
-
+        self.course = get_object_or_404(Course, slug=kwargs['crs_slug'])
         return super(CreateGgvUserView, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
@@ -143,6 +141,7 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
 
         # Need to force lower case emails.
         self.object.username = self.object.username.lower()
+        self.object.email = self.object.username
         self.object.save()
 
         # Gather GGVUser object related data.
@@ -165,11 +164,14 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         student_list = self.course.student_list()
         context['students'] = student_list
         context['instructors'] = self.course.instructor_list()
+        
         user_licenses_used = self.course.ggv_organization.licenses_in_use()
-        context['licenses'] = user_licenses_used
-        context['license_count'] = len(user_licenses_used)
+        context['active'] = user_licenses_used['active']
+        context['unvalidated'] = user_licenses_used['unvalidated']
+        context['license_count'] = user_licenses_used['count']
+        # context['licenses'] = user_licenses_used
         context['license_quota'] = self.course.ggv_organization.user_quota
-        context['org_courses'] = self.course.ggv_organization.organization_courses.all()
+        context['org_courses'] = self.course.ggv_organization.organization_courses.all().exclude(pk=self.course.id)
 
         # context['unregistered'] = User.objects.filter().filter(social_auth__user__isnull=True)
         # context['deactivated'] = User.objects.filter(social_auth__user__isnull=True)
@@ -185,11 +187,17 @@ class GgvUserView(LoginRequiredMixin, GGVUserViewRestrictedAccessMixin, CourseCo
     def get_context_data(self, **kwargs):
         context = super(GgvUserView, self).get_context_data(**kwargs)
         context['ggvuser'] = GGVUser.objects.get(user=self.get_object())
-        context['roles'] = get_perms(self.get_object(), context['course'])
+        context['ggvroles'] = get_user_perms(self.get_object(), context['course'])
+        
         return context
 
 
 class UpdateGgvUserAccountView(LoginRequiredMixin, GGVUserViewRestrictedAccessMixin, CourseContextMixin, UpdateView):
+    """
+    Edits account information for a user.
+
+    Visibility: System admins, Staff, Managers
+    """
     model = User
     template_name = 'user_account_edit.html'
     form_class = GgvUserAccountUpdateForm
@@ -199,7 +207,12 @@ class UpdateGgvUserAccountView(LoginRequiredMixin, GGVUserViewRestrictedAccessMi
         try:
             self.course = Course.objects.get(slug=kwargs['crs_slug'])
             self.ggvuser = GGVUser.objects.get(user=self.get_object())
-            self.permissions = get_perms(self.get_object(), self.course)[0]
+            self.permissions = get_perms(self.get_object(), self.course)
+            if not self.permissions:
+                # Needed to handle state when user has never logged in. (correct registration information)
+                self.permissions = get_user_perms(self.get_object(), self.course)
+            self.permissions = self.permissions[0]
+
         except:
             raise Http404(self.get_object().username + ' is not part of ' + self.course.title)
 
@@ -208,9 +221,18 @@ class UpdateGgvUserAccountView(LoginRequiredMixin, GGVUserViewRestrictedAccessMi
     def get_success_url(self):
         return reverse('view_user', args=[self.course.slug, self.get_object().id])
 
+    def get_form_kwargs(self):
+        kwargs = super(UpdateGgvUserAccountView, self).get_form_kwargs()
+        kwargs['course_obj'] = self.course
+        return kwargs
+
     def get_initial(self):
         initial = self.initial.copy()
-        initial = {'course': self.course, 'perms': self.permissions, 'program_id': self.ggvuser.program_id}
+        initial = {'course': self.course, 'perms': self.permissions, 'program_id': self.ggvuser.program_id, 'receive_email_messages': self.ggvuser.receive_email_messages, 'clean_logout': self.ggvuser.clean_logout, 'is_active': self.get_object().is_active}
+        
+        if 'instructor' in self.permissions:
+            initial['receive_notify_email'] = self.ggvuser.receive_notify_email
+        
         return initial
 
     def form_valid(self, form):
@@ -225,16 +247,30 @@ class UpdateGgvUserAccountView(LoginRequiredMixin, GGVUserViewRestrictedAccessMi
         course = form.cleaned_data['course']
         perms = form.cleaned_data['perms']
         prog_id = form.cleaned_data['program_id']
+        is_active = form.cleaned_data['is_active']
 
         self.ggvuser.program_id = prog_id
         self.ggvuser.language_pref = language
         self.ggvuser.save()
 
+        #get_user_perms
         curr_permissions = get_perms(self.object, self.course)
+        if not curr_permissions:
+            curr_permissions = get_user_perms(self.object, self.course)
 
         # Username changed?
         if not self.object.email == username:
             self.object.email = username
+            self.object.save()
+            try:
+                social_auth_obj = self.object.social_auth.all()[0]
+                social_auth_obj.uid = self.object.email
+                social_auth_obj.save()
+            except:
+                pass
+
+        if not self.object.is_active == is_active:
+            self.object.is_active = is_active
             self.object.save()
 
         # Change the user's course?.
@@ -268,6 +304,11 @@ class UpdateGgvUserAccountView(LoginRequiredMixin, GGVUserViewRestrictedAccessMi
 
 
 class UpdateGgvUserView(LoginRequiredMixin, GGVUserViewRestrictedAccessMixin, CourseContextMixin, UpdateView):
+    """
+    Edits a user's preferences.
+
+    Visibility: all
+    """
     model = User
     template_name = "user_edit.html"
     form_class = GgvUserStudentSettingsForm
@@ -325,7 +366,8 @@ class GgvUsersDeactivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponse
     def post(self, request, *args, **kwargs):
         try:   
             deactivate_list = request.POST.getlist('deactivate_list')
-            urlstr = request.GET['q']
+            request.POST.getlist('activate_list')  
+            urlstr = request.POST['url']
             for i in deactivate_list:
                 u = User.objects.get(pk=i)
                 u.is_active = False
@@ -333,22 +375,23 @@ class GgvUsersDeactivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponse
                 u.ggvuser.save()
                 u.save()
         except Exception as e:
-            print e
             pass  # silently fail
 
-        return redirect('manage_course', crs_slug=urlstr)
+        return redirect(urlstr)
 
 
 class GgvUsersActivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):
     
     def post(self, request, *args, **kwargs):
+        
         try:   
-            activate_list = request.POST.getlist('activate_list')   
-            urlstr = request.GET['q']
-            course = Course.objects.get(slug=urlstr)
-            licenses_in_use = course.ggv_organization.licenses_in_use()
-            license_quota = course.ggv_organization.user_quota
-            license_count = len(licenses_in_use)
+            activate_list = request.POST.getlist('activate_list')  
+            urlstr = request.POST['url']
+            orgid = request.POST['org']
+            ggv_organization = GGVOrganization.objects.get(pk=orgid)
+            licenses_in_use = ggv_organization.licenses_in_use()
+            license_quota = ggv_organization.user_quota
+            license_count = licenses_in_use['count']
             for i in activate_list:
                 if license_count < license_quota:
                     u = User.objects.get(pk=i)
@@ -361,16 +404,16 @@ class GgvUsersActivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMi
                     messages.warning(request, 'License quota has been exceeded. Some or all requested accounts may not have been activated.')
                     break
 
-        except:
+        except Exception as e:
             pass  # silently fail
 
-        return redirect('manage_course', crs_slug=urlstr)
+        return redirect(urlstr)
 
 
 class GgvUserDeleteUnusedAccount(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):
     def post(self, request, *args, **kwargs):
         try:      
-            urlstr = request.GET['q']
+            urlstr = request.POST['url']
             unaccessed_list = request.POST.getlist('unaccessed_list')
             for i in unaccessed_list:
                 u = User.objects.get(pk=i)
@@ -380,7 +423,7 @@ class GgvUserDeleteUnusedAccount(CsrfExemptMixin, LoginRequiredMixin, JSONRespon
         except Exception as e:
             pass  # silently fail
 
-        return redirect('manage_course', crs_slug=urlstr)
+        return redirect(urlstr)
 
 
 class GgvUserArchiveThenDeleteView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):

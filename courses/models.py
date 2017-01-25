@@ -6,7 +6,7 @@ from django.db import models
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
-from guardian.shortcuts import get_users_with_perms, get_perms
+from guardian.shortcuts import get_users_with_perms, get_perms, get_user_perms
 
 from lessons.models import Lesson
 
@@ -40,22 +40,23 @@ class GGVOrganization(models.Model):
         for i in courses:
             licenses += i.licensed_users()
      
-        license_data = {}
+
+        active_data = {}
+        unvalidated_data = {}
         for i in licenses:
-            try:
-                license_data[i[0].email][1][i[1]] = i[2]
-                # license_data[i[0].email][2] += 
-            except KeyError as e:
-                license_data[i[0].email] = (i[0], {i[1]: i[2]})
-                # print license_data[i[0].email]
-            except TypeError as e:
-                # print i, i.last_name, i.first_name
-                license_data[i] = (i, {None: None})
+            if not i[2]:
+                unvalidated_data[i[0].email] = (i[0], {i[1]: i[2]})
+            else:
+                try:
+                    active_data[i[0].email][1][i[1]] = i[2]
+                     
+                except KeyError as e:
+                    active_data[i[0].email] = (i[0], {i[1]: i[2]})
+                    
+                except TypeError as e:
+                    active_data[i] = (i, {None: None})                
 
-        # print len(licenses), licenses
-
-        # print len(license_data), license_data
-
+        license_data = {'active': active_data, 'unvalidated': unvalidated_data, 'count': len(active_data) + len(unvalidated_data)}
         return license_data
 
     def deactivated_users(self):
@@ -71,6 +72,7 @@ class GGVOrganization(models.Model):
         managers = []
         for i in courses:
             managers += i.manager_list()
+        return managers
 
     def __unicode__(self):
         return self.title
@@ -105,7 +107,7 @@ class Course(models.Model):
 
     def licensed_users(self):
         members = self.member_list()
-        unvalidated = [user for user, perms in members.items() if not perms and not user.social_auth.all()]
+        unvalidated = [(user, self, perms) for user, perms in members.items() if not perms and not user.social_auth.all()]
         students = [(user, self, perms) for user, perms in members.items() if 'access' in perms and not user.is_staff and not user.is_superuser and 'instructor' not in perms]
         instructors = [(user, self, perms) for user, perms in members.items() if 'instructor' in perms and not user.is_staff]
         managers = [(user, self, perms) for user, perms in members.items() if 'manage' in perms and not user.is_staff]

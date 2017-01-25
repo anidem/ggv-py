@@ -47,10 +47,22 @@ class GgvOrgAdminView(LoginRequiredMixin, DetailView):
         context = super(GgvOrgAdminView, self).get_context_data(**kwargs)
         org = self.get_object()
         user_licenses_used = org.licenses_in_use()
-        context['courses'] = org.organization_courses.all()
-        context['licensees'] = user_licenses_used
-        context['num_licensees'] = len(user_licenses_used)
+        context['active'] = user_licenses_used['active']
+        context['unvalidated'] = user_licenses_used['unvalidated']
+        context['num_licensees'] = user_licenses_used['count']
         context['deactivated_users'] = org.deactivated_users()
+        context['courses'] = org.organization_courses.all()
+        if self.request.user in org.manager_list(): context['roles'] = ['manage']
+        
+        
+        
+
+        # context['is_manager'] = self.request.user.has_perm('manage', course)
+        # context['managers'] = course.manager_list()
+        # context['instructors'] = instructors
+        # context['students'] = students
+        # context['deactivated'] = deactivated_students
+        # context['unvalidated'] = course.unvalidated_list()
 
         return context
 

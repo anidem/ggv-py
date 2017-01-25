@@ -7,23 +7,20 @@
 {% block page_crumb %}{% endblock page_crumb %}
 
 {% block local_nav %}
-    {% if is_manager %}
-    <li>
-        <a class="static nav-text" href="{% url 'create_user' course.slug %}">
-            <i class="fa fa-user-plus text-primary"></i>
-        </a>
-    </li>
-    {% endif %}
+ 
 {% endblock local_nav %}
 
 {% block page_header %}
-<div class="col-md-12 text-center"><h2 class="lead"><i class="fa fa-university"></i> {{ object }} </h2></div>
+<div class="col-md-12 text-center">
+    <h2><i class="fa fa-gear"></i> Account Management </h2>
+    <p class="lead">{{ object }}</p>
+</div>
 {% endblock page_header %}
 
 {% block content %}
 
 <div class="col-md-6">
-    <p class="lead border-btm">License Information</p>
+    <h3 class="lead border-btm">License Information</h3>
     <div class="row hoverpad">
         <div class="col-md-6"><b>User quota:</b></div><div class="col-md-6">{{ object.user_quota }}</div>
     </div>
@@ -45,7 +42,7 @@
 </div>
 
 <div class="col-md-6">
-    <p class="lead border-btm">
+    <h3 class="lead border-btm">
         {{ courses|length }} Courses 
         <small class="pull-right">
             <i class="fa fa-download"></i>
@@ -54,23 +51,30 @@
         </small>
 
         <small></small>
-    </p>
+    </h3>
     <dl class="dl">
     {% for course in courses %} 
         <div class="row hoverpad">
 
             <div class="col-md-6"><b>{{ course }}</b></div>
             <div class="col-md-6">
-            [ <small><a href="{% url 'manage_course' course.slug %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="View roster information for {{course}}.">roster</a></small> ]
 
-            [ <small>
-                <i class="fa fa-download"></i>
-                <a href="{% url 'report_course_activity' course.slug %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="Download a daily activity report for all active users in {{course}}.">daily report</a>
+            [ <small data-toggle="tooltip" data-placement="top" title="Add a new user to {{course}}.">
+                <a class="static nav-text" href="{% url 'create_user' course.slug %}"><i class="fa fa-user-plus text-primary"></i></a>
             </small> ]
 
-            [ <small>
+            [ <small data-toggle="tooltip" data-placement="top" title="View roster information for {{course}}.">
+                <i class="fa fa-list"></i>
+                <a href="{% url 'manage_course' course.slug %}" class="small text-info"> roster</a></small> ]
+
+            [ <small data-toggle="tooltip" data-placement="top" title="Download a daily activity report for all active users in {{course}}.">
                 <i class="fa fa-download"></i>
-                <a href="{% url 'report_full_course_activity' course.slug %}" class="small text-info" data-toggle="tooltip" data-placement="top" title="Download complete history of activity for all users in {{course}}."> full report </a>
+                <a href="{% url 'report_course_activity' course.slug %}" class="small text-info"> daily report</a>
+            </small> ]
+
+            [ <small data-toggle="tooltip" data-placement="top" title="Download complete history of activity for all users in {{course}}.">
+                <i class="fa fa-download"></i>
+                <a href="{% url 'report_full_course_activity' course.slug %}" class="small text-info"> full report </a>
             </small> ]
             </div>
 
@@ -80,55 +84,95 @@
 </div>
 
 <div class="col-md-12">
-    <p>
-        <span class="lead">Licensed Users</span>
+    <h1></h1>
+    <span class="lead">Licensed Users</span>
+        
         <a tabindex="0" class="bg-default" role="button" data-toggle="popover" data-trigger="focus" title="Licensed Users" data-content="Licensed users are counted against the user quota. Inactive users have an account but they have not logged in to activate.."><i class="fa fa-question-circle"></i></a>
-    </p>
+    </span>
 </div>
+
 <div class="col-md-12 well">
+    <h4>Activated Users</h4>
     <div id="sorts" class="row">
         <div class="col-xs-12">
-                <div class="col-xs-1"><button class="btn btn-block btn-sm btn-primary" data-sort-by="siteid" data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
-                <div class="col-xs-1"><button class="btn btn-block btn-sm" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
-                <div class="col-xs-1"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
-                <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
-                <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="created" data-order="asc"> <i class="fa fa-sort"></i> created</button></div>
-                <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
-                <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="courses" data-order="asc"> <i class="fa fa-sort"></i> courses</button></div>
-                <div class="col-xs-1"><button class="btn btn-block btn-sm" data-sort-by="status" data-order="asc"> <i class="fa fa-sort"></i> status</button></div>
+                <div class="col-xs-1"><button class="sortbtn btn btn-block btn-sm btn-primary" data-sort-by="siteid" data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
+                <div class="col-xs-1"><button class="sortbtn btn btn-block btn-sm" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+                <div class="col-xs-1"><button class="sortbtn btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+                <div class="col-xs-2"><button class="sortbtn btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+                <div class="col-xs-1"><button class="sortbtn btn btn-block btn-sm" data-sort-by="created" data-order="asc"> <i class="fa fa-sort"></i> created</button></div>
+                <div class="col-xs-2"><button class="sortbtn btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
+                <div class="col-xs-2"><button class="sortbtn btn btn-block btn-sm" data-sort-by="courses" data-order="asc"> <i class="fa fa-sort"></i> courses</button></div>
+                <div class="col-xs-2"><button id="deactivate-btn" class="btn btn-block btn-sm btn-danger"><i class="fa fa-check-square-o"></i> deactivate</button></div>
         </div>
     </div>
+    <form id="deactivate-form" method="post" action="{% url 'deactivate_users' %}">{% csrf_token %}
+    <input type="hidden" name="org" value="{{ object.id }}">
+    <input type="hidden" name="url" value="{{ request.build_absolute_uri }}">
     <div id="container_sorts" class="row">
-        {% for i, j in licensees.items %}
+        {% for i, j in active.items %}
             <div class="item hoverpad col-xs-12 {% if not j.0.is_active %}bg-warning{% endif %}" data-created-login="{{ j.0.date_joined|date:'U' }}" data-login="{{ j.0.last_login|date:'U' }}">
-                <a 
-                    {% if j.1.items.0.0.id %} href="{% url 'user_progress' j.1.items.0.0.slug j.0.id %}" 
-                    {% else %} href="#" 
-                    {% endif%} 
-                    class="static">
+                <a href="{% url 'view_user' j.1.items.0.0.slug j.0.id %}" class="static"> 
                     <div class="col-xs-1 siteid"><small>{{ j.0.ggvuser.program_id }}</small></div>
                     <div class="col-xs-1 firstname"><small>{{ j.0.first_name }}</small></div>
                     <div class="col-xs-1 lastname"><small>{{ j.0.last_name }}</small></div>
                     <div class="col-xs-2 username"><small>{{ i }}</small></div>
-                    <div class="col-xs-2 created"><small>{{ j.0.date_joined|date:"Y-M-d" }}</small></div>
+                    <div class="col-xs-1 created"><small>{{ j.0.date_joined|date:"Y-M-d" }}</small></div>
                     <div class="col-xs-2 login"><small>{{ j.0.last_login|date:"Y - M d, g:i A" }}</small></div>
                     <div class="col-xs-2 courses"><small>
                         {% for k, v in j.1.items %}
                             {{ k }} <i class="{% if v.0 == 'manage' %}fa fa-user-secret{% elif v.0 == 'instructor' %}fa fa-graduation-cap{% else %}fa fa-user{% endif %}"></i>{% if not forloop.last %}, {% endif %}
                         {% endfor %}
                     </small></div>
-                    <div class="col-xs-1 status" data-status="{{ j.0.is_active }}"><small>
-                        {% if j.0.is_active %}<span class="label label-success">active</span>
-                        {% else %}<span  class="label label-warning">new</span>
-                        {% endif %}
-                    </small></div>
                 </a>
-
+                <div class="col-xs-2">{% if not j.0.is_superuser and not j.0.is_staff and not j.0 == user %} <input type="checkbox" name="deactivate_list" value="{{ j.0.id }}"> {% endif %}</div>
             </div>
         {% empty %}
-            There no licensees assigned for {{ object }}
+            <p>No active accounts for {{ object }}</p>
         {% endfor %}
     </div>
+    </form>
+</div>
+
+<div class="col-md-12 well">
+    <h4>Unvalidated Accounts</h4>
+    <div id="unvalidated_sorts" class="row">
+        <div class="col-xs-12">
+                <div class="col-xs-1"><button class="sortbtn btn btn-block btn-sm btn-primary" data-sort-by="siteid" data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
+                <div class="col-xs-1"><button class="sortbtn btn btn-block btn-sm" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+                <div class="col-xs-1"><button class="sortbtn btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+                <div class="col-xs-2"><button class="sortbtn btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+                <div class="col-xs-1"><button class="sortbtn btn btn-block btn-sm" data-sort-by="created" data-order="asc"> <i class="fa fa-sort"></i> created</button></div>
+                <div class="col-xs-2"><button class="sortbtn btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
+                <div class="col-xs-2"><button class="sortbtn btn btn-block btn-sm" data-sort-by="courses" data-order="asc"> <i class="fa fa-sort"></i> courses</button></div>
+                <div class="col-xs-2"><button id="remove-unaccessed-btn" class="btn btn-block btn-sm btn-danger"><i class="fa fa-check-square-o"></i> remove access</button></div>
+        </div>
+    </div>
+    <form id="remove-unaccessed-form" method="post" action="{% url 'delete_unused_user' %}">{% csrf_token %}
+    <input type="hidden" name="org" value="{{ object.id }}">
+    <input type="hidden" name="url" value="{{ request.build_absolute_uri }}">
+    <div id="container_unvalidated_sorts" class="row">
+        {% for i, j in unvalidated.items %}
+            <div class="item hoverpad col-xs-12 {% if not j.0.is_active %}bg-warning{% endif %}" data-created-login="{{ j.0.date_joined|date:'U' }}" data-login="{{ j.0.last_login|date:'U' }}">
+                <a href="{% url 'view_user' j.1.items.0.0.slug j.0.id %}" class="static"> 
+                    <div class="col-xs-1 siteid"><small>{{ j.0.ggvuser.program_id }}</small></div>
+                    <div class="col-xs-1 firstname"><small>{{ j.0.first_name }}</small></div>
+                    <div class="col-xs-1 lastname"><small>{{ j.0.last_name }}</small></div>
+                    <div class="col-xs-2 username"><small>{{ i }}</small></div>
+                    <div class="col-xs-1 created"><small>{{ j.0.date_joined|date:"Y-M-d" }}</small></div>
+                    <div class="col-xs-2 login"><small>{{ j.0.last_login|date:"Y - M d, g:i A" }}</small></div>
+                    <div class="col-xs-2 courses"><small>
+                        {% for k, v in j.1.items %}
+                            {{ k }} <i class="{% if v.0 == 'manage' %}fa fa-user-secret{% elif v.0 == 'instructor' %}fa fa-graduation-cap{% else %}fa fa-user{% endif %}"></i>{% if not forloop.last %}, {% endif %}
+                        {% endfor %}
+                    </small></div>
+                </a>
+                <div class="col-xs-2"><input type="checkbox" name="unaccessed_list" value="{{ j.0.id }}"></div>
+            </div>
+        {% empty %}
+            <p>No pending registrations for {{ object }}</p>
+        {% endfor %}
+    </div>
+    </form>
 </div>
 
 <div class="col-md-12">
@@ -140,33 +184,41 @@
 
 <!-- Deactivated users list -->
 <div class="col-md-12 well">
-    <div id="deactived_sorts" class="row">
+    <div id="deactivated_sorts" class="row">
         <div class="col-xs-12">
-                <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="d_siteid" data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
-                <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="d_firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
-                <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="d_lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
-                <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="d_username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
-                <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="d_deactivate" data-order="asc"> <i class="fa fa-sort"></i> deactivated on</button></div>
-                <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="d_course" data-order="asc"> <i class="fa fa-sort"></i> course </button></div>
+                <div class="col-xs-1"><button class="sortbtn btn btn-block btn-sm btn-primary" data-sort-by="d_siteid" data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
+                <div class="col-xs-1"><button class="sortbtn btn btn-block btn-sm" data-sort-by="d_firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+                <div class="col-xs-1"><button class="sortbtn btn btn-block btn-sm" data-sort-by="d_lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+                <div class="col-xs-2"><button class="sortbtn btn btn-block btn-sm" data-sort-by="d_username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+                <div class="col-xs-3"><button class="sortbtn btn btn-block btn-sm" data-sort-by="d_deactivate" data-order="asc"> <i class="fa fa-sort"></i> deactivated on</button></div>
+                <div class="col-xs-2"><button class="sortbtn btn btn-block btn-sm" data-sort-by="d_course" data-order="asc"> <i class="fa fa-sort"></i> course </button></div>
+                <div class="col-xs-2"><button id="activate-btn" class="btn btn-block btn-sm btn-success"><i class="fa fa-check-square-o"></i> activate </button></div>
         </div>
     </div>
+    <form id="activate-form" method="post" action="{% url 'activate_users' %}">{% csrf_token %}
+    <input type="hidden" name="org" value="{{ object.id }}">
+    <input type="hidden" name="url" value="{{ request.build_absolute_uri }}">
     <div id="container_deactivated" class="row text-danger">
         {% for course, user_list in deactivated_users.items %}
             {% for i in user_list %}
             <div class="item hoverpad col-xs-12" data-d-login="{{ i.last_login|date:'U' }}" data-deactivated="{% if i.ggvuser.last_deactivation_date %}{{ i.ggvuser.last_deactivation_date|date:'U' }}{% else %}{{ i.last_login|date:'U'}}{% endif %}">
-                <div class="col-xs-2 d_siteid"><small>{{ i.ggvuser.program_id }}</small></div>
-                <div class="col-xs-2 d_firstname"><small>{{ i.first_name }}</small></div>
-                <div class="col-xs-2 d_lastname"><small>{{ i.last_name }}</small></div>
+                <a href="{% url 'view_user' course.slug i.id %}" class="static">
+                <div class="col-xs-1 d_siteid"><small>{{ i.ggvuser.program_id }}</small></div>
+                <div class="col-xs-1 d_firstname"><small>{{ i.first_name }}</small></div>
+                <div class="col-xs-1 d_lastname"><small>{{ i.last_name }}</small></div>
                 <div class="col-xs-2 d_username"><small>{{ i }}</small></div>
-                <div class="col-xs-2 d_deactivate"><small>{% if i.ggvuser.last_deactivation_date %}{{ i.ggvuser.last_deactivation_date|date:"Y - M d" }}{% else %}{{ i.last_login|date:"Y - M d"}}{% endif %}</small></div>
+                <div class="col-xs-3 d_deactivate"><small>{% if i.ggvuser.last_deactivation_date %}{{ i.ggvuser.last_deactivation_date|date:"Y - M d" }}{% else %}{{ i.last_login|date:"Y - M d"}}{% endif %}</small></div>
                 <div class="col-xs-2 d_course"><small>{{ course }}</small></div>
+                </a>
+                <div class="col-xs-2"><input type="checkbox" name="activate_list" value="{{ i.id }}"></div>
             </div>
             
             {% endfor %}
         {% empty %}
-                There no deactivated users for {{ object }}
+                <p>No deactivated accounts for {{ object }}</p>
         {% endfor %}
     </div>
+    </form>
 </div>
 
 {% endblock content %}
@@ -188,7 +240,19 @@
                         lastname: '.lastname',
                         username: '.username',
                         courses: '.courses',
-                        status: '.status',
+                    },
+
+                });
+
+                var $container_unvalidated_sorts = $('#container_unvalidated_sorts').isotope({
+                    getSortData: {
+                        login: '[data-login] parseInt',
+                        created: '[data-created-login] parseInt',
+                        siteid: '.siteid',
+                        firstname: '.firstname',
+                        lastname: '.lastname',
+                        username: '.username',
+                        courses: '.courses',
                     },
 
                 });
@@ -205,8 +269,23 @@
                     },
 
                 });
-                
-                // sort licensed users on button click
+
+                $('#deactivate-btn').on('click', function () {
+                    if ($('#container_sorts input:checked').length)
+                        $('#deactivate-form').submit();
+                });
+
+                $('#remove-unaccessed-btn').on('click', function () {
+                    if ($('#container_unvalidated_sorts input:checked').length)
+                        $('#remove-unaccessed-form').submit();
+                });
+
+                $('#activate-btn').on('click', function () {
+                    if ($('#container_deactivated input:checked').length)
+                        $('#activate-form').submit();
+                });
+
+                // sort active users on button click
                 $('#sorts .btn').on( 'click', function() {
                     var sortByValue = $(this).attr('data-sort-by');
                     var order = "";
@@ -227,9 +306,8 @@
                     });
                 });
 
-
-                // sort deactivated users on button click
-                $('#deactived_sorts .btn').on( 'click', function() {
+                // sort unvalidated users on button click
+                $('#unvalidated_sorts .btn').on( 'click', function() {
                     var sortByValue = $(this).attr('data-sort-by');
                     var order = "";
                     if ($(this).attr("data-order")==="asc") {
@@ -240,7 +318,29 @@
                         order = false;
                         $(this).attr("data-order", "asc");
                     }
-                    $('#deactived_sorts .btn-primary').removeClass('btn-primary');
+                    $('#unvalidated_sorts .btn-primary').removeClass('btn-primary');
+                    $(this).addClass("btn-primary");
+
+                    $container_unvalidated_sorts.isotope({
+                        sortBy: sortByValue,
+                        sortAscending: order
+                    });
+                });                
+
+
+                // sort deactivated users on button click
+                $('#deactivated_sorts .sortbtn').on( 'click', function() {
+                    var sortByValue = $(this).attr('data-sort-by');
+                    var order = "";
+                    if ($(this).attr("data-order")==="asc") {
+                        order = true;
+                        $(this).attr("data-order", "");
+
+                    } else {
+                        order = false;
+                        $(this).attr("data-order", "asc");
+                    }
+                    $('#deactivated_sorts .btn-primary').removeClass('btn-primary');
                     $(this).addClass("btn-primary");
 
                     $container_deactivated.isotope({
@@ -248,6 +348,8 @@
                         sortAscending: order
                     });
                 });
+
+
 
                 // default sort licensed users by courses
                 $container_sorts.isotope({

@@ -3,15 +3,38 @@
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
+{% block page_header %}
+	<div class="col-md-12 text-center">
+	    <p class="lead">User Account Information</p>
+	</div>
+{% endblock page_header %}
+
 {% block content %}
+
     <div class="col-md-12">
-        <h3>Account information for {{ object.first_name }} {{ object.last_name }}</h3>
-        <p>Account role(s): {% for i in roles %} {{ i }} {% endfor %}</p>
+        <h3 class> {{ object.first_name }} {{ object.last_name }}         	
+        	{% if 'Manager' in role %}
+        	<span class="small"><a href="{% url 'edit_user_account' course.slug object.id %}">[ <i class="fa fa-edit"></i> edit account ]</a> 
+        	<a href="{% url 'user_progress' course.slug object.id %}">[ <i class="fa fa-eye"></i> view account activity ]</a></span>
+        	{% endif %}
+        </h3>        
+
+        <p>Account role(s): 
+        	{% for i in ggvroles %} 
+        		{% if i == 'manager' %} 
+        			<i class="fa fa-user-secret"></i> Manager
+        		{% elif i == 'instructor' %}
+        			<i class="fa fa-graduation-cap"></i> Instructor
+        		{% else %}
+        			<i class="fa fa-user"></i> Student
+        		{% endif %}
+        	{% endfor %}
+        </p>
         <p>Username: {{ object.username }}</p>
         {% if ggvuser.program_id %}<p>Program ID: {{ ggvuser.program_id }}</p>{% endif %}
         <p>Language preference: {{ ggvuser.language_pref }}</p>
         <p>Secure Google logout: {{ ggvuser.clean_logout }}</p>
-        <p>Is active: {{ ggvuser.is_active }}</p>
+        <p>Currently Activiated?: {% if object.is_active %} Yes {% else %} No {% endif %}</p>
 
     </div>
 {% endblock content %}

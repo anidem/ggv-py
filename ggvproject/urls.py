@@ -23,7 +23,7 @@ from core.views import (
     IndexView, HomeView,
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView,
-    CreateGgvUserView, UpdateGgvUserAccountView, GgvUserView, UpdateGgvUserView, GgvUserActivationView, GgvUserArchiveThenDeleteView, GgvUserDeleteUnusedAccount,
+    CreateGgvUserView, UpdateGgvUserAccountView,  GgvUserView, UpdateGgvUserView, GgvUserActivationView, GgvUserArchiveThenDeleteView, GgvUserDeleteUnusedAccount,
     FaqView, GgvUsersDeactivationView, GgvUsersActivationView, AttendanceAjaxCodeUpdateView, AttendanceAjaxCodeCreateView, AttendanceAjaxCodeDeleteView, AttendanceUpdateAllView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView

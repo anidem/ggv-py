@@ -59,7 +59,7 @@
                         </a>
                     </li>
 
-                    {% if user.is_authenticated %}
+                    {% if request.user.is_authenticated %}
 
                         {% if request.session.user_courses|length > 1 %}
                         <li>
@@ -92,7 +92,7 @@
                 <ul class="nav navbar-nav navbar-right">
                     {% block local_nav %} {% endblock local_nav %}
 
-                    {% if user.is_authenticated %}
+                    {% if request.user.is_authenticated %}
                         {% if course %}
                         
                           {% if 'instructor' in roles or 'manage' in roles %}
@@ -116,41 +116,52 @@
                                 </ul>
                           </li> <!-- end course manage dropdown menu -->
                           {% endif %}
-
+                        {% endif %}
+                    {% endif %}
+                    {% if request.user.is_authenticated %}
                         <!-- email / help dropdown menu -->
-                        <li class="dropdown">
-                            
+                        <li class="dropdown">                 
 
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown">
                                 <i class="fa fa-question-circle text-warning"></i> Help <i class="fa fa-caret-down"></i>
                             </a>
+
                             <ul class="dropdown-menu scrollable-menu">
-                                <li>
-                                    <a class="static nav-text" href="{% url 'email_instructor' course.slug %}?q={{request.path}}">
-                                    <i class="fa fa-envelope text-warning"></i> Instructor
-                                    </a>
-                                </li>
-                                <li role="separator" class="divider"></li>
+                                {% if course and 'access' in roles %}
+                                  <li>
+                                      <a class="static nav-text" href="{% url 'email_instructor' course.slug %}?q={{request.path}}">
+                                      <i class="fa fa-envelope text-warning"></i> Instructor
+                                      </a>
+                                  </li>
+                                  <li role="separator" class="divider"></li>
+                                {% endif %}
                                 <li>
                                     <a class="static nav-text" href="{% url 'email_staff' %}?q={{request.path}}">
                                     <i class="fa fa-envelope text-danger"></i> GGV Technical Staff
                                     </a>
                                 </li>
+                                {% if 'manage' in roles %}
+                                <li>
+                                    <a class="static nav-text" href="#">
+                                    <i class="fa fa-book"></i> Manager Help
+                                    </a>
+                                </li>
+                                {% endif %}
 
                             </ul>
                             
                         </li> <!-- end email / help dropdown menu -->
-                        {% endif %}
+                        
                     {% endif %}
 
 
 
                     <!-- login/logout / settings dropdown menu -->
                     <li class="dropdown">
-                        {% if user.is_authenticated %}
+                        {% if request.user.is_authenticated %}
                         <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
                             <i class="{{role_icon}} text-primary"></i>
-                            {{user.email}} <i class="fa fa-caret-down"></i>
+                            {{request.user.email}} <i class="fa fa-caret-down"></i>
                         </a>
 
                         <ul class="dropdown-menu section_drop scrollable-menu">
@@ -159,7 +170,7 @@
                                 <li class="disabled"><a href="#"><i class="{{role_icon}} text-primary"></i> Current role: {{ role }}</a></li> 
                                 <li role="separator" class="divider"></li>
                                 <li>
-                                    <a class="" href="{% url 'edit_user' course.slug user.id %}">
+                                    <a class="" href="{% url 'edit_user' course.slug request.user.id %}">
                                         <i class="fa fa-gear"></i> Preferences
                                     </a>
                                 </li>
@@ -175,7 +186,7 @@
                                 <li role="separator" class="divider"></li>
                             {% endif %}
                             
-                            {% if user.is_staff %}
+                            {% if request.user.is_staff %}
                                 <li role="separator" class="divider"></li>
                                 <li>
                                     <a class="" href="/ggvadmin" target="_blank">
@@ -185,7 +196,7 @@
                             {% endif %}
 
                             <li>
-                                {% if user.ggvuser.clean_logout %}
+                                {% if request.user.ggvuser.clean_logout %}
                                     <a href="{% url 'logout_clean'  %}"> <i class="fa fa-sign-out"></i> Logout</a>
                                 {% else %}
                                     <a href="{% url 'logout' %}"> <i class="fa fa-sign-out"></i> Logout</a>

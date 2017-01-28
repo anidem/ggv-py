@@ -52,6 +52,7 @@ class GgvOrgAdminView(LoginRequiredMixin, DetailView):
         context['num_licensees'] = user_licenses_used['count']
         context['deactivated_users'] = org.deactivated_users()
         context['courses'] = org.organization_courses.all()
+        context['licenseinfo'] = user_licenses_used
         if self.request.user in org.manager_list(): context['roles'] = ['manage']
         
         

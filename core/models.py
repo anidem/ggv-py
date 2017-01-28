@@ -13,6 +13,8 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
+from guardian.shortcuts import get_objects_for_user
+
 from courses.models import Course
 
 tz = timezone(settings.TIME_ZONE)
@@ -55,6 +57,19 @@ class GGVUser(models.Model):
     receive_notify_email = models.BooleanField(default=False)
     receive_email_messages = models.BooleanField(default=False)
     last_deactivation_date = models.DateTimeField(null=True)
+
+    def getGgvOrganizationMap(self):
+        courses = get_objects_for_user(self.user, ['courses.access', 'courses.instructor', 'courses.manage'])
+        orgs = {}
+        for c in courses:
+            crs_object = (c, len(c.licensed_users()))
+            try:
+                orgs[c.ggv_organization].append(crs_object)
+            except KeyError:
+                orgs[c.ggv_organization] = [crs_object]
+            
+            print c.ggv_organization, c.ggv_organization.licenses_in_use()      
+        return orgs
 
     def attendance_by_month(self, year=None, month=None):
         try:

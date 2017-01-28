@@ -36,27 +36,51 @@ class GGVOrganization(models.Model):
 
     def licenses_in_use(self):
         courses = self.organization_courses.all()
-        licenses = []
-        for i in courses:
-            licenses += i.licensed_users()
-     
-
-        active_data = {}
-        unvalidated_data = {}
-        for i in licenses:
-            if not i[2]:
-                unvalidated_data[i[0].email] = (i[0], {i[1]: i[2]})
-            else:
+        licensesd = {"active":{}, "unvalidated":{}}
+        manager_count = 0
+        instructor_count = 0
+        student_count = 0
+        unvalidated_count = 0
+        for course in courses:
+            for course_user in course.licensed_users():
+                user_obj, course_obj, perms = course_user
+                
+                if user_obj.is_active:
+                    status = 'active'
+                else:
+                    status = 'unvalidated'
+                
                 try:
-                    active_data[i[0].email][1][i[1]] = i[2]
-                     
-                except KeyError as e:
-                    active_data[i[0].email] = (i[0], {i[1]: i[2]})
-                    
-                except TypeError as e:
-                    active_data[i] = (i, {None: None})                
+                    licensesd[status][user_obj]['courses'].append(course_obj)
+                    licensesd[status][user_obj]['perms'].update(perms)
 
-        license_data = {'active': active_data, 'unvalidated': unvalidated_data, 'count': len(active_data) + len(unvalidated_data)}
+                except KeyError:                   
+                    licensesd[status][user_obj] = {'courses': [course_obj], 'perms': set(perms), 'status': user_obj.is_active}
+                                        
+                    if 'manage' in perms:
+                        manager_count += 1
+                    elif 'instructor' in perms:
+                        instructor_count += 1
+                    elif 'access' in perms:
+                        student_count += 1
+                    else:
+                        unvalidated_count += 1
+
+        # for k, v in licensesd.items():
+        #     print k, len(v)
+        #     for i, j in v.items():
+        #         print '\t', i, j
+
+        license_data = {
+            'active': licensesd['active'], 
+            'unvalidated': licensesd['unvalidated'], 
+            'count': manager_count + instructor_count + student_count + unvalidated_count, 
+            'manager_count': manager_count,
+            'instructor_count': instructor_count,
+            'student_count': student_count,
+            'unvalidated_count': unvalidated_count
+        }
+        
         return license_data
 
     def deactivated_users(self):
@@ -135,6 +159,9 @@ class Course(models.Model):
 
     def manager_list(self):
         return [user for user, perms in self.member_list().items() if 'manage' in perms and not user.is_staff]
+
+    def activated_list(self):
+        [user for user, perms in self.member_list().items() if user.is_active]
 
     def deactivated_list(self):
         return [user for user, perms in self.member_list().items() if not perms and user.social_auth.all()]

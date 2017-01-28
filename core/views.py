@@ -61,52 +61,25 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context['courses'] = []
         # build organization list from user's course list
 
-        orgs = []
+        orgs = set()
         for i in self.courses:
             crs = Course.objects.get(slug=i)
-            if crs.ggv_organization not in orgs:
-                orgs.append(crs.ggv_organization)
+            orgs.add(crs.ggv_organization)
+            
+        orgs = list(orgs)       
 
         organizations = {}
         permissions = []
-        for o in orgs:      
-            total_active = 0
-            total_deactive = 0
-            total_nologin = 0
-            course_rows = []
+        for org in orgs:
+            if self.request.user in org.manager_list() or self.request.user.is_staff: 
+                context['roles'] = ['manage']
 
-            for course in o.organization_courses.all():
-                permissions += course.manager_list()
-                if  self.request.user.has_perm('courses.manage', course) or self.request.user.is_staff :
-                    context['roles'] = ['manage']
-                    num_instructors = len(course.instructor_list())
-                    num_active = len(course.student_list())
-                    num_deactive = len(course.deactivated_list())
-                    num_nologin = len(course.unvalidated_list())
+            organizations[org] = {'courses': org.organization_courses.all(), 'licenses': org.licenses_in_use()}
 
-                    total_active = total_active + num_active
-                    total_deactive = total_deactive + num_deactive
-                    total_nologin = total_nologin + num_nologin
-
-                    crs_data = (
-                        course,
-                        num_active,
-                        num_deactive,
-                        num_nologin,
-                        num_instructors                
-                    )
-                    course_rows.append(crs_data)
-                
-                elif self.request.user.has_perm('courses.instructor', course):
-                    crs_data = (course,)
-                    course_rows.append(crs_data)                    
             
-            total_quota_used = len(o.licenses_in_use())
-
-            organizations[o] = (course_rows, total_active, total_deactive, total_nologin, total_quota_used)
         
-        context['courses'] = organizations
-        context['managers'] = permissions
+        context['organizations'] = organizations
+        
        
         return context
 

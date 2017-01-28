@@ -73,24 +73,24 @@
 
     {% for i, j in active.items %}
     
-        <div class="row small hoverpad"><a href="{% url 'view_user' course.slug j.0.id %}" class="static">
-            <div class="col-md-4">{{ j.0 }}</div>
-            <div class="col-md-4">{{ j.0.first_name }} {{ j.0.last_name }}</div>
+        <div class="row small hoverpad"><a href="{% url 'view_user' j.courses.0.slug i.id %}" class="static">
+            <div class="col-md-4">{{ i }}</div>
+            <div class="col-md-4">{{ i.first_name }} {{ i.last_name }}</div>
             <div class="col-md-4">
-            {% for k, v in j.1.items %}
-                <i class="{% if v.0 == 'manage' %}fa fa-user-secret{% elif v.0 == 'instructor' %}fa fa-graduation-cap{% else %}fa fa-user{% endif %}"></i> {{ k }}{% if not forloop.last %}, {% endif %}
+            {% for c in j.courses %}
+                <i class="{% if 'manage' in j.perms %}fa fa-user-secret{% elif 'instructor' in j.perms %}fa fa-graduation-cap{% else %}fa fa-user{% endif %}"></i> {{ c }}{% if not forloop.last %}, {% endif %}
             {% endfor %}
             </div>
         </a></div>
     
     {% endfor %}
     {% for i, j in unvalidated.items %}
-        <div class="row small hoverpad"><a href="{% url 'view_user' course.slug j.0.id %}" class="static">
-            <div class="col-md-4">{{ j.0 }}</div>
-            <div class="col-md-4">{{ j.0.first_name }} {{ j.0.last_name }}</div>
+        <div class="row small hoverpad bg-danger"><a href="{% url 'view_user' j.courses.0.slug i.id %}" class="static">
+            <div class="col-md-4">{{ i }}</div>
+            <div class="col-md-4">{{ i.first_name }} {{ i.last_name }}</div>
             <div class="col-md-4">
-            {% for k, v in j.1.items %}
-                <i class="{% if v.0 == 'manage' %}fa fa-user-secret{% elif v.0 == 'instructor' %}fa fa-graduation-cap{% else %}fa fa-user{% endif %}"></i> {{ k }}{% if not forloop.last %}, {% endif %}
+            {% for c in j.courses %}
+                <i class="{% if 'manage' in j.perms %}fa fa-user-secret{% elif 'instructor' in j.perms %}fa fa-graduation-cap{% else %}fa fa-user{% endif %}"></i> {{ c }}{% if not forloop.last %}, {% endif %}
             {% endfor %}
             </div>
         </a></div>

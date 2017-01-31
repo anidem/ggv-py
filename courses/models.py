@@ -56,7 +56,7 @@ class GGVOrganization(models.Model):
 
                 except KeyError:                   
                     licensesd[status][user_obj] = {'courses': [course_obj], 'perms': set(perms), 'status': user_obj.is_active}
-                                        
+                                      
                     if 'manage' in perms:
                         manager_count += 1
                     elif 'instructor' in perms:

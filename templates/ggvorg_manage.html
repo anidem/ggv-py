@@ -28,10 +28,13 @@
         <div class="col-md-6"><b>Manager Licenses used:</b></div><div class="col-md-6"><span class="label label-default">{{ licenseinfo.manager_count }}</span></div>
     </div>
     <div class="row hoverpad">
-        <div class="col-md-6"><b>Instructor Licenses used:</b></div><div class="col-md-6"><span class="label label-default">{{ licenseinfo.instructor_count|add:licenseinfo.unvalidated_count }}</span></div>
+        <div class="col-md-6"><b>Instructor Licenses used:</b></div><div class="col-md-6"><span class="label label-default">{{ licenseinfo.instructor_count }}</span></div>
     </div>
     <div class="row hoverpad">
         <div class="col-md-6"><b>Student Licenses used:</b></div><div class="col-md-6"><span class="label label-default">{{ licenseinfo.student_count }}</span></div>
+    </div>
+    <div class="row hoverpad">
+        <div class="col-md-6"><b>Unvalidated Licenses:</b></div><div class="col-md-6"><span class="label label-default">{{ licenseinfo.unvalidated_count }}</span></div>
     </div>
     <div class="row hoverpad">
         <div class="col-md-6"><b>License start date:</b></div><div class="col-md-6">{{ object.quota_start_date }}</div>

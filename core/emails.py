@@ -246,7 +246,7 @@ class SendEmailToStaff(LoginRequiredMixin, FormView):
         message_text = form.cleaned_data.get('message').encode('utf-8')
         html_message += "<h3>{0}</h3>".format(message_text)
 
-        html_message += '<p>User Info:</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)
+        html_message += '<p>Sender Info:</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)
 
         email = EmailMultiAlternatives(
             subject=self.request.user.get_full_name() + ' has a message about GGV',
@@ -275,10 +275,14 @@ class SendEmailToManagerDeactivationRequest(CsrfExemptMixin, LoginRequiredMixin,
             urlstr = request.GET['q']
             users = ''
             for i in deactivate_list:
-                u = User.objects.get(pk=i).email
-                users = users + u + ', '
+                u = User.objects.get(pk=i)
+                users = users + u.ggvuser.program_id + ' ' + u.first_name + ' ' + u.last_name + ' (' + u.email + '),  '
 
             user_sender = self.request.user
+
+            user_org = self.course.ggv_organization
+
+            url_org =  'http://' + self.request.get_host() + reverse('manage_org', args=[user_org.id])
 
             manager_list = []
             for i in self.course.manager_list():  # Bypassing user settings to control email messages from ggv system
@@ -298,7 +302,9 @@ class SendEmailToManagerDeactivationRequest(CsrfExemptMixin, LoginRequiredMixin,
 
             html_message += "<h3>Please deactivate the following accounts.</h3> <p>{0}</p>".format(users)
 
-            html_message += '<p>User Info:</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)
+            html_message += '<p>Requestor Info::</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)
+
+            html_message += '<p>Manage deactivations here ==> <a href=\"{org_url}\">{org}</a></p>'.format(org_url=url_org, org=user_org)
 
             email = EmailMultiAlternatives(
                 subject=self.request.user.get_full_name() + ' is requesting deactivation for users.',
@@ -332,10 +338,14 @@ class SendEmailToManagerActivationRequest(CsrfExemptMixin, LoginRequiredMixin, C
             urlstr = request.GET['q']
             users = ''
             for i in activate_list:
-                u = User.objects.get(pk=i).email
-                users = users + u + ', '
+                u = User.objects.get(pk=i)
+                users = users + u.ggvuser.program_id + ' ' + u.first_name + ' ' + u.last_name + ' (' + u.email + '),  '
 
             user_sender = self.request.user
+
+            user_org = self.course.ggv_organization
+
+            url_org =  'http://' + self.request.get_host() + reverse('manage_org', args=[user_org.id])
 
             manager_list = []
             for i in self.course.manager_list():  # Bypassing user settings to control email messages from ggv system
@@ -355,7 +365,9 @@ class SendEmailToManagerActivationRequest(CsrfExemptMixin, LoginRequiredMixin, C
 
             html_message += "<h3>Please activate the following accounts.</h3> <p>{0}</p>".format(users)
 
-            html_message += '<p>User Info:</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)
+            html_message += '<p>Requestor Info:</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)
+
+            html_message += '<p>Manage activations here ==> <a href=\"{org_url}\">{org}</a></p>'.format(org_url=url_org, org=user_org)
 
             email = EmailMultiAlternatives(
                 subject=self.request.user.get_full_name() + ' is requesting activation for users.',
@@ -476,7 +488,7 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
         # print html_message, e
         pass
 
-    html_message += "<p>You can view their responses here:</p><p> <a href=\"{ws_url}\">{ws_url}</a><b>Login required.</b></p><p>Also note you may need to Allow students to view results if you are currently restricting this.</p>".format(
+    html_message += "<p>You can view their responses here:</p><p><a href=\"{ws_url}\">{ws_url}</a><b>Login required.</b></p><p>Also note you may need to Allow students to view results if you are currently restricting this.</p>".format(
         ws_url=worksheet_results_url,
         )
 

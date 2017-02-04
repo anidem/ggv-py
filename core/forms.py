@@ -14,9 +14,9 @@ LANG_CHOICES = (('english', 'English'), ('spanish', 'Spanish'))
 ACCESS_CHOICES = (('access', 'Student Access'), ('instructor', 'Instructor Access'))
 LABELS = {
     'language': 'Preferred language:',
-    'program_id': 'Please enter a unique identifier (maximum 32 numbers or letters) for this user if your organization assigns ids to users. This is optional. A default identifier will be generated if one is not specified.',
+    'program_id': 'Please enter a unique identifier (maximum 32 numbers or letters) for this user if your organization assigns ids to users. This is optional. A default identifier will be generated if one is not specified.<br><br>Program ID',
     'access_level': 'Select access level/account type:',
-    'username': 'Users are identified by their gmail address/account. Please enter the user\'s complete email address. Organizations that use gmail as a service are considered valid gmail accounts.',
+    'username': 'Users are identified by their gmail address/account. Please enter the user\'s complete email address. Organizations that use gmail as a service are considered valid gmail accounts.<br><br>Email',
     'is_active': 'Is activated? Uncheck this to deactivate user. User will not be able to access ggv.',
     'clean_logout': 'Google account security. Keep this CHECKED to ensure that this Google account is safely logged out of the browser. This is recommended. UNCHECK to ensure that this Google account remains active in the browser after signing out of GGV.',
     'receive_notifications': 'Choose to receive notifications on student activity. (E.g., worksheet completions, bookmarking, etc.)',
@@ -55,8 +55,8 @@ class GgvUserAccountCreateForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'program_id',
-                  'language', 'perms', 'course', 'is_active']
+        fields = ['perms', 'username', 'first_name', 'last_name', 'program_id',
+                  'language', 'course', 'is_active']
         widgets = {
             'is_active': forms.HiddenInput(), 
         }

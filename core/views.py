@@ -47,7 +47,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
     def get(self, request, *args, **kwargs):
         try:
             self.courses = self.request.session['user_courses']
-
+            
             if len(self.courses) == 1:
                 return redirect('course', crs_slug=self.courses[0])
 
@@ -139,10 +139,11 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         context['instructors'] = self.course.instructor_list()
         
         user_licenses_used = self.course.ggv_organization.licenses_in_use()
+        # print user_licenses_used['student_count'], user_licenses_used['instructor_count'], user_licenses_used['manager_count'], user_licenses_used['count']
         context['active'] = user_licenses_used['active']
         context['unvalidated'] = user_licenses_used['unvalidated']
         context['license_count'] = user_licenses_used['count']
-        # context['licenses'] = user_licenses_used
+        context['licenses'] = user_licenses_used
         context['license_quota'] = self.course.ggv_organization.user_quota
         context['org_courses'] = self.course.ggv_organization.organization_courses.all().exclude(pk=self.course.id)
 
@@ -394,6 +395,7 @@ class GgvUserDeleteUnusedAccount(CsrfExemptMixin, LoginRequiredMixin, JSONRespon
                     u.delete()
                                
         except Exception as e:
+
             pass  # silently fail
 
         return redirect(urlstr)

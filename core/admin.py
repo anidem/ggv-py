@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 
 from guardian.admin import GuardedModelAdmin
 
-from courses.models import GGVOrganization, Course, CourseLesson
+from courses.models import GGVOrganization, Course, CourseLesson, CourseTag, TaggedCourse
 from lessons.models import Lesson, Section
 from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option, UserWorksheetStatus
 from slidestacks.models import SlideStack
@@ -182,6 +182,8 @@ class GGVOrganizationAdmin(admin.ModelAdmin):
 admin.site.register(GGVOrganization, GGVOrganizationAdmin)
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
 admin.site.register(CourseLesson, CourseLessonAdmin)
+admin.site.register(CourseTag)
+admin.site.register(TaggedCourse)
 admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)
 admin.site.register(Section, SectionAdmin, Media=ExtraMedia)
 admin.site.register(SlideStack, SlideStackAdmin)

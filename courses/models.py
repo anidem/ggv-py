@@ -34,8 +34,18 @@ class GGVOrganization(models.Model):
             rows.append(i.student_report(scope))
         return rows
 
-    def licenses_in_use(self):
-        courses = self.organization_courses.all()
+    def licenses_in_use(self, scope=None):
+        tag = ''
+        if not scope:
+            courses = self.organization_courses.all()
+        else:
+            try:
+                tag = CourseTag.objects.get(pk=scope)
+            except:
+                pass
+            
+            courses = [t.course for t in TaggedCourse.objects.filter(tag=tag)]
+        
         licensesd = {"active":{}, "unvalidated":{}}
         manager_count = 0
         instructor_count = 0
@@ -72,6 +82,8 @@ class GGVOrganization(models.Model):
         #         print '\t', i, j
 
         license_data = {
+            'courses': courses,
+            'tag_filter': tag,
             'active': licensesd['active'], 
             'unvalidated': licensesd['unvalidated'], 
             'count': manager_count + instructor_count + student_count + unvalidated_count, 
@@ -116,6 +128,7 @@ class Course(models.Model):
     control_worksheet_results = models.BooleanField(default=False, choices=ws_control_choices)
     access_code = models.CharField(max_length=8, null=True, blank=True)
     ggv_organization = models.ForeignKey(GGVOrganization, null=True, related_name='organization_courses')
+    # tag = models.ForeignKey(CourseTag, null=True, related_name='tagged_courses')
 
     class Meta:
         permissions = (
@@ -248,9 +261,7 @@ class CourseLesson(models.Model):
 
 class CoursePermission(models.Model):
 
-    """
-        This class maps users with courses. It also indicates the user role.
-    """
+    """ This class maps users with courses. It also indicates the user role. """
 
     USER_ROLES = (
         ('manager', 'Manager'),
@@ -265,3 +276,28 @@ class CoursePermission(models.Model):
 
     def __unicode__(self):
         return '%s %s (%s)' % (self.course, self.user, self.role)
+
+
+class CourseTag(models.Model):
+
+    """ This class tag entries to be mapped to ggv organization objects. """
+    title = models.CharField(max_length=512, null=False, unique=True)
+    display_order = models.IntegerField(default=0)
+    ggv_organization = models.ForeignKey(GGVOrganization, blank=True, related_name='organization_tags')
+
+    def __unicode__(self):
+        return '%s' % (self.title)
+
+    class Meta:
+        ordering = ['display_order', 'title']
+
+class TaggedCourse(models.Model):
+    course = models.ForeignKey(Course, related_name='tag')
+    tag = models.ForeignKey(CourseTag, related_name='tagged')
+
+    def __unicode__(self):
+        return '%s' % (self.tag)
+
+    class Meta:
+        ordering = ['course']
+

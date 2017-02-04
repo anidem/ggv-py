@@ -38,9 +38,10 @@
     <div id="instructor_sorts" class="row">
         <div class="col-xs-12">
             <div class="col-xs-1"><button class="btn btn-block btn-sm" data-sort-by="siteid" data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+            <div class="col-xs-1"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+            <div class="col-xs-1"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
             <div class="col-xs-3"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="created" data-order="asc"> <i class="fa fa-sort"></i> created</button></div>
             <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
             <div class="col-xs-2"><button id="instructor-deactivate-btn" class="btn btn-block btn-sm btn-danger"><i class="fa fa-check-square-o"></i>{% if is_manager %} deactivate {% else %} request deactivation {% endif %}</button> </div>
         </div>
@@ -50,12 +51,13 @@
     <input type="hidden" name="url" value="{{ request.build_absolute_uri }}">
     <div id="container_instructors" class="row">               
             {% for i in instructors %}
-            <div class="item hoverpad col-xs-12" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
+            <div class="item hoverpad col-xs-12" data-created="{{ i.0.date_joined|date:'U' }}" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
                 <a href="{% url 'user_progress' course.slug i.0.id %}" class="static">
                     <div class="col-xs-1 siteid">{{ i.0.ggvuser.program_id }}</div>
-                    <div class="col-xs-2 firstname">{{ i.0.first_name }}</div>
-                    <div class="col-xs-2 lastname">{{ i.0.last_name }}</div>
+                    <div class="col-xs-1 firstname">{{ i.0.first_name }}</div>
+                    <div class="col-xs-1 lastname">{{ i.0.last_name }}</div>
                     <div class="col-xs-3 username">{{ i.0.username }}</div>
+                    <div class="col-xs-2 created">{{ i.0.date_joined|date:"Y - M d" }}</div>
                     <div class="col-xs-2 login">{{ i.0.last_login|date:"Y - M d, g:i A" }}</div>
                     <div class="col-xs-2">
                         {% if is_manager or is_instructor %}
@@ -83,9 +85,10 @@
     <div id="sorts"  class="row">
         <div class="col-xs-12">
             <div class="col-xs-1"><button class="btn btn-block btn-sm" data-sort-by="siteid" data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+            <div class="col-xs-1"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+            <div class="col-xs-1"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
             <div class="col-xs-3"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="created" data-order="asc"> <i class="fa fa-sort"></i> created</button></div>
             <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="login" data-order="asc"> <i class="fa fa-sort"></i> last login</button></div>
             <div class="col-xs-2">  <button id="deactivate-btn" class="btn btn-block btn-sm btn-danger"><i class="fa fa-check-square-o"></i>{% if is_manager %} deactivate {% else %} request deactivation {% endif %}</button> </div>
         </div>
@@ -97,12 +100,13 @@
 
     <div id="container_0" class="row">                
         {% for i in students %}
-        <div class="item hoverpad col-xs-12" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
+        <div class="item hoverpad col-xs-12" data-created="{{ i.0.date_joined|date:'U' }}" data-login="{{ i.0.last_login|date:'U' }}" data-recent="{{ i.1.recent_time|date:'U' }}">
             <a href="{% url 'user_progress' course.slug i.0.id %}" class="static">
                 <div class="col-xs-1 siteid">{{ i.0.ggvuser.program_id }}</div>
-                <div class="col-xs-2 firstname">{{ i.0.first_name }}</div>
-                <div class="col-xs-2 lastname">{{ i.0.last_name }}</div>
+                <div class="col-xs-1 firstname">{{ i.0.first_name }}</div>
+                <div class="col-xs-1 lastname">{{ i.0.last_name }}</div>
                 <div class="col-xs-3 username">{{ i.0.username }}</div>
+                <div class="col-xs-2 created">{{ i.0.date_joined|date:"Y - M d" }}</div>
                 <div class="col-xs-2 login">{{ i.0.last_login|date:"Y - M d, g:i A" }}</div>
             </a>
             <div class="col-xs-2">
@@ -128,9 +132,10 @@
     <div id="deactivated_sorts" class="row">
         <div class="col-xs-12">
             <div class="col-xs-1"><button class="btn btn-block btn-sm" data-sort-by="siteid" data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
-            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+            <div class="col-xs-1"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+            <div class="col-xs-1"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
             <div class="col-xs-3"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+            <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="created" data-order="asc"> <i class="fa fa-sort"></i> created</button></div>
             <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="deactivated" data-order="asc"> <i class="fa fa-sort"></i> deactivated</button></div>
             <div class="col-xs-2"><button id="activate-btn" class="btn btn-block btn-sm btn-success"><i class="fa fa-check-square-o"></i>{% if is_manager %} activate {% else %} request activation {% endif %}</button></div>
         </div>
@@ -141,12 +146,13 @@
 
     <div id="container_00" class="row">
         {% for i in deactivated %}
-        <div class="item hoverpad col-xs-12" data-login="{{ i.0.last_login|date:'U' }}">
+        <div class="item hoverpad col-xs-12" data-created="{{ i.0.date_joined|date:'U' }}"  data-login="{{ i.0.last_login|date:'U' }}">
             <a href="{% url 'user_progress' course.slug i.0.id %}" class="static">
             <div class="col-xs-1 siteid">{{ i.0.ggvuser.program_id }}</div>
-            <div class="col-xs-2 firstname">{{ i.0.first_name }}</div>
-            <div class="col-xs-2 lastname">{{ i.0.last_name }}</div>
+            <div class="col-xs-1 firstname">{{ i.0.first_name }}</div>
+            <div class="col-xs-1 lastname">{{ i.0.last_name }}</div>
             <div class="col-xs-3 username">{{ i.0.username }}</div>
+            <div class="col-xs-2 created">{{ i.0.date_joined|date:"Y - M d" }}</div>
             <div class="col-xs-2 deactivated">{{ i.0.ggvuser.last_deactivation_date|date:"Y - M d" }}</div>
             </a>
             <div class="col-xs-2"><input type="checkbox" name="activate_list" value="{{ i.0.id }}"></div>
@@ -185,7 +191,7 @@
 
     <div id="container_1" class="row">
         {% for i in unvalidated %}
-        <div class="item hoverpad col-xs-12" data-created="{{ i.last_login|date:'U' }}">
+        <div class="item hoverpad col-xs-12" data-created="{{ i.date_joined|date:'U' }}">
             <a href="{% url 'view_user' course.slug i.id %}" class="static">
             <div class="col-xs-1 site_id">{{ i.ggvuser.program_id }}</div>
             <div class="col-xs-2 firstname">{{ i.first_name }}</div>
@@ -231,6 +237,7 @@
                 getSortData: {
                     login: '[data-login] parseInt',
                     recent_timestamp: '[data-recent] parseInt',
+                    created: '[data-created] parseInt',
                     siteid: '.siteid',
                     firstname: '.firstname',
                     lastname: '.lastname',
@@ -243,6 +250,7 @@
                 getSortData: {
                     login: '[data-login] parseInt',
                     recent_timestamp: '[data-recent] parseInt',
+                    created: '[data-created] parseInt',
                     siteid: '.siteid',
                     firstname: '.firstname',
                     lastname: '.lastname',
@@ -254,6 +262,7 @@
             var $container00 = $('#container_00').isotope({
                 getSortData: {
                     login: '[data-login] parseInt',
+                    created: '[data-created] parseInt',
                     siteid: '.siteid',
                     firstname: '.firstname',
                     lastname: '.lastname',

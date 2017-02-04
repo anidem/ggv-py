@@ -1,3 +1,5 @@
+# courses/views.py
+
 from collections import OrderedDict
 from pytz import timezone
 from datetime import datetime
@@ -17,7 +19,6 @@ from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment
 from braces.views import LoginRequiredMixin, JSONResponseMixin, AjaxResponseMixin
-# from guardian.shortcuts import has_perm
 
 from core.models import Notification, SiteMessage
 from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin, CourseContextMixin
@@ -33,9 +34,9 @@ tz = timezone(settings.TIME_ZONE)
 
 class GgvOrgAdminView(LoginRequiredMixin, DetailView):
     """
-        Displays an overview of a course. This view is intended for users assigned as managers. 
-        Information displayed includes: instructor and student list of those assigned to the course, 
-        a license information, and organization information.
+        Displays an overview of a ggv organization. This view is intended for users assigned as managers. 
+        Information displayed includes: instructor and student list of those assigned to courses, 
+        license information, and organization information.
 
         Visibility: sysadmin, staff, manager(s) assigned to the course
     """
@@ -46,13 +47,19 @@ class GgvOrgAdminView(LoginRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(GgvOrgAdminView, self).get_context_data(**kwargs)
         org = self.get_object()
-        user_licenses_used = org.licenses_in_use()
+        tag = self.request.GET.get('scope', None)
+        
+        user_licenses_used = org.licenses_in_use(scope=tag)
+        
         context['active'] = user_licenses_used['active']
         context['unvalidated'] = user_licenses_used['unvalidated']
         context['num_licensees'] = user_licenses_used['count']
         context['deactivated_users'] = org.deactivated_users()
-        context['courses'] = org.organization_courses.all()
+        # context['courses'] = org.organization_courses.all()
+        context['courses'] = user_licenses_used['courses']
         context['licenseinfo'] = user_licenses_used
+        context['tag_filter'] = user_licenses_used['tag_filter']
+
         if self.request.user in org.manager_list(): context['roles'] = ['manage']
         
         
@@ -433,7 +440,6 @@ class CourseUserActivityReportView(LoginRequiredMixin, CourseContextMixin, Acces
         return context
 
 
-
 class CourseUserActivityFullReportView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
     """
     Summarizes all student activity for each student in a course. Student reports are arranged in separate worksheets.
@@ -512,7 +518,6 @@ class CourseUserActivityFullReportView(LoginRequiredMixin, CourseContextMixin, A
         context = super(CourseUserActivityFullReportView, self).get_context_data(**kwargs)
    
         return context
-
 
 
 """ User Activity Management """

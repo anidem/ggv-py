@@ -119,7 +119,8 @@ def auth_allowed(response, details, *args, **kwargs):
         ggv_user = User.objects.get(username__iexact=registration_email_str)
         return ggv_user
 
-    except:
+    except Exception as e:
+        # print e
         return None
 
 def ggv_auth_allowed(backend, details, response, *args, **kwargs):
@@ -146,9 +147,12 @@ def ggv_social_user(backend, uid, user=None, *args, **kwargs):
     if user:
         provider = backend.name
         social = backend.strategy.storage.user.get_social_auth(provider, uid)
+        # print 'ggv_social_user=>', social
         if not social:  # user has not logged in previously (e.g., no social auth obj exists) -- make their account active.
             user.is_active = True
+            user.save()
     else:
+        # print 'ggv_social_user=>', user
         raise AuthForbidden(backend)
 
     return {'social': social,

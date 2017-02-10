@@ -3,6 +3,7 @@ import json
 from pytz import timezone
 
 from django import utils
+from django import forms
 from django.db import IntegrityError
 from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -127,13 +128,14 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
 
         # Make a GGVUser object linked to the User account then assign permissions to the course they are being added to.
         ggvuser = GGVUser(user=self.object, language_pref=language, program_id=prog_id)
-        # ggvuser.save()
+
         try:
-            print 'saving ggvuser'
             ggvuser.save()
         except Exception as e:
-            raise Exception
-            
+            form.add_error('program_id', 'This program ID already exists.')
+            self.object.delete()
+            return self.form_invalid(form)
+
         assign_perm(perms, self.object, course)
         messages.success(self.request, 'User successfully added.')
         return super(CreateGgvUserView, self).form_valid(form)

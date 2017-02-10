@@ -34,7 +34,7 @@
         {% if ggvuser.program_id %}<p>Program ID: {{ ggvuser.program_id }}</p>{% endif %}
         <p>Language preference: {{ ggvuser.language_pref }}</p>
         <p>Secure Google logout: {{ ggvuser.clean_logout }}</p>
-        <p>Currently Activiated?: {% if object.is_active %} Yes {% else %} No {% endif %}</p>
+        <p>Currently Activated?: {% if object.is_active %} Yes {% else %} No {% endif %}</p>
 
     </div>
 {% endblock content %}

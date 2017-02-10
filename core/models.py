@@ -56,7 +56,7 @@ class GGVUser(models.Model):
     clean_logout = models.BooleanField(default=True)
     receive_notify_email = models.BooleanField(default=False)
     receive_email_messages = models.BooleanField(default=False)
-    last_deactivation_date = models.DateTimeField(null=True)
+    last_deactivation_date = models.DateTimeField(null=True, blank=True)
 
     def getGgvOrganizationMap(self):
         courses = get_objects_for_user(self.user, ['courses.access', 'courses.instructor', 'courses.manage'])

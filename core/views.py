@@ -127,7 +127,13 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
 
         # Make a GGVUser object linked to the User account then assign permissions to the course they are being added to.
         ggvuser = GGVUser(user=self.object, language_pref=language, program_id=prog_id)
-        ggvuser.save()
+        # ggvuser.save()
+        try:
+            print 'saving ggvuser'
+            ggvuser.save()
+        except Exception as e:
+            print type(e), e
+
         assign_perm(perms, self.object, course)
         messages.success(self.request, 'User successfully added.')
         return super(CreateGgvUserView, self).form_valid(form)

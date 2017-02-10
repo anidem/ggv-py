@@ -132,8 +132,8 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
             print 'saving ggvuser'
             ggvuser.save()
         except Exception as e:
-            print type(e), e
-
+            raise Exception
+            
         assign_perm(perms, self.object, course)
         messages.success(self.request, 'User successfully added.')
         return super(CreateGgvUserView, self).form_valid(form)

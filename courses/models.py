@@ -22,6 +22,9 @@ class GGVOrganization(models.Model):
     license_id = models.CharField(max_length=48, null=True)
     title = models.CharField(max_length=256)
     user_quota = models.IntegerField(default=0)
+    manager_quota = models.IntegerField(default=0)
+    instructor_quota = models.IntegerField(default=0)
+    student_quota = models.IntegerField(default=0)
     quota_start_date = models.DateField()
     quota_end_date = models.DateField(null=True)
     business_contact_email = models.EmailField()
@@ -280,9 +283,17 @@ class CoursePermission(models.Model):
 
 class CourseTag(models.Model):
 
-    """ This class tag entries to be mapped to ggv organization objects. """
+    """ 
+        This class models a suborganization entry for a ggv organization
+        object.  A suborg can be further defined with a subset of licenses
+        assigned to a ggv organization account.
+    """
+
     title = models.CharField(max_length=512, null=False, unique=True)
     display_order = models.IntegerField(default=0)
+    manager_quota = models.IntegerField(default=0)
+    instructor_quota = models.IntegerField(default=0)
+    student_quota = models.IntegerField(default=0)    
     ggv_organization = models.ForeignKey(GGVOrganization, blank=True, related_name='organization_tags')
 
     def __unicode__(self):
@@ -290,6 +301,7 @@ class CourseTag(models.Model):
 
     class Meta:
         ordering = ['display_order', 'title']
+
 
 class TaggedCourse(models.Model):
     course = models.ForeignKey(Course, related_name='tag')

@@ -394,7 +394,11 @@ form ul {
   border-bottom:1px solid gray;
 }
 
-
+/* django message error classes */
+.bg-error {
+  background-color: red;
+  color: #fff;
+}
 
 
 

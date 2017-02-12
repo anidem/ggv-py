@@ -134,6 +134,7 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         except Exception as e:
             form.add_error('program_id', 'This program ID already exists.')
             self.object.delete()
+            messages.error(self.request, 'User not added. There is a problem with the information provided. See below.', extra_tags='danger')
             return self.form_invalid(form)
 
         assign_perm(perms, self.object, course)

@@ -59,17 +59,15 @@
                         </a>
                     </li>
 
-                    {% if request.user.is_authenticated %}               
-                        {% if course %}
-                          
-                          {% if request.session.user_courses|length > 1 %}
-                            <li>
-                                <a class="navbar-brand" href="{% url 'ggvhome' %}">
-                                    <button class="btn btn-sm btn-default"><i class="fa fa-caret-left"></i> Courses </button>
-                                </a>
-                            </li>
-                          {% endif %}
-                          
+                    {% if request.user.is_authenticated %}
+                        {% if request.session.user_courses|length > 1 and request.resolver_match.url_name != 'ggvhome' %}
+                          <li>
+                              <a class="navbar-brand" href="{% url 'ggvhome' %}">
+                                  <button class="btn btn-sm btn-default"><i class="fa fa-caret-left"></i> Courses </button>
+                              </a>
+                          </li>
+                        {% endif %}
+                        {% if course %}                         
                           {% if request.resolver_match.url_name != 'course' %}
                             <li>
                               <a class="navbar-brand" href="{% url 'course' course.slug %}">

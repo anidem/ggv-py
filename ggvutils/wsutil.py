@@ -201,10 +201,10 @@ def import_json_questions(json_dir=None, lid=None, sid=None):
             files.append(fstr)
 
     for f in files:
-        print f
+        print 'PROCESSING ==>', f
         json_file = open('%s/%s' % (json_dir, f))
         json_data = json_file.read()
-        data = json.loads(json_data) # deserialises it
+        data = json.loads(json_data) # deserializes it
 
         WID = None
         worksheet_obj = None
@@ -216,7 +216,7 @@ def import_json_questions(json_dir=None, lid=None, sid=None):
                 try:
                     worksheet_obj = QuestionSet.objects.get(pk=idmap[WID])
                 except:
-                    # This need to be configured for the desination lesson and section.
+                    # This need to be configured for the destination lesson and section.
                     lesson = Lesson.objects.get(pk=lid)
                     section = Section.objects.get(pk=sid)
                     worksheet_obj =  QuestionSet(lesson=lesson, section=section,title=WID, instructions='Add instructions here.', display_order=0, activity_type='worksheet')
@@ -293,6 +293,110 @@ def import_json_questions(json_dir=None, lid=None, sid=None):
 
 
     return
+
+def import_new_json_questions_from_file(json_dir=None, json_file_name=None, lid=None, sid=None, fake=False):
+    optsmap ={'A': '1', 'B': '2', 'C': '3', 'D': '4', 'a': '1', 'b': '2', 'c': '3', 'd': '4' }
+    
+    
+    json_file = open('%s/%s' % (json_dir, json_file_name)) 
+    data = json.loads(json_file.read()) # deserializes it
+    print 'PROCESSING ==>', json_file
+    json_file.close()
+
+    worksheet_title = 'no title'
+    worksheet_obj = None
+
+    # Setup a new worksheet
+    if data[0].get('title') != '':
+        worksheet_title = data[0].get('title')
+    
+    print 'NEW WORKSHEET TITLE ==> ', worksheet_title
+    lesson = Lesson.objects.get(pk=lid)
+    
+    print 'WORKSHEET LESSON ==> ', lesson.id, lesson.title
+    section = Section.objects.get(pk=sid)
+    
+    print 'WORKSHEET SECTION ==> ', section.id, section.title
+    
+    worksheet_obj = QuestionSet(lesson=lesson, section=section, title=worksheet_title, instructions='Add instructions here.', display_order=0, activity_type='worksheet')
+    if not fake: worksheet_obj.save()
+
+    print 'NEW WORKSHEET CREATED ==> ', worksheet_obj.id, worksheet_obj.title
+
+    # Iterate over each question --> i = json question object
+    for i in data:
+        try:
+            if i.get('image') != '':
+                imgpath = 'img/' + i.get('image')
+            else:
+                imgpath = ''
+            
+            if i.get('type') == 'text':
+                question = TextQuestion()
+                question.display_text = i.get('question')
+                question.display_order = i.get('order')
+                question.correct = i.get('correct')
+                question.display_image = imgpath
+                question.question_set = worksheet_obj
+                if not fake: question.save()
+            else:
+                question = OptionQuestion()
+                question.display_text = i.get('question')
+                question.display_order = i.get('order')
+                question.display_image = imgpath
+                question.input_select = i.get('type')
+                question.question_set = worksheet_obj
+                if not fake: question.save()
+                
+                corstr =  i.get('correct')
+                corlist = corstr.split(',')
+
+                # retrieve the list of options (option 1, option 2, ...)
+                opts = dict((k, v) for k, v in sorted(i.items()) if k.startswith('option'))
+                
+                # process each retrieved option
+                for k, v in opts.items():
+                    try:
+                        order = k[7:] # get the number portion of the key: e.g.,option 1 --> 1
+                        opt = Option()
+                        opt.display_text = v
+                        opt.display_order = order
+                        for c in corlist:
+                            try:
+                                opt.correct = order == optsmap[c]
+                            except:
+                                opt.correct = order == c
+
+                        opt.question = question
+                    except Exception as e:
+                        print '%s (%s)' % (e.message, type(e))
+                        print 'VALUE=*%s*'% (v)
+                        print 'WORKSHEET:', worksheet_obj
+                    
+                    if not fake: opt.save()
+
+        except Exception as e:
+            print e
+
+        # except ValueError:
+        #     print '[%s] not saved'% i.get('QUESTION')
+        #     continue
+        # except KeyError as e:
+        #     print '%s (%s)' % (e.message, type(e))
+        #     # print e.message
+        #     continue
+
+
+
+        # seqitem = QuestionSequenceItem(content_object=question, question_sequence=seq)
+        # seqitem.save()
+
+        print 'updated %s with %s' % (worksheet_obj, question.display_text[:10])
+    
+    return
+
+
+
 
 def json_repair_questions(json_dir=None):
     worksheet_repairs=[782, 783, 785, 786, 787, 788, 789, 790, 791, 792]

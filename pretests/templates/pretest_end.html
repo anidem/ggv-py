@@ -1,0 +1,18 @@
+<!-- pretest_end.html -->
+{% extends "pretest_base.html" %}
+
+{% block page_header %}
+	<div class="col-md-12 text-center">
+	    <h2><i class="fa fa-home"></i> {{ puser.id }} Score on {{ object.title }} is 199/200</h2>
+	    <h3><a href="{% url 'pretestapp:pretest_menu' %}">Back to more tests?</a></h3>
+	</div>
+{% endblock page_header %}
+
+{% block content %}
+
+{% for i in responses %}
+	<div>{{ forloop.counter }}. {{ i.content_object | safe }} {{ i.iscorrect }} </div>
+{% endfor %}
+
+	
+{% endblock content %}

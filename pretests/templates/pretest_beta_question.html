@@ -1,0 +1,21 @@
+<!-- pretest_beta_question.html -->
+{% extends "pretest_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_header %}
+	<div class="col-md-12 text-center">
+	    <h2><i class="fa fa-home"></i> Question</h2>
+	</div>
+{% endblock page_header %}
+
+{% block content %}
+
+	<form action="" method="post">{% csrf_token %}
+	    {{ form.as_p }}
+	    <input type="submit" value="submit your answer" />
+	</form>
+
+{% endblock content %}
+
+

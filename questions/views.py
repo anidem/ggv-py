@@ -524,6 +524,7 @@ class RestrictResultsUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateVi
         user = ws_status_obj.user.id
         return reverse_lazy('worksheet_user_report', args=[course, worksheet, user])
 
+
 class UserResponsesResetView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = QuestionSet
     template_name = ''

@@ -298,7 +298,6 @@ def update_attendance_for_all_users():
     for user in User.objects.all():
         populate_attendance_duration_field(user)
 
-
 def remove_zero_attendance_rows():
     a = AttendanceTracker.objects.all().filter(duration_in_secs=0)
     for i in a:

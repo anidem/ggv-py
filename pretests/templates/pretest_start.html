@@ -1,0 +1,18 @@
+<!-- pretest_question.html -->
+{% extends "pretest_base.html" %}
+
+{% block page_header %}
+	<div class="col-md-12 text-center">
+	    <h2><i class="fa fa-home"></i> Begin {{ object.title }}</h2>
+	</div>
+{% endblock page_header %}
+
+{% block content %}
+
+
+Instructions here.
+
+
+<h2><a href="{% url 'pretestapp:pretest_take' object.id 1 %}">Begin</a></h2>
+	
+{% endblock content %}

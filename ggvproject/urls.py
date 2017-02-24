@@ -45,6 +45,7 @@ from questions.views import (
     )
 from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView, slide_view
 from supportmedia.views import ExternalMediaView, ExternalMediaCourseView, ExternalMediaCreateView, ExternalMediaUpdateView
+from pretests.views import PretestHomeView
 
 handler404 = 'core.views.handler404'
 handler500 = 'core.views.handler500'
@@ -53,6 +54,10 @@ urlpatterns = [
     url('', include('social.apps.django_app.urls', namespace='social')),
     url('', include('django.contrib.auth.urls', namespace='auth')),
     url(r'session_security/', include('session_security.urls')),
+    
+    url(r'^pretest/', include('pretests.urls', namespace='pretestapp')),
+
+
     url(r'^ggv/test/$', TestDocView.as_view(), name='util'),
     url(r'^ggv/email-us/$', SendEmailToStaff.as_view(), name='email_staff'),
 

@@ -1,0 +1,20 @@
+<!-- pretest_menu.html -->
+{% extends "pretest_base.html" %}
+{% load staticfiles %}
+
+{% block page_header %}
+	<div class="col-md-12 text-center">
+	    <h2><i class="fa fa-home"></i> GGV Interactive Pretests</h2>
+	</div>
+{% endblock page_header %}
+
+{% block content %}
+
+	{% for lesson in lessons %}
+		{% for act in lesson.activities %}
+			<h4><i class="fa fa-pencil-square-o fa-2x icon-worksheet"></i><a class="btn btn-lg media-heading" href="{% url 'pretestapp:pretest_start' act.id %}">{{ act.title }}</a></h4>
+			<h3><a href="{% url 'pretestapp:pretest_done' act.id 3%}">score</a></h3>
+		{% endfor %}
+	{% endfor %}
+	
+{% endblock content %}

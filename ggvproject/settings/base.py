@@ -72,6 +72,7 @@ INSTALLED_APPS = (
     'supportmedia',
     'notes',
     'core',
+    'pretests',
 
     'crispy_forms',
     'django_wysiwyg',

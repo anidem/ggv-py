@@ -11,6 +11,10 @@ class Lesson(models.Model):
         ('science', 'science'),
         ('socialstudies', 'socialstudies'),
         ('writing', 'writing'),
+        ('pre_math', 'pre_math'),
+        ('pre_science', 'pre_science'),
+        ('pre_socialstudies', 'pre_socialstudies'),
+        ('pre_writing', 'pre_writing'),
         ('default', 'default'),
     )
 

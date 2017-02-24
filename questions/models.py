@@ -1,18 +1,21 @@
-from django.db import models
 from itertools import chain
 from operator import attrgetter
+import json, ast
+
+from django.db import models
 from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
-
 from django import forms
-import json, ast
 
 from model_utils.models import TimeStampedModel
+
 from lessons.models import Lesson, AbstractActivity
 from notes.models import UserNote
 from core.models import Bookmark
+from pretests.models import PretestQuestionResponse
+
 
 
 class QuestionSet(AbstractActivity):
@@ -140,6 +143,18 @@ class QuestionSet(AbstractActivity):
         responses = []
         for i in self.get_ordered_question_list():
             responses.append(i.user_response_object(user))
+
+        return responses
+
+    def get_pretest_user_response_objects(self, user):
+        """
+        Returns a list of PretestQuestionResponse objects related to this worksheet and user.
+        This list may contain None values where a response to a question has not been submitted OR 
+        the question does not require a response.
+        """
+        responses = []
+        for i in self.get_ordered_question_list():
+            responses.append(i.pretestuser_response_object(user))
 
         return responses
 
@@ -282,7 +297,6 @@ class TextQuestion(AbstractQuestion):
     """
     A question type that accepts text input.
     """
-
     question_set = models.ForeignKey(
         QuestionSet, related_name='text_questions')
     input_size = models.CharField(max_length=64, choices=[
@@ -291,11 +305,15 @@ class TextQuestion(AbstractQuestion):
         ('15', 'paragraph(s): (15 rows 50 cols)')], default='1')
     correct = models.TextField(blank=True)
     responses = GenericRelation('QuestionResponse')
+    pretest_responses = GenericRelation(PretestQuestionResponse)
     notes = GenericRelation(UserNote)
     bookmarks = GenericRelation(Bookmark)
 
     def get_question_type(self):
         return 'text'
+
+    def get_django_content_type(self):
+        return ContentType.objects.get_for_model(self)
 
     def get_input_widget(self):
         widget_attrs = {
@@ -328,6 +346,15 @@ class TextQuestion(AbstractQuestion):
         except:
             return None
 
+    def pretestuser_response_object(self, user):
+        """
+        Returns a PretestQuestionResponse object related to user.
+        """
+        try:
+            return self.pretest_responses.get(pretestuser=user)
+        except:
+            return None
+
     def get_edit_url(self, course):
         return reverse('text_question_update', args=[course.slug, self.id])
 
@@ -343,18 +370,23 @@ class OptionQuestion(AbstractQuestion):
     """
     A question type that accepts a selection from a list of choices (multiple choice).
     """
+
     input_select = models.CharField(max_length=64, choices=[(
         'radio', 'single responses'), ('checkbox', 'multiple responses')], default='radio')
 
     question_set = models.ForeignKey(
         QuestionSet, related_name='option_questions')
     responses = GenericRelation('QuestionResponse')
+    pretest_responses = GenericRelation(PretestQuestionResponse)
     notes = GenericRelation(UserNote)
     bookmarks = GenericRelation(Bookmark)
 
     
     def get_question_type(self):
         return 'option'
+
+    def get_django_content_type(self):
+        return ContentType.objects.get_for_model(self)
 
     def get_input_widget(self):
         if self.input_select == 'checkbox':
@@ -401,6 +433,15 @@ class OptionQuestion(AbstractQuestion):
         try:
             return self.responses.get(user=user)
 
+        except:
+            return None
+
+    def pretestuser_response_object(self, user):
+        """
+        Returns a PretestQuestionResponse object related to user.
+        """
+        try:
+            return self.pretest_responses.get(pretestuser=user)
         except:
             return None
 

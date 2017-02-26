@@ -27,6 +27,17 @@ class LoginTokenForm(forms.Form):
             'object_id': forms.HiddenInput()
         }
 
+class LanguageChoiceForm(ModelForm):
+
+    def clean(self):
+        data = super(LanguageChoiceForm, self).clean()
+        if data['language_pref'] == None:
+            raise forms.ValidationError('A language preference must be indicated.')
+
+    class Meta:
+        model = PretestUser
+        fields = ['language_pref']
+
 class PretestQuestionResponseForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(PretestQuestionResponseForm, self).__init__(*args, **kwargs)

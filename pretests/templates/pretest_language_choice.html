@@ -1,11 +1,11 @@
-<!-- pretest_home.html -->
+<!-- pretest_language_choice.html -->
 {% extends "pretest_base.html" %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
 {% block page_header %}
 	<div class="col-md-12 text-center">
-	    <h2><i class="fa fa-home"></i>Welcome to GGV Pretest Administration</h2>
+	    <h2><i class="fa fa-home"></i>Choose your preferred language:</h2>
 	</div>
 {% endblock page_header %}
 
@@ -14,7 +14,7 @@
 		<p class="text-center">
 			<form action="" method="post">{% csrf_token %}
 			    {{ form|crispy }}
-			    <input type="submit" class="btn btn-success center-block" value="Access Your Tests" />
+			    <input type="submit" class="btn btn-success center-block" value="Save" />
 			</form>
 		</p>
 	</div>

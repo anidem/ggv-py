@@ -10,11 +10,10 @@
 
 {% block content %}
 
-	{% for lesson in lessons %}
+	<div class="col-md-6 col-md-push-3">
 		{% for act in lesson.activities %}
 			<h4><i class="fa fa-pencil-square-o fa-2x icon-worksheet"></i><a class="btn btn-lg media-heading" href="{% url 'pretestapp:pretest_start' act.id %}">{{ act.title }}</a></h4>
-			<h3><a href="{% url 'pretestapp:pretest_done' act.id 3%}">score</a></h3>
 		{% endfor %}
-	{% endfor %}
+	</div>
 	
 {% endblock content %}

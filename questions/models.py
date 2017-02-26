@@ -152,9 +152,12 @@ class QuestionSet(AbstractActivity):
         This list may contain None values where a response to a question has not been submitted OR 
         the question does not require a response.
         """
-        responses = []
+        responses = {'count': 0, 'responses': []}
         for i in self.get_ordered_question_list():
-            responses.append(i.pretestuser_response_object(user))
+            resp = i.pretestuser_response_object(user)
+            responses['responses'].append(resp)
+            if i.response_required and resp:
+                responses['count'] += 1
 
         return responses
 

@@ -72,7 +72,7 @@
                     <li class="dropdown">
 
                         {% if 'pretester_token' in request.session.keys %}
-                          <a href="{% url 'pretestapp:pretest_logout' %}">logout</a>
+                          <a href="{% url 'pretestapp:pretest_logout' %}">logout {{request.session.items.0.1}}</a>
                         {% else %}
                           <a href="{% url 'pretestapp:pretest_home' %}">login</a>
                         {% endif %}
@@ -89,7 +89,7 @@
 
     <!-- Begin page content -->
     <div class="container-fluid">
-      <div class="row">{{request.session.items}} {{request.session.session_key}} {% block page_header %}  {% endblock page_header %}</div>
+      <div class="row">{% block page_header %}  {% endblock page_header %}</div>
       <div class="row">
         <div class="col-md-6 col-md-offset-3">
             {% if messages %}

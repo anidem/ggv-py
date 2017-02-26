@@ -10,7 +10,7 @@
 
 {% block content %}
 
-{% for i in responses %}
+{% for i in responses.responses %}
 	<div>{{ forloop.counter }}. {{ i.content_object | safe }} {{ i.iscorrect }} </div>
 {% endfor %}
 

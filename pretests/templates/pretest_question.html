@@ -5,7 +5,7 @@
 
 {% block page_header %}
 	<div class="col-md-4 text-center">
-	    <p class="lead">{{ worksheet }}</p>
+	    <p class="lead">{{ question.question_set }}</p>
 	</div>
 {% endblock page_header %}
 
@@ -13,142 +13,53 @@
 {% block content %}
     <div class="col-md-12">
         <div class="row " style="padding-top: 10px">
-
-        <!-- LEFT panel: Question text and input for response -->
-            <div class="col-md-4">
-            <!-- Question header -->
-
+            <!-- LEFT panel: Question text and input for response -->
+            <div class="col-md-4">            
+                <!-- Question header -->
                 <div class="lead">
-                    {{ question_position }}/{{ question_list|length }}.
-                    
-                    <h6></h6>
-                    {% if calculator %}
-                    <!-- Modal trigger -->
-                    <a id="calculator_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" data-toggle="modal" data-target="#calculator">
-                      <i class="fa fa-calculator"></i>
-                    </a>
-                    <!-- Modal Content -->
-                    <div class="modal fade" id="calculator" role="dialog" aria-hidden="true">
-                      <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
-                            <p class="text-center"><a class="btn btn-link" href="{{ calculator|slice:"-3" }}html" target="_blank">print</a></p>
-                          </div>
-                          <div class="modal-body">
-                            <iframe  id="pdf_calculator" class="pdfframe"></iframe>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    {% endif %}
-
-                    {% if formula %}
-                    <!-- Modal trigger -->
-                    <a id="formula_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" data-toggle="modal" data-target="#formula">
-                       <i class="fa fa-book"></i>
-                    </a>
-                    <!-- Modal Content -->
-                    <div class="modal fade" id="formula" role="dialog" aria-hidden="true">
-                      <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
-                            <p class="text-center"><a class="btn btn-link" href="{{ formula|slice:"-3" }}html" target="_blank">print</a></p>
-                          </div>
-                          <div class="modal-body">
-                            <iframe id="pdf_formula" class="pdfframe"></iframe>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                    {% endif %}
-
-                    {%if user_completed %}
-                        {% if instructor %}
-                        {% comment %}
-                        <a href="{% url 'worksheet_report' course.slug worksheet.id %}" class="btn btn-xs btn-primary">
-                        Full <i class="fa fa-check"></i> <i class="fa fa-th-list"></i>
-                        </a>
-                        {% endcomment %}
-                        {% endif %}
-
-                        <a href="{% url 'worksheet_user_report' course.slug worksheet.id user.id %}"  class="btn btn-xs btn-primary">
-                            <i class="fa fa-check"></i> <i class="fa fa-th-list"></i>
-                        </a>
-
-                        <a class="btn btn-xs btn-success" data-toggle="collapse" href="#progress-panel" aria-expanded="false" aria-controls="collapseExample">
-                        <i class="fa fa-question"></i> <i class="fa fa-list"></i></span>
-                        </a>
-                        <div id="progress-panel" class="well collapse">
-                            {% for k, v in question_list.items %}
-
-
-                                    <a  style="padding: 2px; " href="{% url 'question_response' course.slug worksheet.id forloop.counter %}">
-                                        {% if forloop.counter == question_position  %}
-                                            <span class="badge larger">{{ forloop.counter }}</span>
-                                        {% else %}
-                                            <span class="">{{ forloop.counter }}</span>
-                                        {% endif %}
-                                    </a>
-
-
-                            {% endfor %}
-                        </div>
-                    {% endif %}
-
+                    {{ question_position }}/{{ question_count }}.
                     {% if edit_url %}<a href="{{ edit_url }}" class="btn btn-xs btn-warning">edit</a>{% endif %}
                 </div>
 
-
-            <!-- Question content -->
-            <p class="clearfix"></p>
+                <!-- Question content -->
+                <p class="clearfix"></p>
                 <div class="lead">{{ question | safe }} </div>
 
-                <form id="response_form" action="" method="post" >{% csrf_token %}
+                <form id="response_form" action="." method="post" >{% csrf_token %}
                     {% if question.response_required %}
-                    {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
+                        {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
 
-                    <p class="label label-danger">{% for e in form.response.errors  %}An answer is required.{% endfor %}</p>
-                    <p></p>
+                        <p class="label label-danger">{% for e in form.response.errors  %}An answer is required.{% endfor %}</p>
+                        <p></p>
 
-                    {% for field in form.response %}
-                    <p>
-                        {% if not field.choice_label %}
-                            <label for="{{ field.id_for_label }}">{{ field }}</label>
-                        {% else %}
-                            <label for="{{ field.id_for_label }}">
-                                {{ field.tag }} {{ field.choice_label | safe }}
-                            </label>
-                        {% endif %}
-                    </p>
-                    {% endfor %}
+                        {% for field in form.response %}
+                        <p>
+                            {% if not field.choice_label %}
+                                <label for="{{ field.id_for_label }}">{{ field }}</label>
+                            {% else %}
+                                <label for="{{ field.id_for_label }}">
+                                    {{ field.tag }} {{ field.choice_label | safe }}
+                                </label>
+                            {% endif %}
+                        </p>
+                        {% endfor %}
                     {% endif %}
-                    <p></p>
-
                 </form>
-                    <p>
-                        {%if user_completed and previous_position %}
-                            <a href="{% url 'question_response' course.slug worksheet.id previous_position %}" class="btn">Previous</a>
-                        {% endif %}
-                        {% if form.response and question.response_required %}
-                            <button id="chk_response_btn" class="btn btn-default">Submit Answer</button>
-                        {% elif next_position and not user_completed %}
-                            <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Continue</a>
-                        {% endif %}
+                <p>
+                    {%if question_position > 1 %}
+                        <a href="{% url 'pretestapp:pretest_take' question.question_set.id question_previous  %}" class="btn">Previous</a>
+                    {% endif %}
+                    
+                    {% if form.response and question.response_required  or request.user.is_staff %}
+                        <button id="chk_response_btn" class="btn btn-default">Submit Answer</button>
+                    {% elif question_position < question_count or request.user.is_staff %}
+                        <a href="{% url 'pretestapp:pretest_take' question.question_set.id question_next  %}" class="btn">Continue</a>
+                    {% endif %}
 
-                        {% if user_completed and next_position  %}
-                            <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Next</a>
-                        {% endif %}
-                    </p>
+                    {% if question_position <= response_count  or request.user.is_staff %}
+                        <a href="{% url 'pretestapp:pretest_take' question.question_set.id question_next  %}" class="btn">Next</a>
+                    {% endif %}
+                </p>
             </div>
 
         <!-- RIGHT panel: Question media (images, pdfs) -->
@@ -179,31 +90,6 @@
 
         </div>
     <!-- END TWO PANEL CONTENT -->
-
-    <!-- BOTTOM ROW -->
-    {% comment %}
-        <div class="row">
-            <div class="col-md-12">
-                <legend>Messages
-                    <a data-toggle="collapse" href="#add_note_panel" aria-controls="add_note_panel"><small>+</small></a>
-                </legend>
-                <div id="add_note_panel" class="panel-collapse collapse">
-                        <form id="noteform" action="" method="post">{% csrf_token %}
-                            {{ noteform|crispy }}
-                            <p><input id="note_submit_btn" type="submit" class="btn btn-default" value="Add Note"/></p>
-                        </form>
-                </div>
-                <dl id="notes">
-                {% for i in note_list  %}
-                    <dt><small>{{ i.creator }}</small><small style="float: right">{{ i.modified|date:"M j Y" }}</small></dt>
-                    <dd class="well">{{ i.text }}</dd>
-                {% endfor %}
-                </dl>
-            </div>
-        </div>
-    </div>
-    {% endcomment %}
-    <!-- END BOTTOM ROW -->
 
 <!-- Response processing message modal -->
 <div id="wait_msg" class="modal" role="dialog" tabindex="-1">

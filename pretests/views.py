@@ -77,9 +77,9 @@ class PretestMenuView(TokenAccessRequiredMixin, TemplateView):
     def get_context_data(self, **kwargs):
         context = super(PretestMenuView, self).get_context_data(**kwargs)
         if self.pretestuser.language_pref == 'spanish':
-            context['lesson'] = Lesson.objects.get(pk=17)
-        else:
             context['lesson'] = Lesson.objects.get(pk=18)
+        else:
+            context['lesson'] = Lesson.objects.get(pk=17)
         
         return context
 

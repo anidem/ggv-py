@@ -3,16 +3,46 @@
 {% load staticfiles %}
 
 {% block page_header %}
-	<div class="col-md-12">
-	    <h2><i class="fa fa-home"></i>Tokens for {{ account }}</h2>
+	<div class="col-md-12 text-center">
+	    <h2><i class="fa fa-cogs"></i> Tokens for {{ account }}</h2>
 	</div>
 {% endblock page_header %}
 
 {% block content %}
-	<ul>
-	{% for i in pretest_users %}
-		<li> {{ i.access_token }} {{ i.email }} {{ i.first_name }} {{ i.last_name }} 
-		<a href="{% url 'pretestapp:pretest_user_edit' i.id %}" class="btn btn-link">edit</a></li>
-	{% endfor %}
-	</ul>
+	<div class="col-md-10 col-md-offset-1">
+		<div class="table-responsive">
+  			<table class="table table-condensed">
+  				<thead>
+  					<tr>
+  						<th>status</th>
+  						<th>email</th>
+  						<th>token</th>
+  						<th>first</th>
+  						<th>last</th>
+  						<th>edit</th>
+  					</tr>
+  				</thead>
+  				<tbody>
+				{% for i in pretest_users %}
+					<tr>
+					<td>
+					{% if i.1 > 0%}
+						<span class="label label-danger">{{ i.1 }}</span>
+					{% elif i.1 == 0 and i.0.email %}
+						<span class="label label-warning">{{ i.1 }}</span>
+					{% else %}
+						<span class="label label-success">&nbsp;&nbsp;</span>
+					{% endif %}
+					</td>
+					<td>{{ i.0.email }}</td>
+					<td>{{ i.0.access_token }}</td>
+					<td>{{ i.0.first_name }}</td>
+					<td>{{ i.0.last_name }}</td>
+					<td><a href="{% url 'pretestapp:pretest_user_edit' i.0.id %}">edit</a></td>
+					</tr>
+				{% endfor %}
+				</tbody>
+  			</table>
+		</div>		
+	</div>
 {% endblock content %}

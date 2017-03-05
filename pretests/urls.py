@@ -3,12 +3,13 @@
 from django.conf.urls import include, url
 
 from .views import PretestHomeView, PretestMenuView, PretestEndView, PretestLogoutView, PretestWorksheetLaunchView, PretestQuestionResponseView, PretestLanguageChoiceUpdateView, PretestUserUpdateView, PretestUserListView
-from .utils import PretestCreateTokensView
+from .utils import PretestCreateTokensView, AccessErrorView
 
 app_name = 'pretests'
 
 urlpatterns = [
 	url(r'^$', PretestHomeView.as_view(), name='pretest_home'),
+	url(r'^access-error/$', AccessErrorView.as_view(), name='pretest_access_error'),
 	url(r'^generate-tokens/$', PretestCreateTokensView.as_view(), name='pretest_gen_tokens'),
 	url(r'^manage/$', PretestUserListView.as_view(), name='pretest_user_list'),
 	url(r'^edit/(?P<pk>\d+)/$', PretestUserUpdateView.as_view(), name='pretest_user_edit'),

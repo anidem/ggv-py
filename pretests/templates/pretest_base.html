@@ -76,7 +76,7 @@
                         {% if 'pretester_token' in request.session.keys %}
                           <a href="{% url 'pretestapp:pretest_logout' %}">exit </a>
                         {% else %}
-                          <a href="{% url 'pretestapp:pretest_home' %}">login</a>
+                          <a href="{% url 'pretestapp:pretest_home' %}">access</a>
                         {% endif %}
                         <ul class="dropdown-menu section_drop scrollable-menu">
                         </ul>                        

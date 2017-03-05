@@ -16,6 +16,7 @@ from questions.models import QuestionSet
 from .models import PretestAccount, PretestUser, PretestQuestionResponse, PretestUserCompletion
 from .forms import LoginTokenForm, LanguageChoiceForm, PretestQuestionResponseForm, PretestUserUpdateForm
 from .mixins import TokenAccessRequiredMixin, PretestQuestionMixin
+from .utils import AccessErrorView
 
 
 class PretestHomeView(FormView):
@@ -75,10 +76,21 @@ class PretestLanguageChoiceUpdateView(TokenAccessRequiredMixin, UpdateView):
 class PretestUserListView(TemplateView):
     template_name = "pretest_user_list.html"
 
+    def get(self, request, *args, **kwargs):
+        if not self.request.user or not self.request.user.is_staff:
+            return redirect('pretests:pretest_access_error')       
+                
+        return super(PretestUserListView, self).get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(PretestUserListView, self).get_context_data(**kwargs)
-        account = PretestAccount.objects.get(manager=self.request.user)
-        context['pretest_users'] = account.tokens.all()
+        try:
+            account = PretestAccount.objects.get(manager=self.request.user)
+        except:
+            return redirect('pretests:pretest_access_error') 
+            
+        context['account'] = account
+        context['pretest_users'] = account.pretest_user_list()
         return context
 
 

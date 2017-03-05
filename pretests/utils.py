@@ -31,3 +31,6 @@ class PretestCreateTokensView(FormView):
     def get_context_data(self, **kwargs):
         context = super(PretestCreateTokensView, self).get_context_data(**kwargs)
         return context
+
+class AccessErrorView(TemplateView):
+    template_name = "pretest_access_error.html"

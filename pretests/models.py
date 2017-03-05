@@ -30,6 +30,12 @@ class PretestAccount(models.Model):
     contact_phone = models.CharField(max_length=20, null=True, blank=True)
     ggv_org = models.ForeignKey(GGVOrganization, null=True, blank=True)
     tokens_purchased = models.PositiveIntegerField(default=0)
+
+    def pretest_user_list(self):
+        users = []
+        for i in self.tokens.all():
+            users.append((i, i.completion_status().count()))
+        return users 
     
     def __unicode__(self):
         return self.name
@@ -48,8 +54,7 @@ class PretestUser(TimeStampedModel):
         ('english', 'english'), ('spanish', 'spanish')))
     expired = models.BooleanField(default=False)
 
-    def save(self, *args, **kwargs):
-        
+    def save(self, *args, **kwargs):        
         if not self.access_token:
             while True:
                 self.access_token = generate_token()
@@ -58,11 +63,17 @@ class PretestUser(TimeStampedModel):
                     break
                 except:
                     pass
+        else:
+            super(PretestUser, self).save(*args, **kwargs)
 
+    def completion_status(self):
+        return self.pretest_user_completions.all()
 
     def __unicode__(self):
         return self.access_token
 
+    class Meta:
+        ordering = ['last_name', 'email']
 
 class PretestUserCompletion(TimeStampedModel):
     """Stores when a user completes a worksheet. Instances of this class

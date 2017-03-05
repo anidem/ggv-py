@@ -1,5 +1,6 @@
 # views.py
 from collections import OrderedDict
+from datetime import datetime
 
 from django.forms import ValidationError
 from django.core.exceptions import PermissionDenied
@@ -12,9 +13,10 @@ from django.http import Http404
 from lessons.models import Lesson
 from questions.models import QuestionSet
 
-from .models import PretestUser, PretestQuestionResponse
-from .forms import LoginTokenForm, LanguageChoiceForm, PretestQuestionResponseForm
+from .models import PretestAccount, PretestUser, PretestQuestionResponse, PretestUserCompletion
+from .forms import LoginTokenForm, LanguageChoiceForm, PretestQuestionResponseForm, PretestUserUpdateForm
 from .mixins import TokenAccessRequiredMixin, PretestQuestionMixin
+
 
 class PretestHomeView(FormView):
     template_name = 'pretest_home.html'
@@ -46,6 +48,15 @@ class PretestHomeView(FormView):
         return context
 
 
+class PretestUserUpdateView(UpdateView):
+    model = PretestUser
+    template_name = 'pretest_user_edit.html'
+    form_class = PretestUserUpdateForm
+
+    def get_success_url(self): 
+        return reverse('pretests:pretest_user_list', current_app=self.request.resolver_match.namespace)
+
+
 class PretestLanguageChoiceUpdateView(TokenAccessRequiredMixin, UpdateView):
     model = PretestUser
     template_name = 'pretest_language_choice.html'
@@ -59,6 +70,16 @@ class PretestLanguageChoiceUpdateView(TokenAccessRequiredMixin, UpdateView):
 
     def get_success_url(self): 
         return reverse('pretests:pretest_menu', current_app=self.request.resolver_match.namespace)
+
+
+class PretestUserListView(TemplateView):
+    template_name = "pretest_user_list.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(PretestUserListView, self).get_context_data(**kwargs)
+        account = PretestAccount.objects.get(manager=self.request.user)
+        context['pretest_users'] = account.tokens.all()
+        return context
 
 
 class PretestMenuView(TokenAccessRequiredMixin, TemplateView):
@@ -81,6 +102,10 @@ class PretestMenuView(TokenAccessRequiredMixin, TemplateView):
         else:
             context['lesson'] = Lesson.objects.get(pk=17)
         
+        completions = self.pretestuser.pretest_user_completions.all()
+
+        context['completions'] = [i.completed_pretest.id for i in completions if i.is_expired()]
+        context['incompletions'] = [i.completed_pretest.id for i in completions if not i.is_expired()]
         return context
 
 
@@ -95,6 +120,13 @@ class PretestEndView(TokenAccessRequiredMixin, DetailView):
         context = super(PretestEndView, self).get_context_data(**kwargs)
         context['pretestuser'] = get_object_or_404(PretestUser, pk=self.kwargs['user'])
         context['responses'] = self.get_object().get_pretest_user_response_objects(context['pretestuser'])
+        context['status_obj'] = context['pretestuser'].pretest_user_completions.filter(completed_pretest=self.get_object())
+        context["score"] = [0, 0]
+        for i in context['responses']['responses']:
+            if i and i.iscorrect:
+                context["score"][0] += 8
+            context["score"][1] += 8
+        
         return context
 
 
@@ -102,10 +134,12 @@ class PretestLogoutView(TemplateView):
     template_name = 'pretest_logout.html'
 
     def get(self, request, *args, **kwargs):
-        try:
-            del request.session['pretester_token']
-        except KeyError:
-            pass
+        for i in request.session.keys():
+            try:
+                del request.session[i]
+            except KeyError:
+                pass
+
         return super(PretestLogoutView, self).get(request, *args, **kwargs)
 
 
@@ -113,7 +147,17 @@ class PretestWorksheetLaunchView(TokenAccessRequiredMixin, DetailView):
     model = QuestionSet
     template_name = 'pretest_start.html'
 
-    def get(self, request, *args, **kwargs):     
+    def get(self, request, *args, **kwargs):
+        try:
+            status_obj = self.pretestuser.pretest_user_completions.get(completed_pretest=self.get_object())
+            if status_obj.is_expired(): 
+                return redirect('pretests:pretest_done', pk=self.get_object().id, user=self.pretestuser.id)
+            else:
+                return redirect('pretests:pretest_take', p=self.get_object().id, q=1)
+
+        except PretestUserCompletion.DoesNotExist:  # user will be starting the pretest for first time. show the launch page.
+            pass
+
         return super(PretestWorksheetLaunchView, self).get(request, *args, **kwargs)
 
 
@@ -121,6 +165,7 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
     model = PretestQuestionResponse
     template_name = 'pretest_question.html'
     form_class = PretestQuestionResponseForm
+    time_remaining = 0
     
     def get(self, request, *args, **kwargs):
 
@@ -128,12 +173,30 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
             if not self.question:
                 return redirect('pretests:pretest_done', pk=self.worksheet.id, user=self.pretestuser.id)
             return super(PretestQuestionResponseView, self).get(request, *args, **kwargs)            
-
-        if self.stack['count'] >= len(self.stack['responses']):  # user has answered all questions so show results page.
-            return redirect('pretests:pretest_done', pk=self.worksheet.id, user=self.pretestuser.id)
         
-        elif not self.question: # request for invalid question so take user to next available question not answered.
+        # try:
+        #     status_obj = self.pretestuser.pretest_user_completions.get(completed_pretest=self.worksheet)          
+        #     elapsed_time_secs = status_obj.seconds_since_created()
+        
+        # #  create a new completion record. user must be beginning the test
+        # except PretestUserCompletion.DoesNotExist:  
+        #     status_obj = PretestUserCompletion(pretestuser=self.pretestuser, completed_pretest=self.worksheet)
+        #     status_obj.save()
+        #     elapsed_time_secs = 0
+
+        # #  completion record indicates that user has exceeded the time limit. show results page.
+        # if elapsed_time_secs > self.worksheet.time_limit * 60: 
+        #         return redirect('pretests:pretest_done', pk=self.worksheet.id, user=self.pretestuser.id)   
+        
+        # user has answered all questions. show results page.
+        if self.stack['count'] >= len(self.stack['responses']):  
+            return redirect('pretests:pretest_done', pk=self.worksheet.id, user=self.pretestuser.id)
+       
+        # request for invalid question so take user to next available question not answered.
+        elif not self.question: 
             return redirect('pretests:pretest_take', p=self.worksheet.id, q=self.stack['count']+1)
+
+        # self.time_remaining = self.worksheet.time_limit*60 - elapsed_time_secs   
 
         return super(PretestQuestionResponseView, self).get(request, *args, **kwargs)
 
@@ -146,6 +209,7 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
         initial['content_type'] = self.question['question'].get_django_content_type()
         initial['object_id'] = self.question['question'].id
         initial['question'] = self.question['question']
+
 
         return initial
 
@@ -172,5 +236,8 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
         context['question_next'] = self.req_question+2
         context['question_count'] = len(self.stack['responses'])
         context['response_count'] = self.stack['count']
+        context['time_remaining'] = self.time_remaining
+        context['pretestuser'] = self.pretestuser
+        # datetime.strftime(time_started, '%Y-%m-%d %H:%M:%S') maybe useful later.
 
         return context 

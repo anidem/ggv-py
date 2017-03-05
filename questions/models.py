@@ -14,8 +14,6 @@ from model_utils.models import TimeStampedModel
 from lessons.models import Lesson, AbstractActivity
 from notes.models import UserNote
 from core.models import Bookmark
-from pretests.models import PretestQuestionResponse
-
 
 
 class QuestionSet(AbstractActivity):
@@ -26,6 +24,7 @@ class QuestionSet(AbstractActivity):
     notes = GenericRelation(UserNote)
     bookmarks = GenericRelation(Bookmark)
     display_pdf = models.FileField(null=True, blank=True, upload_to='pdf')
+    time_limit = models.PositiveIntegerField(default=0, blank=True, help_text="(Optional) # of minutes allowed to complete worksheet")
 
     def check_membership(self, user_session):
         """
@@ -300,6 +299,8 @@ class TextQuestion(AbstractQuestion):
     """
     A question type that accepts text input.
     """
+    from pretests.models import PretestQuestionResponse
+
     question_set = models.ForeignKey(
         QuestionSet, related_name='text_questions')
     input_size = models.CharField(max_length=64, choices=[
@@ -373,7 +374,8 @@ class OptionQuestion(AbstractQuestion):
     """
     A question type that accepts a selection from a list of choices (multiple choice).
     """
-
+    from pretests.models import PretestQuestionResponse
+    
     input_select = models.CharField(max_length=64, choices=[(
         'radio', 'single responses'), ('checkbox', 'multiple responses')], default='radio')
 

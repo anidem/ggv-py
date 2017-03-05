@@ -5,7 +5,7 @@ from django.forms import ModelForm
 
 from django.contrib.contenttypes.models import ContentType
 
-from .models import PretestUser, PretestQuestionResponse
+from .models import PretestAccount, PretestUser, PretestQuestionResponse
 
 class LoginTokenForm(forms.Form):
     email = forms.EmailField()
@@ -27,6 +27,13 @@ class LoginTokenForm(forms.Form):
             'object_id': forms.HiddenInput()
         }
 
+class TokenGeneratorForm(forms.Form):
+    account = forms.ModelChoiceField(queryset=PretestAccount.objects.all())
+    num_tokens = forms.IntegerField(min_value=1)
+    
+    class Meta:
+        fields = ['account', 'num_tokens']
+
 class LanguageChoiceForm(ModelForm):
 
     def clean(self):
@@ -37,6 +44,12 @@ class LanguageChoiceForm(ModelForm):
     class Meta:
         model = PretestUser
         fields = ['language_pref']
+
+class PretestUserUpdateForm(ModelForm):
+
+    class Meta:
+        model = PretestUser
+        fields = ['email', 'first_name', 'last_name']
 
 class PretestQuestionResponseForm(ModelForm):
     def __init__(self, *args, **kwargs):

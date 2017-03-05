@@ -1,22 +1,36 @@
 from __future__ import unicode_literals
 import json, ast
+from datetime import datetime
 
 from django.db import models
+from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
 from model_utils.models import TimeStampedModel
+import pytz
 
 from courses.models import GGVOrganization
 from lessons.models import Lesson
-# from questions.models import TextQuestion, OptionQuestion, Option 
+
+
+def generate_token():
+    import random
+    alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#@'
+    token = ''
+    for i in range(8):
+        token += random.choice(alpha)
+    return token
+
 
 class PretestAccount(models.Model):
     name = models.CharField(max_length=512)
+    manager = models.ForeignKey(User, null=False)
     contact_email = models.EmailField()
     contact_phone = models.CharField(max_length=20, null=True, blank=True)
     ggv_org = models.ForeignKey(GGVOrganization, null=True, blank=True)
-
+    tokens_purchased = models.PositiveIntegerField(default=0)
+    
     def __unicode__(self):
         return self.name
 
@@ -25,7 +39,7 @@ class PretestUser(TimeStampedModel):
     Models a non authenticated user who is granted access to a pretest worksheet.
     """
     account = models.ForeignKey(PretestAccount, related_name='tokens')
-    access_token = models.CharField(max_length=512)
+    access_token = models.CharField(max_length=512, unique=True)
     email = models.EmailField(null=True, blank=True)
     first_name = models.CharField(max_length=512, null=True, blank=True)
     last_name = models.CharField(max_length=512, null=True, blank=True)
@@ -34,11 +48,44 @@ class PretestUser(TimeStampedModel):
         ('english', 'english'), ('spanish', 'spanish')))
     expired = models.BooleanField(default=False)
 
+    def save(self, *args, **kwargs):
+        
+        if not self.access_token:
+            while True:
+                self.access_token = generate_token()
+                try:
+                    super(PretestUser, self).save(*args, **kwargs)
+                    break
+                except:
+                    pass
+
+
     def __unicode__(self):
         return self.access_token
 
 
+class PretestUserCompletion(TimeStampedModel):
+    """Stores when a user completes a worksheet. Instances of this class
+    are also created if the time has expired on a worksheet.
+    """
+    from questions.models import QuestionSet
+    pretestuser = models.ForeignKey(PretestUser, related_name='pretest_user_completions')
+    completed_pretest = models.ForeignKey(QuestionSet, related_name='pretest_completions')
+
+    def seconds_since_created(self):
+        delta = datetime.now(pytz.utc) - self.created
+        return delta.seconds
+
+    def is_expired(self):
+        if self.completed_pretest.time_limit < 1:
+            return False
+        return self.seconds_since_created() > (self.completed_pretest.time_limit * 60)
+
+    class Meta:
+        unique_together = ('pretestuser', 'completed_pretest')
+
 class PretestUserAssignment(models.Model):
+    """2017-03-02 This is not in use as of yet."""
     pretestuser = models.ForeignKey(PretestUser, related_name='pretest_assignments')
     lesson = models.ForeignKey(Lesson, related_name='pretest_lessons')
 
@@ -91,3 +138,4 @@ class PretestQuestionResponse(TimeStampedModel):
 
     class Meta:
         unique_together = (("pretestuser", "object_id", "content_type"),)
+

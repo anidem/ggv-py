@@ -5,7 +5,7 @@ from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 
 from questions.models import QuestionSet
-from .models import PretestUser
+from .models import PretestUser, PretestUserCompletion
 
 class TokenAccessRequiredMixin(object):
 
@@ -60,9 +60,25 @@ class PretestQuestionMixin(object):
             # route to a previously answered question or send a null question object
             elif self.req_question <= self.stack['count']:
                 self.question = self.worksheet.get_question_at_index(self.req_question)
+            
             else:
                 self.question = None
 
+            try:
+                status_obj = self.pretestuser.pretest_user_completions.get(completed_pretest=self.worksheet)          
+                elapsed_time_secs = status_obj.seconds_since_created()
+            
+            #  create a new completion record. user must be beginning the test
+            except PretestUserCompletion.DoesNotExist:  
+                status_obj = PretestUserCompletion(pretestuser=self.pretestuser, completed_pretest=self.worksheet)
+                status_obj.save()
+                elapsed_time_secs = 0
+
+            #  completion record indicates that user has exceeded the time limit. show results page.
+            if elapsed_time_secs > self.worksheet.time_limit * 60: 
+                    return redirect('pretests:pretest_done', pk=self.worksheet.id, user=self.pretestuser.id)            
+
+            self.time_remaining = self.worksheet.time_limit*60 - elapsed_time_secs 
 
             return super(PretestQuestionMixin, self).dispatch(*args, **kwargs)
 

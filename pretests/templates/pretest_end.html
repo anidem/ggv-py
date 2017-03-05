@@ -3,16 +3,33 @@
 
 {% block page_header %}
 	<div class="col-md-12 text-center">
-	    <h2><i class="fa fa-home"></i> {{ puser.id }} Score on {{ object.title }} is 199/200</h2>
-	    <h3><a href="{% url 'pretestapp:pretest_menu' %}">Back to more tests?</a></h3>
+	    <h2><i class="fa fa-home"></i> {{ object.title }} Results </h2>
+	    
+	    <h4><a href="{% url 'pretestapp:pretest_menu' %}">Back to more tests?</a></h4>
 	</div>
 {% endblock page_header %}
 
 {% block content %}
+	<div class="col-md-10 col-md-offset-1">
+		<p>User: {{ pretestuser.first_name }} {{ pretestuser.last_name }}</p>
+		<p>Token: {{ pretestuser.access_token }}</p>
+		<p>Email: {{ pretestuser.email }}</p>
+		<p>Date: {{ status_obj.0.created|date:"Y-M-d" }}</p>
+		<p>Test: {{ object.title }}</p>
+		<h3>{{ score.0 }}/{{ score.1 }}</h3>
+	</div>
+	<div class="col-md-10 col-md-offset-1">
+	<ul>
+		{% for i in responses.responses %}
+			{% if forloop.counter == 6 or forloop.counter == 11 or forloop.counter == 16 or forloop.counter == 21 %}{% endif %}
+			
+			{% if i.iscorrect %}
+				<li class="label label-success text-center" style="margin: 3px" >{{ forloop.counter }} </li> 
+			{% else %}
+				<li class="label label-danger text-center" style="margin: 3px" >{{ forloop.counter }} </li> 
+			{% endif %}	
 
-{% for i in responses.responses %}
-	<div>{{ forloop.counter }}. {{ i.content_object | safe }} {{ i.iscorrect }} </div>
-{% endfor %}
-
-	
+		{% endfor %}
+		</ul>	
+	</div>	
 {% endblock content %}

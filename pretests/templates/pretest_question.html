@@ -4,9 +4,13 @@
 {% load crispy_forms_tags %}
 
 {% block page_header %}
-	<div class="col-md-4 text-center">
+    <div class="col-md-12 text-right">
+        <p class="small"><span id="clock">{{ time_remaining }}</span></p>
+    </div> 
+	<div class="col-md-12 text-center">
 	    <p class="lead">{{ question.question_set }}</p>
-	</div>
+        <h1 id="clock-alert" class="text-danger"></h1>
+	</div>   
 {% endblock page_header %}
 
 
@@ -62,33 +66,31 @@
                 </p>
             </div>
 
-        <!-- RIGHT panel: Question media (images, pdfs) -->
-            {% if question.display_image %}
-                <div class="col-md-8">
-                    <a href="{{ question.display_image.url }}" target="_blank">print</a>
-                    <div><img class="fit" src="{{ question.display_image.url }}"></div>
-                </div>
-            {% endif %}
+            <!-- RIGHT panel: Question media (images, pdfs) -->
+                {% if question.display_image %}
+                    <div class="col-md-8">
+                        <div><img class="fit" src="{{ question.display_image.url }}"></div>
+                    </div>
+                {% endif %}
 
-            {% if question.display_pdf %}
-                <div class="col-md-8">
-                        <a href="{{ question.display_pdf.url }}" target="_blank">print</a>
-                    <!-- <div class="pdfframe"> -->
-                        <iframe id="pdf_display"  class="pdfframe"></iframe>
-                    <!-- </div> -->
-                </div>
-            {% endif %}
+                {% if question.display_pdf %}
+                    <div class="col-md-8">
+                        <!-- <div class="pdfframe"> -->
+                            <iframe id="pdf_display"  class="pdfframe"></iframe>
+                        <!-- </div> -->
+                    </div>
+                {% endif %}
 
-            {% if worksheet.display_pdf %}
-                <div class="col-md-8">
-                    <a href="{{ worksheet.display_pdf.url }}" target="_blank">print</a>
-                    <!-- <div class="pdfframe"> -->
-                        <iframe id="ws_pdf_display" class="pdfframe"></iframe>
-                    <!-- </div> -->
-                </div>
+                {% if worksheet.display_pdf %}
+                    <div class="col-md-8">
+                        <!-- <div class="pdfframe"> -->
+                            <iframe id="ws_pdf_display" class="pdfframe"></iframe>
+                        <!-- </div> -->
+                    </div>
             {% endif %}
 
         </div>
+    </div>
     <!-- END TWO PANEL CONTENT -->
 
 <!-- Response processing message modal -->
@@ -103,6 +105,18 @@
   </div>
 </div>
 
+<!-- Test has expired message modal -->
+<div id="expire_msg" class="modal" role="dialog" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-body text-center">
+            <i class="fa fa-clock-o fa-5x text-danger" aria-hidden="true"></i>
+            <h2 class="lead">Test time limit has expired.</h2>
+            <p class="text-center"><button class="btn btn-default">Ok</button>
+        </div>
+    </div>
+  </div>
+</div>
 
 <!-- THE END -->
 {% endblock content %}
@@ -113,14 +127,34 @@
     <script src="{% static 'js/questions.js'%}"></script>
 
     <script type="text/javascript" language="JavaScript">
-
-        function set_body_height() {
-            var wh = $(window).height();
-            $('body').attr('style', 'height:' + wh + 'px;');
-        }
-
-
         $(document).ready(function() {
+            var time_left_in_secs = parseInt({{ time_remaining }});
+            console.log(time_left_in_secs);
+            // var time_left_in_secs = 125
+            function set_body_height() {
+                $('body').attr('style', 'height:' + $(window).height() + 'px;');
+            }
+
+            function clock_tick() {
+                var mins = Math.floor(time_left_in_secs / 60);
+                var secs = time_left_in_secs % 60;
+                if (mins > 0) {
+                    mins++;
+                    $("#clock").html("Time remaining: " + mins + " minutes");
+                } else {
+                    $("#clock-alert").html(secs + " seconds" );
+                    $("#clock").html("");
+                }
+                
+                if (time_left_in_secs < 1) {
+                    // trigger exit message
+                    $("#expire_msg").fadeIn(4000).modal({show: true});
+                    return
+                }
+                time_left_in_secs -= 1;
+                setTimeout(clock_tick, 1000);
+            }
+
             {% if worksheet.display_pdf %}
                 $("#ws_pdf_display").attr({"src": "{{ worksheet.display_pdf.url|slice:"-3" }}html"});
             {% endif %}
@@ -149,8 +183,15 @@
 
             $('#wait_msg').on('shown.bs.modal', function (e) {
                 $("#response_form").submit();
-            });                   
+            });
+
+            $('#expire_msg').on("click", function (e) {
+                window.location.href = "{% url 'pretestapp:pretest_done' question.question_set.id pretestuser.id  %}"
+            });
+
+            clock_tick();           
         });
     </script>
 
 {% endblock local_js %}
+

@@ -1,0 +1,18 @@
+<!-- pretest_user_list.html -->
+{% extends "pretest_base.html" %}
+{% load staticfiles %}
+
+{% block page_header %}
+	<div class="col-md-12">
+	    <h2><i class="fa fa-home"></i>Tokens for {{ account }}</h2>
+	</div>
+{% endblock page_header %}
+
+{% block content %}
+	<ul>
+	{% for i in pretest_users %}
+		<li> {{ i.access_token }} {{ i.email }} {{ i.first_name }} {{ i.last_name }} 
+		<a href="{% url 'pretestapp:pretest_user_edit' i.id %}" class="btn btn-link">edit</a></li>
+	{% endfor %}
+	</ul>
+{% endblock content %}

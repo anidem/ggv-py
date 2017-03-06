@@ -10,7 +10,7 @@
 {% block content %}
 
 	<div class="col-md-6 col-md-push-3 text-center">
-		<p class="lead">{{ object.instructions }}</p>
+		<p class="lead">{{ object.instructions|safe}}</p>
 		<p class="block-center"><a class="btn btn-success btn-md" href="{% url 'pretestapp:pretest_take' object.id 1 %}">Begin <i class="fa fa-caret-right"></i></a></p>
 	</div>
 

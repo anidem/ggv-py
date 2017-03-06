@@ -91,7 +91,7 @@ class QuestionSetUpdateForm(ModelForm):
         
     class Meta:
         model = QuestionSet
-        fields = ['title', 'lesson', 'section', 'instructions',
+        fields = ['title', 'lesson', 'instructions',
                   'display_order', 'display_pdf', ]
         widgets = {
             'instructions': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'class': 'editor'})

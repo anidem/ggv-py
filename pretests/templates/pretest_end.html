@@ -14,19 +14,19 @@
 		<p>User: {{ pretestuser.first_name }} {{ pretestuser.last_name }}</p>
 		<p>Token: {{ pretestuser.access_token }}</p>
 		<p>Email: {{ pretestuser.email }}</p>
-		<p>Date: {{ status_obj.0.created|date:"Y-M-d" }}</p>
+		<p>Started: {{ completion.0.created|date:"Y-M-d" }}</p>
 		<p>Test: {{ object.title }}</p>
-		<h3>{{ score.0 }}/{{ score.1 }}</h3>
+		<h3>Score: {{ completion.1 }}</h3>
 	</div>
-	<div class="col-md-10 col-md-offset-1">
+	<div class="col-md-10 col-md-offset-1"> 
 	<ul>
-		{% for i in responses.responses %}
-			{% if forloop.counter == 6 or forloop.counter == 11 or forloop.counter == 16 or forloop.counter == 21 %}{% endif %}
+		{% for i in completion.2 %}
+			{% if forloop.counter == 6 or forloop.counter == 11 or forloop.counter == 16 or forloop.counter == 21 %}<p></p>{% endif %}
 			
 			{% if i.iscorrect %}
-				<li class="label label-success text-center" style="margin: 3px" >{{ forloop.counter }} </li> 
+				<li class="label label-success text-center" style="margin: 3px" >{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }} </li> 
 			{% else %}
-				<li class="label label-danger text-center" style="margin: 3px" >{{ forloop.counter }} </li> 
+				<li class="label label-danger text-center" style="margin: 3px" >{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }} </li> 
 			{% endif %}	
 
 		{% endfor %}

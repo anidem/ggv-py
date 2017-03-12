@@ -5,6 +5,7 @@ from pytz import timezone
 from django import utils
 from django import forms
 from django.db import IntegrityError
+from django.core.exceptions import PermissionDenied
 from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.http import Http404
@@ -46,12 +47,19 @@ class HomeView(LoginRequiredMixin, TemplateView):
     courses = None
 
     def get(self, request, *args, **kwargs):
+        pretest_account = request.user.pretest_user_account.all() or None
+        try:
+            ggv_account = request.user.ggvuser
+        except:
+            ggv_account = None
+
+        if pretest_account and not ggv_account:
+            return redirect('pretestapp:pretest_account_list')
+
         try:
             self.courses = self.request.session['user_courses']
-            
             if len(self.courses) == 1:
                 return redirect('course', crs_slug=self.courses[0])
-
         except:
             pass
 
@@ -61,27 +69,28 @@ class HomeView(LoginRequiredMixin, TemplateView):
         context = super(HomeView, self).get_context_data(**kwargs)
         context['courses'] = []
         # build organization list from user's course list
+        try:
+            orgs = set()
+            for i in self.courses:
+                crs = Course.objects.get(slug=i)
+                orgs.add(crs.ggv_organization)
+                
+            orgs = list(orgs)       
 
-        orgs = set()
-        for i in self.courses:
-            crs = Course.objects.get(slug=i)
-            orgs.add(crs.ggv_organization)
+            organizations = {}
+            permissions = []
+            for org in orgs:
+                if self.request.user in org.manager_list() or self.request.user.is_staff: 
+                    context['roles'] = ['manage']
+
+                organizations[org] = {'courses': org.organization_courses.all(), 'licenses': org.licenses_in_use()}
+
+                
             
-        orgs = list(orgs)       
-
-        organizations = {}
-        permissions = []
-        for org in orgs:
-            if self.request.user in org.manager_list() or self.request.user.is_staff: 
-                context['roles'] = ['manage']
-
-            organizations[org] = {'courses': org.organization_courses.all(), 'licenses': org.licenses_in_use()}
-
-            
+            context['organizations'] = organizations
+        except:
+            raise PermissionDenied()
         
-        context['organizations'] = organizations
-        
-       
         return context
 
 

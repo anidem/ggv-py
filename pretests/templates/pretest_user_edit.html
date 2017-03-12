@@ -25,7 +25,7 @@
         <form method="post" action=".">{% csrf_token %}
             {{ form|crispy }}
             <button class="btn btn-sm btn-success" type="submit">{% if object.email %}Update{% else %}Assign Access Token{% endif %}</button>
-            <a href="{% url 'pretestapp:pretest_user_list' %}" class="btn btn-link">cancel</a>
+            <a href="{% url 'pretestapp:pretest_user_list' object.account.id %}" class="btn btn-link">cancel</a>
         </form>
         
     </div>

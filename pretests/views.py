@@ -8,14 +8,17 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import User
 from django.http import Http404
+
+from braces.views import LoginRequiredMixin
 
 from lessons.models import Lesson
 from questions.models import QuestionSet
 
 from .models import PretestAccount, PretestUser, PretestQuestionResponse, PretestUserCompletion
 from .forms import LoginTokenForm, LanguageChoiceForm, PretestQuestionResponseForm, PretestUserUpdateForm
-from .mixins import TokenAccessRequiredMixin, PretestQuestionMixin
+from .mixins import TokenAccessRequiredMixin, PretestQuestionMixin, PretestAccountRequiredMixin
 from .utils import AccessErrorView
 
 
@@ -46,16 +49,12 @@ class PretestHomeView(FormView):
 
     def get_context_data(self, **kwargs):
         context = super(PretestHomeView, self).get_context_data(**kwargs)
+        if self.request.user.is_staff:
+            context['pretest_accounts'] = PretestAccount.objects.all()
+        elif self.request.user.is_authenticated:
+            context['pretest_accounts'] = self.request.user.pretest_user_account.all()
+
         return context
-
-
-class PretestUserUpdateView(UpdateView):
-    model = PretestUser
-    template_name = 'pretest_user_edit.html'
-    form_class = PretestUserUpdateForm
-
-    def get_success_url(self): 
-        return reverse('pretests:pretest_user_list', current_app=self.request.resolver_match.namespace)
 
 
 class PretestLanguageChoiceUpdateView(TokenAccessRequiredMixin, UpdateView):
@@ -72,26 +71,6 @@ class PretestLanguageChoiceUpdateView(TokenAccessRequiredMixin, UpdateView):
     def get_success_url(self): 
         return reverse('pretests:pretest_menu', current_app=self.request.resolver_match.namespace)
 
-
-class PretestUserListView(TemplateView):
-    template_name = "pretest_user_list.html"
-
-    def get(self, request, *args, **kwargs):
-        if not self.request.user or not self.request.user.is_staff:
-            return redirect('pretests:pretest_access_error')       
-                
-        return super(PretestUserListView, self).get(request, *args, **kwargs)
-
-    def get_context_data(self, **kwargs):
-        context = super(PretestUserListView, self).get_context_data(**kwargs)
-        try:
-            account = PretestAccount.objects.get(manager=self.request.user)
-        except:
-            return redirect('pretests:pretest_access_error') 
-            
-        context['account'] = account
-        context['pretest_users'] = account.pretest_user_list()
-        return context
 
 
 class PretestMenuView(TokenAccessRequiredMixin, TemplateView):
@@ -131,13 +110,19 @@ class PretestEndView(TokenAccessRequiredMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(PretestEndView, self).get_context_data(**kwargs)
         context['pretestuser'] = get_object_or_404(PretestUser, pk=self.kwargs['user'])
-        context['responses'] = self.get_object().get_pretest_user_response_objects(context['pretestuser'])
-        context['status_obj'] = context['pretestuser'].pretest_user_completions.filter(completed_pretest=self.get_object())
-        context["score"] = [0, 0]
-        for i in context['responses']['responses']:
-            if i and i.iscorrect:
-                context["score"][0] += 8
-            context["score"][1] += 8
+        # context['responses'] = self.get_object().get_pretest_user_response_objects(context['pretestuser'])
+        completion_obj = context['pretestuser'].pretest_user_completions.get(completed_pretest=self.get_object())
+        
+        if completion_obj:
+            responses = completion_obj.completed_pretest.get_pretest_user_response_objects(context['pretestuser'])
+            context['completion'] = (completion_obj, responses['num_correct'] * 8, responses['responses'])
+       
+        # context['status_obj'] = context['pretestuser'].pretest_user_completions.filter(completed_pretest=self.get_object())
+        # context["score"] = [0, 0]
+        # for i in context['responses']['responses']:
+        #     if i and i.iscorrect:
+        #         context["score"][0] += 8
+        #     context["score"][1] += 8
         
         return context
 
@@ -252,4 +237,67 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
         context['pretestuser'] = self.pretestuser
         # datetime.strftime(time_started, '%Y-%m-%d %H:%M:%S') maybe useful later.
 
-        return context 
+        return context
+
+
+###############################################################################
+###############################################################################
+######################### Account Manager Views ###############################
+###############################################################################
+###############################################################################
+
+
+class PretestUserDetailView(LoginRequiredMixin, PretestAccountRequiredMixin, DetailView):
+    model = PretestUser
+    template_name = 'pretest_user_detail.html'
+    pretest_accounts = None
+    access_model = PretestUser
+
+    def get_context_data(self, **kwargs):
+        context = super(PretestUserDetailView, self).get_context_data(**kwargs)        
+        context['pretest_accounts'] = self.pretest_accounts
+        context['bundle'] = self.get_object().pretest_bundle()
+        completions = []
+        for i in self.get_object().completion_status():
+            responses = i.completed_pretest.get_pretest_user_response_objects(i.pretestuser)
+            completions.append((i, responses['num_correct'] * 8, responses['responses']))
+        context['completions'] = completions
+        return context
+
+
+class PretestUserUpdateView(LoginRequiredMixin, PretestAccountRequiredMixin, UpdateView):
+    model = PretestUser
+    template_name = 'pretest_user_edit.html'
+    form_class = PretestUserUpdateForm
+    pretest_accounts = None
+    access_model = PretestUser
+
+    def get_success_url(self): 
+        return reverse('pretests:pretest_user_list', args=[self.get_object().account.id], current_app=self.request.resolver_match.namespace)
+
+class PretestAccountListView(LoginRequiredMixin, PretestAccountRequiredMixin, TemplateView):
+    template_name = "pretest_account_list.html"
+    pretest_accounts = None
+    access_model = User
+
+    def get_context_data(self, **kwargs):
+        context = super(PretestAccountListView, self).get_context_data(**kwargs)        
+        context['pretest_accounts'] = self.pretest_accounts
+        return context
+
+
+class PretestUserListView(LoginRequiredMixin, PretestAccountRequiredMixin, DetailView):
+    model = PretestAccount
+    template_name = "pretest_user_list.html"
+    pretest_accounts = None
+    access_model = PretestAccount
+
+    def get(self, request, *args, **kwargs):           
+        return super(PretestUserListView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(PretestUserListView, self).get_context_data(**kwargs)        
+        context['account'] = self.get_object()
+        context['pretest_users'] = context['account'].pretest_user_list()
+        context['pretest_accounts'] = self.pretest_accounts
+        return context

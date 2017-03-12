@@ -147,16 +147,23 @@ class QuestionSet(AbstractActivity):
 
     def get_pretest_user_response_objects(self, user):
         """
-        Returns a list of PretestQuestionResponse objects related to this worksheet and user.
-        This list may contain None values where a response to a question has not been submitted OR 
-        the question does not require a response.
+        Returns a dictionary containing:
+        a) number of responses that are not null
+
+        b) list of PretestQuestionResponse objects related to this worksheet and user.
+        This list may contain None values where a response to a question has 
+        not been submitted OR the question does not require a response.
+
+        c) a compiled number of correct responses in (a).
         """
-        responses = {'count': 0, 'responses': []}
+        responses = {'count': 0, 'responses': [], 'num_correct': 0}
         for i in self.get_ordered_question_list():
             resp = i.pretestuser_response_object(user)
             responses['responses'].append(resp)
             if i.response_required and resp:
                 responses['count'] += 1
+                if resp.iscorrect:
+                    responses['num_correct'] += 1
 
         return responses
 

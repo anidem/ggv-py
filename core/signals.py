@@ -16,11 +16,12 @@ def init_session(sender, **kwargs):
     user_courses: a list of course slugs of which the logged in user has permissions
     user_lessons: a list of lessons assigned to courses
     """
+    
     try:
         request = kwargs['request']
         user = kwargs['user']
         rem_addr = request.META['REMOTE_ADDR']
-
+    
         course_permissions = get_objects_for_user(
             user, ['access', 'instructor', 'manage'], Course, any_perm=True).order_by('ggv_organization','title')
 

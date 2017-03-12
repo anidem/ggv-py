@@ -25,7 +25,7 @@ def generate_token():
 
 class PretestAccount(models.Model):
     name = models.CharField(max_length=512)
-    manager = models.ForeignKey(User, null=False)
+    manager = models.ForeignKey(User, null=False, related_name='pretest_user_account')
     contact_email = models.EmailField()
     contact_phone = models.CharField(max_length=20, null=True, blank=True)
     ggv_org = models.ForeignKey(GGVOrganization, null=True, blank=True)
@@ -69,6 +69,12 @@ class PretestUser(TimeStampedModel):
     def completion_status(self):
         return self.pretest_user_completions.all()
 
+    def pretest_bundle(self):
+        attempts = self.pretest_user_completions.all()
+        if attempts:
+            return attempts[0].completed_pretest.lesson.activities()
+        return []
+
     def __unicode__(self):
         return self.access_token
 
@@ -77,7 +83,8 @@ class PretestUser(TimeStampedModel):
 
 class PretestUserCompletion(TimeStampedModel):
     """Stores when a user completes a worksheet. Instances of this class
-    are also created if the time has expired on a worksheet.
+    are created when a user begins a test. Because of this, records in this
+    table are used to calculate expiration of tests and scores.
     """
     from questions.models import QuestionSet
     pretestuser = models.ForeignKey(PretestUser, related_name='pretest_user_completions')
@@ -91,6 +98,15 @@ class PretestUserCompletion(TimeStampedModel):
         if self.completed_pretest.time_limit < 1:
             return False
         return self.seconds_since_created() > (self.completed_pretest.time_limit * 60)
+
+    def get_score(self):
+        responses = self.completed_pretest.get_pretest_user_response_objects(self.pretestuser)
+        score, ceiling = 0, 0
+        for i in responses['responses']:
+            if i and i.iscorrect:
+                score += 8
+            ceiling += 8
+        return score, ceiling
 
     class Meta:
         unique_together = ('pretestuser', 'completed_pretest')

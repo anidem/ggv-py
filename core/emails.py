@@ -442,6 +442,8 @@ class SendEmailToManagerCreateAccountRequest(LoginRequiredMixin, CourseContextMi
         messages.info(self.request, 'Your request for a new account has been sent to the managers for your account.')
         return super(SendEmailToManagerCreateAccountRequest, self).form_valid(form)
 
+
+
 """ BACKEND EMAIL PROCEDURES. FUNCTIONS THAT ARE INITIATED AUTOMATICALLY BY THE SYSTEM. """
 
 def SendWorksheetNotificationEmailToInstructors(request=None, course=None, worksheet=None):

@@ -17,15 +17,15 @@ class PretestCreateTokensView(FormView):
 
     def form_valid(self, form): 
     	data = form.cleaned_data
-    	account = data['account']
+    	self.account = data['account']
     	for i in range(data['num_tokens']):
-    		p = PretestUser(account=account)
+    		p = PretestUser(account=self.account)
     		p.save()
 
         return super(PretestCreateTokensView, self).form_valid(form)
 
     def get_success_url(self):
-        success_url = reverse('pretests:pretest_user_list', current_app=self.request.resolver_match.namespace)
+        success_url = reverse('pretests:pretest_user_list', args=[self.account.id], current_app=self.request.resolver_match.namespace)
         return success_url
 
     def get_context_data(self, **kwargs):
@@ -34,3 +34,7 @@ class PretestCreateTokensView(FormView):
 
 class AccessErrorView(TemplateView):
     template_name = "pretest_access_error.html"
+
+    def get_context_data(self, **kwargs):
+        context = super(AccessErrorView, self).get_context_data(**kwargs)
+        return context

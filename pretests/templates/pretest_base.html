@@ -70,13 +70,36 @@
                 <ul class="nav navbar-nav navbar-right">
                     {% block local_nav %} {% endblock local_nav %}
 
-                    <!-- login/logout / settings dropdown menu -->
+                    <!-- staff only: generate tokens for an account -->
+                    {% if request.user.is_staff %}
+                      <li><a href="{% url 'pretestapp:pretest_gen_tokens' %}"><i class="fa fa-plus"></i> Tokens</a></li>
+                    {% endif %}
+                    
+                    <!-- account listing for managing tokens and users -->
+                    <li class="dropdown">
+                      {% if request.user.is_authenticated and pretest_accounts %}
+                        
+                          <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                            <i class="fa fa-gears"></i> Accounts <i class="fa fa-caret-down"></i>
+                          </a>
+                          <ul class="dropdown-menu scrollable-menu">
+                            {% for i in pretest_accounts %}
+                              <li><a href="{%url 'pretestapp:pretest_user_list' i.id %}"><i class="fa fa-gear"></i> {{ i }}</a></li>
+                            {% endfor %}
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i> Logout {{ request.user }}</a></li>
+                          </ul>
+
+                      {% elif 'pretester_token' not in request.session.keys %}
+                          <a href="{%url 'pretestapp:pretest_account_list' %}"><i class="fa fa-lock"></i> Account Administrator </a>
+                      {% endif %}
+                    </li>
+
+                    <!-- exit button for pretest user -->
                     <li class="dropdown">
 
                         {% if 'pretester_token' in request.session.keys %}
-                          <a href="{% url 'pretestapp:pretest_logout' %}">exit </a>
-                        {% else %}
-                          <a href="{% url 'pretestapp:pretest_home' %}">access</a>
+                          <a href="{% url 'pretestapp:pretest_logout' %}">Exit Pretests</a>
                         {% endif %}
                         <ul class="dropdown-menu section_drop scrollable-menu">
                         </ul>                        

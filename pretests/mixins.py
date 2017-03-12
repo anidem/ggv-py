@@ -5,7 +5,60 @@ from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 
 from questions.models import QuestionSet
-from .models import PretestUser, PretestUserCompletion
+from .models import PretestUser, PretestUserCompletion, PretestAccount
+
+class PretestAccountRequiredMixin(object):
+
+    def dispatch(self, *args, **kwargs):
+        """Permission checks here rest on 
+        a) braces.LoginRequiredMixin called prior to this mixin
+        b) user object having an association with a pretest account object.
+
+        Mixin primary function is to set class variable pretest_accounts (a listing of accounts. all for staff, filtered list for users)
+        """
+        access_model = self.access_model.__name__
+        try:
+            if self.request.user.is_staff:
+                #  staff can access anything.
+                self.pretest_accounts = PretestAccount.objects.all()
+                return super(PretestAccountRequiredMixin, self).dispatch(*args, **kwargs)
+           
+            self.pretest_accounts = self.request.user.pretest_user_account.all()
+            
+            valid_account = None
+            custom_message = 'any accounts.'
+            if access_model == 'PretestAccount':
+                #  user requesting access to an account information.
+                #  user MUST have association with the account.
+                valid_account = self.pretest_accounts.filter(pk=self.get_object().id)
+                custom_message = str(self.get_object())
+            
+            elif access_model == 'PretestUser':
+                #  user is requesting access to pretest user information (tokens and results).
+                #  user must have association with the account associated with the pretest user account.
+                valid_account = self.pretest_accounts.filter(pk=self.get_object().account.id)
+                custom_message = 'token ' + str(self.get_object())
+
+            elif access_model == 'QuestionSet':
+                #  user is requesting to view detail results of pretest user score.
+                userid=self.kwargs['user']
+                pretestuser = PretestUser.objects.get(pk=userid)
+                valid_account = self.pretest_accounts.filter(pk=pretestuser.account.id) 
+
+            elif access_model == 'User':
+                #  user is requesting a listing of their accounts.
+                valid_account = self.pretest_accounts       
+
+            if valid_account:
+                return super(PretestAccountRequiredMixin, self).dispatch(*args, **kwargs)
+
+
+            messages.error(self.request, 'You do not appear to have valid access to ' + custom_message, extra_tags='danger')
+            return redirect('pretests:pretest_access_error')
+
+        except Exception as e:
+            print e, 'bad account'
+            return redirect('pretests:pretest_access_error') 
 
 class TokenAccessRequiredMixin(object):
 

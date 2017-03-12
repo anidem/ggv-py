@@ -20,6 +20,7 @@
   						<th>first</th>
   						<th>last</th>
   						<th>edit</th>
+  						<th>email token</th>
   					</tr>
   				</thead>
   				<tbody>
@@ -28,8 +29,10 @@
 					<td>
 					{% if i.1 > 0%}
 						<span class="label label-danger">{{ i.1 }}</span>
+						<a href="{%  url 'pretestapp:pretest_user_detail' i.0.id %}"> view </a>
 					{% elif i.1 == 0 and i.0.email %}
 						<span class="label label-warning">{{ i.1 }}</span>
+						<a href="{%  url 'pretestapp:pretest_user_detail' i.0.id %}"> view </a>
 					{% else %}
 						<span class="label label-success">&nbsp;&nbsp;</span>
 					{% endif %}
@@ -39,6 +42,11 @@
 					<td>{{ i.0.first_name }}</td>
 					<td>{{ i.0.last_name }}</td>
 					<td><a href="{% url 'pretestapp:pretest_user_edit' i.0.id %}">edit</a></td>
+					<td>
+					{% if i.0.email %}
+						<a href="{% url 'pretestapp:pretest_send_token' i.0.id %}">email token</a>
+					{% endif %}
+					</td>
 					</tr>
 				{% endfor %}
 				</tbody>

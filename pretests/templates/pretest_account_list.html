@@ -1,0 +1,18 @@
+<!-- pretest_account_list.html -->
+{% extends "pretest_base.html" %}
+{% load staticfiles %}
+
+{% block page_header %}
+	<div class="col-md-12 text-center">
+	    <h2><i class="fa fa-cogs"></i> Pretest Accounts Managed by</h2>
+	    <h5>{{ request.user }}</h5>
+	</div>
+{% endblock page_header %}
+
+{% block content %}
+	<div class="col-md-10 col-md-offset-1">
+		{% for i in pretest_accounts %}
+			<p class="lead"> <a href="{%url 'pretestapp:pretest_user_list' i.id %}">{{ i }}</a> </p>
+		{% endfor %}
+	</div>
+{% endblock content %}

@@ -184,6 +184,14 @@
 
                                 <li role="separator" class="divider"></li>
                             {% endif %}
+
+                            {% if request.user.pretest_user_account.all %}
+                                <li>
+                                    <a class="" href="/pretest/accounts/">
+                                        <i class="fa fa-cogs"></i> Pretest Manager
+                                    </a>
+                                </li>                              
+                            {% endif %}
                             
                             {% if request.user.is_staff %}
                                 <li role="separator" class="divider"></li>

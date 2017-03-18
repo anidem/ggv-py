@@ -70,6 +70,8 @@ class PretestUser(TimeStampedModel):
         return self.pretest_user_completions.all()
 
     def pretest_bundle(self):
+        """Returns the set of pretests the user is associated with.
+        """
         attempts = self.pretest_user_completions.all()
         if attempts:
             return attempts[0].completed_pretest.lesson.activities()
@@ -82,13 +84,14 @@ class PretestUser(TimeStampedModel):
         ordering = ['last_name', 'email']
 
 class PretestUserCompletion(TimeStampedModel):
-    """Stores when a user completes a worksheet. Instances of this class
+    """Stores when a user begins a worksheet. Instances of this class
     are created when a user begins a test. Because of this, records in this
     table are used to calculate expiration of tests and scores.
     """
     from questions.models import QuestionSet
     pretestuser = models.ForeignKey(PretestUser, related_name='pretest_user_completions')
     completed_pretest = models.ForeignKey(QuestionSet, related_name='pretest_completions')
+    confirm_completed = models.BooleanField(default=False)
 
     def seconds_since_created(self):
         delta = datetime.now(pytz.utc) - self.created

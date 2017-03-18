@@ -6,6 +6,7 @@
 {% block page_header %}
     <div class="col-md-12 text-right">
         <p class="small"><span id="clock">{{ time_remaining }}</span></p>
+        {% if status and not status.completion_confirmed %}<p class="small"><a class="btn btn-warning" href="{% url 'pretestapp:pretest_confirm_done' status.id %}">Finalize</a></p>{% endif %}
     </div> 
 	<div class="col-md-12 text-center">
 	    <p class="lead">{{ question.question_set }}</p>

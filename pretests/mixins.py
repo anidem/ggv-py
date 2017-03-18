@@ -57,7 +57,7 @@ class PretestAccountRequiredMixin(object):
             return redirect('pretests:pretest_access_error')
 
         except Exception as e:
-            print e, 'bad account'
+            # print e, 'bad account'
             return redirect('pretests:pretest_access_error') 
 
 class TokenAccessRequiredMixin(object):
@@ -73,7 +73,7 @@ class TokenAccessRequiredMixin(object):
             return super(TokenAccessRequiredMixin, self).dispatch(*args, **kwargs)
         
         except Exception as e:
-            messages.error(self.request, 'You will need to provide your credentials to continue.', extra_tags='danger')
+            messages.error(self.request, 'You will need to provide your credentials to continue.' + str(e), extra_tags='danger')
             return redirect('pretests:pretest_home')
 
 class PretestQuestionMixin(object):
@@ -99,6 +99,7 @@ class PretestQuestionMixin(object):
             self.worksheet = get_object_or_404(QuestionSet, pk=kwargs['p'])
             self.stack = self.worksheet.get_pretest_user_response_objects(self.pretestuser)
             self.req_question = int(kwargs['q'])
+            self.status_obj = None
             
             if self.req_question > 0: self.req_question -= 1
             else: self.req_question = 0
@@ -118,13 +119,13 @@ class PretestQuestionMixin(object):
                 self.question = None
 
             try:
-                status_obj = self.pretestuser.pretest_user_completions.get(completed_pretest=self.worksheet)          
-                elapsed_time_secs = status_obj.seconds_since_created()
+                self.status_obj = self.pretestuser.pretest_user_completions.get(completed_pretest=self.worksheet)          
+                elapsed_time_secs = self.status_obj.seconds_since_created()
             
             #  create a new completion record. user must be beginning the test
             except PretestUserCompletion.DoesNotExist:  
-                status_obj = PretestUserCompletion(pretestuser=self.pretestuser, completed_pretest=self.worksheet)
-                status_obj.save()
+                self.status_obj = PretestUserCompletion(pretestuser=self.pretestuser, completed_pretest=self.worksheet)
+                self.status_obj.save()
                 elapsed_time_secs = 0
 
             #  completion record indicates that user has exceeded the time limit. show results page.
@@ -136,7 +137,8 @@ class PretestQuestionMixin(object):
             return super(PretestQuestionMixin, self).dispatch(*args, **kwargs)
 
         except Exception as e:
-            messages.error(self.request, 'A problem with the testing page as occurred. System admins have been contacted.', extra_tags='danger')
+            messages.error(self.request, 'A problem with the testing page as occurred. System admins have been contacted.' + str(e), extra_tags='danger')
+            
             return redirect('pretests:pretest_home')
 
 

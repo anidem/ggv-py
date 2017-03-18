@@ -17,7 +17,7 @@ from lessons.models import Lesson
 from questions.models import QuestionSet
 
 from .models import PretestAccount, PretestUser, PretestQuestionResponse, PretestUserCompletion
-from .forms import LoginTokenForm, LanguageChoiceForm, PretestQuestionResponseForm, PretestUserUpdateForm
+from .forms import LoginTokenForm, LanguageChoiceForm, PretestQuestionResponseForm, PretestUserUpdateForm, PretestCompleteConfirmForm
 from .mixins import TokenAccessRequiredMixin, PretestQuestionMixin, PretestAccountRequiredMixin
 from .utils import AccessErrorView
 
@@ -72,7 +72,6 @@ class PretestLanguageChoiceUpdateView(TokenAccessRequiredMixin, UpdateView):
         return reverse('pretests:pretest_menu', current_app=self.request.resolver_match.namespace)
 
 
-
 class PretestMenuView(TokenAccessRequiredMixin, TemplateView):
     template_name = 'pretest_menu.html'
 
@@ -99,6 +98,30 @@ class PretestMenuView(TokenAccessRequiredMixin, TemplateView):
         context['incompletions'] = [i.completed_pretest.id for i in completions if not i.is_expired()]
         return context
 
+
+class PretestEndConfirmView(TokenAccessRequiredMixin, UpdateView):
+    model = PretestUserCompletion
+    template_name = 'pretest_confirm_complete.html'
+    form_class = PretestCompleteConfirmForm
+    
+    def get(self, request, *args, **kwargs):
+        if self.pretestuser.id != self.get_object().pretestuser.id:
+                return redirect('pretests:pretest_home')       
+                
+        return super(PretestEndConfirmView, self).get(request, *args, **kwargs)
+
+    def get_initial(self):
+        initial = super(PretestEndConfirmView, self).get_initial()
+        initial['confirm_completed'] = True
+        return initial
+
+    def get_success_url(self): 
+        return reverse('pretests:pretest_done', args=[self.get_object().completed_pretest.id, self.pretestuser.id], current_app=self.request.resolver_match.namespace)
+
+    def get_context_data(self, **kwargs):
+        context = super(PretestEndConfirmView, self).get_context_data(**kwargs)
+        context['questions'] = self.get_object().completed_pretest.get_ordered_question_list()
+        return context
 
 class PretestEndView(TokenAccessRequiredMixin, DetailView):
     model = QuestionSet
@@ -185,10 +208,15 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
         # if elapsed_time_secs > self.worksheet.time_limit * 60: 
         #         return redirect('pretests:pretest_done', pk=self.worksheet.id, user=self.pretestuser.id)   
         
-        # user has answered all questions. show results page.
-        if self.stack['count'] >= len(self.stack['responses']):  
+        # user has already confirmed completed pretest.
+        if self.status_obj.confirm_completed:
             return redirect('pretests:pretest_done', pk=self.worksheet.id, user=self.pretestuser.id)
-       
+
+        # user has answered all questions (they are requesting a null question). show confirm page.
+        elif self.req_question+1 > self.worksheet.get_num_questions():
+            return redirect('pretests:pretest_confirm_done', pk=self.status_obj.id)
+        
+        # elif self.stack['count'] >= len(self.stack['responses']):
         # request for invalid question so take user to next available question not answered.
         elif not self.question: 
             return redirect('pretests:pretest_take', p=self.worksheet.id, q=self.stack['count']+1)
@@ -235,6 +263,9 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
         context['response_count'] = self.stack['count']
         context['time_remaining'] = self.time_remaining
         context['pretestuser'] = self.pretestuser
+        if self.stack['count'] >= len(self.stack['responses']):
+            context['status'] = self.status_obj
+        
         # datetime.strftime(time_started, '%Y-%m-%d %H:%M:%S') maybe useful later.
 
         return context
@@ -274,6 +305,7 @@ class PretestUserUpdateView(LoginRequiredMixin, PretestAccountRequiredMixin, Upd
 
     def get_success_url(self): 
         return reverse('pretests:pretest_user_list', args=[self.get_object().account.id], current_app=self.request.resolver_match.namespace)
+
 
 class PretestAccountListView(LoginRequiredMixin, PretestAccountRequiredMixin, TemplateView):
     template_name = "pretest_account_list.html"

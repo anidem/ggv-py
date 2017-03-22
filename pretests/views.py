@@ -43,6 +43,16 @@ class PretestHomeView(FormView):
 
         return super(PretestHomeView, self).form_valid(form)
 
+    def get_initial(self):
+        initial = super(PretestHomeView, self).get_initial()
+        try:
+            token = self.kwargs['token']
+            initial['email'] = PretestUser.objects.get(access_token=token).email
+            initial['token'] = token            
+        except:
+            pass
+        return initial
+
     def get_success_url(self):
         success_url = reverse('pretests:pretest_menu', current_app=self.request.resolver_match.namespace)
         return success_url

@@ -9,6 +9,7 @@ app_name = 'pretests'
 
 urlpatterns = [
 	url(r'^$', PretestHomeView.as_view(), name='pretest_home'),
+	url(r'^access/(?P<token>[\w!#@]+)/$', PretestHomeView.as_view(), name='pretest_home_shortcut'),
 	url(r'^access-error/$', AccessErrorView.as_view(), name='pretest_access_error'),
 	url(r'^generate-tokens/$', PretestCreateTokensView.as_view(), name='pretest_gen_tokens'),
 	url(r'^accounts/$', PretestAccountListView.as_view(), name='pretest_account_list'),

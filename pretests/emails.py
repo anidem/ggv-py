@@ -1,6 +1,7 @@
 # emails.py
 from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.contrib import messages
 from django.views.generic import DetailView
 from django.conf import settings
@@ -18,9 +19,12 @@ class SendPretestTokenView(LoginRequiredMixin, PretestAccountRequiredMixin, Deta
     access_model = PretestUser
 
     def dispatch(self, request, *args, **kwargs):
+        access_url = reverse('pretests:pretest_home_shortcut',args=[self.get_object().access_token,], current_app=self.request.resolver_match.namespace)
+        access_url = 'http://' + request.get_host() + access_url
+
         html_message = ''
-        html_message += "<h3>Hi, you have been granted access to the GGV Pretest System for the GED. Please use the following information to access your exams.</h3>"
-        html_message += "<p>Please go to <a href='{0}'>{0}</a> and enter the following information to begin. Good luck!</p>".format('http://www.ggvinteractive.com/pretest/')
+        html_message += "<h2>Hi, you have been granted access to the GGV Pretest System for the GED. Please use the following information to access your exams.</h2>"
+        html_message += "<h1>Quick Access:</h1><h2><a href='{0}'>{0}</a></h2>".format(access_url, self.get_object().access_token)
         html_message += "<h1>EMAIL: {0}</h1>".format(self.get_object().email)
         html_message += "<h1>TOKEN: {0}</h1>".format(self.get_object().access_token)
         html_message += "<p>Please email {0} with any questions. </p>".format(self.request.user.email)

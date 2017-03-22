@@ -18,15 +18,6 @@ class LoginTokenForm(forms.Form):
         except:
             raise forms.ValidationError('email and/or token were invalid.', code='invalid_creds')
 
-    class Meta:
-        model = PretestQuestionResponse
-        fields = ['pretestuser', 'content_type', 'object_id', 'response']
-        widgets = {
-            'pretestuser': forms.HiddenInput(),
-            'content_type': forms.HiddenInput(),
-            'object_id': forms.HiddenInput()
-        }
-
 
 class TokenGeneratorForm(forms.Form):
     account = forms.ModelChoiceField(queryset=PretestAccount.objects.all())

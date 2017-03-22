@@ -2,6 +2,7 @@
 
 from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 from django.urls import reverse
+from django.shortcuts import redirect
 
 from .forms import TokenGeneratorForm
 from .models import PretestAccount, PretestUser
@@ -14,6 +15,7 @@ class PretestCreateTokensView(FormView):
         
         if self.request.user.is_staff:
             return super(PretestCreateTokensView, self).dispatch(*args, **kwargs)
+        return redirect('pretests:pretest_access_error') 
 
     def form_valid(self, form): 
     	data = form.cleaned_data

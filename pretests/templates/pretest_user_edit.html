@@ -29,4 +29,22 @@
         </form>
         
     </div>
+    {% for i in user_list %}
+        <input id="user_{{ i.id }}" type="hidden" data-email="{{ i.email }}" data-first="{{ i.first_name }}" data-last="{{ i.last_name }}" data-progid="{{ i.ggvuser.program_id }}"/>
+    {% endfor %}
 {% endblock content %}
+
+{% block local_js %}
+<script type="text/javascript" language="JavaScript">
+    $(document).ready(function() {
+        $("#id_account_selector").change(function() {
+            var data = $(this).val();
+            var user_d = $("#user_"+data);
+            $("#id_email").val(user_d.attr('data-email'));
+            $("#id_first_name").val(user_d.attr('data-first'));
+            $("#id_last_name").val(user_d.attr('data-last'));
+            $("#id_program_id").val(user_d.attr('data-progid'));
+        });
+    });
+</script>
+{% endblock local_js %}

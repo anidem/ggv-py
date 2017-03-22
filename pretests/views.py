@@ -136,6 +136,7 @@ class PretestEndConfirmView(TokenAccessRequiredMixin, UpdateView):
         context['questions'] = self.get_object().completed_pretest.get_ordered_question_list()
         return context
 
+
 class PretestEndView(TokenAccessRequiredMixin, DetailView):
     model = QuestionSet
     template_name = 'pretest_end.html'
@@ -316,9 +317,26 @@ class PretestUserUpdateView(LoginRequiredMixin, PretestAccountRequiredMixin, Upd
     pretest_accounts = None
     access_model = PretestUser
 
+    def get_initial(self):
+        initial = super(PretestUserUpdateView, self).get_initial()
+        try:
+            self.user_list = self.get_object().account.get_org_users()
+            initial['users'] = self.user_list
+        except:
+            initial['users'] = []
+        return initial
+
     def get_success_url(self): 
         return reverse('pretests:pretest_user_list', args=[self.get_object().account.id], current_app=self.request.resolver_match.namespace)
 
+    def get_context_data(self, **kwargs):
+        context = super(PretestUserUpdateView, self).get_context_data(**kwargs)
+        try:
+            context['user_list'] = self.user_list
+        except:
+            pass
+
+        return context
 
 class PretestAccountListView(LoginRequiredMixin, PretestAccountRequiredMixin, TemplateView):
     template_name = "pretest_account_list.html"

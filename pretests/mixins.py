@@ -57,7 +57,7 @@ class PretestAccountRequiredMixin(object):
             return redirect('pretests:pretest_access_error')
 
         except Exception as e:
-            # print e, 'bad account'
+            print e, 'bad account'
             return redirect('pretests:pretest_access_error') 
 
 class TokenAccessRequiredMixin(object):

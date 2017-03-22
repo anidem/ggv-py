@@ -40,10 +40,20 @@ class LanguageChoiceForm(ModelForm):
 
 
 class PretestUserUpdateForm(ModelForm):
+    account_selector = forms.ChoiceField(choices=[], required=False)
+        
+    def __init__(self, *args, **kwargs):
+        super(PretestUserUpdateForm, self).__init__(*args, **kwargs)
+        if self.initial['users']:
+            self.fields['account_selector'].choices = [(i.id, i.email) for i in self.initial['users']]
+            self.fields['account_selector'].label = 'Choose valid email address from list (optional):'
+        else:
+            del self.fields['account_selector']
 
     class Meta:
         model = PretestUser
-        fields = ['email', 'first_name', 'last_name']
+        fields = ['account_selector', 'email', 'first_name', 'last_name', 'program_id']
+        labels = {'email': 'Enter a valid email address for pretest user.'}
 
 
 class PretestCompleteConfirmForm(ModelForm):
@@ -53,9 +63,7 @@ class PretestCompleteConfirmForm(ModelForm):
         fields = ['confirm_completed']
         widgets = {'confirm_completed': forms.HiddenInput(),}
 
-    # pretestuser
-    # completed_pretest 
-    # confirm_completed
+
 class PretestQuestionResponseForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(PretestQuestionResponseForm, self).__init__(*args, **kwargs)

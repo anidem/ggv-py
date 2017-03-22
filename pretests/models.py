@@ -16,7 +16,7 @@ from lessons.models import Lesson
 
 def generate_token():
     import random
-    alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!#@'
+    alpha = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
     token = ''
     for i in range(8):
         token += random.choice(alpha)
@@ -32,11 +32,16 @@ class PretestAccount(models.Model):
     tokens_purchased = models.PositiveIntegerField(default=0)
 
     def pretest_user_list(self):
+        """Returns a list of tuples (pretest user account object and number of exams they have started)
+        """
         users = []
         for i in self.tokens.all():
             users.append((i, i.completion_status().count()))
         return users 
     
+    def get_org_users(self):
+        return self.ggv_org.licensed_user_list()
+
     def __unicode__(self):
         return self.name
 

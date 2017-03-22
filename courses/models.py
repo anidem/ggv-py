@@ -37,6 +37,14 @@ class GGVOrganization(models.Model):
             rows.append(i.student_report(scope))
         return rows
 
+    def licensed_user_list(self):
+        users = []
+        for course in self.organization_courses.all():
+            for user in course.licensed_users():
+                users.append(user[0])
+        users = list(set(users))
+        return users
+
     def licenses_in_use(self, scope=None):
         tag = ''
         if not scope:

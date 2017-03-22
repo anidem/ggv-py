@@ -13,18 +13,21 @@
 
 {% block content %}
     <div class="col-md-10 col-md-offset-1">
-        <p>User: {{ object.first_name }} {{ object.last_name }}</p>
-        <p>Token: {{ object.access_token }} <a href="{% url 'pretestapp:pretest_user_edit' object.id %}" class="btn btn-link">edit</a></p>
-        <p>Email: {{ object.email }}</p>
-        <p>Date Created: {{ object.created|date:"Y-M-d" }}</p>
-        <p>Pretest Exams: </p>
+        <dl class="dl-horizontal">
+        <dt>Token:</dt><dd> {{ object.access_token }}<a href="{% url 'pretestapp:pretest_user_edit' object.id %}" class="btn btn-link">edit</a></dd>
+        <dt>Pretester:</dt><dd> {{ object.first_name }} {{ object.last_name }}</dd>
+        <dt>Email:</dt><dd> {{ object.email }}</dd>
+        <dt>Program ID:</dt><dd> {{ object.ggvuser.program_id }}</dd>
+        <dt>Date Created:</dt><dd> {{ object.created|date:"Y-M-d" }}</dd>
+        <dt>Pretest Exams:</dt><dd></dd>
         <ul class="list-inline">{% for i in bundle %}<li><em>{{ i }}{% if not forloop.last %},{% endif %}</em></li>{% endfor %}</ul>
+        </dl>
     </div>
     
     <div class="col-md-12 col-md-offset-1">
         <h4>Current Available Scores <small>({{ completions|length }} of {{ bundle|length }} exams have been attempted.)</small> </h4>
         {% for i in completions %}
-            <p>
+            <dt>
                 <i class="fa fa-list-alt"></i> {{ i.0.completed_pretest }}: <strong>{{ i.1 }}</strong>
             
             <ul>

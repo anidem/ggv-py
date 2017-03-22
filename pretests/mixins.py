@@ -73,7 +73,9 @@ class TokenAccessRequiredMixin(object):
             return super(TokenAccessRequiredMixin, self).dispatch(*args, **kwargs)
         
         except Exception as e:
-            messages.error(self.request, 'You will need to provide your credentials to continue.' + str(e), extra_tags='danger')
+            if self.request.user.is_staff:
+                return super(TokenAccessRequiredMixin, self).dispatch(*args, **kwargs)
+            messages.error(self.request, 'You will need to provide your credentials to continue.', extra_tags='danger')
             return redirect('pretests:pretest_home')
 
 class PretestQuestionMixin(object):
@@ -137,7 +139,7 @@ class PretestQuestionMixin(object):
             return super(PretestQuestionMixin, self).dispatch(*args, **kwargs)
 
         except Exception as e:
-            messages.error(self.request, 'A problem with the testing page as occurred. System admins have been contacted.' + str(e), extra_tags='danger')
+            messages.error(self.request, 'A problem with the testing page as occurred. System admins have been contacted.', extra_tags='danger')
             
             return redirect('pretests:pretest_home')
 

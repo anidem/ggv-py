@@ -1,0 +1,12 @@
+[
+{
+  "model": "lessons.section",
+  "pk": 44,
+  "fields": {
+    "title": "Pretest Exams",
+    "subtitle": "",
+    "display_order": 0,
+    "lesson": 17
+  }
+}
+]

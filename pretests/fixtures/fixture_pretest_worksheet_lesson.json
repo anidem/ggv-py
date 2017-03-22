@@ -1,0 +1,12 @@
+[
+{
+  "model": "lessons.lesson",
+  "pk": 17,
+  "fields": {
+    "title": "English Pretests",
+    "subject": "default",
+    "language": "eng",
+    "icon_class": "university"
+  }
+}
+]

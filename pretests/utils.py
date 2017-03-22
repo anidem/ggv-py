@@ -3,6 +3,7 @@
 from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 from django.urls import reverse
 from django.shortcuts import redirect
+from django.contrib import messages
 
 from .forms import TokenGeneratorForm
 from .models import PretestAccount, PretestUser
@@ -15,6 +16,7 @@ class PretestCreateTokensView(FormView):
         
         if self.request.user.is_staff:
             return super(PretestCreateTokensView, self).dispatch(*args, **kwargs)
+        messages.error(self.request, 'You do not appear to have valid access to this resource.', extra_tags='danger')
         return redirect('pretests:pretest_access_error') 
 
     def form_valid(self, form): 

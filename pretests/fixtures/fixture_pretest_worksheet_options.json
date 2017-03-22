@@ -1,0 +1,86 @@
+[
+{
+  "model": "questions.option",
+  "pk": 53189,
+  "fields": {
+    "question": [
+      "Test Pre Exam",
+      "Favorite color?",
+      1
+    ],
+    "correct": false,
+    "display_text": "red",
+    "display_order": 0
+  }
+},
+{
+  "model": "questions.option",
+  "pk": 53192,
+  "fields": {
+    "question": [
+      "Test Pre Exam",
+      "Fav food?",
+      0
+    ],
+    "correct": false,
+    "display_text": "bread",
+    "display_order": 0
+  }
+},
+{
+  "model": "questions.option",
+  "pk": 53190,
+  "fields": {
+    "question": [
+      "Test Pre Exam",
+      "Favorite color?",
+      1
+    ],
+    "correct": false,
+    "display_text": "green",
+    "display_order": 1
+  }
+},
+{
+  "model": "questions.option",
+  "pk": 53193,
+  "fields": {
+    "question": [
+      "Test Pre Exam",
+      "Fav food?",
+      0
+    ],
+    "correct": true,
+    "display_text": "water",
+    "display_order": 1
+  }
+},
+{
+  "model": "questions.option",
+  "pk": 53191,
+  "fields": {
+    "question": [
+      "Test Pre Exam",
+      "Favorite color?",
+      1
+    ],
+    "correct": true,
+    "display_text": "blue",
+    "display_order": 2
+  }
+},
+{
+  "model": "questions.option",
+  "pk": 53194,
+  "fields": {
+    "question": [
+      "Test Pre Exam",
+      "Fav food?",
+      0
+    ],
+    "correct": false,
+    "display_text": "coffee",
+    "display_order": 2
+  }
+}
+]

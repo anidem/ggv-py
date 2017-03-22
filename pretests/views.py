@@ -9,6 +9,7 @@ from django.urls import reverse
 from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
+from django.contrib import messages
 from django.http import Http404
 
 from braces.views import LoginRequiredMixin
@@ -115,10 +116,12 @@ class PretestEndConfirmView(TokenAccessRequiredMixin, UpdateView):
     form_class = PretestCompleteConfirmForm
     
     def get(self, request, *args, **kwargs):
-        if self.pretestuser.id != self.get_object().pretestuser.id:
-                return redirect('pretests:pretest_home')       
-                
-        return super(PretestEndConfirmView, self).get(request, *args, **kwargs)
+        if request.user.is_staff:
+            return super(PretestEndConfirmView, self).get(request, *args, **kwargs)
+        elif self.pretestuser.id != self.get_object().pretestuser.id:
+            return redirect('pretests:pretest_home')
+        else:               
+            return super(PretestEndConfirmView, self).get(request, *args, **kwargs)
 
     def get_initial(self):
         initial = super(PretestEndConfirmView, self).get_initial()

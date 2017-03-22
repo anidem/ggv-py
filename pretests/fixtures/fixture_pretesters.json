@@ -1,0 +1,18 @@
+[
+{
+  "model": "pretests.pretestuser",
+  "pk": 5,
+  "fields": {
+    "created": "2017-03-05T20:08:38.262Z",
+    "modified": "2017-03-22T16:28:58.932Z",
+    "account": 1,
+    "access_token": "EjCKJZDm",
+    "email": "richmedina@gmail.com",
+    "first_name": "Rich",
+    "last_name": "Medina",
+    "program_id": "",
+    "language_pref": "english",
+    "expired": false
+  }
+}
+]

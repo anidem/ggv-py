@@ -1,0 +1,16 @@
+[
+{
+  "model": "pretests.pretestusercompletion",
+  "pk": 41,
+  "fields": {
+    "created": "2017-03-22T16:52:43.634Z",
+    "modified": "2017-03-22T16:52:43.635Z",
+    "pretestuser": 5,
+    "completed_pretest": [
+      "English Pretests",
+      "Test Pre Exam"
+    ],
+    "confirm_completed": false
+  }
+}
+]

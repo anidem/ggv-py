@@ -1,0 +1,34 @@
+[
+{
+  "model": "questions.optionquestion",
+  "fields": {
+    "display_text": "Fav food?",
+    "display_order": 0,
+    "display_image": "",
+    "display_pdf": "",
+    "display_key_file": "",
+    "response_required": true,
+    "input_select": "radio",
+    "question_set": [
+      "English Pretests",
+      "Test Pre Exam"
+    ]
+  }
+},
+{
+  "model": "questions.optionquestion",
+  "fields": {
+    "display_text": "Favorite color?",
+    "display_order": 1,
+    "display_image": "",
+    "display_pdf": "",
+    "display_key_file": "",
+    "response_required": true,
+    "input_select": "radio",
+    "question_set": [
+      "English Pretests",
+      "Test Pre Exam"
+    ]
+  }
+}
+]

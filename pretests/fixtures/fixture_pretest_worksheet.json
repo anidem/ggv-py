@@ -1,0 +1,15 @@
+[
+{
+  "model": "questions.questionset",
+  "fields": {
+    "title": "Test Pre Exam",
+    "instructions": "Small pretest for testing.",
+    "section": 44,
+    "display_order": 0,
+    "lesson": 17,
+    "activity_type": "worksheet",
+    "display_pdf": "",
+    "time_limit": 2
+  }
+}
+]

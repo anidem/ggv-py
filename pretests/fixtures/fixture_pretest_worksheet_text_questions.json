@@ -1,0 +1,19 @@
+[
+{
+  "model": "questions.textquestion",
+  "fields": {
+    "display_text": "Stream of conscious writing. Begin now.",
+    "display_order": 0,
+    "display_image": "",
+    "display_pdf": "",
+    "display_key_file": "",
+    "response_required": true,
+    "question_set": [
+      "English Pretests",
+      "Test Pre Exam"
+    ],
+    "input_size": "15",
+    "correct": ""
+  }
+}
+]

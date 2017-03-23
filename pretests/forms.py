@@ -45,8 +45,8 @@ class PretestUserUpdateForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(PretestUserUpdateForm, self).__init__(*args, **kwargs)
         if self.initial['users']:
-            self.fields['account_selector'].choices = [(' ',' ')] + [(i.id, i.email) for i in self.initial['users']]
-            self.fields['account_selector'].label = 'Choose valid email address from list (optional):'
+            self.fields['account_selector'].choices = [(' ',' ')] + [(i.id, str(i.first_name + ' ' + i.last_name)) for i in self.initial['users']]
+            self.fields['account_selector'].label = 'Choose pretest user from list (optional):'
         else:
             del self.fields['account_selector']
 

@@ -5,6 +5,9 @@
 {% block page_header %}
 	<div class="col-md-12 text-center">
 	    <h2><i class="fa fa-cogs"></i> Tokens for {{ account }}</h2>
+	    {% if request.user.is_staff %} 
+	    <h6><a href="{% url 'pretestapp:pretest_account_report' account.id %}">{{ account.name|slugify }}-pretest-report.xlsx</a></h6>
+	    {% endif %}
 	</div>
 {% endblock page_header %}
 

@@ -14,14 +14,14 @@
 {% block content %}
     <div class="col-md-10 col-md-offset-1">
         <dl class="dl-horizontal">
-        <dt>Token:</dt><dd> {{ object.access_token }}<a href="{% url 'pretestapp:pretest_user_edit' object.id %}" class="btn btn-link">edit</a></dd>
+        <dt>Token:</dt><dd> {{ object.access_token }} <a href="{% url 'pretestapp:pretest_user_edit' object.id %}" class="btn btn-link">edit</a></dd>
         <dt>Pretester:</dt><dd> {{ object.first_name }} {{ object.last_name }}</dd>
         <dt>Email:</dt><dd> {{ object.email }}</dd>
         <dt>Program ID:</dt><dd> {{ object.ggvuser.program_id }}</dd>
         <dt>Date Created:</dt><dd> {{ object.created|date:"Y-M-d" }}</dd>
-        <dt>Pretest Exams:</dt><dd></dd>
+        <dt>Pretest Exams:</dt><dd>
         <ul class="list-inline">{% for i in bundle %}<li><em>{{ i }}{% if not forloop.last %},{% endif %}</em></li>{% endfor %}</ul>
-        </dl>
+        </dd></dl>
     </div>
     
     <div class="col-md-12 col-md-offset-1">

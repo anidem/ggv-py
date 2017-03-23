@@ -5,14 +5,17 @@ from datetime import datetime
 from django.forms import ValidationError
 from django.core.exceptions import PermissionDenied
 from django.shortcuts import render, redirect, get_object_or_404
+from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
 from django.views.generic import View, FormView, TemplateView, CreateView, UpdateView, ListView, DetailView, DeleteView
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.contrib import messages
-from django.http import Http404
+from django.utils.text import slugify
+from django.conf import settings
 
 from braces.views import LoginRequiredMixin
+from openpyxl import Workbook
 
 from lessons.models import Lesson
 from questions.models import QuestionSet
@@ -364,3 +367,33 @@ class PretestUserListView(LoginRequiredMixin, PretestAccountRequiredMixin, Detai
         context['pretest_users'] = context['account'].pretest_user_list()
         context['pretest_accounts'] = self.pretest_accounts
         return context
+
+
+class PretestAccountReportView(LoginRequiredMixin, PretestAccountRequiredMixin, DetailView):
+    model = PretestAccount
+    template_name = "pretest_user_list.html"
+    pretest_accounts = None
+    access_model = PretestAccount
+
+    def render_to_response(self, context, **response_kwargs):
+        account = self.get_object()
+        daystr = datetime.now().strftime('%Y-%m-%d')
+        root_dir = settings.ARCHIVE_DATA_DIR
+        filename = slugify(account.name) + '-pretest-report.xlsx'
+        # path not used for response file object ...
+        path = root_dir + '/' + filename
+        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+        response['Content-Disposition'] = 'attachment; filename=' + filename
+        
+        # Openpyxl writer
+        writer = Workbook()
+        ws = writer.get_active_sheet()
+        ws.title = slugify(account.name)
+        for i in account.tokens.filter(email__isnull=False).order_by('email'):
+            for j in i.pretest_user_completions.all():
+                datarow = [i.program_id, i.email, i.first_name, i.last_name, j.completed_pretest.title, j.get_score()[0]]
+                ws.append(datarow)
+
+        writer.save(response)
+        # response.set_cookie('fileDownload','true');
+        return response

@@ -378,10 +378,10 @@ class PretestAccountReportView(LoginRequiredMixin, PretestAccountRequiredMixin, 
     def render_to_response(self, context, **response_kwargs):
         account = self.get_object()
         daystr = datetime.now().strftime('%Y-%m-%d')
-        root_dir = settings.ARCHIVE_DATA_DIR
+        # root_dir = settings.ARCHIVE_DATA_DIR
         filename = slugify(account.name) + '-pretest-report.xlsx'
         # path not used for response file object ...
-        path = root_dir + '/' + filename
+        # path = root_dir + '/' + filename
         response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
         response['Content-Disposition'] = 'attachment; filename=' + filename
         

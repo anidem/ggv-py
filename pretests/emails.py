@@ -53,7 +53,7 @@ def send_request_to_grade(request, pretest_response_obj=None):
     access_url = reverse('pretests:pretest_response_grade', args=[pretest_response_obj.id], current_app=request.resolver_match.namespace)
     access_url = 'http://' + request.get_host() + access_url
 
-    grader = User.objects.get(pk=1)
+    grader = User.objects.get(pk=settings.GRADER_ID)
     
     msg = 'A pretester is making a grade request.'
     html_message = '<h2>' + msg + '</h2>'

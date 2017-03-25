@@ -1,0 +1,43 @@
+<!-- pretest_language_choice.html -->
+{% extends "pretest_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_header %}
+	<div class="col-md-12 text-center">
+	    <h2>Essay Grading</h2>
+	</div>
+{% endblock page_header %}
+
+{% block content %}
+	<div class="col-md-4">
+		<dl>
+			<dt>Test:</dt> <dd>{{ question.question_set }} </dd>
+			<dt>Original question:</dt>
+			<dd class="">{{ question.display_text|safe }}</dd>
+			<dt>{{ object.pretestuser.email }} ({{ object.pretestuser.access_token }}) wrote:</dt>
+			<dt></dt><dd><h1></h1></dd>
+			<dd class="lead">{{ object.response }}</dd>
+		</dl>
+	</div>
+	<div class="col-md-8">
+		{{ question.display_pdf}}
+		{% if question.display_pdf %}
+			<iframe id="pdf_display" src="{{ question.display_pdf.url|slice:"-3" }}html" class="pdfframe"></iframe>
+			}
+		{% endif %}
+	</div>
+
+	<div class="col-md-4">
+		<dt>Your Assessment</dt>
+		<dd>
+			<form action="" method="post">{% csrf_token %}
+			    {{ form|crispy }}
+			    <button class="btn btn-sm btn-success" type="submit">Submit Score</button>
+			    <a class="" href="{% url 'pretestapp:pretest_account_list' %}">cancel</a>
+			</form>		
+		</dd>	
+	</div>
+{% endblock content %}
+
+

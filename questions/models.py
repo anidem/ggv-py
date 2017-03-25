@@ -163,6 +163,8 @@ class QuestionSet(AbstractActivity):
             if i.response_required and resp:
                 responses['count'] += 1
                 if resp.iscorrect:
+                    if resp.content_object.get_question_type() == 'text':
+                        pass
                     responses['num_correct'] += 1
 
         return responses
@@ -284,6 +286,7 @@ class AbstractQuestion(models.Model):
     display_pdf = models.FileField(null=True, blank=True, upload_to='pdf')
     display_key_file = models.FileField(null=True, blank=True, upload_to='pdf')
     response_required = models.BooleanField(default=True)
+    max_points = models.PositiveIntegerField(default=0)
 
     def get_sequence_url(self, course):
         try:
@@ -346,7 +349,9 @@ class TextQuestion(AbstractQuestion):
     def check_answer(self, question_response):
         if self.correct:  # Check if question has a correct answer specified.
             return question_response.response == self.correct
-        return True  # If correct answer not specified return True
+        elif question_response.score == -1:
+            return False  # score must be assessed. e.g., grading an essay.
+        return True  # score has been assessed. return True
 
     def user_response_object(self, user):
         """
@@ -496,6 +501,7 @@ class QuestionResponse(TimeStampedModel):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     iscorrect = models.BooleanField(blank=True, default=True)
+    score = models.IntegerField(default=0)
 
     def json_response(self):
         try:

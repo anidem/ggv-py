@@ -45,6 +45,7 @@ class PretestAccount(models.Model):
     def __unicode__(self):
         return self.name
 
+
 class PretestUser(TimeStampedModel):
     """
     Models a non authenticated user who is granted access to a pretest worksheet.
@@ -88,6 +89,7 @@ class PretestUser(TimeStampedModel):
     class Meta:
         ordering = ['last_name', 'email']
 
+
 class PretestUserCompletion(TimeStampedModel):
     """Stores when a user begins a worksheet. Instances of this class
     are created when a user begins a test. Because of this, records in this
@@ -119,6 +121,7 @@ class PretestUserCompletion(TimeStampedModel):
     class Meta:
         unique_together = ('pretestuser', 'completed_pretest')
 
+
 class PretestUserAssignment(models.Model):
     """2017-03-02 This is not in use as of yet."""
     pretestuser = models.ForeignKey(PretestUser, related_name='pretest_assignments')
@@ -139,6 +142,7 @@ class PretestQuestionResponse(TimeStampedModel):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
     iscorrect = models.BooleanField(blank=True, default=True)
+    score = models.IntegerField(default=0)
 
     def json_response(self):
         try:
@@ -162,7 +166,7 @@ class PretestQuestionResponse(TimeStampedModel):
             except Exception as e:
                 # print "DUMPING TO JSON==>:", json.dumps(ast.literal_eval(self.response))
                 self.response = json.dumps(ast.literal_eval(self.response)) # previous: json.dumps(self.response)
-            
+    
         self.iscorrect = self.content_object.check_answer(self)
             
         super(PretestQuestionResponse, self).save(*args, **kwargs)   

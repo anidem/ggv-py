@@ -1,5 +1,6 @@
 # emails.py
 from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
+from django.contrib.auth.models import User
 from django.shortcuts import redirect
 from django.urls import reverse
 from django.contrib import messages
@@ -44,4 +45,56 @@ class SendPretestTokenView(LoginRequiredMixin, PretestAccountRequiredMixin, Deta
 
 
 
+def send_request_to_grade(request, pretest_response_obj=None):
 
+    if not pretest_response_obj:
+        return
+
+    access_url = reverse('pretests:pretest_response_grade', args=[pretest_response_obj.id], current_app=request.resolver_match.namespace)
+    access_url = 'http://' + request.get_host() + access_url
+
+    grader = User.objects.get(pk=1)
+    
+    msg = 'A pretester is making a grade request.'
+    html_message = '<h2>' + msg + '</h2>'
+    html_message += "<h2><a href='{0}'>{0}</a></h2>".format(access_url)
+    html_message += "<h2>{0}</h2>".format(pretest_response_obj.get_question_object())
+
+    email = EmailMultiAlternatives(
+        subject='GGV Pretest - Request to Grade',
+        body=html_message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[grader.email,],
+        )
+
+    email.attach_alternative(html_message, "text/html")
+    email.send(fail_silently=True)
+    messages.info(request, 'Your writing response will be graded and scored. Please check back in 48 hours.')
+    return
+
+
+def send_score_notification(request, pretest_response_obj=None):
+
+    if not pretest_response_obj:
+        return
+
+    access_url = reverse('pretests:pretest_home', current_app=request.resolver_match.namespace)
+    access_url = 'http://' + request.get_host() + access_url
+
+    pretest = pretest_response_obj.content_object.question_set
+
+    msg = ' .'
+    html_message = '<h2>Your written response to {0} has been graded.</h2>'.format(pretest)
+    html_message += "<h2>Click here to see your assessed score:<a href='{0}'>{0}</a></h2>".format(access_url)
+    
+    email = EmailMultiAlternatives(
+        subject='GGV Pretest Question Has Been Graded',
+        body=html_message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[pretest_response_obj.pretestuser.email,],
+        )
+
+    email.attach_alternative(html_message, "text/html")
+    email.send(fail_silently=False)
+    messages.info(request, 'Pretest user has been emailed at ' + pretest_response_obj.pretestuser.email + '.')
+    return

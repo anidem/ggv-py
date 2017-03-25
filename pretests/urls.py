@@ -2,7 +2,7 @@
 
 from django.conf.urls import include, url
 
-from .views import PretestHomeView, PretestMenuView, PretestEndView, PretestLogoutView, PretestWorksheetLaunchView, PretestQuestionResponseView, PretestLanguageChoiceUpdateView, PretestUserUpdateView, PretestUserListView, PretestAccountListView, PretestUserDetailView, PretestEndConfirmView, PretestAccountReportView
+from .views import PretestHomeView, PretestMenuView, PretestEndView, PretestLogoutView, PretestWorksheetLaunchView, PretestQuestionResponseView, PretestLanguageChoiceUpdateView, PretestUserUpdateView, PretestUserListView, PretestAccountListView, PretestUserDetailView, PretestEndConfirmView, PretestAccountReportView, PretestResponseGradeView
 from .utils import PretestCreateTokensView, AccessErrorView
 from .emails import SendPretestTokenView
 app_name = 'pretests'
@@ -24,6 +24,6 @@ urlpatterns = [
 	url(r'^done/confirm/(?P<pk>\d+)/$', PretestEndConfirmView.as_view(), name='pretest_confirm_done'),
 	url(r'^done/(?P<pk>\d+)/(?P<user>\d+)/$', PretestEndView.as_view(), name='pretest_done'),
 	url(r'^logout/$', PretestLogoutView.as_view(), name='pretest_logout'),
-
+	url(r'^grade/(?P<pk>\d+)/$', PretestResponseGradeView.as_view(), name='pretest_response_grade'),
 	url(r'^troper/(?P<pk>\d+)/$', PretestAccountReportView.as_view(), name='pretest_account_report'),
 	]

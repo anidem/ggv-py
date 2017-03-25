@@ -80,3 +80,9 @@ class PretestQuestionResponseForm(ModelForm):
             'content_type': forms.HiddenInput(),
             'object_id': forms.HiddenInput()
         }
+
+
+class PretestResponseGradeForm(ModelForm):
+    class Meta:
+        model = PretestQuestionResponse
+        fields = ['score']

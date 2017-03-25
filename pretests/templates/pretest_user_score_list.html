@@ -1,0 +1,28 @@
+<!-- pretest_user_score_list.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>GGV Pretest Scores {{ object }} </title>
+</head>
+
+<body>
+	<table>
+		<thead>
+			<tr>
+				<th>id</th>
+				<th>pretest</th>
+				<th>score</th>
+			</tr>
+		</thead>
+		<tbody>
+		{% for i in scores %}
+			<tr>
+			<td>{{ i.0 }}</td>
+			<td>{{ i.1 }}</td>
+			<td>{{ i.2 }}</td>			
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</body>
+</html>

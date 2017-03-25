@@ -14,16 +14,17 @@ from django.contrib import messages
 from django.utils.text import slugify
 from django.conf import settings
 
-from braces.views import LoginRequiredMixin
+from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 from openpyxl import Workbook
 
 from lessons.models import Lesson
 from questions.models import QuestionSet
 
 from .models import PretestAccount, PretestUser, PretestQuestionResponse, PretestUserCompletion
-from .forms import LoginTokenForm, LanguageChoiceForm, PretestQuestionResponseForm, PretestUserUpdateForm, PretestCompleteConfirmForm
+from .forms import LoginTokenForm, LanguageChoiceForm, PretestQuestionResponseForm, PretestUserUpdateForm, PretestCompleteConfirmForm, PretestResponseGradeForm
 from .mixins import TokenAccessRequiredMixin, PretestQuestionMixin, PretestAccountRequiredMixin
 from .utils import AccessErrorView
+from .emails import send_request_to_grade, send_score_notification
 
 
 class PretestHomeView(FormView):
@@ -156,7 +157,13 @@ class PretestEndView(TokenAccessRequiredMixin, DetailView):
         if completion_obj:
             responses = completion_obj.completed_pretest.get_pretest_user_response_objects(context['pretestuser'])
             context['completion'] = (completion_obj, responses['num_correct'] * 8, responses['responses'])
-       
+        
+        for i in responses['responses']:
+            if i.score == -1:
+                print 'SEND REQUEST TO GRADE'
+
+                send_request_to_grade(self.request, pretest_response_obj=i)
+
         # context['status_obj'] = context['pretestuser'].pretest_user_completions.filter(completed_pretest=self.get_object())
         # context["score"] = [0, 0]
         # for i in context['responses']['responses']:
@@ -257,13 +264,20 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
 
     def form_valid(self, form):
         try:
+            self.object = form.save()
             # strip whitespace from text question responses.
-            if len(form.cleaned_data['response']) > 20:
-                form.response = form.response.strip()
-        except:
+            # if len(form.cleaned_data['response']) > 20:
+            #     form.response = form.response.strip()
+            # print 'SAVING', self.get_object().content_object.get_question_type()
+            if self.object.content_object.get_question_type() == 'text':
+                self.object.score = -1  # indicates response needs to be graded (assigned a score)
+                self.object.iscorrect = False
+
+        except Exception as e:
+            print e
             pass
         
-        self.object = form.save()
+        
         return super(PretestQuestionResponseView, self).form_valid(form)
 
     def get_success_url(self):
@@ -341,6 +355,7 @@ class PretestUserUpdateView(LoginRequiredMixin, PretestAccountRequiredMixin, Upd
 
         return context
 
+
 class PretestAccountListView(LoginRequiredMixin, PretestAccountRequiredMixin, TemplateView):
     template_name = "pretest_account_list.html"
     pretest_accounts = None
@@ -369,31 +384,37 @@ class PretestUserListView(LoginRequiredMixin, PretestAccountRequiredMixin, Detai
         return context
 
 
-class PretestAccountReportView(LoginRequiredMixin, PretestAccountRequiredMixin, DetailView):
+class PretestAccountReportView(DetailView):
     model = PretestAccount
-    template_name = "pretest_user_list.html"
-    pretest_accounts = None
-    access_model = PretestAccount
-
-    def render_to_response(self, context, **response_kwargs):
+    template_name = "pretest_user_score_list.html"
+    
+    def get_context_data(self, **kwargs):
+        context = super(PretestAccountReportView, self).get_context_data(**kwargs)
         account = self.get_object()
-        daystr = datetime.now().strftime('%Y-%m-%d')
-        # root_dir = settings.ARCHIVE_DATA_DIR
-        filename = slugify(account.name) + '-pretest-report.xlsx'
-        # path not used for response file object ...
-        # path = root_dir + '/' + filename
-        response = HttpResponse(content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
-        response['Content-Disposition'] = 'attachment; filename=' + filename
-        
-        # Openpyxl writer
-        writer = Workbook()
-        ws = writer.get_active_sheet()
-        ws.title = slugify(account.name)
+        scores = []
         for i in account.tokens.filter(email__isnull=False).order_by('email'):
             for j in i.pretest_user_completions.all():
-                datarow = [i.program_id, i.email, i.first_name, i.last_name, j.completed_pretest.title, j.get_score()[0]]
-                ws.append(datarow)
+                datarow = [i.program_id, j.completed_pretest.title, j.get_score()[0]]
+                scores.append(datarow)
+        context['scores'] = scores
+        return context
 
-        writer.save(response)
-        # response.set_cookie('fileDownload','true');
-        return response
+class PretestResponseGradeView(LoginRequiredMixin, StaffuserRequiredMixin, UpdateView):
+    model = PretestQuestionResponse
+    template_name = 'pretest_grade_response.html'
+    form_class = PretestResponseGradeForm
+
+    def get_success_url(self):
+        messages.info(self.request, 'Your assessment has been saved.')
+        send_score_notification(self.request, self.get_object())
+        return reverse('pretests:pretest_response_grade', args=[self.get_object().id], current_app=self.request.resolver_match.namespace)
+
+    def get_context_data(self, **kwargs):
+        context = super(PretestResponseGradeView, self).get_context_data(**kwargs)
+        context['question'] =  self.get_object().content_object
+        return context 
+
+
+
+
+

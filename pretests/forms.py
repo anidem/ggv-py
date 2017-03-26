@@ -44,16 +44,17 @@ class PretestUserUpdateForm(ModelForm):
         
     def __init__(self, *args, **kwargs):
         super(PretestUserUpdateForm, self).__init__(*args, **kwargs)
+        self.fields['email'].required = True
         if self.initial['users']:
-            self.fields['account_selector'].choices = [(' ',' ')] + [(i.id, str(i.first_name + ' ' + i.last_name)) for i in self.initial['users']]
-            self.fields['account_selector'].label = 'Choose pretest user from list (optional):'
+            self.fields['account_selector'].choices = [(' ','--')] + [(i.id, str(i.ggvuser.program_id + ' - ' + i.last_name + ', ' + i.first_name + ', ' + i.email)) for i in self.initial['users']]
+            self.fields['account_selector'].label = 'Choose an examinee from a list of users that are part of your organization. (optional):'
         else:
             del self.fields['account_selector']
 
     class Meta:
         model = PretestUser
         fields = ['account_selector', 'email', 'first_name', 'last_name', 'program_id']
-        labels = {'email': 'Enter a valid email address for pretest user.'}
+        labels = {'email': 'Enter a valid email address for a pretest examinee.'}
 
 
 class PretestCompleteConfirmForm(ModelForm):

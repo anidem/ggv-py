@@ -81,17 +81,33 @@ def send_score_notification(request, pretest_response_obj=None):
     access_url = reverse('pretests:pretest_home', current_app=request.resolver_match.namespace)
     access_url = 'http://' + request.get_host() + access_url
 
+    manager_url = reverse('pretests:pretest_user_detail', args=[pretest_response_obj.pretestuser.id], current_app=request.resolver_match.namespace)
+    manager_url = 'http://' + request.get_host() + manager_url
+
     pretest = pretest_response_obj.content_object.question_set
+    pretester = pretest_response_obj.pretestuser.first_name + ' ' + pretest_response_obj.pretestuser.last_name
+    pretest_account =  pretest_response_obj.pretestuser.account
+    score = pretest_response_obj.score
+    if score > 0: score = 'PASSED'
+    else: score = 'DID NOT PASS'
 
     msg = ' .'
-    html_message = '<h2>Your written response to {0} has been graded.</h2>'.format(pretest)
-    html_message += "<h2>Click here to see your assessed score:<a href='{0}'>{0}</a></h2>".format(access_url)
+    html_message = '<p>Hi {1},</p><p>Your written response to {0} has been graded.</p>'.format(pretest, pretester)
+    html_message += '<p>Your written response <strong>{0}</strong>.'.format(score)
+    html_message += "<p>Click link to see your assessed score:<a href='{0}'>{0}</a></p>".format(access_url)
+
+    html_message += "<h3>Are you an account manager?</h3><p>View results here:<a href='{0}'>{0}</a></p>".format(manager_url)
+    
+    if pretest_account.ggv_org:
+        html_message += '<p>Name: {0}</p>'.format(pretester)
+        html_message += '<p>GGV Account: {0}</p>'.format(pretest_account.ggv_org)
+        html_message += '<p>GGV Program ID: {0}</p>'.format(pretest_response_obj.pretestuser.program_id)
     
     email = EmailMultiAlternatives(
-        subject='GGV Pretest Question Has Been Graded',
+        subject=pretester + ' - GGV Pretest Written Response Has Been Graded',
         body=html_message,
         from_email=settings.EMAIL_HOST_USER,
-        to=[pretest_response_obj.pretestuser.email,],
+        to=[pretest_response_obj.pretestuser.email, pretest_account.manager.email],
         )
 
     email.attach_alternative(html_message, "text/html")

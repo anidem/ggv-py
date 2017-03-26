@@ -139,6 +139,13 @@
                                     <i class="fa fa-envelope text-danger"></i> GGV Technical Staff
                                     </a>
                                 </li>
+                                {% if 'instructor' in roles %}
+                                <li>
+                                    <a class="static nav-text" target="_blank" href="/media/pdf/ggv-academic-plan.pdf">
+                                    <i class="fa fa-book"></i> Pretest Placement Help
+                                    </a>
+                                </li>
+                                {% endif %}
                                 {% if 'manage' in roles %}
                                 <li>
                                     <a class="static nav-text" href="#">

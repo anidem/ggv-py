@@ -90,8 +90,8 @@ class PretestLanguageChoiceUpdateView(TokenAccessRequiredMixin, UpdateView):
 class PretestMenuView(TokenAccessRequiredMixin, TemplateView):
     template_name = 'pretest_menu.html'
 
-    """TODO: check for language setting to show form or not."""
     def get(self, request, *args, **kwargs):
+        # reroute to language choice form if language preference is not set
         try:
             if not self.pretestuser.language_pref:
                 return redirect('pretests:pretest_language_choice', pk=self.pretestuser.id)          
@@ -108,9 +108,16 @@ class PretestMenuView(TokenAccessRequiredMixin, TemplateView):
             context['lesson'] = Lesson.objects.get(pk=17)
         
         completions = self.pretestuser.pretest_user_completions.all()
-
-        context['completions'] = [i.completed_pretest.id for i in completions if i.is_expired()]
-        context['incompletions'] = [i.completed_pretest.id for i in completions if not i.is_expired()]
+        context['completions'] = []
+        context['incompletions'] = []
+        for i in completions:
+            if i.is_expired() or i.confirm_completed:
+                context['completions'].append(i.completed_pretest.id)
+            else:
+                context['incompletions'].append(i.completed_pretest.id)
+        
+        # context['completions'] = [i.completed_pretest.id for i in completions if i.is_expired() or i.confirm_completed]
+        # context['incompletions'] = [i.completed_pretest.id for i in completions if not i.is_expired()]
         return context
 
 
@@ -398,6 +405,7 @@ class PretestAccountReportView(DetailView):
                 scores.append(datarow)
         context['scores'] = scores
         return context
+
 
 class PretestResponseGradeView(LoginRequiredMixin, StaffuserRequiredMixin, UpdateView):
     model = PretestQuestionResponse

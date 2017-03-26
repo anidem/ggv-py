@@ -24,9 +24,9 @@
 			{% if forloop.counter == 6 or forloop.counter == 11 or forloop.counter == 16 or forloop.counter == 21 %}<p></p>{% endif %}
 			
 			{% if i.iscorrect %}
-				<li class="label label-success text-center" style="margin: 3px" >{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }} </li> 
+				<li class="label label-success text-center" style="margin: 3px; padding: 10px" ><div class="btn btn-lg">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</div> </li> 
 			{% else %}
-				<li class="label label-danger text-center" style="margin: 3px" >{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }} </li> 
+				<li class="label label-danger text-center" style="margin: 3px; padding: 10px" ><div class="btn btn-lg">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }} </div></li> 
 			{% endif %}	
 
 		{% endfor %}

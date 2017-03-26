@@ -167,8 +167,6 @@ class PretestEndView(TokenAccessRequiredMixin, DetailView):
         
         for i in responses['responses']:
             if i.score == -1:
-                print 'SEND REQUEST TO GRADE'
-
                 send_request_to_grade(self.request, pretest_response_obj=i)
 
         # context['status_obj'] = context['pretestuser'].pretest_user_completions.filter(completed_pretest=self.get_object())

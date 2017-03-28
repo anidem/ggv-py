@@ -24,7 +24,7 @@ from .models import PretestAccount, PretestUser, PretestQuestionResponse, Pretes
 from .forms import LoginTokenForm, LanguageChoiceForm, PretestQuestionResponseForm, PretestUserUpdateForm, PretestCompleteConfirmForm, PretestResponseGradeForm
 from .mixins import TokenAccessRequiredMixin, PretestQuestionMixin, PretestAccountRequiredMixin
 from .utils import AccessErrorView
-from .emails import send_request_to_grade, send_score_notification
+from .emails import send_request_to_grade, send_score_notification, send_completion_notification
 
 
 class PretestHomeView(FormView):
@@ -164,10 +164,15 @@ class PretestEndView(TokenAccessRequiredMixin, DetailView):
         if completion_obj:
             responses = completion_obj.completed_pretest.get_pretest_user_response_objects(context['pretestuser'])
             context['completion'] = (completion_obj, responses['num_correct'] * 8, responses['responses'])
-        
+            
+            graded = True
             for i in responses['responses']:
                 if i and i.score == -1:
+                    graded = False
                     send_request_to_grade(self.request, pretest_response_obj=i)
+
+            if graded:
+                send_completion_notification(self.request, pretest_completion_obj=completion_obj)
 
         # context['status_obj'] = context['pretestuser'].pretest_user_completions.filter(completed_pretest=self.get_object())
         # context["score"] = [0, 0]
@@ -247,7 +252,7 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
         
         # elif self.stack['count'] >= len(self.stack['responses']):
         # request for invalid question so take user to next available question not answered.
-        elif not self.question: 
+        elif not self.question:
             return redirect('pretests:pretest_take', p=self.worksheet.id, q=self.stack['count']+1)
 
         # self.time_remaining = self.worksheet.time_limit*60 - elapsed_time_secs   

@@ -139,11 +139,11 @@
             function clock_tick() {
                 var mins = Math.floor(time_left_in_secs / 60);
                 var secs = time_left_in_secs % 60;
-                if (mins > 0) {
+                if (mins > 10) {
                     mins++;
                     $("#clock").html("Time remaining: " + mins + " minutes");
                 } else {
-                    $("#clock-alert").html(secs + " seconds" );
+                    $("#clock-alert").html(mins + " minutes remaining." );
                     $("#clock").html("");
                 }
                 

@@ -88,7 +88,7 @@ class PretestUser(TimeStampedModel):
         return self.access_token
 
     class Meta:
-        ordering = ['last_name', 'email']
+        ordering = ['last_name']
 
 
 class PretestUserCompletion(TimeStampedModel):

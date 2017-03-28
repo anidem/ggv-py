@@ -46,7 +46,9 @@ class SendPretestTokenView(LoginRequiredMixin, PretestAccountRequiredMixin, Deta
 
 
 def send_request_to_grade(request, pretest_response_obj=None):
-
+    """Sends email to official grader (user pk reads from settings file) to
+    grade a written response to a pretest.
+    """
     if not pretest_response_obj:
         return
 
@@ -55,10 +57,10 @@ def send_request_to_grade(request, pretest_response_obj=None):
 
     grader = User.objects.get(pk=settings.GRADER_ID)
     
-    msg = 'A pretester is making a grade request.'
-    html_message = '<h2>' + msg + '</h2>'
-    html_message += "<h2><a href='{0}'>{0}</a></h2>".format(access_url)
-    html_message += "<h2>{0}</h2>".format(pretest_response_obj.get_question_object())
+    msg = 'A GGV pretester is making a grade request.'
+    html_message = '<p>' + msg + '</p>'
+    html_message += "<p><a href='{0}'>{0}</a></p>".format(access_url)
+    html_message += "<p>{0}</p>".format(pretest_response_obj.get_question_object())
 
     email = EmailMultiAlternatives(
         subject='GGV Pretest - Request to Grade',
@@ -74,15 +76,16 @@ def send_request_to_grade(request, pretest_response_obj=None):
 
 
 def send_score_notification(request, pretest_response_obj=None):
-
+    """Sends two emails:
+    a) to pretest user that a written response has been graded.
+    b) to pretest account manager (associated with pretest user)
+    that assessment of the current pretest exam has been completed.
+    """
     if not pretest_response_obj:
         return
 
     access_url = reverse('pretests:pretest_home', current_app=request.resolver_match.namespace)
     access_url = 'http://' + request.get_host() + access_url
-
-    manager_url = reverse('pretests:pretest_user_detail', args=[pretest_response_obj.pretestuser.id], current_app=request.resolver_match.namespace)
-    manager_url = 'http://' + request.get_host() + manager_url
 
     pretest = pretest_response_obj.content_object.question_set
     pretester = pretest_response_obj.pretestuser.first_name + ' ' + pretest_response_obj.pretestuser.last_name
@@ -107,20 +110,25 @@ def send_score_notification(request, pretest_response_obj=None):
     email.send(fail_silently=False)
     messages.info(request, 'Pretest user has been emailed at ' + pretest_response_obj.pretestuser.email + '.')
 
+    # SEND EMAIL TO MANAGER
+    manager_url = reverse('pretests:pretest_user_detail', args=[pretest_response_obj.pretestuser.id], current_app=request.resolver_match.namespace)
+    manager_url = 'http://' + request.get_host() + manager_url
 
-    html_message = '<p>{0} has completed a pretest: {1}</p>'.format(pretester, pretest)
+    html_message = '<p>{0} has completed a pretest: <strong>{1}</strong></p>'.format(pretester, pretest)
     html_message += "<p>View results here:<a href='{0}'>{0}</a></p>".format(manager_url)
+    html_message += '<h4>Pretest User Info:</h4>'
+    html_message += '<p>Name: {0}</p>'.format(pretester)
+    html_message += '<p>Access Token: {0}</p>'.format(pretest_response_obj.pretestuser.access_token)
+
     if pretest_account.ggv_org:
-        html_message += '<h4>Pretest User Info:</h4>'
-        html_message += '<p>Name: {0}</p>'.format(pretester)
-        html_message += '<p>GGV Account: {0}</p>'.format(pretest_account.ggv_org)
-        html_message += '<p>GGV Program ID: {0}</p>'.format(pretest_response_obj.pretestuser.program_id)
+        html_message += '<p>GGV Interactive Account: {0}</p>'.format(pretest_account.ggv_org)
+        html_message += '<p>GGV Interactive Program ID: {0}</p>'.format(pretest_response_obj.pretestuser.program_id)
 
     email = EmailMultiAlternatives(
         subject=pretester + ' has completed a pretest',
         body=html_message,
         from_email=settings.EMAIL_HOST_USER,
-        to=[pretest_response_obj.pretestuser.email],
+        to=[pretest_account.manager.email],
         )
 
     email.attach_alternative(html_message, "text/html")
@@ -138,10 +146,17 @@ def send_completion_notification(request, pretest_completion_obj=None):
 
     pretest = pretest_completion_obj.completed_pretest
     pretester = pretest_completion_obj.pretestuser.first_name + ' ' + pretest_completion_obj.pretestuser.last_name
-    pretest_account =  pretest_completion_obj.pretestuser.account
+    pretest_account = pretest_completion_obj.pretestuser.account
  
-    html_message = '<p>{0} has completed a pretest: {1}</p>'.format(pretester, pretest)
+    html_message = '<p>{0} has completed a pretest: <strong>{1}</strong></p>'.format(pretester, pretest)
     html_message += "<p>View results here:<a href='{0}'>{0}</a></p>".format(access_url)
+    html_message += '<h4>Pretest User Info:</h4>'
+    html_message += '<p>Name: {0}</p>'.format(pretester)
+    html_message += '<p>Access Token: {0}</p>'.format(pretest_completion_obj.pretestuser.access_token)
+
+    if pretest_account.ggv_org:
+        html_message += '<p>GGV Interactive Account: {0}</p>'.format(pretest_account.ggv_org)
+        html_message += '<p>GGV Interactive Program ID: {0}</p>'.format(pretest_completion_obj.pretestuser.program_id)
           
     email = EmailMultiAlternatives(
         subject=pretester + ' has completed a pretest',

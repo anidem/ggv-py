@@ -14,13 +14,23 @@ class PretestUserAdmin(admin.ModelAdmin):
 
 
 class PretestQuestionResponseAdmin(admin.ModelAdmin):
-    list_display = ('pretestuser', 'response', 'iscorrect',)
-    list_filter = ('pretestuser',)
+    list_display = ('pretestuser', 'pretestuser_name', 'response', 'iscorrect',) 
+    list_filter = ('pretestuser__account', 'pretestuser__last_name', 'pretestuser__email',)
+
+    def pretestuser_name(self, obj):
+        return ("%s %s" % (obj.pretestuser.first_name, obj.pretestuser.last_name))
 
 
 class PretestUserCompletionAdmin(admin.ModelAdmin):
-    list_display = ('created', 'pretestuser', 'completed_pretest',)
-    list_filter = ('completed_pretest', 'pretestuser',)
+    list_display = ('created', 'pretestuser_name', 'pretestuser', 'completed_pretest', 'confirm_completed')
+    list_filter = ('pretestuser__account', ('completed_pretest', admin.RelatedOnlyFieldListFilter), 'pretestuser__last_name',)
+    
+    def pretestuser_name(self, obj):
+        return ("%s %s" % (obj.pretestuser.first_name, obj.pretestuser.last_name))
+
+    def pretest_exams(self, obj):
+        return obj.pretest_completions.all()
+
 
 admin.site.register(PretestAccount, PretestAccountAdmin)
 admin.site.register(PretestUser, PretestUserAdmin)

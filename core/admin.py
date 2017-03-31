@@ -179,6 +179,7 @@ class GGVUserAdmin(admin.ModelAdmin):
 class GGVOrganizationAdmin(admin.ModelAdmin):
     list_display = ('id', 'license_id', 'title', 'user_quota', 'quota_start_date', 'business_contact_email', 'business_contact_phone')
 
+
 admin.site.register(GGVOrganization, GGVOrganizationAdmin)
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
 admin.site.register(CourseLesson, CourseLessonAdmin)

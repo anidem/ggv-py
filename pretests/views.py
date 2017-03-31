@@ -404,7 +404,7 @@ class PretestAccountReportView(DetailView):
         scores = []
         for i in account.tokens.filter(email__isnull=False).order_by('email'):
             for j in i.pretest_user_completions.all():
-                datarow = [i.program_id, j.completed_pretest.title, j.get_score()[0]]
+                datarow = [i.program_id, j.completed_pretest.title, j.get_score()[0], datetime.strftime(j.created, '%Y-%m-%d')]
                 scores.append(datarow)
         context['scores'] = scores
         return context

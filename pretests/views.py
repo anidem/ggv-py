@@ -102,22 +102,21 @@ class PretestMenuView(TokenAccessRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PretestMenuView, self).get_context_data(**kwargs)
+
         if self.pretestuser.language_pref == 'spanish':
-            context['lesson'] = Lesson.objects.get(pk=18)
+            lesson_bundle = Lesson.objects.get(pk=18)
         else:
-            context['lesson'] = Lesson.objects.get(pk=17)
+            lesson_bundle = Lesson.objects.get(pk=17)
         
-        completions = self.pretestuser.pretest_user_completions.all()
-        context['completions'] = []
-        context['incompletions'] = []
-        for i in completions:
+        completion_map = {i: (-2, -2) for i in lesson_bundle.activities()}
+
+        for i in self.pretestuser.pretest_user_completions.filter(completed_pretest__lesson=lesson_bundle):
             if i.is_expired() or i.confirm_completed:
-                context['completions'].append(i.completed_pretest.id)
+                completion_map[i.completed_pretest] = i.get_score()
             else:
-                context['incompletions'].append(i.completed_pretest.id)
-        
-        # context['completions'] = [i.completed_pretest.id for i in completions if i.is_expired() or i.confirm_completed]
-        # context['incompletions'] = [i.completed_pretest.id for i in completions if not i.is_expired()]
+                completion_map[i.completed_pretest] = (-1, -1) # indicates user has started an exam
+
+        context['completions'] = completion_map
         return context
 
 
@@ -167,19 +166,12 @@ class PretestEndView(TokenAccessRequiredMixin, DetailView):
             
             graded = True
             for i in responses['responses']:
-                if i and i.score == -1:
+                if i and i.score == -1:  # indicates a response (essay question) needs to graded.
                     graded = False
                     send_request_to_grade(self.request, pretest_response_obj=i)
 
             if graded:
                 send_completion_notification(self.request, pretest_completion_obj=completion_obj)
-
-        # context['status_obj'] = context['pretestuser'].pretest_user_completions.filter(completed_pretest=self.get_object())
-        # context["score"] = [0, 0]
-        # for i in context['responses']['responses']:
-        #     if i and i.iscorrect:
-        #         context["score"][0] += 8
-        #     context["score"][1] += 8
         
         return context
 

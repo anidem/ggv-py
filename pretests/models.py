@@ -100,6 +100,7 @@ class PretestUserCompletion(TimeStampedModel):
     pretestuser = models.ForeignKey(PretestUser, related_name='pretest_user_completions')
     completed_pretest = models.ForeignKey(QuestionSet, related_name='pretest_completions')
     confirm_completed = models.BooleanField(default=False)
+    notification_sent = models.BooleanField(default=False)
 
     def seconds_since_created(self):
         delta = datetime.now(pytz.utc) - self.created
@@ -144,6 +145,7 @@ class PretestQuestionResponse(TimeStampedModel):
     content_object = GenericForeignKey('content_type', 'object_id')
     iscorrect = models.BooleanField(blank=True, default=True)
     score = models.IntegerField(default=0)
+    grade_request_sent = models.BooleanField(default=False)
 
     def json_response(self):
         try:

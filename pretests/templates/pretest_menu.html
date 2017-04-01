@@ -11,14 +11,17 @@
 {% block content %}
 	<hr>
 	<div class="col-md-6 col-md-offset-3">
-		{% for act in lesson.activities %}
+		{% for pretest, score in completions.items %}
 			<h4>				
 				<i class="fa fa-list-alt fa-2x"></i> 
-				<a class="btn btn-lg btn-link media-heading" href="{% url 'pretestapp:pretest_start' act.id %}">{{ act.title }}</a>
-				{% if act.id in completions %}
-					<i class="fa fa-check fa-2x text-success"></i> <sup class="small">completed</sup>
-				{% elif act.id in incompletions %}
-					<i class="fa fa-check fa-2x text-success"></i> <sup class="small">in progress</sup>
+				<a class="btn btn-lg btn-link media-heading" href="{% url 'pretestapp:pretest_start' pretest.id %}">{{ pretest.title }}</a>
+				
+				{% if score.0 > 0 %}
+					<i class="fa fa-check fa-2x text-success"></i> <span class="small">score (<em>resultado</em>):</span> <span class="label label-success">{{ score.0 }}</span>
+				{% elif score.0 == -1 %}
+					<i class="fa fa-clock-o fa-2x"></i> <span class="small">in progress</span>
+				{% else %}
+					<span class="small text-danger"></span>
 				{% endif%}
 			</h4>
 		{% endfor %}

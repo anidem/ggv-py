@@ -11,7 +11,7 @@ from django.conf import settings
 from braces.views import LoginRequiredMixin
 
 from .mixins import PretestAccountRequiredMixin
-from .models import PretestUser
+from .models import PretestUser, PretestUserCompletion
 
 """PRETEST EMAIL PROCEDURES"""
 class SendPretestTokenView(LoginRequiredMixin, PretestAccountRequiredMixin, DetailView):
@@ -53,6 +53,9 @@ def send_request_to_grade(request, pretest_response_obj=None):
     if not pretest_response_obj:
         return
 
+    if pretest_response_obj.grade_request_sent:
+        return
+
     access_url = reverse('pretests:pretest_response_grade', args=[pretest_response_obj.id], current_app=request.resolver_match.namespace)
     access_url = 'http://' + request.get_host() + access_url
 
@@ -72,9 +75,49 @@ def send_request_to_grade(request, pretest_response_obj=None):
 
     email.attach_alternative(html_message, "text/html")
     email.send(fail_silently=True)
+    pretest_response_obj.grade_request_sent = True
+    pretest_response_obj.save()
     messages.info(request, 'Your writing response will be graded and scored. Please check back in 48 hours. (Su respuesta de escritura será calificada. Por favor, verifique en 48 horas.)' )
     return
 
+
+def send_completion_notification(request, pretest_completion_obj=None):
+    # EMAILS MANAGER
+    if not pretest_completion_obj:
+        return
+
+    if pretest_completion_obj.notification_sent:
+        return 
+
+    access_url = reverse('pretests:pretest_user_detail', args=[pretest_completion_obj.pretestuser.id], current_app=request.resolver_match.namespace)
+    access_url = 'http://' + request.get_host() + access_url
+
+    pretest = pretest_completion_obj.completed_pretest
+    pretester = pretest_completion_obj.pretestuser.first_name + ' ' + pretest_completion_obj.pretestuser.last_name
+    pretest_account = pretest_completion_obj.pretestuser.account
+ 
+    html_message = '<p>{0} has completed a pretest: <strong>{1}</strong></p>'.format(pretester, pretest)
+    html_message += "<p>View results here:<a href='{0}'>{0}</a></p>".format(access_url)
+    html_message += '<h4>Pretest User Info:</h4>'
+    html_message += '<p>Name: {0}</p>'.format(pretester)
+    html_message += '<p>Access Token: {0}</p>'.format(pretest_completion_obj.pretestuser.access_token)
+
+    if pretest_account.ggv_org:
+        html_message += '<p>GGV Interactive Account: {0}</p>'.format(pretest_account.ggv_org)
+        html_message += '<p>GGV Interactive Program ID: {0}</p>'.format(pretest_completion_obj.pretestuser.program_id)
+          
+    email = EmailMultiAlternatives(
+        subject=pretester + ' has completed a pretest',
+        body=html_message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[pretest_account.manager.email],
+        )
+
+    email.attach_alternative(html_message, "text/html")
+    email.send(fail_silently=False)
+    pretest_completion_obj.notification_sent = True
+    pretest_completion_obj.save()
+    return
 
 def send_score_notification(request, pretest_response_obj=None):
     """Sends two emails:
@@ -112,60 +155,11 @@ def send_score_notification(request, pretest_response_obj=None):
     messages.info(request, 'Pretest user has been emailed at ' + pretest_response_obj.pretestuser.email + '.')
 
     # SEND EMAIL TO MANAGER
-    manager_url = reverse('pretests:pretest_user_detail', args=[pretest_response_obj.pretestuser.id], current_app=request.resolver_match.namespace)
-    manager_url = 'http://' + request.get_host() + manager_url
-
-    html_message = '<p>{0} has completed a pretest: <strong>{1}</strong></p>'.format(pretester, pretest)
-    html_message += "<p>View results here:<a href='{0}'>{0}</a></p>".format(manager_url)
-    html_message += '<h4>Pretest User Info:</h4>'
-    html_message += '<p>Name: {0}</p>'.format(pretester)
-    html_message += '<p>Access Token: {0}</p>'.format(pretest_response_obj.pretestuser.access_token)
-
-    if pretest_account.ggv_org:
-        html_message += '<p>GGV Interactive Account: {0}</p>'.format(pretest_account.ggv_org)
-        html_message += '<p>GGV Interactive Program ID: {0}</p>'.format(pretest_response_obj.pretestuser.program_id)
-
-    email = EmailMultiAlternatives(
-        subject=pretester + ' has completed a pretest',
-        body=html_message,
-        from_email=settings.EMAIL_HOST_USER,
-        to=[pretest_account.manager.email],
-        )
-
-    email.attach_alternative(html_message, "text/html")
-    email.send(fail_silently=False)
+    try:
+        pretest_completion_obj = PretestUserCompletion.objects.filter(pretestuser=pretest_response_obj.pretestuser).get(completed_pretest=pretest)
+        send_completion_notification(request, pretest_completion_obj)
+    except Exception as e:
+        pass        
 
     return
 
-def send_completion_notification(request, pretest_completion_obj=None):
-
-    if not pretest_completion_obj:
-        return
-
-    access_url = reverse('pretests:pretest_user_detail', args=[pretest_completion_obj.pretestuser.id], current_app=request.resolver_match.namespace)
-    access_url = 'http://' + request.get_host() + access_url
-
-    pretest = pretest_completion_obj.completed_pretest
-    pretester = pretest_completion_obj.pretestuser.first_name + ' ' + pretest_completion_obj.pretestuser.last_name
-    pretest_account = pretest_completion_obj.pretestuser.account
- 
-    html_message = '<p>{0} has completed a pretest: <strong>{1}</strong></p>'.format(pretester, pretest)
-    html_message += "<p>View results here:<a href='{0}'>{0}</a></p>".format(access_url)
-    html_message += '<h4>Pretest User Info:</h4>'
-    html_message += '<p>Name: {0}</p>'.format(pretester)
-    html_message += '<p>Access Token: {0}</p>'.format(pretest_completion_obj.pretestuser.access_token)
-
-    if pretest_account.ggv_org:
-        html_message += '<p>GGV Interactive Account: {0}</p>'.format(pretest_account.ggv_org)
-        html_message += '<p>GGV Interactive Program ID: {0}</p>'.format(pretest_completion_obj.pretestuser.program_id)
-          
-    email = EmailMultiAlternatives(
-        subject=pretester + ' has completed a pretest',
-        body=html_message,
-        from_email=settings.EMAIL_HOST_USER,
-        to=[pretest_account.manager.email],
-        )
-
-    email.attach_alternative(html_message, "text/html")
-    email.send(fail_silently=False)
-    return

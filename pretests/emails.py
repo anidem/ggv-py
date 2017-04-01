@@ -1,3 +1,4 @@
+# This Python file uses the following encoding: utf-8
 # emails.py
 from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
 from django.contrib.auth.models import User
@@ -71,7 +72,7 @@ def send_request_to_grade(request, pretest_response_obj=None):
 
     email.attach_alternative(html_message, "text/html")
     email.send(fail_silently=True)
-    messages.info(request, 'Your writing response will be graded and scored. Please check back in 48 hours.')
+    messages.info(request, 'Your writing response will be graded and scored. Please check back in 48 hours. (Su respuesta de escritura será calificada. Por favor, verifique en 48 horas.)' )
     return
 
 

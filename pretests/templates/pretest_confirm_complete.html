@@ -11,25 +11,37 @@
 {% endblock page_header %}
 
 {% block content %}
-	<div class="col-md-8 col-md-offset-2">
+	<div class="col-md-8 col-md-offset-2"> <span class=""></span>
 		
-		<h3>Need to review?</h3>
-		<h4 class="well text-default">You can review your responses before final submission. Click on a question number below to review and/or edit your response to that question.</h4>
+		<h3><strong>Need to review? ( <em>¿Necesitas revisar?</em> )</strong></h3>
+		<h4 class="well text-default">
+		You can review your responses before final submission. Click on a question number below to review and/or edit your response to that question. 
+		<p></p>
+		<p><em>Puede revisar su respuestas antes de su envío final. Haga clic en un el número de pregunta a continuación para revisar o editar su respuesta a esa pregunta.</em></p>
+		</h4>
+		
         <ul class="list-unstyled text-center">
         {% for i in questions %}
-	        {% if forloop.counter == 6 or forloop.counter == 11 or forloop.counter == 16 or forloop.counter == 21 %}<p></p>{% endif %}
-	        <li class="btn btn-link text-center" style="margin: 3px" >
-	        	<a href="{% url 'pretestapp:pretest_take' i.question_set.id forloop.counter %}">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</a></li>
+	        
+	        <li class="btn btn-link btn-xs text-center" style="margin: 2px" >
+	        	<a href="{% url 'pretestapp:pretest_take' i.question_set.id forloop.counter %}">{{ forloop.counter }}</a></li>
         {% endfor %}
         </ul>
 
         <h1 class="text-center"></h1>
 
-        <h3>Ready to finalize?</h3>
-		<h4 class="well text-danger">Click the button below to <strong>finalize</strong> your responses and view your score. Clicking the button below confirms your choice to make your responses <strong>final</strong>. You cannot return to review or edit your responses after this selection.</h4>
+        <h3><strong>Ready to Finish? ( <em>¿Listo para terminar?</em> )</strong></h3>
+		<h4 class="well text-danger">
+		Click the button below to <strong>finalize</strong> your responses and view your score. Clicking the button below confirms your choice to make your responses <strong>final</strong>. You cannot return to review or edit your responses after this selection.
+		<p></p>
+		<p><em>Haga clic en el botón de abajo para finalizar su respuestas y ver su calificaciones. Haciendo clic en el botón debajo confirma su opción para hacer su respuestas finales. No puede volver a revisar o editar sus respuestas después de esta selección.</em></p>
+		</h4>
 		<form class="text-center" method="post" action=".">{% csrf_token %}
             {{ form|crispy }}
-            <button class="btn btn-lg btn-success" type="submit">Finalize Responses and View My Score </button>
+            <button class="btn btn-lg btn-success" type="submit">
+            	Finalize Responses and View My Score <br>
+            	<em>Finalizar las Respuestas y Ver Mis Calificaciones.</em>
+            </button>
         </form>
         
 	</div>

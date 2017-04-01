@@ -5,31 +5,35 @@
 	<div class="col-md-12 text-center">
 	    <h2>{{ object.title }} Results </h2>
 	    
-	    <h4><a href="{% url 'pretestapp:pretest_menu' %}">Back to more tests?</a></h4>
+	    <h4><a href="{% url 'pretestapp:pretest_menu' %}">Back to more tests? (¿Volver a más pruebas?)</a></h4>
 	</div>
 {% endblock page_header %}
 
 {% block content %}
+
 	<div class="col-md-10 col-md-offset-1">
-		<p>User: {{ pretestuser.first_name }} {{ pretestuser.last_name }}</p>
-		<p>Token: {{ pretestuser.access_token }}</p>
+		<p>Name (<em>Nombre</em>): {{ pretestuser.first_name }} {{ pretestuser.last_name }}</p>
+		<p>Token (<em>Ficha</em>): {{ pretestuser.access_token }}</p>
 		<p>Email: {{ pretestuser.email }}</p>
-		<p>Started: {{ completion.0.created|date:"Y-M-d" }}</p>
-		<p>Test: {{ object.title }}</p>
-		<h3>Score: {{ completion.1 }}</h3>
+		<p>Started (<em>Comenzar</em>): {{ completion.0.created|date:"Y-M-d" }}</p>
+		<p>Test (<em>Examen</em>): {{ object.title }}</p>
+		<h3>Result (<em>Resultados</em>): {{ completion.1 }}</h3>
 	</div>
+	<div class="col-md-10 col-md-offset-1"><hr></div>
 	<div class="col-md-10 col-md-offset-1"> 
-	<ul>
+	
+	<ul class="list-unstyled">
 		{% for i in completion.2 %}
-			{% if forloop.counter == 6 or forloop.counter == 11 or forloop.counter == 16 or forloop.counter == 21 %}<p></p>{% endif %}
+			{% if forloop.counter == 6 or forloop.counter == 11 or forloop.counter == 16 or forloop.counter == 21 %}<li><p style="margin: 10px">&nbsp;</p><p></p></li>{% endif %}
 			
 			{% if i.iscorrect %}
-				<li class="label label-success text-center" style="margin: 3px; padding: 10px" ><div class="btn btn-lg">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</div> </li> 
+				<li class="label label-success" style="margin: 3px; padding: 10px; font-size: 1.0em">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</li> 
 			{% else %}
-				<li class="label label-danger text-center" style="margin: 3px; padding: 10px" ><div class="btn btn-lg">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }} </div></li> 
+				<li class="label label-danger" style="margin: 3px; padding: 10px; font-size: 1.0em">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</li> 
 			{% endif %}	
 
 		{% endfor %}
 		</ul>	
-	</div>	
+	</div>
+
 {% endblock content %}

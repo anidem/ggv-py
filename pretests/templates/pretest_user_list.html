@@ -17,6 +17,7 @@
   			<table class="table table-condensed">
   				<thead>
   					<tr>
+  						<th>modified on</th>
   						<th>status</th>
   						<th>id</th>
   						<th>email</th>
@@ -30,6 +31,7 @@
   				<tbody>
 				{% for i in pretest_users %}
 					<tr>
+					<td>{{ i.0.modified|date:"Y-M-d" }}</td>
 					<td>
 					{% if i.1 > 0%}
 						<span class="label label-danger">{{ i.1 }}</span>

@@ -74,8 +74,7 @@
                                 <button class="btn btn-sm btn-success"><i class="fa fa-caret-left"></i> {{ course }} Curriculum Page </button> 
                               </a>
                             </li>
-                          {% endif %}
-                        
+                          {% endif %}                       
                         {% endif %}
                     {% endif %}
                 </ul>
@@ -129,14 +128,14 @@
                                 {% if course and 'access' in roles %}
                                   <li>
                                       <a class="static nav-text" href="{% url 'email_instructor' course.slug %}?q={{request.path}}">
-                                      <i class="fa fa-envelope text-warning"></i> Instructor
+                                      <i class="fa fa-envelope text-warning"></i> Email Instructor
                                       </a>
                                   </li>
                                   <li role="separator" class="divider"></li>
                                 {% endif %}
                                 <li>
                                     <a class="static nav-text" href="{% url 'email_staff' %}?q={{request.path}}">
-                                    <i class="fa fa-envelope text-danger"></i> GGV Technical Staff
+                                    <i class="fa fa-envelope text-danger"></i> Email GGV Technical Staff
                                     </a>
                                 </li>
                                 {% if 'instructor' in roles or 'manage' in roles %}

@@ -19,7 +19,12 @@
 		<p>Test (<em>Examen</em>): {{ object.title }}</p>
 		<h3>Result (<em>Resultados</em>): {{ completion.1 }}</h3>
 	</div>
-	<div class="col-md-10 col-md-offset-1"><hr></div>
+	<div class="col-md-10 col-md-offset-1 small">
+		<span class="label label-success">correct</span> 
+		<span class="label label-warning">grade pending</span> 
+		<span class="label label-danger">incorrect</span>
+		<hr>
+	</div>
 	<div class="col-md-10 col-md-offset-1"> 
 	
 	<ul class="list-unstyled">
@@ -28,6 +33,8 @@
 			
 			{% if i.iscorrect %}
 				<li class="label label-success" style="margin: 3px; padding: 10px; font-size: 1.0em">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</li> 
+			{% elif i.score == -1 %}
+				<li class="label label-warning" style="margin: 3px; padding: 10px; font-size: 1.0em" title="grade for this question is pending">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</li> 
 			{% else %}
 				<li class="label label-danger" style="margin: 3px; padding: 10px; font-size: 1.0em">{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }}</li> 
 			{% endif %}	

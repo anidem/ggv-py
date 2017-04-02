@@ -272,11 +272,11 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             'course'].instructor_list() or self.request.user.is_staff
 
         if self.worksheet.lesson.id == 1:   # English math lesson.
-            context['calculator'] = settings.MEDIA_URL + 'img/eng/ti-30xs-calculator-english.pdf'
-            context['formula'] = settings.MEDIA_URL + 'pdf/eng-formula-page.pdf'
+            context['calculator'] = settings.MEDIA_URL + 'pdf/0-calculator-eng.pdf'
+            context['formula'] = settings.MEDIA_URL + 'pdf/0_A-GGV_Formula_Sheet_Eng.pdf'
         elif self.worksheet.lesson.id == 5:  # Spanish math lesson
-            context['calculator'] = settings.MEDIA_URL + 'img/eng/ti-30xs-calculator-english.pdf'
-            context['formula'] = settings.MEDIA_URL + 'pdf/span-formula-page.pdf'
+            context['calculator'] = settings.MEDIA_URL + 'pdf/0-calculator-spn.pdf'
+            context['formula'] = settings.MEDIA_URL + 'pdf/0_A-GGV_Formula_Sheet_Spn.pdf'
 
         return context
 

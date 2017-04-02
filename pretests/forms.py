@@ -54,7 +54,7 @@ class PretestUserUpdateForm(ModelForm):
     class Meta:
         model = PretestUser
         fields = ['account_selector', 'email', 'first_name', 'last_name', 'program_id']
-        labels = {'email': 'Enter a valid email address for a pretest examinee.'}
+        labels = {'email': 'Enter a valid email address for a pretest examinee.', 'program_id': 'Program ID (optional)'}
 
 
 class PretestCompleteConfirmForm(ModelForm):

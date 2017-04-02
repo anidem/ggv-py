@@ -11,9 +11,9 @@
 {% endblock page_header %}
 
 {% block content %}
-	<div class="col-md-8 col-md-offset-2"> <span class=""></span>
+	<div class="col-md-6"> <span class=""></span>
 		
-		<h3><strong>Need to review? ( <em>¿Necesitas revisar?</em> )</strong></h3>
+		<h3 class="text-center"><strong>Need to review? ( <em>¿Necesitas revisar?</em> )</strong></h3>
 		<h4 class="well text-default">
 		You can review your responses before final submission. Click on a question number below to review and/or edit your response to that question. 
 		<p></p>
@@ -23,14 +23,16 @@
         <ul class="list-unstyled text-center">
         {% for i in questions %}
 	        
-	        <li class="btn btn-link btn-xs text-center" style="margin: 2px" >
-	        	<a href="{% url 'pretestapp:pretest_take' i.question_set.id forloop.counter %}">{{ forloop.counter }}</a></li>
+	        <li class="btn btn-link btn-lg text-center" style="margin: 2px" >
+	        	<a href="{% url 'pretestapp:pretest_take' i.question_set.id forloop.counter %}">{{ forloop.counter }} {% if i.id in flags %}<sup><i class="fa fa-flag flagger bkset"></i></sup>{% endif %}</a>
+	        	
+	        </li>
         {% endfor %}
         </ul>
-
-        <h1 class="text-center"></h1>
-
-        <h3><strong>Ready to Finish? ( <em>¿Listo para terminar?</em> )</strong></h3>
+    </div>
+    <div class="col-md-6">
+      
+        <h3 class="text-center"><strong>Ready to Finish? ( <em>¿Listo para terminar?</em> )</strong></h3>
 		<h4 class="well text-danger">
 		Click the button below to <strong>finalize</strong> your responses and view your score. Clicking the button below confirms your choice to make your responses <strong>final</strong>. You cannot return to review or edit your responses after this selection.
 		<p></p>

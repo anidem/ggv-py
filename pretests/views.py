@@ -14,7 +14,7 @@ from django.contrib import messages
 from django.utils.text import slugify
 from django.conf import settings
 
-from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
+from braces.views import LoginRequiredMixin, StaffuserRequiredMixin, JSONResponseMixin, AjaxResponseMixin
 from openpyxl import Workbook
 
 from lessons.models import Lesson
@@ -45,6 +45,8 @@ class PretestHomeView(FormView):
         # set up a session variable for the user. will need more sophistication here.
         # add token, add timestamp, add email???
         self.request.session['pretester_token'] = form.cleaned_data['token']
+        # set up a session variable for flagged questions.
+        self.request.session['flags'] = {}
 
         return super(PretestHomeView, self).form_valid(form)
 
@@ -144,6 +146,7 @@ class PretestEndConfirmView(TokenAccessRequiredMixin, UpdateView):
     def get_context_data(self, **kwargs):
         context = super(PretestEndConfirmView, self).get_context_data(**kwargs)
         context['questions'] = self.get_object().completed_pretest.get_ordered_question_list()
+        context['flags'] = [int(i) for i in self.request.session['flags'].keys()]
         return context
 
 
@@ -161,6 +164,10 @@ class PretestEndView(TokenAccessRequiredMixin, DetailView):
         completion_obj = context['pretestuser'].pretest_user_completions.get(completed_pretest=self.get_object())
         
         if completion_obj:
+            if not completion_obj.confirm_completed:
+                completion_obj.confirm_completed = True
+                completion_obj.save()
+
             responses = completion_obj.completed_pretest.get_pretest_user_response_objects(context['pretestuser'])
             context['completion'] = (completion_obj, responses['num_correct'] * 8, responses['responses'])
             
@@ -220,20 +227,6 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
                 return redirect('pretests:pretest_done', pk=self.worksheet.id, user=self.pretestuser.id)
             return super(PretestQuestionResponseView, self).get(request, *args, **kwargs)            
         
-        # try:
-        #     status_obj = self.pretestuser.pretest_user_completions.get(completed_pretest=self.worksheet)          
-        #     elapsed_time_secs = status_obj.seconds_since_created()
-        
-        # #  create a new completion record. user must be beginning the test
-        # except PretestUserCompletion.DoesNotExist:  
-        #     status_obj = PretestUserCompletion(pretestuser=self.pretestuser, completed_pretest=self.worksheet)
-        #     status_obj.save()
-        #     elapsed_time_secs = 0
-
-        # #  completion record indicates that user has exceeded the time limit. show results page.
-        # if elapsed_time_secs > self.worksheet.time_limit * 60: 
-        #         return redirect('pretests:pretest_done', pk=self.worksheet.id, user=self.pretestuser.id)   
-        
         # user has already confirmed completed pretest.
         if self.status_obj.confirm_completed:
             return redirect('pretests:pretest_done', pk=self.worksheet.id, user=self.pretestuser.id)
@@ -260,25 +253,17 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
         initial['content_type'] = self.question['question'].get_django_content_type()
         initial['object_id'] = self.question['question'].id
         initial['question'] = self.question['question']
-
-
         return initial
 
     def form_valid(self, form):
         try:
             self.object = form.save()
-            # strip whitespace from text question responses.
-            # if len(form.cleaned_data['response']) > 20:
-            #     form.response = form.response.strip()
-            # print 'SAVING', self.get_object().content_object.get_question_type()
             if self.object.content_object.get_question_type() == 'text':
                 self.object.score = -1  # indicates response needs to be graded (assigned a score)
                 self.object.iscorrect = False
 
         except Exception as e:
-            print e
-            pass
-        
+            pass    
         
         return super(PretestQuestionResponseView, self).form_valid(form)
 
@@ -296,12 +281,43 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
         context['response_count'] = self.stack['count']
         context['time_remaining'] = self.time_remaining
         context['pretestuser'] = self.pretestuser
+        
         if self.stack['count'] >= len(self.stack['responses']):
             context['status'] = self.status_obj
-        
+
+        if self.worksheet.id == 150 and context['question_position'] > 7:   # English pretest math.
+            context['calculator'] = settings.MEDIA_URL + 'pdf/0-calculator-eng.pdf'
+            context['formula'] = settings.MEDIA_URL + 'pdf/0_A-GGV_Formula_Sheet_Eng.pdf'
+        elif self.worksheet.id == 154 and context['question_position'] > 7:  # Spanish pretest math.
+            context['calculator'] = settings.MEDIA_URL + 'pdf/0-calculator-spn.pdf'
+            context['formula'] = settings.MEDIA_URL + 'pdf/0_A-GGV_Formula_Sheet_Spn.pdf'
+
+        try:
+            flags = self.request.session['flags']
+            context['flag'] = flags[str(self.question['question'].id)]  
+        except:
+            pass
+      
         # datetime.strftime(time_started, '%Y-%m-%d %H:%M:%S') maybe useful later.
 
         return context
+
+
+class PretestToggleFlagView(TokenAccessRequiredMixin, JSONResponseMixin, AjaxResponseMixin, View):
+
+    def post_ajax(self, request, *args, **kwargs):
+        data = {}
+        try:
+            question = request.POST.get('flagged')
+            del self.request.session['flags'][question]
+            self.request.session.save()
+
+        except Exception as e:
+            question = request.POST.get('flagged')
+            self.request.session['flags'][question] = True
+            self.request.session.save()            
+
+        return self.render_json_response(data)
 
 
 ###############################################################################
@@ -364,7 +380,7 @@ class PretestAccountListView(LoginRequiredMixin, PretestAccountRequiredMixin, Te
     access_model = User
 
     def get_context_data(self, **kwargs):
-        context = super(PretestAccountListView, self).get_context_data(**kwargs)        
+        context = super(PretestAccountListView, self).get_context_data(**kwargs)
         context['pretest_accounts'] = self.pretest_accounts
         return context
 

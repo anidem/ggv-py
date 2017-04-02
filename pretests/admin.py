@@ -28,9 +28,6 @@ class PretestUserCompletionAdmin(admin.ModelAdmin):
     def pretestuser_name(self, obj):
         return ("%s %s" % (obj.pretestuser.first_name, obj.pretestuser.last_name))
 
-    def pretest_exams(self, obj):
-        return obj.pretest_completions.all()
-
 
 admin.site.register(PretestAccount, PretestAccountAdmin)
 admin.site.register(PretestUser, PretestUserAdmin)

@@ -86,6 +86,10 @@
                             {% for i in pretest_accounts %}
                               <li><a href="{%url 'pretestapp:pretest_user_list' i.id %}"><i class="fa fa-gear"></i> {{ i }}</a></li>
                             {% endfor %}
+
+                            <li role="separator" class="divider"></li>
+                            <li><a href="{% url 'ggvhome' %}"><i class="fa fa-home"></i> GGV Curriculum </a></li>
+
                             <li role="separator" class="divider"></li>
                             <li><a href="{% url 'logout' %}"><i class="fa fa-sign-out"></i> Logout {{ request.user }}</a></li>
                           </ul>

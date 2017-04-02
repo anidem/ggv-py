@@ -35,7 +35,7 @@ class PretestAccount(models.Model):
         """Returns a list of tuples (pretest user account object and number of exams they have started)
         """
         users = []
-        for i in self.tokens.all():
+        for i in self.tokens.all().order_by('-modified'):
             users.append((i, i.completion_status().count()))
         return users 
     

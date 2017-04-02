@@ -23,26 +23,32 @@
         <ul class="list-inline">{% for i in bundle %}<li><em>{{ i }}{% if not forloop.last %},{% endif %}</em></li>{% endfor %}</ul>
         </dd></dl>
     </div>
-    
-    <div class="col-md-12 col-md-offset-1">
+
+    <div class="col-md-10 col-md-offset-1">
         <h4>Current Available Scores <small>({{ completions|length }} of {{ bundle|length }} exams have been attempted.)</small> </h4>
+        <p>
+            <span class="label label-success">correct</span> 
+            <span class="label label-warning">grade pending</span> 
+            <span class="label label-danger">incorrect</span>
+        </p>
         {% for i in completions %}
             <dt>
                 <i class="fa fa-list-alt"></i> {{ i.0.completed_pretest }}: <strong>{{ i.1 }}</strong>
-            
+            <dd>
             <ul>
             {% for j in i.2 %}
                 {% if forloop.counter == 6 or forloop.counter == 11 or forloop.counter == 16 or forloop.counter == 21 %}<p></p>{% endif %}
-                
                 {% if j.iscorrect %}
                     <li class="label label-success text-center" style="margin: 3px" >{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }} </li> 
+                {% elif i.score == -1 %}
+                    <li class="label label-warning text-center" style="margin: 3px" >{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }} </li>
                 {% else %}
                     <li class="label label-danger text-center" style="margin: 3px" >{% if forloop.counter < 10 %}0{% endif %}{{ forloop.counter }} </li> 
                 {% endif %} 
             
             {% endfor %}
             </ul>
-            </p>
+            </dd>
         {% endfor %}
             
         

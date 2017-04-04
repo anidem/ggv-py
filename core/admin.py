@@ -179,6 +179,9 @@ class GGVUserAdmin(admin.ModelAdmin):
 class GGVOrganizationAdmin(admin.ModelAdmin):
     list_display = ('id', 'license_id', 'title', 'user_quota', 'quota_start_date', 'business_contact_email', 'business_contact_phone')
 
+class QuestionResponseAdmin(admin.ModelAdmin):
+    list_display = ('id', 'response', 'modified')
+    list_filter = ('user__email',)
 
 admin.site.register(GGVOrganization, GGVOrganizationAdmin)
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
@@ -191,7 +194,7 @@ admin.site.register(SlideStack, SlideStackAdmin)
 admin.site.register(QuestionSet, QuestionSetAdmin, Media=ExtraMedia)
 admin.site.register(OptionQuestion, OptionQuestionAdmin, Media=ExtraMedia)
 admin.site.register(TextQuestion, TextQuestionAdmin, Media=ExtraMedia)
-admin.site.register(QuestionResponse)
+admin.site.register(QuestionResponse, QuestionResponseAdmin)
 admin.site.register(ExternalMedia)
 admin.site.register(UserWorksheetStatus)
 admin.site.register(ActivityLog, ActivityLogAdmin)

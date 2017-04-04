@@ -349,11 +349,13 @@ class TextQuestion(AbstractQuestion):
     def check_answer(self, question_response):
         if self.correct:  # Check if question has a correct answer specified.
             return question_response.response == self.correct
-        elif question_response.score < 0:
-            return False  # score must be assessed. response needs to be graded.
-        elif question_response.score > 0:
-            return True  # score indicates that it is graded so is correct
-        return False  # score has been assessed a score of 0. so is NOT correct
+        if self.id in [1022, 1023, 1024, 1025]:  # checking if text question is a pretest question.
+            if question_response.score < 0:
+                return False  # score must be assessed. response needs to be graded.
+            elif question_response.score > 0:
+                return True  # score indicates that it is graded > 0 so is correct
+            return False  # score has been assessed a score of 0. so is NOT correct
+        return True
 
     def user_response_object(self, user):
         """

@@ -235,12 +235,9 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
         elif self.req_question+1 > self.worksheet.get_num_questions():
             return redirect('pretests:pretest_confirm_done', pk=self.status_obj.id)
         
-        # elif self.stack['count'] >= len(self.stack['responses']):
         # request for invalid question so take user to next available question not answered.
         elif not self.question:
             return redirect('pretests:pretest_take', p=self.worksheet.id, q=self.stack['count']+1)
-
-        # self.time_remaining = self.worksheet.time_limit*60 - elapsed_time_secs   
 
         return super(PretestQuestionResponseView, self).get(request, *args, **kwargs)
 
@@ -256,14 +253,12 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
         return initial
 
     def form_valid(self, form):
-        try:
-            self.object = form.save()
-            if self.object.content_object.get_question_type() == 'text':
-                self.object.score = -1  # indicates response needs to be graded (assigned a score)
-                self.object.iscorrect = False
-
+        try:            
+            if form.instance.content_object.get_question_type() == 'text':
+                form.instance.score = -1  # indicates response needs to be graded (assigned a score)
+                form.instance.iscorrect = False
         except Exception as e:
-            pass    
+            pass  
         
         return super(PretestQuestionResponseView, self).form_valid(form)
 

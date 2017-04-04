@@ -162,16 +162,8 @@ class PretestQuestionResponse(TimeStampedModel):
         E.g., json.loads(response) See: self.json_response() method.
 
         Every save operation will update the iscorrect field.
-        """
-        if self.content_object.get_question_type() == 'option' and self.content_object.input_select == 'checkbox':
-            try:  # verify that response is not already encoded in json
-                json.loads(self.response)
-            except Exception as e:
-                # print "DUMPING TO JSON==>:", json.dumps(ast.literal_eval(self.response))
-                self.response = json.dumps(ast.literal_eval(self.response)) # previous: json.dumps(self.response)
-    
-        self.iscorrect = self.content_object.check_answer(self)
-            
+        """   
+        self.iscorrect = self.content_object.check_answer(self)           
         super(PretestQuestionResponse, self).save(*args, **kwargs)   
 
     # Fix this to construct arguments relative to question sequence object

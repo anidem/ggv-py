@@ -180,8 +180,8 @@ class GGVOrganizationAdmin(admin.ModelAdmin):
     list_display = ('id', 'license_id', 'title', 'user_quota', 'quota_start_date', 'business_contact_email', 'business_contact_phone')
 
 class QuestionResponseAdmin(admin.ModelAdmin):
-    list_display = ('id', 'response', 'modified')
-    list_filter = ('user__email',)
+    list_display = ('user', 'response', 'modified', 'content_type', 'object_id', 'iscorrect')
+    list_filter = ('user__email', 'content_type')
 
 admin.site.register(GGVOrganization, GGVOrganizationAdmin)
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)

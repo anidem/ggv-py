@@ -197,7 +197,8 @@ class ActivityLog(models.Model):
 
             except Exception as exp:
                 if self.action == 'completed-worksheet':
-                    e['report_url'] = reverse('worksheet_user_report', args=[course.slug, worksheet.id, self.user.id])    
+                    e['report_url'] = reverse('worksheet_user_report', args=[course.slug, worksheet.id, self.user.id])
+                    e['module'] = worksheet.section   
                 pass  # malformed log message or non-existent objects -- proceed silently...
 
         elif self.action == 'access-presentation':

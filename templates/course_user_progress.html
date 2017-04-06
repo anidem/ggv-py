@@ -60,7 +60,8 @@
                 <div class="col-xs-2">Date/Time <sup><small>MST</small></sup></div>
                 <div class="col-xs-2">Subject</div>
                 <div class="col-xs-1">Activity</div>
-                <div class="col-xs-6">Content</div>
+                <div class="col-xs-1">Module</div>
+                <div class="col-xs-5">Content</div>
                 <div class="col-xs-1">Current Score</div>
             </div>
             {% for j in v.2 %}
@@ -78,10 +79,11 @@
                         
                         <div class="col-xs-1">completed</div>
                         
+                        <div class="col-xs-1">{{j.event_target.section}}</div>
 
-                        <div class="col-xs-6">
+                        <div class="col-xs-5">
                                 <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
-                                {{j.event_target }} {% if j.activity.action == 'completed-worksheet' %}<a href="{{ j.report_url }}">(view report) {% endif %}</a>
+                                 {{j.event_target }} {% if j.activity.action == 'completed-worksheet' %}<a href="{{ j.report_url }}">(view report) {% endif %}</a>
                         </div>
 
                         <div class="col-xs-1">
@@ -110,8 +112,8 @@
                         {% else %}
                             <div class="col-xs-1">&nbsp;</div>
                         {% endif %}
-
-                        <div class="col-xs-6">
+                        <div class="col-xs-1">{{j.event_target.section}}</div>
+                        <div class="col-xs-5">
                             {% if j.activity.action == 'completed-worksheet' or j.activity.action == 'access-worksheet'%}
                                 <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
                                 {{j.event_target }}

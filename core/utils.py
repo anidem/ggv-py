@@ -277,6 +277,52 @@ def elapsed_daily_activity(user=None):
 
     return log
 
+def elapsed_time_per_event(user=None):
+    activity = user.activitylog.all()
+    log = []
+    subject_time = {}
+
+    for curr_act in range(1, len(activity)):
+        act = activity[curr_act]
+        t = act.timestamp_tz()
+        day = t.strftime('%Y-%m-%d')
+
+        event = [day, act.message_detail]
+        try:
+            next_act =  activity[curr_act-1]
+            
+            seq = (act.action, next_act.action)
+            if next_act.action == 'login' or act.action == 'login' or next_act.timestamp_tz().strftime('%Y-%m-%d') != day:
+                pass
+            elif seq == ('logout', 'login'):   #curr_act.action == 'logout' or next_act.action == 'login':
+                pass
+            elif seq == ('login', 'logout'):  # curr_act.action == 'login' and next_act.action == 'logout':
+                pass
+            else:
+                delta = next_act.timestamp_tz() - t
+                
+                """ patch auto logout glitch requires this in order to limit over calculation """
+                if delta.seconds > 3600:
+                    event.append(3600)
+                    try:
+                        subject_time[act.message_detail] += 3600
+                    except:
+                        subject_time[act.message_detail] = 3600
+                else:
+                    event.append(delta.seconds)
+                    try:
+                        subject_time[act.message_detail] += delta.seconds
+                    except:
+                        subject_time[act.message_detail] = delta.seconds
+
+                """ END patch """
+        except Exception as e:
+            print e 
+
+        log.append(event)
+
+    return log, subject_time
+
 def populate_attendance_duration_field(user=None):
     elapsed = elapsed_daily_activity(user)
     for i, j in elapsed.items():

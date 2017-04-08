@@ -321,3 +321,11 @@ class TaggedCourse(models.Model):
     class Meta:
         ordering = ['course']
 
+
+class CourseGrader(models.Model):
+    grader = models.ForeignKey(User, related_name='courses_to_grade')
+    course = models.ForeignKey(Course, related_name='assigned_graders')
+
+
+    def __unicode__(self):
+        return '%s' % (self.grader)

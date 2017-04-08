@@ -4,8 +4,8 @@ from django.conf import settings
 from django import forms
 from django.forms import ModelForm
 from django.forms.models import inlineformset_factory
-from .models import QuestionResponse, OptionQuestion, TextQuestion, Option, QuestionSet, UserWorksheetStatus
 
+from .models import QuestionResponse, OptionQuestion, TextQuestion, Option, QuestionSet, UserWorksheetStatus
 # from filebrowser.widgets import FileInput, ClearableFileInput
 
 import os
@@ -61,10 +61,11 @@ class QuestionResponseForm(ModelForm):
         if previous_response:
             previous_response.response = submitted_form.response
             previous_response.save()
+            return previous_response
         else:
             submitted_form.save()
-
-        return submitted_form
+            submitted_form.score = -1  # a new response is scored as -1 to indicate that it needs to be graded
+            return submitted_form
 
     class Meta:
         model = QuestionResponse
@@ -114,7 +115,7 @@ class OptionQuestionUpdateForm(ModelForm):
 
     class Meta:
         model = OptionQuestion
-        fields = ['question_set', 'display_text', 'response_required', 'display_order', 'input_select',
+        fields = ['question_set', 'display_text', 'response_required', 'max_points', 'display_order', 'input_select',
                   'display_image', 'display_pdf', 'display_key_file']
         widgets = {
             'display_text': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'class': 'editor'}),
@@ -159,7 +160,7 @@ class TextQuestionUpdateForm(ModelForm):
         
     class Meta:
         model = TextQuestion
-        fields = ['question_set', 'display_text', 'response_required', 'display_order', 'correct', 'input_size',
+        fields = ['question_set', 'display_text', 'response_required', 'auto_grade' , 'max_points', 'display_order', 'correct', 'input_size',
                   'display_image', 'display_pdf', 'response_required', 'display_key_file']
         widgets = {
             'display_text': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'class': 'editor'}),
@@ -173,3 +174,8 @@ class TextQuestionUpdateForm(ModelForm):
             'response_required': 'Users must respond? (Turn this off to only display content.) ',
             'display_key_file': 'Add answer key as PDF? <i class="fa fa-key fa-2x"></i> + <i class="fa fa-file-pdf-o fa-2x"></i>'
         }
+
+class QuestionResponseGradeForm(ModelForm):
+    class Meta:
+        model = QuestionResponse
+        fields = ['score',]

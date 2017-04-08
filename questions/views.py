@@ -7,6 +7,7 @@ from django.shortcuts import get_object_or_404
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.core.exceptions import ObjectDoesNotExist, PermissionDenied
+from django.contrib import messages
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.models import User
 from django.conf import settings
@@ -23,13 +24,13 @@ from sendfile import sendfile
 from core.models import ActivityLog, Notification
 from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import PresetBookmarkForm
-from core.emails import SendWorksheetNotificationEmailToInstructors
+from core.emails import SendWorksheetNotificationEmailToInstructors, send_request_to_grade
 from notes.forms import UserNoteForm
 from lessons.models import Lesson, Section
 from courses.models import Course
 
 from .models import TextQuestion, OptionQuestion, QuestionResponse, QuestionSet, UserWorksheetStatus, Option
-from .forms import QuestionResponseForm, OptionQuestionUpdateForm, TextQuestionUpdateForm, OptionFormset, QuestionSetUpdateForm
+from .forms import QuestionResponseForm, OptionQuestionUpdateForm, TextQuestionUpdateForm, OptionFormset, QuestionSetUpdateForm, QuestionResponseGradeForm
 
 
 def filter_filelisting_images(item):
@@ -188,6 +189,9 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         return self.initial
 
     def get_success_url(self):
+        if self.next_question['question'].get_question_type() == 'text' and not self.next_question['question'].auto_grade:
+            print 'emailing!', self.object, self.object.id
+            send_request_to_grade(self.request, Course.objects.get(slug=self.kwargs['crs_slug']), self.object)
         next_item = int(self.kwargs['j']) + 1
         course = self.kwargs['crs_slug']
         return reverse_lazy('question_response', args=[course, self.worksheet.id, next_item])
@@ -554,5 +558,18 @@ class UserResponsesResetView(LoginRequiredMixin, CourseContextMixin, DetailView)
             # return super(UserResponsesResetView, self).get(request, *args, **kwargs)    
 
 
+class QuestionResponseGradeView(LoginRequiredMixin, UpdateView):
+    model = QuestionResponse
+    template_name = 'question_grade_response.html'
+    form_class = QuestionResponseGradeForm
 
+    def get_success_url(self):
+        messages.info(self.request, 'Your assessment has been saved.')
+        # send_score_notification(self.request, self.get_object())
+        return reverse('question_response_grade', args=[self.get_object().id])
+
+    def get_context_data(self, **kwargs):
+        context = super(QuestionResponseGradeView, self).get_context_data(**kwargs)
+        context['question'] =  self.get_object().content_object
+        return context 
 

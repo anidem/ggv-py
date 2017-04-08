@@ -1,3 +1,4 @@
+# This Python file uses the following encoding: utf-8
 # core/emails.py
 
 from django.views.generic import FormView, TemplateView, View
@@ -506,3 +507,44 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
 
     email.attach_alternative(html_message, "text/html")
     email.send(fail_silently=True)
+
+
+
+def send_request_to_grade(request, course=None, question_response_obj=None):
+    """Sends email to official grader (user pk reads from settings file) to
+    grade a written response to a pretest.
+    """
+    if not question_response_obj:
+        return
+
+    if question_response_obj.grade_request_sent:
+        return
+
+    
+    access_url = reverse('question_response_grade', args=[question_response_obj.id])
+    access_url = 'http://' + request.get_host() + access_url
+
+    try:
+        graders = [i.grader.email for i in course.assigned_graders.all()]
+    except:
+        return 
+    
+    msg = 'A GGV pretester is making a grade request.'
+    html_message = '<p>' + msg + '</p>'
+    html_message += "<p><a href='{0}'>{0}</a></p>".format(access_url)
+    html_message += "<p>{0}</p>".format(question_response_obj.get_question_object())
+
+    email = EmailMultiAlternatives(
+        subject='GGV Pretest - Request to Grade',
+        body=html_message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=graders,
+        )
+
+    email.attach_alternative(html_message, "text/html")
+    email.send(fail_silently=True)
+    #  not sure about maintaining this status.
+    # question_response_obj.grade_request_sent = True
+    # question_response_obj.save()
+    messages.info(request, 'Your writing response will be graded and scored. Please check back in 48 hours. (Su respuesta de escritura será calificada. Por favor, verifique en 48 horas.)' )
+    return

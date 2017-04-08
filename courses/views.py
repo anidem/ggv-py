@@ -22,7 +22,7 @@ from braces.views import LoginRequiredMixin, JSONResponseMixin, AjaxResponseMixi
 
 from core.models import Notification, SiteMessage
 from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin, CourseContextMixin
-from core.utils import UnicodeWriter, GGVExcelWriter, get_daily_log_times, get_daily_log_times_v2
+from core.utils import UnicodeWriter, GGVExcelWriter, get_daily_log_times, get_daily_log_times_v2, elapsed_time_per_event
 from questions.models import QuestionSet, UserWorksheetStatus
 from slidestacks.models import SlideStack
 from .models import GGVOrganization, Course
@@ -268,6 +268,7 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         context['students'] = students
         context['deactivated'] = deactivated_students
         context['unvalidated'] = course.unvalidated_list()
+        context['graders'] = course.assigned_graders.all()
         return context
 
 
@@ -628,6 +629,10 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         course = self.get_object()
         context['student_user'] = user
         context['activity_log'] = get_daily_log_times_v2(user, course) # 'login', 'logout', 'access-worksheet'
+        subject_time = elapsed_time_per_event(user)[1]
+        for i, j in subject_time.items():
+            subject_time[i] = j/3600, (j%3600)/60
+        context['subject_time'] = subject_time
         if 'completed' in self.request.GET.get('filter', ''):
             context['filter'] = 'completed'       
         return context
@@ -794,5 +799,18 @@ class CourseAttendanceUserView(LoginRequiredMixin, CourseContextMixin, AccessReq
         return context
 
 
+""" Analytics """
 
+# class UserElapsedTimePerActivity(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView)
 
+#     model = Course
+#     template_name = 'course_user_activity_time.html'
+#     slug_url_kwarg = 'crs_slug'
+#     access_object = None
+
+#     def get_context_data(self, **kwargs):
+#         context = super(UserElapsedTimePerActivity, self).get_context_data(**kwargs)
+#         user = User.objects.get(pk=self.kwargs['user'])
+#         context['student_user'] = user
+#         context['activity_log'] = elapsed_time_per_event(user) # 'login', 'logout', 'access-worksheet'       
+#         return context

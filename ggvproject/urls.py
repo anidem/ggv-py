@@ -40,7 +40,7 @@ from questions.views import (
     OptionQuestionView, OptionQuestionUpdateView,
     TextQuestionView, TextQuestionUpdateView,
     QuestionAssetHandlerView,
-    UserReportView, FullReportView, UserResponsesResetView,
+    UserReportView, FullReportView, UserResponsesResetView, QuestionResponseGradeView,
     LessonKeyView, WorksheetKeyView, WorksheetCompletedView, RestrictResultsUpdateView, TestDocView
     )
 from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView, slide_view
@@ -141,6 +141,9 @@ urlpatterns = [
     url(r'^ggv/(?P<crs_slug>[-\w]+)/support-media/external-media/add/$', ExternalMediaCreateView.as_view(), name='external_media_add'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/support-media/external-media/edit/(?P<pk>\d+)/$', ExternalMediaUpdateView.as_view(), name='external_media_update'),
 
+    url(r'^ggv/grade/(?P<pk>\d+)/$', QuestionResponseGradeView.as_view(), name='question_response_grade'),
+
+
 # GGV components
     url(r'^ggv/(?P<crs_slug>[-\w]+)/note/(?P<pk>\d+)/$', NoteView.as_view(), name='view_note'),
     url(r'^ggv/note/add/$', NoteCreateView.as_view(), name='create_note'),
@@ -198,7 +201,7 @@ urlpatterns = [
     url(r'^faq/$', FaqView.as_view(), name='faq'),
     url(r'^home/$', HomeView.as_view(), name='ggvhome'),
     url(r'^', IndexView.as_view(), name='splash'),
-
+ 
 ] 
 
 # if settings.DEBUG:

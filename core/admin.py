@@ -7,7 +7,7 @@ from django.core.urlresolvers import reverse
 
 from guardian.admin import GuardedModelAdmin
 
-from courses.models import GGVOrganization, Course, CourseLesson, CourseTag, TaggedCourse
+from courses.models import GGVOrganization, Course, CourseLesson, CourseTag, TaggedCourse, CourseGrader
 from lessons.models import Lesson, Section
 from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option, UserWorksheetStatus
 from slidestacks.models import SlideStack
@@ -138,6 +138,16 @@ class CourseLessonAdmin(admin.ModelAdmin):
     list_filter = ('course',)
 
 
+class CourseGraderAdmin(admin.ModelAdmin):
+    list_display = ('course', 'grader')
+    list_filter = ('course__ggv_organization',)
+
+    def formfield_for_foreignkey(self, db_field, request, **kwargs):
+        # if db_field.name == "grader":
+        #     kwargs["queryset"] = User.objects.filter(is_staff=True)
+        return super(CourseGraderAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+
+
 class LessonAdmin(GuardedModelAdmin):
     list_display = ('title', 'subject', 'icon_class', 'language')
     list_editable = ('subject', 'icon_class', 'language')
@@ -188,6 +198,7 @@ admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
 admin.site.register(CourseLesson, CourseLessonAdmin)
 admin.site.register(CourseTag)
 admin.site.register(TaggedCourse)
+admin.site.register(CourseGrader, CourseGraderAdmin)
 admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)
 admin.site.register(Section, SectionAdmin, Media=ExtraMedia)
 admin.site.register(SlideStack, SlideStackAdmin)

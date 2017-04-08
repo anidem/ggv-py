@@ -209,6 +209,20 @@
     </form>
 </div>
 
+
+<div class="col-md-12"><h1></h1></div>
+
+<!-- Graders -->
+<div class="col-md-12"><span class="lead">{{ graders|length }} Grader{{ graders|length|pluralize}}</span></div>
+<div class="col-md-12">
+    {% for i in graders %} 
+        {{ i.grader.first_name }} {{ i.grader.last_name }} <span class="small">({{ i.grader.email }})</span> {% if not forloop.last %}, {% endif %}
+    {% empty %}
+        <div class="panel-body">There are no graders assigned to this course.</div>
+    {% endfor %}
+</div>
+
+
 <div class="col-md-12"><h1></h1></div>
 
 <!-- Managers -->

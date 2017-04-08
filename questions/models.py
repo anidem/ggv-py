@@ -219,7 +219,7 @@ class QuestionSet(AbstractActivity):
                 else:
                     bk = None          
 
-            response = (bk, i, respstr, question_result)
+            response = (bk, i, respstr, question_result, respobj)
             report.append(response)
 
         try:
@@ -318,6 +318,7 @@ class TextQuestion(AbstractQuestion):
         ('5', 'sentence: (5 rows 50 cols'),
         ('15', 'paragraph(s): (15 rows 50 cols)')], default='1')
     correct = models.TextField(blank=True)
+    auto_grade = models.BooleanField(default=True, help_text='UNCHECK if this requires an external reader/grader')
     responses = GenericRelation('QuestionResponse')
     pretest_responses = GenericRelation(PretestQuestionResponse)
     notes = GenericRelation(UserNote)
@@ -349,12 +350,10 @@ class TextQuestion(AbstractQuestion):
     def check_answer(self, question_response):
         if self.correct:  # Check if question has a correct answer specified.
             return question_response.response == self.correct
-        if self.id in [1022, 1023, 1024, 1025]:  # checking if text question is a pretest question.
-            if question_response.score < 0:
-                return False  # score must be assessed. response needs to be graded.
-            elif question_response.score > 0:
-                return True  # score indicates that it is graded > 0 so is correct
-            return False  # score has been assessed a score of 0. so is NOT correct
+        if not self.auto_grade:  # checking if text question requires external grader.[1022, 1023, 1024, 1025]
+            if question_response.score <= 0:
+                return False  # response needs to be graded or has been graded and is 0 (incorrect).
+            return True  # score indicates that it is graded > 0 so is correct        
         return True
 
     def user_response_object(self, user):
@@ -506,6 +505,7 @@ class QuestionResponse(TimeStampedModel):
     content_object = GenericForeignKey('content_type', 'object_id')
     iscorrect = models.BooleanField(blank=True, default=True)
     score = models.IntegerField(default=0)
+    grade_request_sent = models.BooleanField(default=False)
 
     def json_response(self):
         try:

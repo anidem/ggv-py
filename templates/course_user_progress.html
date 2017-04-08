@@ -43,11 +43,16 @@
     {% endif %}
     <a class="btn btn-md" href="./?export=xlsx"> [ <i class="fa fa-download"></i> Download this report as an Excel file ]</a>
 </div>
-
+<div class="col-md-12">
+    <p>
+    {% for i, j in subject_time.items %}
+        <span class="small"><strong>{{i|safe}}</strong>: {{j.0}}:{{j.1}}</span> 
+    {% endfor %}
+    </p>
+</div>
 <div class="col-md-12 text-center">
     <a class="btn btn-md btn-default" href="./?filter=completed">  <i class="fa fa-eye"></i> show only completed worksheets </a>
     <a class="btn btn-md btn-default" href="./">  <i class="fa fa-eye"></i> show all activity (default) </a>
-
 </div>
 <div class="col-md-12" style="padding-top: 20px">
 

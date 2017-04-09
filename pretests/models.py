@@ -41,7 +41,7 @@ class PretestAccount(models.Model):
     
     def get_org_users(self):
         users = self.ggv_org.licensed_user_list()
-        return sorted(users, key=lambda u: (u.last_name, u.first_name))
+        return sorted(users, key=lambda u: (u.first_name, u.last_name))
 
     def __unicode__(self):
         return self.name

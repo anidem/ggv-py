@@ -46,7 +46,7 @@ class PretestUserUpdateForm(ModelForm):
         super(PretestUserUpdateForm, self).__init__(*args, **kwargs)
         self.fields['email'].required = True
         if self.initial['users']:
-            self.fields['account_selector'].choices = [(' ','--')] + [(i.id, str(i.first_name + ', ' + i.last_name + ', ' + i.email)) for i in self.initial['users']]
+            self.fields['account_selector'].choices = [(' ','--')] + [(i.id, str(i.first_name + ' ' + i.last_name + ', ' + i.email)) for i in self.initial['users']]
             self.fields['account_selector'].label = 'Choose an examinee from a list of users that are part of your organization. (optional):'
         else:
             del self.fields['account_selector']

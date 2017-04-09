@@ -116,7 +116,7 @@
                         </a>
 
                         <a class="btn btn-xs btn-success" data-toggle="collapse" href="#progress-panel" aria-expanded="false" aria-controls="collapseExample">
-                        <i class="fa fa-question"></i> <i class="fa fa-list"></i></span>
+                        <i class="fa fa-question"></i> <i class="fa fa-list"></i>
                         </a>
                         <div id="progress-panel" class="well collapse">
                             {% for k, v in question_list.items %}
@@ -142,6 +142,53 @@
             <!-- Question content -->
             <p class="clearfix"></p>
                 <div class="lead">{{ question | safe }} </div>
+
+                {% if question.auto_grade == False %}
+                <div>
+                    <a class="btn btn-link" data-toggle="collapse" href="#essay-instruction-panel" aria-expanded="false">
+                     writing instructions?
+                    </a>
+                    <div id="essay-instruction-panel" class="well collapse">
+                        <p><strong>Writing Instructions</strong></p>
+                        <ol>
+                            <li>Read the passage below.</li>
+                            <li>Enter text in the box provided.</li>
+                            <li>Use your ideas or details from the passage to support your analysis</li>
+                            <li>Express your ideas clearly</li>
+                        </ol>
+                        <p><strong>Scoring</strong></p>
+                        <p>Correct responses are indicated by:
+                            <ol>
+                                <li>ideas are clearly stated</li>
+                                <li>writing expresses details</li>
+                                <li>analysis is clearly consistent with passage</li>
+                            </ol>
+                        </p>
+                        <p>Incorrect responses are indicated by:
+                            <ol>
+                                <li>ideas are not clearly stated</li>
+                                <li>minimal expression of details</li>
+                                <li>analysis is not consistent with passage</li>
+                            </ol>
+                        </p>
+                        <a class="btn btn-default" data-toggle="collapse" href="#essay-instruction-panel" aria-expanded="false">OK, got it!</a>
+                    </div>
+                    {% comment %}<a class="btn btn-link" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">
+                     grading?
+                    </a>
+                    <div id="essay-rubric-panel" class="well collapse">
+                        <p>This question is scored as follows:
+                        <ul>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                            <li></li>
+                        </ul>
+                        <a class="btn btn-default" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">OK, got it!</a>
+                    </div>
+                    {% endcomment %}                  
+                </div>
+                {% endif %}
 
                 <form id="response_form" action="" method="post" >{% csrf_token %}
                     {% if question.response_required %}

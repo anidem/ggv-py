@@ -190,7 +190,6 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
 
     def get_success_url(self):
         if self.next_question['question'].get_question_type() == 'text' and not self.next_question['question'].auto_grade:
-            print 'emailing!', self.object, self.object.id
             send_request_to_grade(self.request, Course.objects.get(slug=self.kwargs['crs_slug']), self.object)
         next_item = int(self.kwargs['j']) + 1
         course = self.kwargs['crs_slug']

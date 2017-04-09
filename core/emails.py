@@ -517,8 +517,8 @@ def send_request_to_grade(request, course=None, question_response_obj=None):
     if not question_response_obj:
         return
 
-    if question_response_obj.grade_request_sent:
-        return
+    # if question_response_obj.grade_request_sent:
+    #     return
 
     
     access_url = reverse('question_response_grade', args=[question_response_obj.id])
@@ -529,13 +529,14 @@ def send_request_to_grade(request, course=None, question_response_obj=None):
     except:
         return 
     
-    msg = 'A GGV pretester is making a grade request.'
+    msg = 'A GGV Curriculum student (<strong>{0} {1}</strong>) is making a grade request.'.format(question_response_obj.user.first_name, question_response_obj.user.last_name)
     html_message = '<p>' + msg + '</p>'
+    html_message += '<p>Course: {0}</p>'.format(course)
     html_message += "<p><a href='{0}'>{0}</a></p>".format(access_url)
     html_message += "<p>{0}</p>".format(question_response_obj.get_question_object())
 
     email = EmailMultiAlternatives(
-        subject='GGV Pretest - Request to Grade',
+        subject='GGV Curriculum - Request to Grade',
         body=html_message,
         from_email=settings.EMAIL_HOST_USER,
         to=graders,

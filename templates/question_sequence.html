@@ -44,7 +44,7 @@
                 {{ bookmarkform|crispy }}
             </form>
 
-        <!-- LEFT panel: Question text and input for response -->
+            <!-- LEFT panel: Question text and input for response -->
             <div class="col-md-4">
             <!-- Question header -->
 
@@ -140,92 +140,123 @@
 
 
             <!-- Question content -->
-            <p class="clearfix"></p>
+                <p class="clearfix"></p>
                 <div class="lead">{{ question | safe }} </div>
 
                 {% if question.auto_grade == False %}
-                <div>
-                    <a class="btn btn-link" data-toggle="collapse" href="#essay-instruction-panel" aria-expanded="false">
-                     writing instructions?
-                    </a>
-                    <div id="essay-instruction-panel" class="well collapse">
-                        <p><strong>Writing Instructions</strong></p>
-                        <ol>
-                            <li>Read the passage below.</li>
-                            <li>Enter text in the box provided.</li>
-                            <li>Use your ideas or details from the passage to support your analysis</li>
-                            <li>Express your ideas clearly</li>
-                        </ol>
-                        <p><strong>Scoring</strong></p>
-                        <p>Correct responses are indicated by:
-                            <ol>
-                                <li>ideas are clearly stated</li>
-                                <li>writing expresses details</li>
-                                <li>analysis is clearly consistent with passage</li>
-                            </ol>
-                        </p>
-                        <p>Incorrect responses are indicated by:
-                            <ol>
-                                <li>ideas are not clearly stated</li>
-                                <li>minimal expression of details</li>
-                                <li>analysis is not consistent with passage</li>
-                            </ol>
-                        </p>
-                        <a class="btn btn-default" data-toggle="collapse" href="#essay-instruction-panel" aria-expanded="false">OK, got it!</a>
-                    </div>
-                    {% comment %}<a class="btn btn-link" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">
-                     grading?
-                    </a>
-                    <div id="essay-rubric-panel" class="well collapse">
-                        <p>This question is scored as follows:
-                        <ul>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                            <li></li>
-                        </ul>
-                        <a class="btn btn-default" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">OK, got it!</a>
-                    </div>
-                    {% endcomment %}                  
-                </div>
+                    {% if worksheet.lesson.language == 'eng'%}
+                        <div>
+                            <a class="btn btn-link" data-toggle="collapse" href="#essay-instruction-panel" aria-expanded="false">
+                             Writing instructions?
+                            </a>
+                             
+                            <div id="essay-instruction-panel" class="well collapse">
+                                <p><strong>Writing Instructions</strong></p>
+                                <ol>
+                                    <li>Read the passage.</li>
+                                    <li>Write a response in the box provided.</li>
+                                    <li>Use details from the passage to support your analysis.</li>
+                                    <li>Express your ideas clearly.</li>
+                                    <li>Edit your response.</li>
+                                </ol>
+                                <a class="btn btn-default" data-toggle="collapse" href="#essay-instruction-panel" aria-expanded="false">OK, got it!</a>
+                            </div>
+                            
+                            <a class="btn btn-link" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">
+                             Scoring?
+                            </a>
+                            <div id="essay-rubric-panel" class="well collapse">
+                                <p><strong>Scoring</strong></p>
+                                <p>CORRECT responses are based on:
+                                    <ol>
+                                        <li>writing details that are clearly stated</li>
+                                        <li>analysis is clearly consistent with passage</li>
+                                    </ol>
+                                </p>
+                                <p>INCORRECT responses are based on:
+                                    <ol>
+                                        <li>details that are not clearly stated</li>
+                                        <li>analysis that is not consistent with passage</li>
+                                        <li>analysis is not consistent with passage</li>
+                                        <li>If you receive an INCORRECTresult, contact your instructor/tutor. You may rewrite a response at anytime and submit.</li>
+                                    </ol>
+                                </p>
+                                <a class="btn btn-default" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">OK, got it!</a>
+                            </div>                  
+                        </div>
+
+                    {% else %}
+                    <!-- SPANISH instructions -->                    
+                        <div>
+                            <a class="btn btn-link" data-toggle="collapse" href="#essay-instruction-panel" aria-expanded="false">Instrucciones De Escritura?</a>
+                            <div id="essay-instruction-panel" class="well collapse">
+                                <p><strong>Instrucciones De Escritura</strong></p>
+                                <ol>
+                                    <li>Lea el pasaje.</li>
+                                    <li>Escribe una respuesta en la caja provista.</li>
+                                    <li>Utilice detalles del pasaje para apoyar su análisis.</li>
+                                    <li>Exprese sus ideas claramente.</li>
+                                    <li>Edite su respuesta.</li>
+                                </ol>
+                                <a class="btn btn-default" data-toggle="collapse" href="#essay-instruction-panel" aria-expanded="false">OK, got it!</a>
+                            </div>
+                            <a class="btn btn-link" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">Calificar Su Respuesta?</a>
+                            <div id="essay-rubric-panel" class="well collapse">
+                                <p><strong>Calificar Su Respuesta</strong></p>
+                                <p>Respuestas CORRECTAS serán calificadas en:
+                                    <ol>
+                                        <li>los detalles que están claramente establecidas en la escritura</li>
+                                        <li>el análisis que es claramente consistente con el pasaje</li>
+                                    </ol>
+                                </p>
+                                <p>Respuestas INCORRECTAS serán calificadas en:
+                                    <ol>
+                                        <li>los detalles que no están claramente establecidas en la escritura</li>
+                                        <li>el análisis que no es consistente con el pasaje</li>
+                                        <li>Si recibe una Respuesta INCORRECTA, comuníquese con su tutor/instructor. Puede volver a escribir su respuesta en cualquier momento y enviarlo de nuevo</li>
+                                    </ol>
+                                </p>
+                                <a class="btn btn-default" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">OK, got it!</a>
+                            </div>                 
+                        </div>
+                    {% endif %}
                 {% endif %}
 
                 <form id="response_form" action="" method="post" >{% csrf_token %}
                     {% if question.response_required %}
-                    {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
+                        {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
 
-                    <p class="label label-danger">{% for e in form.response.errors  %}An answer is required.{% endfor %}</p>
-                    <p></p>
+                        <p class="label label-danger">{% for e in form.response.errors  %}An answer is required.{% endfor %}</p>
+                        <p></p>
 
-                    {% for field in form.response %}
-                    <p>
-                        {% if not field.choice_label %}
-                            <label for="{{ field.id_for_label }}">{{ field }}</label>
-                        {% else %}
-                            <label for="{{ field.id_for_label }}">
-                                {{ field.tag }} {{ field.choice_label | safe }}
-                            </label>
-                        {% endif %}
-                    </p>
-                    {% endfor %}
+                        {% for field in form.response %}
+                        <p>
+                            {% if not field.choice_label %}
+                                <label for="{{ field.id_for_label }}">{{ field }}</label>
+                            {% else %}
+                                <label for="{{ field.id_for_label }}">
+                                    {{ field.tag }} {{ field.choice_label | safe }}
+                                </label>
+                            {% endif %}
+                        </p>
+                        {% endfor %}
                     {% endif %}
                     <p></p>
-
                 </form>
-                    <p>
-                        {%if user_completed and previous_position %}
-                            <a href="{% url 'question_response' course.slug worksheet.id previous_position %}" class="btn">Previous</a>
-                        {% endif %}
-                        {% if form.response and question.response_required %}
-                            <button id="chk_response_btn" class="btn btn-default">Submit Answer</button>
-                        {% elif next_position and not user_completed %}
-                            <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Continue</a>
-                        {% endif %}
+                <p>
+                    {%if user_completed and previous_position %}
+                        <a href="{% url 'question_response' course.slug worksheet.id previous_position %}" class="btn">Previous</a>
+                    {% endif %}
+                    {% if form.response and question.response_required %}
+                        <button id="chk_response_btn" class="btn btn-default">Submit Answer</button>
+                    {% elif next_position and not user_completed %}
+                        <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Continue</a>
+                    {% endif %}
 
-                        {% if user_completed and next_position  %}
-                            <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Next</a>
-                        {% endif %}
-                    </p>
+                    {% if user_completed and next_position  %}
+                        <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Next</a>
+                    {% endif %}
+                </p>
             </div>
 
         <!-- RIGHT panel: Question media (images, pdfs) -->

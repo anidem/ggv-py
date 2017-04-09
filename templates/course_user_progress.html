@@ -43,17 +43,22 @@
     {% endif %}
     <a class="btn btn-md" href="./?export=xlsx"> [ <i class="fa fa-download"></i> Download this report as an Excel file ]</a>
 </div>
-<div class="col-md-12">
+
+<div class="col-md-12 text-center">
     <p>
-    {% for i, j in subject_time.items %}
-        <span class="small"><strong>{{i|safe}}</strong>: {{j.0}}:{{j.1}}</span> 
-    {% endfor %}
+        <a class="btn btn-md btn-default" href="./?filter=completed">  <i class="fa fa-eye"></i> show only completed worksheets </a>
+        <a class="btn btn-md btn-default" href="./">  <i class="fa fa-eye"></i> show all activity (default) </a>
     </p>
 </div>
-<div class="col-md-12 text-center">
-    <a class="btn btn-md btn-default" href="./?filter=completed">  <i class="fa fa-eye"></i> show only completed worksheets </a>
-    <a class="btn btn-md btn-default" href="./">  <i class="fa fa-eye"></i> show all activity (default) </a>
-</div>
+{% if request.user.is_staff %}
+    <div class="col-md-12 text-center">
+        <p>
+        {% for i, j in subject_time.items %}
+            <span class=""><strong>{{i|safe}}</strong>: {{j.0}}:{{j.1}}</span> 
+        {% endfor %}
+        </p>
+    </div>
+{% endif %}
 <div class="col-md-12" style="padding-top: 20px">
 
     {% for k, v in activity_log.items %}
@@ -63,30 +68,30 @@
             </div>
             <div class="row">
                 <div class="col-xs-2">Date/Time <sup><small>MST</small></sup></div>
-                <div class="col-xs-2">Subject</div>
+                <div class="col-xs-1">Subject</div>
                 <div class="col-xs-1">Activity</div>
-                <div class="col-xs-1">Module</div>
-                <div class="col-xs-5">Content</div>
+                <div class="col-xs-3">Module</div>
+                <div class="col-xs-4">Content</div>
                 <div class="col-xs-1">Current Score</div>
             </div>
             {% for j in v.2 %}
                 {% if filter == 'completed' and j.activity.action == 'completed-worksheet' %}        
                     <div class="row hoverpad text-left" style="padding-bottom: 5px; padding-bottom: 5px">
                         <div class="col-xs-2"><small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong></div>
-                        <div class="col-xs-2">
+                        <div class="col-xs-1 small">
                             {% if  j.event_target.lesson %}
-                            {{ j.event_target.lesson }} <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">(view)</a>
+                             <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">{{ j.event_target.lesson }}</a>
                             {% else %}
                                 {{ j.activity.action }}
                             {% endif %}
                         </div>
 
                         
-                        <div class="col-xs-1">completed</div>
+                        <div class="col-xs-1 small">completed</div>
                         
-                        <div class="col-xs-1">{{j.event_target.section}}</div>
+                        <div class="col-xs-3">{{j.event_target.section}}</div>
 
-                        <div class="col-xs-5">
+                        <div class="col-xs-4">
                                 <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
                                  {{j.event_target }} {% if j.activity.action == 'completed-worksheet' %}<a href="{{ j.report_url }}">(view report) {% endif %}</a>
                         </div>
@@ -100,25 +105,25 @@
 
                     <div class="row hoverpad text-left ">
                         <div class="col-xs-2"><small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong></div>
-                        <div class="col-xs-2">
+                        <div class="col-xs-1 small">
                             {% if  j.event_target.lesson %}
-                            {{ j.event_target.lesson }} <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">(view)</a>
+                             <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">{{ j.event_target.lesson }}</a>
                             {% else %}
                                 {{ j.activity.action }}
                             {% endif %}
                         </div>
 
                         {% if j.activity.action == 'completed-worksheet' %}
-                            <div class="col-xs-1">completed</div>
+                            <div class="col-xs-1 small">completed</div>
                         {% elif j.activity.action == 'access-worksheet' %}
-                            <div class="col-xs-1">viewed</div>
+                            <div class="col-xs-1 small">viewed</div>
                         {% elif j.activity.action == 'access-presentation' %}
-                            <div class="col-xs-1">viewed</div>
+                            <div class="col-xs-1 small">viewed</div>
                         {% else %}
-                            <div class="col-xs-1">&nbsp;</div>
+                            <div class="col-xs-1 small">&nbsp;</div>
                         {% endif %}
-                        <div class="col-xs-1">{{j.event_target.section}}</div>
-                        <div class="col-xs-5">
+                        <div class="col-xs-3">{{j.event_target.section}}</div>
+                        <div class="col-xs-4">
                             {% if j.activity.action == 'completed-worksheet' or j.activity.action == 'access-worksheet'%}
                                 <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
                                 {{j.event_target }}

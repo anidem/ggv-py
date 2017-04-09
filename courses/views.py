@@ -629,10 +629,13 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         course = self.get_object()
         context['student_user'] = user
         context['activity_log'] = get_daily_log_times_v2(user, course) # 'login', 'logout', 'access-worksheet'
-        subject_time = elapsed_time_per_event(user)[1]
-        for i, j in subject_time.items():
-            subject_time[i] = j/3600, (j%3600)/60
-        context['subject_time'] = subject_time
+
+        if self.request.user.is_staff:
+            subject_time = elapsed_time_per_event(user)[1]
+            for i, j in subject_time.items():
+                subject_time[i] = j/3600, (j%3600)/60
+            context['subject_time'] = subject_time
+
         if 'completed' in self.request.GET.get('filter', ''):
             context['filter'] = 'completed'       
         return context

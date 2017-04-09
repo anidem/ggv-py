@@ -63,8 +63,8 @@ class QuestionResponseForm(ModelForm):
             previous_response.save()
             return previous_response
         else:
-            submitted_form.save()
             submitted_form.score = -1  # a new response is scored as -1 to indicate that it needs to be graded
+            submitted_form.save()
             return submitted_form
 
     class Meta:

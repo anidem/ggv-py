@@ -11,7 +11,7 @@ from django import forms
 
 from model_utils.models import TimeStampedModel
 
-from lessons.models import Lesson, AbstractActivity
+from lessons.models import Lesson, AbstractActivity, Section
 from notes.models import UserNote
 from core.models import Bookmark
 
@@ -287,6 +287,12 @@ class AbstractQuestion(models.Model):
     display_key_file = models.FileField(null=True, blank=True, upload_to='pdf')
     response_required = models.BooleanField(default=True)
     max_points = models.PositiveIntegerField(default=0)
+    content_area = models.ForeignKey(Section, models.SET_NULL, 
+        null=True, blank=True, 
+        help_text='(optional) Choose a related module (section) for this question.')
+    extra_info = models.ForeignKey('ExtraInfo', models.SET_NULL, 
+        null=True, blank=True, 
+        help_text='(optional) Choose to add rubric and/or additional instructions')
 
     def get_sequence_url(self, course):
         try:
@@ -567,3 +573,32 @@ class UserWorksheetStatus(TimeStampedModel):
     def update_score(self):
         self.score = self.completed_worksheet.get_user_score(self.user)
         self.save()
+
+
+class ExtraInfo(models.Model):
+    """Stores extra information about a question.
+    rubric: A rubric may be used to inform users on how an answer is 
+    graded. E.g., how essay questions are graded.
+    
+    extra_instructions: Additional information and guidance on how to
+    answer a question.
+    """
+    short_description = models.CharField(max_length=255, unique=True)
+    rubric = models.TextField(null=True, blank=True)
+    extra_instructions = models.TextField(null=True, blank=True)
+
+    def __unicode__(self):
+        return self.short_description
+
+# class QuestionExtraInfo(models.Model):
+#     """A join of a question object (option or text) and ExtraInfo obj
+#     """
+#     content_type = models.ForeignKey(ContentType, related_name="content")
+#     object_id = models.PositiveIntegerField()
+#     content_object = GenericForeignKey('content_type', 'object_id')
+#     extra_info = models.ForeignKey(ExtraInfo)
+
+
+
+
+

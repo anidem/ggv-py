@@ -138,8 +138,8 @@ class Course(models.Model):
     slug = models.SlugField(max_length=128, unique=True)
     control_worksheet_results = models.BooleanField(default=False, choices=ws_control_choices)
     access_code = models.CharField(max_length=8, null=True, blank=True)
-    ggv_organization = models.ForeignKey(GGVOrganization, null=True, related_name='organization_courses')
-    # tag = models.ForeignKey(CourseTag, null=True, related_name='tagged_courses')
+    ggv_organization = models.ForeignKey(GGVOrganization, models.PROTECT, null=True, related_name='organization_courses')
+    # tag = models.ForeignKey(CourseTag, models.SET_NULL, null=True, related_name='tagged_courses')
 
     class Meta:
         permissions = (

@@ -81,7 +81,7 @@ class Section(models.Model):
 class AbstractActivity(models.Model):
     title = models.CharField(max_length=256)
     instructions = models.TextField(null=True, blank=True)
-    section = models.ForeignKey(Section, null=True, blank=True)
+    section = models.ForeignKey(Section, models.SET_NULL, null=True, blank=True)
     display_order = models.IntegerField()
 
     def check_membership(self, user_session):

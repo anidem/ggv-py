@@ -9,7 +9,7 @@ from guardian.admin import GuardedModelAdmin
 
 from courses.models import GGVOrganization, Course, CourseLesson, CourseTag, TaggedCourse, CourseGrader
 from lessons.models import Lesson, Section
-from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option, UserWorksheetStatus
+from questions.models import QuestionSet, QuestionResponse, OptionQuestion, TextQuestion, Option, UserWorksheetStatus, ExtraInfo
 from slidestacks.models import SlideStack
 from supportmedia.models import ExternalMedia
 from notes.models import UserNote
@@ -110,17 +110,17 @@ class QuestionSetAdmin(admin.ModelAdmin):
 
 class OptionQuestionAdmin(admin.ModelAdmin):
     list_display = ('display_text', 'display_order',
-                    'display_image', 'display_pdf', 'response_required')
-    list_filter = ('question_set', 'question_set__lesson')
+                    'display_image', 'display_pdf', 'response_required', 'extra_info')
+    list_filter = ('question_set', 'question_set__lesson', 'content_area', 'extra_info')
     list_editable = ('display_order', 'display_image', 'response_required')
     inlines = [QuestionOptionInlineAdmin]
 
 
 class TextQuestionAdmin(admin.ModelAdmin):
-    list_display = ('display_text', 'correct', 'display_order',
-                    'display_image', 'display_pdf', 'response_required')
-    list_filter = ('question_set', 'question_set__lesson')
-    list_editable = ('display_order', 'display_image', 'response_required')
+    list_display = ('id', 'correct', 'display_order',
+                    'display_image', 'display_pdf', 'response_required','extra_info')
+    list_filter = ('question_set', 'question_set__lesson', 'content_area', 'extra_info', 'correct', 'response_required')
+    list_editable = ('display_order', 'display_image', 'response_required', 'extra_info')
 
 
 class CourseAdmin(GuardedModelAdmin):
@@ -206,6 +206,7 @@ admin.site.register(QuestionSet, QuestionSetAdmin, Media=ExtraMedia)
 admin.site.register(OptionQuestion, OptionQuestionAdmin, Media=ExtraMedia)
 admin.site.register(TextQuestion, TextQuestionAdmin, Media=ExtraMedia)
 admin.site.register(QuestionResponse, QuestionResponseAdmin)
+admin.site.register(ExtraInfo)
 admin.site.register(ExternalMedia)
 admin.site.register(UserWorksheetStatus)
 admin.site.register(ActivityLog, ActivityLogAdmin)

@@ -1,5 +1,13 @@
 <!-- slidestack_view.html -->
 {% load staticfiles %}
+
+<script src="https://code.jquery.com/jquery.js"></script>
+
+<!-- Django session security -->
+{% include 'session_security/all.html' %}
+
+<iframe seamless style="width: 95%; height: 95%; align: center; background-color: white" src="{{ stacks_url }}{{ object.asset}}/html5.html"></iframe>
+
 {% if course %}
 	<div  style="float: left">
 		<== Back
@@ -21,11 +29,3 @@
 		{% endif %}
 	</div>
 {% endif %}
-
-<script src="https://code.jquery.com/jquery.js"></script>
-
-<!-- Django session security -->
-{% include 'session_security/all.html' %}
-
-<iframe seamless style="width: 90%; height: 90%" src="{{ stacks_url }}{{ object.asset}}/html5.html"></iframe>
-

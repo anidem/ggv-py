@@ -1,31 +1,12 @@
+
 <!-- slidestack_view.html -->
+{% extends "base_slide.html" %}
 {% load staticfiles %}
 
-<script src="https://code.jquery.com/jquery.js"></script>
-
-<!-- Django session security -->
-{% include 'session_security/all.html' %}
-
-<iframe seamless style="width: 95%; height: 95%; align: center; background-color: white" src="{{ stacks_url }}{{ object.asset}}/html5.html"></iframe>
-
-{% if course %}
-	<div  style="float: left">
-		<== Back
-		<a href="{% url 'lesson' course.slug object.lesson.id %}#{{ section|title|urlencode }}" class="btn btn-xs btn-success">
-			<button style=" cursor: pointer; border: none; font-size: 16px; color: white; background-color: orange;"> {{ section|title }}</button>
-		</a>
-	</div>
+{% block content %}
+	<div class="col-md-12" style="height: 600px; width: 800px">
 	
-	<div style="float: right">
-		{% if next_act.activity_type == 'worksheet' %} 
-			Next ==>
-			<a href="{% url 'worksheet_launch' course.slug next_act.id %}" class="btn btn-xs btn-default">
-				<button style="cursor: pointer; border: none; font-size: 16px; color: white; background-color: green">  {{ next_act }} </button>
-			</a>
-		{% elif next_act.activity_type == 'external_media' %}
-			<a href="{% url 'external_media' course.slug next_act.id %}" class="btn btn-xs btn-default">
-				<button style=" cursor: pointer; border: none; font-size: 16px; color: white; background-color: green">{{ next_act }} </button>
-			</a>
-		{% endif %}
+		<iframe width="800" height="600" scrolling=”no”  src="{{ stacks_url }}{{ object.asset}}/html5.html"></iframe>
+
 	</div>
-{% endif %}
+{% endblock content %}

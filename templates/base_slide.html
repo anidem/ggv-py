@@ -40,6 +40,25 @@
 </head>
 
 <body>
+
+
+
+    <!-- Begin page content -->
+    <div class="container">
+      <div class="row">
+        <div class="col-md-6 col-md-offset-3"> 
+            {% if messages %}
+              {% for message in messages %}
+                <div class="{% if message.tags %}bg-{{ message.tags }} {% endif %}alert alert-dismissible" role="alert">
+                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                     <p>{{ message }}</p>
+                </div>
+              {% endfor %}
+            {% endif %}
+        </div>
+      </div>
+      <div class="row">{% block content %} {% endblock content %}</div>
+    </div>
     <!-- Fixed navbar -->
     <div class="navbar navbar-default">
         <div class="container">
@@ -225,24 +244,6 @@
             </div><!--/.nav-collapse -->
         </div><!--/.header container-fluid -->
     </div><!--/.navbar -->
-
-
-    <!-- Begin page content -->
-    <div class="container">
-      <div class="row">
-        <div class="col-md-6 col-md-offset-3"> 
-            {% if messages %}
-              {% for message in messages %}
-                <div class="{% if message.tags %}bg-{{ message.tags }} {% endif %}alert alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                     <p>{{ message }}</p>
-                </div>
-              {% endfor %}
-            {% endif %}
-        </div>
-      </div>
-      <div class="row">{% block content %} {% endblock content %}</div>
-    </div>
     <!-- End page content -->
 
   <script

@@ -115,7 +115,7 @@ class OptionQuestionUpdateForm(ModelForm):
 
     class Meta:
         model = OptionQuestion
-        fields = ['question_set', 'display_text', 'response_required', 'content_area', 'extra_info', 'max_points', 'display_order', 'input_select',
+        fields = ['question_set', 'display_text', 'response_required', 'content_area', 'extra_info', 'max_points', 'min_correct', 'display_order', 'input_select',
                   'display_image', 'display_pdf', 'display_key_file']
         widgets = {
             'display_text': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'class': 'editor'}),
@@ -160,7 +160,7 @@ class TextQuestionUpdateForm(ModelForm):
         
     class Meta:
         model = TextQuestion
-        fields = ['question_set', 'display_text', 'response_required', 'auto_grade', 'content_area', 'extra_info', 'max_points', 'display_order', 'correct', 'input_size',
+        fields = ['question_set', 'display_text', 'response_required', 'auto_grade', 'content_area', 'extra_info', 'max_points', 'min_correct', 'display_order', 'correct', 'input_size',
                   'display_image', 'display_pdf', 'response_required', 'display_key_file']
         widgets = {
             'display_text': forms.Textarea(attrs={'rows': 5, 'cols': 70, 'class': 'editor'}),

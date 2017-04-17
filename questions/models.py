@@ -287,6 +287,7 @@ class AbstractQuestion(models.Model):
     display_key_file = models.FileField(null=True, blank=True, upload_to='pdf')
     response_required = models.BooleanField(default=True)
     max_points = models.PositiveIntegerField(default=0)
+    min_correct = models.PositiveIntegerField(default=1, help_text='Indicate minimum points to consider as correct.')
     content_area = models.ForeignKey(Section, models.SET_NULL, 
         null=True, blank=True, 
         help_text='(optional) Choose a related module (section) for this question.')
@@ -357,7 +358,7 @@ class TextQuestion(AbstractQuestion):
         if self.correct:  # Check if question has a correct answer specified.
             return question_response.response == self.correct
         if not self.auto_grade:  # checking if text question requires external grader.[1022, 1023, 1024, 1025]
-            if question_response.score <= 0:
+            if question_response.score < self.min_correct:
                 return False  # response needs to be graded or has been graded and is 0 (incorrect).
             return True  # score indicates that it is graded > 0 so is correct        
         return True
@@ -586,6 +587,7 @@ class ExtraInfo(models.Model):
     short_description = models.CharField(max_length=255, unique=True)
     rubric = models.TextField(null=True, blank=True)
     extra_instructions = models.TextField(null=True, blank=True)
+    extra_help = models.TextField(null=True, blank=True)
 
     def __unicode__(self):
         return self.short_description

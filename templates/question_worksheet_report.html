@@ -68,11 +68,22 @@
                         <td> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</td>
                         <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">{{ i.display_text | safe }}</a></td>
                         <td>{{ j | safe }}</td>
-                        <td>
+                        <td> {% comment %} k={{k}}, q={{ q }}, score={{q.score}}, question={{q.get_question_object.get_question_type}} {% endcomment %}
                             {% if j == 'Response not required' %} <span>n/a</span>
-                            {% elif k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
-                            {% elif q.score == -1 %}<span class="btn btn-xs btn-info" title="grade pending">grade pending</span>
-                            {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-close"></i> {{ q.score }}</span>
+                            
+                            {% elif q.get_question_object.get_question_type == 'text' %}
+                                
+                                {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span> grade: {{ q.score }}
+                                {% elif q.score == -1 %}<span class="btn btn-xs btn-info" title="grade pending">grade pending</span>
+                                {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-close"></i> grade: {{ q.score }}</span>
+                                {% endif %}
+
+                            {% else %}
+
+                                {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
+                                {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-close"></i></span>
+                                {% endif %}
+
                             {% endif %}
                         </td>
                     </tr>

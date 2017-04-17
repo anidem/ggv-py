@@ -1,12 +1,35 @@
 
 <!-- slidestack_view.html -->
-{% extends "base_slide.html" %}
 {% load staticfiles %}
+{% if course %}
+	<div  style="float: left">
+		<== Back
+		<a href="{% url 'lesson' course.slug object.lesson.id %}#{{ section|title|urlencode }}" class="btn btn-xs btn-success">
+			<button style=" cursor: pointer; border: none; font-size: 16px; color: white; background-color: orange;"> {{ section|title }}</button>
+		</a>
+	</div>
+	
+	<div style="float: right">
+		{% if next_act.activity_type == 'worksheet' %} 
+			Next ==>
+			<a href="{% url 'worksheet_launch' course.slug next_act.id %}" class="btn btn-xs btn-default">
+				<button style="cursor: pointer; border: none; font-size: 16px; color: white; background-color: green">  {{ next_act }} </button>
+			</a>
+		{% elif next_act.activity_type == 'external_media' %}
+			<a href="{% url 'external_media' course.slug next_act.id %}" class="btn btn-xs btn-default">
+				<button style=" cursor: pointer; border: none; font-size: 16px; color: white; background-color: green">{{ next_act }} </button>
+			</a>
+		{% endif %}
+	</div>
+{% endif %}
 
-{% block content %}
-	<div class="embed-responsive embed-responsive-16by9">
+<script src="https://code.jquery.com/jquery.js"></script>
+
+<!-- Django session security -->
+{% include 'session_security/all.html' %}
+
+
 		<iframe width="560" height="315" frameborder="0" allowfullscreen src="{{ stacks_url }}{{ object.asset}}/html5.html"></iframe>
 
 		<!--<iframe class="embed-responsive-item" src="{{ stacks_url }}{{ object.asset}}/html5.html"></iframe>-->
-	</div>
-{% endblock content %}
+	

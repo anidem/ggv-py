@@ -145,23 +145,23 @@
 
                 {% if question.extra_info %}
                         <div>
-                            <a class="btn btn-link" data-toggle="collapse" href="#essay-instruction-panel" aria-expanded="false">
-                             {% if worksheet.lesson.language == 'eng' %}Instructions{% else %}Instrucciones De Respuesta Escritura {% endif %}
+                            <a class="btn btn-primary btn-xs" data-toggle="collapse" href="#essay-instruction-panel" aria-expanded="false">
+                             {% if worksheet.lesson.language == 'eng' %}Instructions{% else %}Instrucciones{% endif %} <i class="fa fa-caret-down"></i>
                             </a>                             
                             <div id="essay-instruction-panel" class="well collapse">
                                 {{ question.extra_info.extra_instructions|safe }}
                                 <a class="btn btn-default" data-toggle="collapse" href="#essay-instruction-panel" aria-expanded="false">OK</a> 
                             </div>
                             
-                            <a class="btn btn-link" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">
-                             {% if worksheet.lesson.language == 'eng' %}Scoring{% else %}Calificar Su Respuesta Escritura{% endif %}
+                            <a class="btn btn-primary btn-xs" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">
+                             {% if worksheet.lesson.language == 'eng' %}Scoring{% else %}Calificar{% endif %} <i class="fa fa-caret-down"></i>
                             </a>
                             <div id="essay-rubric-panel" class="well collapse">
                                 {{ question.extra_info.rubric|safe }}
                                 <a class="btn btn-default" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">OK</a>
                             </div>
-                            <a class="btn btn-link" data-toggle="collapse" href="#essay-help-panel" aria-expanded="false">
-                             {% if worksheet.lesson.language == 'eng' %}Help{% else %}Ayuda{% endif %}
+                            <a class="btn btn-primary btn-xs" data-toggle="collapse" href="#essay-help-panel" aria-expanded="false">
+                             {% if worksheet.lesson.language == 'eng' %}Help{% else %}Ayuda{% endif %} <i class="fa fa-caret-down"></i>
                             </a>
                             <div id="essay-help-panel" class="well collapse">
                                 {{ question.extra_info.extra_help|safe }}

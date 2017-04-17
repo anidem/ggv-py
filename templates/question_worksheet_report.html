@@ -73,9 +73,9 @@
                             
                             {% elif q.get_question_object.get_question_type == 'text' %}
                                 
-                                {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span> grade: {{ q.score }}
+                                {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span> score: {{ q.score }}
                                 {% elif q.score == -1 %}<span class="btn btn-xs btn-info" title="grade pending">grade pending</span>
-                                {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-close"></i> grade: {{ q.score }}</span>
+                                {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-close"></i> </span>score: {{ q.score }}
                                 {% endif %}
 
                             {% else %}

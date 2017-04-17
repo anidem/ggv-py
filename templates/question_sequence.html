@@ -146,7 +146,7 @@
                 {% if question.extra_info %}
                         <div>
                             <a class="btn btn-link" data-toggle="collapse" href="#essay-instruction-panel" aria-expanded="false">
-                             {% if worksheet.lesson.language == 'eng' %}More Instructions{% else %}Instrucciones De Respuesta Escritura {% endif %}
+                             {% if worksheet.lesson.language == 'eng' %}Instructions{% else %}Instrucciones De Respuesta Escritura {% endif %}
                             </a>                             
                             <div id="essay-instruction-panel" class="well collapse">
                                 {{ question.extra_info.extra_instructions|safe }}
@@ -161,7 +161,7 @@
                                 <a class="btn btn-default" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">OK</a>
                             </div>
                             <a class="btn btn-link" data-toggle="collapse" href="#essay-help-panel" aria-expanded="false">
-                             {% if worksheet.lesson.language == 'eng' %}More Help{% else %}Mas Ayuda{% endif %}
+                             {% if worksheet.lesson.language == 'eng' %}Help{% else %}Ayuda{% endif %}
                             </a>
                             <div id="essay-help-panel" class="well collapse">
                                 {{ question.extra_info.extra_help|safe }}

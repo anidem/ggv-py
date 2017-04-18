@@ -97,7 +97,8 @@
                         </div>
 
                         <div class="col-xs-1">
-                            {% if j.score %} <strong>{{ j.score|floatformat:"0" }}%</strong> 
+
+                            {% if j.score >= 0 %} <strong>{{ j.score|floatformat:"0" }}%</strong> 
                             {% else %} <strong><span class="text-danger">cleared</span></strong>{% endif %}
                         </div>
                     </div>
@@ -138,7 +139,7 @@
 
                         <div class="col-xs-1">
                             {% if j.activity.action == 'completed-worksheet' %}
-                                {% if j.score %}
+                                {% if j.score >= 0%}
                                 <strong>{{ j.score|floatformat:"0" }}%</strong>
                                 {% else %}
                                 <strong><span class="text-danger">cleared</span></strong>

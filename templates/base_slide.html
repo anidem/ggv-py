@@ -48,14 +48,14 @@
       <div class="row">
         
             {% if course %}
-              <div  style="float: left">
+              <div class="col-xs-6 text-left">
                 
                 <a href="{% url 'lesson' course.slug object.lesson.id %}#{{ section|title|urlencode }}" class="btn btn-xs btn-success">
                   <i class="fa fa-caret-left"></i> {{ section|title }}
                 </a>
               </div>
               
-              <div style="float: right">
+              <div class="col-xs-6 text-right">
                 {% if next_act.activity_type == 'worksheet' %} 
                   <a href="{% url 'worksheet_launch' course.slug next_act.id %}" class="btn btn-xs btn-success">
                     {{ next_act }} <i class="fa fa-caret-right"></i> 

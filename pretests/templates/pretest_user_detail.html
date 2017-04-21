@@ -33,7 +33,8 @@
         </p>
         {% for i in completions %}
             <dt>
-                <i class="fa fa-list-alt"></i> {{ i.0.completed_pretest }}: <strong>{{ i.1 }}</strong>
+                <i class="fa fa-list-alt"></i> {{ i.0.completed_pretest }}: 
+                <span class="badge">{{ i.1 }}</span> <p> <small class="text-muted">{{ i.0.modified|date:"Y-M-d" }}</small></p></dt>
             <dd>
             <ul>
             {% for j in i.2 %}

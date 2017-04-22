@@ -63,7 +63,11 @@ class QuestionResponseForm(ModelForm):
             previous_response.save()
             return previous_response
         else:
-            submitted_form.score = -1  # a new response is scored as -1 to indicate that it needs to be graded
+            try:
+                if question.input_size and not question.auto_grade:
+                    submitted_form.score = -1  # a new response is scored as -1 to indicate that it needs to be graded
+            except:
+                pass
             submitted_form.save()
             return submitted_form
 

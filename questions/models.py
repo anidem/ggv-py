@@ -592,14 +592,6 @@ class ExtraInfo(models.Model):
     def __unicode__(self):
         return self.short_description
 
-# class QuestionExtraInfo(models.Model):
-#     """A join of a question object (option or text) and ExtraInfo obj
-#     """
-#     content_type = models.ForeignKey(ContentType, related_name="content")
-#     object_id = models.PositiveIntegerField()
-#     content_object = GenericForeignKey('content_type', 'object_id')
-#     extra_info = models.ForeignKey(ExtraInfo)
-
 
 
 

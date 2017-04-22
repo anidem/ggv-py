@@ -71,9 +71,9 @@
                         <td> {% comment %} k={{k}}, q={{ q }}, score={{q.score}}, question={{q.get_question_object.get_question_type}} {% endcomment %}
                             {% if j == 'Response not required' %} <span>n/a</span>
                             
-                            {% elif q.get_question_object.get_question_type == 'text' %}
+                            {% elif q.get_question_object.get_question_type == 'text' and not q.get_question_object.auto_grade %}
                                 
-                                {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span> score: {{ q.score }}
+                                {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span> {% if q.score > 0 %}score: {{ q.score }} {% endif %}
                                 {% elif q.score == -1 %}<span class="btn btn-xs btn-info" title="grade pending">grade pending</span>
                                 {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-close"></i> </span>score: {{ q.score }}
                                 {% endif %}

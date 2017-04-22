@@ -35,6 +35,7 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         activity_list = []
         bookmarks = Bookmark.objects.filter(creator=self.request.user).filter(course_context=context['course'])
 
+        completions = self.request.user.completed_worksheets.all()
         for i in lesson.activities():
             activity_type = ContentType.objects.get_for_model(i).id
             bookmark = None
@@ -69,6 +70,8 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
             a['bookmark_label'] = bookmark_label
             a['bookmark_type'] = bookmark_type
             a['date'] = None
+            if activity_type == 13:  # worksheet activity
+                a['score'] = completions.filter(completed_worksheet=i)
 
             activity_list.append(a)
 

@@ -5,149 +5,115 @@
 
 
 {% block page_header %}
-<div class="col-xs-12 small">
+
+<div class="col-md-12">
     <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i>
     <a href="{% url 'lesson' course.slug worksheet.lesson.id %}">{{ worksheet.lesson }}</a>
 </div>
 
 <div class="col-md-12 text-center">
-    <p class="lead">{{ worksheet }} Report</p>
+    <p class="lead">Worksheet Report</p>
 </div>
+
 {% endblock page_header%}
 
 
 {% block content %}
 <div class="col-md-12">
-    <p class="lead">Worksheet Report {% if student %} {{ student.first_name }} {{ student.last_name }} {% else %} All Students {% endif %}</p>
-    <span class="label label-xs label-success pull-right"><i class="fa fa-check"></i> = correct</span>
-    <span class="label label-xs label-warning pull-right"><i class="fa fa-close"></i> = incorrect</span>
-    <h3>{{ worksheet }}</h3>
-</div>
-<div class="col-md-10 col-md-offset-1">
-{% if not reports %}
+    <p class="lead">{{ worksheet }}</p>
+    <ul class="list-inline">
+        <li class="lead"><strong>{{ student.first_name }} {{ student.last_name }}</strong></li>
 
+        <li class="pull-right">
+            {% if is_instructor or user.is_staff %}
+                <span>
+                    <a href="{% url 'reset_worksheet_responses' course.slug worksheet.id student.id %}" class="btn btn-xs btn-danger" name="reset_responses" data-toggle="tooltip" data-placement="left" title="Erases this student's responses to this worksheet. Student will have to reanswer all questions."><i class="fa fa-exclamation-triangle"></i> clear student responses</a>
+                    
+                </span>
+            {% endif %}
+        </li>
+
+        <li class="pull-right">
+            {% if course.control_worksheet_results and is_instructor and ws_status %}
+            <form method="post" action="{% url 'worksheet_report_access' course.slug ws_status.id %}">{% csrf_token %}
+                {% if ws_status.can_check_results %}
+                <button class="btn btn-xs btn-danger" name="can_check_results" value="False" data-toggle="tooltip" data-placement="left" title="Prevent student from viewing this page. Useful if you are controlling worksheet results. See Worksheet Settings for more information."><i class="fa fa-eye-slash"></i> hide results from student</button>
+                {% else %}
+                <button class="btn btn-xs btn-success" name="can_check_results" value="True" data-toggle="tooltip" data-placement="left" title="Allow student to review the results to this worksheet. Useful if you are controlling worksheet results. See Worksheet Settings for more information."><i class="fa fa-eye"></i> allow student to view results</button>
+                {% endif %}
+            </form>
+            {% endif %}            
+        </li>
+        <li>
+            {% if is_instructor or user.is_staff %}
+                <a href="{% url 'user_progress' course.slug student.id %}?filter=completed">view other completed worksheets</a>
+            {% endif %}
+        </li>
+    </ul>
+        {% if student == request.user and grade < 80 %}
+        <p>
+            <span><mark class="bg-danger">Your result is below 80%. Please contact your tutor/instructor for help. You can also review and correct your questions on your own.</mark></span>
+        </p>
+        {% endif %}                     
+
+</div>
+
+<div class="col-md-12">
     <table class="table">
         <tbody>
             <thead>
-              {% if report %}<tr>
-              <h2>{{ student.first_name }} {{ student.last_name }}
-                {% if is_instructor or user.is_staff %}
-                <span class="pull-right">
-                        <a href="{% url 'reset_worksheet_responses' course.slug worksheet.id student.id %}" class="btn btn-xs btn-danger" name="reset_responses">clear student responses</a>
-                </span>
-                {% endif %}
-              </h2>
-              <h2 class="">
-                <b>{{ grade|floatformat:"0" }}%</b>
-                <span class="small">({{correct}}/{{numquestions}})</span>
-                <span class="small">
-                    {% if course.control_worksheet_results and is_instructor and ws_status %}
-                    <form method="post" action="{% url 'worksheet_report_access' course.slug ws_status.id %}">{% csrf_token %}
+                {% if report %}
+                <tr>
+                    <h2>
+                        <strong>{{ grade|floatformat:"0" }}%</strong>
+                        <span class="small">({{correct}}/{{numquestions}})</span>
+                    </h2>
 
-                        {% if ws_status.can_check_results %}
-                        <button class="btn btn-xs btn-primary" name="can_check_results" value="False"> hide results from student</button>
-                        {% else %}
-                        <button class="btn btn-xs btn-primary" name="can_check_results" value="True"> allow student to view results</button>
-                        {% endif %}
-                        </input>
-                    </form>
-                    {% endif %}
-                </span>
-              </h2>
-                <th><small><em>#</em></small></th>
-                <th><small><em>Question</em></small></th>
-                <th><small><em>Response</em></small></th>
-                <th><small><em>Correct</em></small></th>
-              </tr>
-              {% endif %}
-            </thead>
-            {% for h,i,j,k,q in report %}
-                    
-                    {% if j %}
-                    <tr class="hoverpad {% cycle 'row1' 'row2' %}">
-                        <td> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</td>
-                        <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">{{ i.display_text | safe }}</a></td>
-                        <td>{{ j | safe }}</td>
-                        <td> {% comment %} k={{k}}, q={{ q }}, score={{q.score}}, question={{q.get_question_object.get_question_type}} {% endcomment %}
-                            {% if j == 'Response not required' %} <span>n/a</span>
-                            
-                            {% elif q.get_question_object.get_question_type == 'text' and not q.get_question_object.auto_grade %}
-                                
-                                {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span> {% if q.score > 0 %}score: {{ q.score }} {% endif %}
-                                {% elif q.score == -1 %}<span class="btn btn-xs btn-info" title="grade pending">grade pending</span>
-                                {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-close"></i> </span>score: {{ q.score }}
-                                {% endif %}
+                    <h6>
+                        <span class="label label-xs label-success small pull-right"><i class="fa fa-check"></i> correct</span> 
+                        <span class="label label-xs label-warning small pull-right"><i class="fa fa-close"></i> incorrect</span> 
+                    </h6>
 
-                            {% else %}
-
-                                {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
-                                {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-close"></i></span>
-                                {% endif %}
-
-                            {% endif %}
-                        </td>
-                    </tr>
-                    {% endif %}
-            {% empty %}
-                <tr>This worksheet has no responses or does not require responses.</tr>
-            {% endfor %}
-        </tbody>
-    </table>
-{% endif %}
-
-{% if reports %}
-    {% for report in reports %}
-    <h4 class="">{{ report.0 }}  </h4>
-    {% if course.control_worksheet_results and report.4 %}
-        <form method="post" action="{% url 'worksheet_report_access' course.slug report.4.id %}">{% csrf_token %}
-            {% if report.4.can_check_results %}
-            <button class="btn btn-xs btn-primary" name="can_check_results" value="False"> hide results from student</button>
-            {% else %}
-            <button class="btn btn-xs btn-primary" name="can_check_results" value="True"> allow student to view results</button>
-            {% endif %}
-            </input>
-        </form>
-    {% endif %}
-
-    <div><span class="label label-lg label-default">{{ report.3|floatformat:"0" }}</b>%</span> <span class="small"> ({{report.2}}/{{numquestions}})</span></div>
-        <table class="table">
-            <tbody>
-                <thead>
-
-                  {% if report.1 %}
-                  <tr>
                     <th><small><em>#</em></small></th>
                     <th><small><em>Question</em></small></th>
                     <th><small><em>Response</em></small></th>
-                    <th><small><em>Correct</em></small></th>
-                  </tr>
-                  {% endif %}
-                </thead>
+                    <th><small><em>Result</em></small></th>
+                </tr>
+                {% endif %}
+            </thead>
+            
+            {% for h,i,j,k,q in report %}
+                {% if j %}
 
-                {% for h,i,j,k in report.1 %}
-
-                    {% if j %}
-
-                    <tr class=" {% cycle 'row1' 'row2' %}">
-                        <td> {{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</td>
-                        <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static"><small>{{ i.display_text | striptags | safe }}</small></a></td>
-                        <td>{{ j | safe }}</td>
-                        <td>
-                            {% if j == 'Response not required' %} <span>n/a</span>
-                            {% elif k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
-                            {% else %}<span class="btn btn-xs btn-red"><i class="fa fa-check"></i></span>
+                <tr class="hoverpad {% cycle 'row1' 'row2' %}">
+                    <td>{{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</td>
+                    <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">{{ i.display_text | safe }}</a></td>
+                    <td>{{ j | safe }}</td>
+                    <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">
+                        {% if j == 'Response not required' %}
+                        
+                            <span>n/a</span>
+                        
+                        {% elif q.get_question_object.get_question_type == 'text' and not q.get_question_object.auto_grade %}
+                            
+                            {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span> {% if q.score > 0 %}<strong>score: {{ q.score }}</strong> {% endif %}
+                            {% elif q.score == -1 %}<span class="btn btn-xs btn-info" title="grade pending">grade pending</span>
+                            {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-close"></i> </span> <strong>score: {{ q.score }}</strong>
                             {% endif %}
-                        </td>
-                    </tr>
-                    {% endif %}
 
-                {% endfor %}
-            </tbody>
-        </table>
-    {% empty %}
-        <div class="row">This worksheet has no responses or does not require responses.</div>
-    {% endfor %}
-{% endif %}
+                        {% else %}
+
+                            {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>
+                            {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-close"></i></span>
+                            {% endif %}
+
+                        {% endif %}
+                    </a></td>
+                </tr>
+                {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
 {% endblock content %}
 

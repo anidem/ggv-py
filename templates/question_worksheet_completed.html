@@ -11,22 +11,24 @@
 </div>
 
 <div class="col-md-4 text-center">
-    <p class="lead">You have completed <i>{{ status.completed_worksheet }}</i>!</p>
+    <p class="lead">You have completed</p>
+    <h2><strong>{{ status.completed_worksheet }}</strong></h2>
 </div>
 {% endblock page_header%}
 
 
 {% block content %}
-<div class="col-md-6">
+<div class="col-md-6 col-md-offset-3 text-center lead">
     {% if course.control_worksheet_results %}
         {% if status.can_check_results %}
-            You can check your answers <a href="{% url 'worksheet_user_report' course.slug status.completed_worksheet.id status.user.id %}">here</a>.
+            You can check your answers <a href="{% url 'worksheet_user_report' course.slug status.completed_worksheet.id status.user.id %}"><strong>here</strong></a>.
 
         {% else %}
-            You can check your answers after your instructor has reviewed your responses. View more activities in this lesson <a href="{% url 'lesson' course.slug status.completed_worksheet.lesson.id %}">here</a>.
+            <p>You can check your answers after your instructor has reviewed your responses.</p>
+            <p>Try completing more activities in this lesson <a href="{% url 'lesson' course.slug status.completed_worksheet.lesson.id %}"><strong>here</strong></a></p>
         {% endif %}
     {% else %}
-        You can check your answers <a href="{% url 'worksheet_user_report' course.slug status.completed_worksheet.id status.user.id %}">here</a>.
+        You can check your answers <a href="{% url 'worksheet_user_report' course.slug status.completed_worksheet.id status.user.id %}"><strong>here</strong></a>.
     {% endif %}
 
 

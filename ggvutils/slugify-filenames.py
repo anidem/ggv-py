@@ -1,33 +1,31 @@
-# python script to rename (slugify) files in a directory. CD to the directory before running. Note the curr directory path given on line 5
+# python script to rename (slugify) ispring folder names in a directory. 
+
 import os
 from django.utils.text import slugify
 
-input_dir = os.path.abspath('.')
 
+""" Usage:
+1. cd to directory containing files/folders that need to be renamed (slugified)
+2. run python slugify-filenames.py within above directory
+
+"""
 
 def slugify_file(directory, fstr):
-    froot = fstr[:-4]
-    fext = fstr[-4:]  # get the three letter extension with the '.'
-    j = slugify(unicode(froot, errors='replace'))
-    j = j + fext
-    # print '\t\tRENAMED', j
-
+    ftrim = fstr[:-4] # remove (Web) from filename.
+    ftrim = slugify(unicode(ftrim, errors='replace'))
     os.rename(
         os.path.join(directory, fstr),
-        os.path.join(directory, j)
+        os.path.join(directory, ftrim)
     )
 
 
 def slugify_dir(directory):
     # loop through files in dir -- rename each file by slugifying it.
-    for i in os.listdir(directory):
-        # print '\t',i
+    files = [i for i in os.listdir(directory) if i[0] != '.']
+    for i in files:
         slugify_file(directory, i)
 
+if __name__ == '__main__':
+    input_dir = os.path.abspath('.')
+    slugify_dir(input_dir)
 
-slugify_dir(input_dir)
-
-# for j in filter(os.path.isdir, os.listdir(input_dir)):
-#     subdir = os.path.abspath(os.path.join(input_dir, j))
-#     # print subdir
-#     slugify_dir(subdir)

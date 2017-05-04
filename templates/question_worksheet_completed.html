@@ -24,7 +24,7 @@
             You can check your answers <a href="{% url 'worksheet_user_report' course.slug status.completed_worksheet.id status.user.id %}"><strong>here</strong></a>.
 
         {% else %}
-            <p>You can check your answers after your instructor has reviewed your responses.</p>
+            You can check your answers after your instructor has reviewed your responses.
             <p>Try completing more activities in this lesson <a href="{% url 'lesson' course.slug status.completed_worksheet.lesson.id %}"><strong>here</strong></a></p>
         {% endif %}
     {% else %}

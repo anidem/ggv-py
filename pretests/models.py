@@ -52,11 +52,13 @@ class PretestUser(TimeStampedModel):
     Models a non authenticated user who is granted access to a pretest worksheet.
     """
     account = models.ForeignKey(PretestAccount, related_name='tokens')
+    # prepare to link a pretestuser to an existing user account. Note: this user account is typically inactive.
+    # ggvuser_account = models.ForeignKey(User, null=True, blank=True)   
     access_token = models.CharField(max_length=512, unique=True)
     email = models.EmailField(null=True, blank=True)
     first_name = models.CharField(max_length=512, null=True, blank=True)
     last_name = models.CharField(max_length=512, null=True, blank=True)
-    program_id = models.CharField(max_length=128, null=True, blank=True)    
+    program_id = models.CharField(max_length=128, null=True, blank=True) 
     language_pref = models.CharField(max_length=32, null=True, blank=True, choices=(
         ('english', 'english'), ('spanish', 'spanish')))
     expired = models.BooleanField(default=False)

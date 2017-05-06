@@ -479,6 +479,12 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
         if i.ggvuser.receive_notify_email:
             instructor_list.append(i.email)
 
+    if not instructor_list:  # Nobody to send to. Recipient list is empty!
+        messages.info(self.request, 'Your instructor(s) did not receive your email but other administrative staff will be contacted.')
+
+        for i in course.manager_list():
+            instructor_list.append(i.email)
+
     worksheet_results_url = 'http://' + request.get_host() + reverse('worksheet_user_report', args=[course.slug, worksheet.id, request.user.id])
 
     html_message = "<p><b>Replies to this message will be sent to: {usr_email}</b></p>".format(usr_email=request.user.email)

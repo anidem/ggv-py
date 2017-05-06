@@ -24,7 +24,7 @@ from core.views import (
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView,
     CreateGgvUserView, UpdateGgvUserAccountView,  GgvUserView, UpdateGgvUserView, GgvUserActivationView, GgvUserArchiveThenDeleteView, GgvUserDeleteUnusedAccount,
-    FaqView, GgvUsersDeactivationView, GgvUsersActivationView, AttendanceAjaxCodeUpdateView, AttendanceAjaxCodeCreateView, AttendanceAjaxCodeDeleteView, AttendanceUpdateAllView
+    FaqView, GgvUsersDeactivationView, GgvUsersActivationView, AttendanceAjaxCodeUpdateView, AttendanceAjaxCodeCreateView, AttendanceAjaxCodeDeleteView, AttendanceUpdateAllView, SurveySelectView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import (
@@ -166,7 +166,7 @@ urlpatterns = [
     url(r'^ggv/users/activate/$', GgvUsersActivationView.as_view(), name='activate_users'),
     url(r'^ggv/users/delete-unused/$', GgvUserDeleteUnusedAccount.as_view(), name='delete_unused_user'),
     url(r'^ggv/users/archive-delete/$', GgvUserArchiveThenDeleteView.as_view(), name='archive_delete_user'),
-
+    url(r'^ggv/survey/(?P<pk>[-\d]+)/$', SurveySelectView.as_view(), name='survey_option'),
     # deprecate => url(r'^ggv/(?P<crs_slug>[-\w]+)/user/list/$', ListGgvUserView.as_view(), name='list_users'),
 
     # Login urls

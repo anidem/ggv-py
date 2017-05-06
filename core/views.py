@@ -1,6 +1,7 @@
 # core/views.py
 import json
 from pytz import timezone
+from datetime import datetime
 
 from django import utils
 from django import forms
@@ -25,7 +26,7 @@ from courses.models import Course, GGVOrganization
 from archiver import serialize_user_data
 
 from .models import Bookmark, GGVUser, SiteMessage, Notification, SitePage, AttendanceTracker
-from .forms import BookmarkForm, GgvUserAccountCreateForm, GgvUserSettingsForm, GgvUserAccountUpdateForm, GgvUserStudentSettingsForm, GgvEmailQuestionToInstructorsForm, AttendanceTrackerUpdateForm, AttendanceTrackerCreateForm
+from .forms import BookmarkForm, GgvUserAccountCreateForm, GgvUserSettingsForm, GgvUserAccountUpdateForm, GgvUserStudentSettingsForm, GgvEmailQuestionToInstructorsForm, AttendanceTrackerUpdateForm, AttendanceTrackerCreateForm, SurveyOptionForm
 from .mixins import CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from .signals import *
 from .utils import update_attendance_for_all_users
@@ -55,6 +56,11 @@ class HomeView(LoginRequiredMixin, TemplateView):
 
         if pretest_account and not ggv_account:
             return redirect('pretestapp:pretest_account_list')
+
+        if request.user.is_staff:  # testing for staff only - temporary
+            elapsed = datetime.today().date() - ggv_account.user.date_joined.date()
+            if elapsed.days > 30 and not ggv_account.survey_viewed:  
+                return redirect('survey_option', ggv_account.pk)
 
         try:
             self.courses = self.request.session['user_courses']
@@ -535,6 +541,7 @@ class AttendanceUpdateAllView(LoginRequiredMixin, TemplateView):
             update_attendance_for_all_users()
         return super(AttendanceUpdateAllView, self).dispatch(request, *args, **kwargs)
 
+
 """ Bookmark Management """
 
 class BookmarkAjaxCreateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptMixin, JSONResponseMixin, AjaxResponseMixin, CreateView):
@@ -633,6 +640,22 @@ class FaqView(TemplateView):
         context["sitepage"] = SitePage.objects.get(title='FAQ')
         return context
 
+
+""" Survey Option """
+
+class SurveySelectView(LoginRequiredMixin, UpdateView):
+    model = GGVUser
+    template_name = 'survey_option.html'
+    form_class = SurveyOptionForm
+
+    def form_valid(self, form): 
+        if form.instance.survey_viewed:  
+            self.success_url = 'http://www.google.com'  # user will take survey. redirect to survey site.
+        else:                                           
+            self.success_url = reverse('ggvhome')       # user has declined survey. redirect to home page.
+            form.instance.survey_viewed = True          # set the survey_viewed to true even though they have declined.       
+
+        return super(SurveySelectView, self).form_valid(form)
 
 """ Error Pages """
 

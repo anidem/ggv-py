@@ -12,6 +12,7 @@ from .models import Bookmark
 
 LANG_CHOICES = (('english', 'English'), ('spanish', 'Spanish'))
 ACCESS_CHOICES = (('access', 'Student Access'), ('instructor', 'Instructor Access'))
+SURVEY_OPTIONS = ((True, 'Take Survey'), (False, 'Decline Survey'))
 LABELS = {
     'language': 'Preferred language:',
     'program_id': 'Please enter a unique identifier (maximum 32 numbers or letters) for this user if your organization assigns ids to users. This is optional. A default identifier will be generated if one is not specified.<br><br>Program ID',
@@ -121,6 +122,14 @@ class GgvUserSettingsForm(ModelForm):
         }
 
 
+class SurveyOptionForm(ModelForm):
+    survey_viewed = forms.ChoiceField(choices=SURVEY_OPTIONS, label='Take the survey?', required=True)
+
+    class Meta:
+        model = GGVUser
+        fields = ['survey_viewed']
+
+
 class GgvUserStudentSettingsForm(ModelForm):
     """
     Form designed for student users to modify their preferences.
@@ -182,6 +191,7 @@ class GgvEmailActivationRequestForm(Form):
         help_text='After pressing Send Message, the site manager will receive your request in their email.'
         )
 
+
 class GgvEmailManagerRequestAccountForm(Form):
     # course = forms.ModelChoiceField(
     #     queryset=Course.objects.all(), widget=forms.HiddenInput())
@@ -199,6 +209,7 @@ class GgvEmailManagerRequestAccountForm(Form):
     #     widgets = {
     #         'is_active': forms.HiddenInput(),
     #     }    
+
 
 class BookmarkForm(ModelForm):
 
@@ -278,9 +289,6 @@ class AttendanceTrackerUpdateForm(ModelForm):
     class Meta:
         model = AttendanceTracker
         fields = ['code']
-
-
-
 
 
 

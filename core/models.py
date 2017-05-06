@@ -57,6 +57,7 @@ class GGVUser(models.Model):
     receive_notify_email = models.BooleanField(default=False)
     receive_email_messages = models.BooleanField(default=False)
     last_deactivation_date = models.DateTimeField(null=True, blank=True)
+    survey_viewed = models.BooleanField(default=False, blank=True)
 
     def getGgvOrganizationMap(self):
         courses = get_objects_for_user(self.user, ['courses.access', 'courses.instructor', 'courses.manage'])
@@ -331,7 +332,6 @@ class SitePage(models.Model):
 
     def __unicode__(self):
         return self.title
-
 
 
 

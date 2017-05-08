@@ -480,7 +480,7 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
             instructor_list.append(i.email)
 
     if not instructor_list:  # Nobody to send to. Recipient list is empty!
-        messages.info(self.request, 'Your instructor(s) did not receive your email but other administrative staff will be contacted.')
+        messages.info(request, 'Your instructor(s) did not receive your email but other administrative staff will be contacted.')
 
         for i in course.manager_list():
             instructor_list.append(i.email)

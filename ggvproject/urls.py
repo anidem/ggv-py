@@ -46,6 +46,7 @@ from questions.views import (
 from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView, slide_view
 from supportmedia.views import ExternalMediaView, ExternalMediaCourseView, ExternalMediaCreateView, ExternalMediaUpdateView
 from pretests.views import PretestHomeView
+from simplesurvey.views import SurveyQuestionResponseView
 
 handler404 = 'core.views.handler404'
 handler500 = 'core.views.handler500'
@@ -166,10 +167,14 @@ urlpatterns = [
     url(r'^ggv/users/activate/$', GgvUsersActivationView.as_view(), name='activate_users'),
     url(r'^ggv/users/delete-unused/$', GgvUserDeleteUnusedAccount.as_view(), name='delete_unused_user'),
     url(r'^ggv/users/archive-delete/$', GgvUserArchiveThenDeleteView.as_view(), name='archive_delete_user'),
-    url(r'^ggv/survey/(?P<pk>[-\d]+)/$', SurveySelectView.as_view(), name='survey_option'),
+    
     # deprecate => url(r'^ggv/(?P<crs_slug>[-\w]+)/user/list/$', ListGgvUserView.as_view(), name='list_users'),
 
-    # Login urls
+# Survey
+    url(r'^ggv/survey/(?P<pk>[-\d]+)/$', SurveySelectView.as_view(), name='survey_option'),
+    url(r'^ggv/survey-take/(?P<p>\d+)/(?P<pk>[-\d]+)/$', SurveyQuestionResponseView.as_view(), name='survey'),
+
+# Login urls
 
     url(r'^login/', include('social.apps.django_app.urls')),
     url(r'^logout/$', views.logout, name='logout'),

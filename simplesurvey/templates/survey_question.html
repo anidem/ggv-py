@@ -1,0 +1,86 @@
+<!-- pretest_question.html -->
+{% extends "pretest_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_header %}
+	<div class="col-md-12 text-center">
+	    <p class="lead">{{ survey }}</p>
+	</div>   
+{% endblock page_header %}
+
+
+{% block content %}
+    <div class="col-md-12">
+        <div class="row "> <!-- Question content -->
+                
+                <div class="lead">{{ question | safe }} </div>
+
+                <form id="response_form" action="." method="post" >{% csrf_token %}
+                    {% if question.response_required %}
+                        {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
+
+                        <p class="label label-danger">{% for e in form.response.errors  %}An answer is required.{% endfor %}</p>
+                        <p></p>
+
+                        {% for field in form.response %}
+                        <p>
+                            {% if not field.choice_label %}
+                                <label for="{{ field.id_for_label }}">{{ field }}</label>
+                            {% else %}
+                                <label for="{{ field.id_for_label }}">
+                                    {{ field.tag }} {{ field.choice_label | safe }}
+                                </label>
+                            {% endif %}
+                        </p>
+                        {% endfor %}
+                    {% endif %}
+                </form>
+                <p><button id="chk_response_btn" class="btn btn-default">Submit Answer</button></p>
+        </div>
+    </div>
+
+<!-- Response processing message modal -->
+<div id="wait_msg" class="modal" role="dialog" tabindex="-1">
+  <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-body text-center">
+            <i class="fa fa-spinner fa-spin fa-5x"></i> 
+            <h2 class="lead">Processing your response. Please wait.</h2>
+        </div>
+    </div>
+  </div>
+</div>
+
+<!-- THE END -->
+{% endblock content %}
+
+{% block local_js %}
+    <script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>
+    <script>tinymce.init({selector:'textarea.editor'});</script>
+    
+
+    <script type="text/javascript" language="JavaScript">
+        $(document).ready(function() {
+
+            function set_body_height() {
+                $('body').attr('style', 'height:' + $(window).height() + 'px;');
+            }
+
+            $("#chk_response_btn").on("click", function(e) {
+                $(this).attr('disabled', 'disabled');
+                $("#wait_msg").modal({
+                    keyboard: false,
+                    backdrop: "static",
+                    show: true
+                });
+                // After modal is shown the shown.bs.modal event below will fire triggering the form submit.
+            });
+
+            $('#wait_msg').on('shown.bs.modal', function (e) {
+                $("#response_form").submit();
+            });
+        });
+    </script>
+{% endblock local_js %}
+

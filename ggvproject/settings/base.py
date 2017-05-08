@@ -73,6 +73,7 @@ INSTALLED_APPS = (
     'notes',
     'core',
     'pretests',
+    'simplesurvey',
 
     'crispy_forms',
     'django_wysiwyg',

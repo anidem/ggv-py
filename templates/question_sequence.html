@@ -50,11 +50,11 @@
 
                 <div class="lead">
                     {{ question_position }}/{{ question_list|length }}.
-                    <i class="fa fa-flag flagger {% if bookmark %}bkset{% endif %}" title="flag this question to review later" data-target="{{ bookmark.id }}" data-form="#flag_form"></i>
+                    <i class="fa fa-flag flagger {% if bookmark %}bkset{% endif %}" title="Flag this question to review later" data-target="{{ bookmark.id }}" data-form="#flag_form"></i>
                     <h6></h6>
                     {% if calculator %}
                     <!-- Modal trigger -->
-                    <a id="calculator_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title="calculator help" data-toggle="modal" data-target="#calculator">
+                    <a id="calculator_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title="Click to view calculator shortcuts." data-toggle="modal" data-target="#calculator">
                       <i class="fa fa-calculator"></i>
                     </a>
                     <!-- Modal Content -->
@@ -79,10 +79,10 @@
 
                     {% if formula %}
                     <!-- Modal trigger -->
-                    <a id="formula_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title="show formula help" data-toggle="modal" data-target="#formula">
+                    <a id="formula_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title="Click to view formulas." data-toggle="modal" data-target="#formula">
                        <i class="fa fa-book"></i>
                     </a>
-                    <a id="graph_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title="print graph paper" data-toggle="modal" data-target="#graph_paper">
+                    <a id="graph_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title="Print graph paper." data-toggle="modal" data-target="#graph_paper">
                        <i class="fa fa-th"></i>
                     </a>
 

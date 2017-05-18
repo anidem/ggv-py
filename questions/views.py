@@ -277,10 +277,12 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         if self.worksheet.lesson.id == 1:   # English math lesson.
             context['calculator'] = settings.MEDIA_URL + 'pdf/0-calculator-eng.pdf'
             context['formula'] = settings.MEDIA_URL + 'pdf/0_A-GGV_Formula_Sheet_Eng.pdf'
+            context['graph_paper'] = settings.MEDIA_URL + 'img/graph-sheet-for-slope.png'
         elif self.worksheet.lesson.id == 5:  # Spanish math lesson
             context['calculator'] = settings.MEDIA_URL + 'pdf/0-calculator-spn.pdf'
             context['formula'] = settings.MEDIA_URL + 'pdf/0_A-GGV_Formula_Sheet_Spn.pdf'
-
+            context['graph_paper'] = settings.MEDIA_URL + 'img/graph-sheet-for-slope.png'
+            
         return context
 
 

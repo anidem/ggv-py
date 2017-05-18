@@ -50,11 +50,11 @@
 
                 <div class="lead">
                     {{ question_position }}/{{ question_list|length }}.
-                    <i class="fa fa-flag flagger {% if bookmark %}bkset{% endif %}" data-target="{{ bookmark.id }}" data-form="#flag_form"></i>
+                    <i class="fa fa-flag flagger {% if bookmark %}bkset{% endif %}" title="flag this question to review later" data-target="{{ bookmark.id }}" data-form="#flag_form"></i>
                     <h6></h6>
                     {% if calculator %}
                     <!-- Modal trigger -->
-                    <a id="calculator_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" data-toggle="modal" data-target="#calculator">
+                    <a id="calculator_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title="calculator help" data-toggle="modal" data-target="#calculator">
                       <i class="fa fa-calculator"></i>
                     </a>
                     <!-- Modal Content -->
@@ -79,10 +79,14 @@
 
                     {% if formula %}
                     <!-- Modal trigger -->
-                    <a id="formula_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" data-toggle="modal" data-target="#formula">
+                    <a id="formula_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title="show formula help" data-toggle="modal" data-target="#formula">
                        <i class="fa fa-book"></i>
                     </a>
-                    <!-- Modal Content -->
+                    <a id="graph_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title="print graph paper" data-toggle="modal" data-target="#graph_paper">
+                       <i class="fa fa-th"></i>
+                    </a>
+
+                    <!-- Modal Content Formula-->
                     <div class="modal fade" id="formula" role="dialog" aria-hidden="true">
                       <div class="modal-dialog modal-lg">
                         <div class="modal-content">
@@ -93,6 +97,25 @@
                           </div>
                           <div class="modal-body">
                             <iframe id="pdf_formula" class="pdfframe"></iframe>
+                          </div>
+                          <div class="modal-footer">
+                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Modal Content Graph Paper -->
+                    <div class="modal fade" id="graph_paper" role="dialog" aria-hidden="true">
+                      <div class="modal-dialog modal-lg">
+                        <div class="modal-content">
+                          <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
+                            <p class="text-center"><a class="btn btn-link" href="{{ graph_paper }}" target="_blank">print</a></p>
+                          </div>
+                          <div class="modal-body">
+                            <img src="{{ graph_paper }}" width="100%">
                           </div>
                           <div class="modal-footer">
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
@@ -111,11 +134,13 @@
                         {% endcomment %}
                         {% endif %}
 
-                        <a href="{% url 'worksheet_user_report' course.slug worksheet.id user.id %}"  class="btn btn-xs btn-primary">
+                        <a href="{% url 'worksheet_user_report' course.slug worksheet.id user.id %}"  class="btn btn-xs btn-primary" title="Click to view your worksheet results when you have completed worksheet.">
                             <i class="fa fa-check"></i> <i class="fa fa-th-list"></i>
                         </a>
 
-                        <a class="btn btn-xs btn-success" data-toggle="collapse" href="#progress-panel" aria-expanded="false" aria-controls="collapseExample">
+
+                        <a class="btn btn-xs btn-success" title="Click to view the number of questions on the worksheet.
+" data-toggle="collapse" href="#progress-panel" aria-expanded="false" aria-controls="collapseExample">
                         <i class="fa fa-question"></i> <i class="fa fa-list"></i>
                         </a>
                         <div id="progress-panel" class="well collapse">

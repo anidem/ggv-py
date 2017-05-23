@@ -54,14 +54,16 @@ class HomeView(LoginRequiredMixin, TemplateView):
         except:
             ggv_account = None
 
+        # User is accessing a pretest as non ggv user so redirect.
         if pretest_account and not ggv_account:
             return redirect('pretestapp:pretest_account_list')
 
-        if request.user.is_staff:  # testing for staff only - temporary
-            elapsed = datetime.today().date() - ggv_account.user.date_joined.date()
-            if elapsed.days > 30 and not ggv_account.survey_viewed:  
-                return redirect('survey_option', ggv_account.pk)
-
+        # Show the user the survey option
+        elapsed = datetime.today().date() - ggv_account.user.date_joined.date()
+        if elapsed.days > 30 and not ggv_account.survey_viewed:
+            return redirect('survey_option', ggv_account.pk)
+                                
+        # proceed to ggv home page
         try:
             self.courses = self.request.session['user_courses']
             if len(self.courses) == 1:
@@ -649,8 +651,12 @@ class SurveySelectView(LoginRequiredMixin, UpdateView):
     form_class = SurveyOptionForm
 
     def form_valid(self, form): 
-        if form.instance.survey_viewed:  
-            self.success_url = 'http://www.google.com'  # user will take survey. redirect to survey site.
+        if form.instance.survey_viewed:
+            perms = get_objects_for_user(self.request.user, [ 'instructor', 'manage'], Course, any_perm=True)
+            if perms or self.request.user.is_staff: # user will take survey. redirect to instructor survey site.
+                self.success_url = 'https://docs.google.com/forms/d/e/1FAIpQLScH7vr78qLQ8muic4SUPJPt_gHHw8i1mO43Q6KC_ITzYbZBfw/viewform'  
+            else:   # user will take survey. redirect to student survey site.
+                self.success_url = 'https://docs.google.com/forms/d/e/1FAIpQLSc6Bu3c3EDN7z9tEM2aIw65erMzc934Vxq1-H9VZXQvNUMTrQ/viewform'
         else:                                           
             self.success_url = reverse('ggvhome')       # user has declined survey. redirect to home page.
             form.instance.survey_viewed = True          # set the survey_viewed to true even though they have declined.       

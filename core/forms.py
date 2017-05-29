@@ -12,7 +12,6 @@ from .models import Bookmark
 
 LANG_CHOICES = (('english', 'English'), ('spanish', 'Spanish'))
 ACCESS_CHOICES = (('access', 'Student Access'), ('instructor', 'Instructor Access'))
-SURVEY_OPTIONS = ((True, 'Take Survey'), (False, 'Decline Survey'))
 LABELS = {
     'language': 'Preferred language:',
     'program_id': 'Please enter a unique identifier (maximum 32 numbers or letters) for this user if your organization assigns ids to users. This is optional. A default identifier will be generated if one is not specified.<br><br>Program ID',
@@ -120,14 +119,6 @@ class GgvUserSettingsForm(ModelForm):
             'receive_notify_email': 'Receive student activity notifications in email?',
             'receive_email_messages': 'Receive emails from students?'
         }
-
-
-class SurveyOptionForm(ModelForm):
-    survey_viewed = forms.ChoiceField(choices=SURVEY_OPTIONS, label='Take the survey?', required=True)
-
-    class Meta:
-        model = GGVUser
-        fields = ['survey_viewed']
 
 
 class GgvUserStudentSettingsForm(ModelForm):

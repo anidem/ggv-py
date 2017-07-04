@@ -51,7 +51,8 @@ class PretestUserUpdateForm(ModelForm):
         else:
             # self.fields['account_selector'].choices = [(' ','--')]
             # self.fields['account_selector'].label = 'Choose an examinee from a list of users that are part of your organization. (optional):'
-            del self.fields['account_selector']
+            # del self.fields['account_selector']
+            pass
 
     class Meta:
         model = PretestUser

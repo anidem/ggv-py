@@ -347,6 +347,9 @@ class PretestUserUpdateView(LoginRequiredMixin, PretestAccountRequiredMixin, Upd
     pretest_accounts = None
     access_model = PretestUser
 
+    def get(self, request, *args, **kwargs):               
+        return super(PretestUserUpdateView, self).get(request, *args, **kwargs)
+
     def get_initial(self):
         initial = super(PretestUserUpdateView, self).get_initial()
         try:
@@ -363,6 +366,7 @@ class PretestUserUpdateView(LoginRequiredMixin, PretestAccountRequiredMixin, Upd
         context = super(PretestUserUpdateView, self).get_context_data(**kwargs)
         try:
             context['user_list'] = self.user_list
+            context['google_db'] = self.get_object().account.ggv_org.google_db.all()[0]
         except:
             pass
 
@@ -387,7 +391,7 @@ class PretestUserUpdateFromGoogleView(LoginRequiredMixin, PretestAccountRequired
     def get_context_data(self, **kwargs):
         context = super(PretestUserUpdateFromGoogleView, self).get_context_data(**kwargs)
         try:
-            context['user_list'] = self.user_list
+            context['google_db'] = self.get_object().account.ggv_org.google_db.all()[0]
         except:
             pass
 

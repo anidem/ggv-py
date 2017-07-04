@@ -33,6 +33,7 @@
         
     </div>
     <div id="google_db_users"></div>
+    <input id="google_id" type="hidden" value="{{ google_db.google_file_id }}"/>
     {% for i in user_list %}
         <input id="user_{{ i.id }}" type="hidden" data-email="{{ i.email }}" data-first="{{ i.first_name }}" data-last="{{ i.last_name }}" data-progid="{{ i.ggvuser.program_id }}"/>
     {% endfor %}
@@ -165,21 +166,23 @@
    * https://docs.google.com/spreadsheets/d/1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms/edit
    */
   function listMajors() {
+    var file_id = document.getElementById('google_id').value;
+    console.log(file_id);
+
     gapi.client.sheets.spreadsheets.values.get({
-      spreadsheetId: 
+      spreadsheetId: file_id,
       //'1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-      '1KGsK2xA__7Wc8PNnw4N2dicVx0plVs_GbZu3wK64Af4',
+      // lamar file id: '1KGsK2xA__7Wc8PNnw4N2dicVx0plVs_GbZu3wK64Af4',
       range: 'Form Responses 2!A2:V',
     }).then(function(response) {
       var range = response.result;
-      console.log("ROWS: " + range.values.length);
       
       
 
       if (range.values.length > 0) {
         for (i = 0; i < range.values.length; i++) {
           var row = range.values[i];
-          console.log("GEDID: " + row[0]);
+          // console.log("GEDID: " + row[0]);
 
           if(row[0] !== undefined) {            
               var user_data = [row[0], row[7], row[9], row[21]];

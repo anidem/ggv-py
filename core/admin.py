@@ -166,6 +166,7 @@ class ActivityLogAdmin(admin.ModelAdmin):
     list_display = ('timestamp', 'user', 'action', 'message')
     list_filter = ('timestamp', 'user', 'action')
 
+
 class AttendanceTrackerAdmin(admin.ModelAdmin):
     list_display = ('user', 'datestamp', 'datestr', 'code')
     list_filter = ('user',)
@@ -189,9 +190,15 @@ class GGVUserAdmin(admin.ModelAdmin):
 class GGVOrganizationAdmin(admin.ModelAdmin):
     list_display = ('id', 'license_id', 'title', 'user_quota', 'quota_start_date', 'business_contact_email', 'business_contact_phone')
 
+
 class QuestionResponseAdmin(admin.ModelAdmin):
     list_display = ('user', 'response', 'modified', 'content_type', 'object_id', 'iscorrect')
     list_filter = ('user__email', 'content_type')
+
+
+class TempCourseGoogleDbAdmin(admin.ModelAdmin):
+    list_display = ('google_file_id', 'ggv_org')
+
 
 admin.site.register(GGVOrganization, GGVOrganizationAdmin)
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
@@ -199,7 +206,7 @@ admin.site.register(CourseLesson, CourseLessonAdmin)
 admin.site.register(CourseTag)
 admin.site.register(TaggedCourse)
 admin.site.register(CourseGrader, CourseGraderAdmin)
-admin.site.register(TempCourseGoogleDb)
+admin.site.register(TempCourseGoogleDb, TempCourseGoogleDbAdmin)
 admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)
 admin.site.register(Section, SectionAdmin, Media=ExtraMedia)
 admin.site.register(SlideStack, SlideStackAdmin)

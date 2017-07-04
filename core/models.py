@@ -15,7 +15,7 @@ from django.contrib.contenttypes.fields import GenericForeignKey
 
 from guardian.shortcuts import get_objects_for_user
 
-from courses.models import Course
+from courses.models import Course, GGVOrganization
 
 tz = timezone(settings.TIME_ZONE)
 
@@ -336,7 +336,9 @@ class SitePage(models.Model):
 
 class TempCourseGoogleDb(models.Model):
     google_file_id = models.CharField(max_length=512)
-    course = models.ForeignKey(Course)
+    ggv_org = models.ForeignKey(GGVOrganization, related_name='google_db')
 
-    
+    def __unicode__(self):
+        return self.ggv_org.title
+
 

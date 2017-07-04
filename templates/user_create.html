@@ -37,7 +37,7 @@
         <span class="label label-default">{{ licenses.manager_count }} managers</span>
     </h5>
     
-    <form class="well" method="post" action="." style="padding: 50px">{% csrf_token %}
+    <form class="well" method="post" action="." style="padding: 50px;">{% csrf_token %}
         {{ form|crispy }}
         <button class="btn btn-sm btn-success" type="submit">Add User to {{ course }}</button>
     </form>
@@ -108,6 +108,25 @@
         <p> {{ i }} </p>
     {% endfor %}
 
+    {% for i in user_list %}
+        <input id="user_{{ i.id }}" type="hidden" data-email="{{ i.email }}" data-first="{{ i.first_name }}" data-last="{{ i.last_name }}" data-progid="{{ i.program_id }}"/>
+    {% endfor %}
+
 </div>
 
 {% endblock content %}
+
+{% block local_js %}
+<script type="text/javascript" language="JavaScript">
+    $(document).ready(function() {
+        $("#id_account_selector").change(function() {
+            var data = $(this).val();
+            var user_d = $("#user_"+data);
+            $("#id_username").val(user_d.attr('data-email'));
+            $("#id_first_name").val(user_d.attr('data-first'));
+            $("#id_last_name").val(user_d.attr('data-last'));
+            $("#id_program_id").val(user_d.attr('data-progid'));
+        });
+    });
+</script>
+{% endblock local_js %}

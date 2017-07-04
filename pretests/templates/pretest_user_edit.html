@@ -22,6 +22,9 @@
         {% endif %}
     
         <h3><span class="small">Access Token <i class="fa fa-caret-right"></i></span> {{ object.access_token }}</h3>
+
+        <h3><a href="{% url 'pretestapp:pretest_user_edit_from_google' object.id %}">from google</a></h3>
+        
         <form method="post" action=".">{% csrf_token %}
             {{ form|crispy }}
             <button class="btn btn-sm btn-success" type="submit">{% if object.email %}Update{% else %}Assign Access Token{% endif %}</button>

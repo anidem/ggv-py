@@ -73,7 +73,7 @@ class TokenAccessRequiredMixin(object):
             return super(TokenAccessRequiredMixin, self).dispatch(*args, **kwargs)
         
         except Exception as e:
-            print e
+            # print e
             if self.request.user.is_staff:
                 return super(TokenAccessRequiredMixin, self).dispatch(*args, **kwargs)
             messages.error(self.request, 'You will need to provide your credentials to continue.' + str(e), extra_tags='danger')

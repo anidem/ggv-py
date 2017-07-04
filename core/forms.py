@@ -37,11 +37,18 @@ class GgvUserAccountCreateForm(ModelForm):
     Visibility: System admins, Managers
     """
 
+    account_selector = forms.ChoiceField(choices=[(' ','--')], required=False)
     course = forms.ModelChoiceField(queryset=Course.objects.all(), widget=forms.HiddenInput())
     language = forms.ChoiceField(choices=LANG_CHOICES, label=LABELS['language'], required=False)
     perms = forms.ChoiceField(widget=forms.RadioSelect(), choices=ACCESS_CHOICES, label=LABELS['access_level'])
     username = forms.EmailField(widget=forms.EmailInput(), label=LABELS['username'])
     program_id = forms.CharField(label=LABELS['program_id'], required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(GgvUserAccountCreateForm, self).__init__(*args, **kwargs)
+        if self.initial['users']:
+            self.fields['account_selector'].choices = [(' ','--')] + [(i.id, str(i.first_name + ' ' + i.last_name + ', ' + i.email)) for i in self.initial['users']]
+            self.fields['account_selector'].label = 'Choose a user from a list of users who have completed their pretests. (optional):'
 
     def clean(self):
         data = super(GgvUserAccountCreateForm, self).clean()
@@ -55,7 +62,7 @@ class GgvUserAccountCreateForm(ModelForm):
 
     class Meta:
         model = User
-        fields = ['perms', 'username', 'first_name', 'last_name', 'program_id',
+        fields = ['account_selector', 'perms', 'username', 'first_name', 'last_name', 'program_id',
                   'language', 'course', 'is_active']
         widgets = {
             'is_active': forms.HiddenInput(), 

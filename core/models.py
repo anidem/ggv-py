@@ -334,4 +334,9 @@ class SitePage(models.Model):
         return self.title
 
 
+class TempCourseGoogleDb(models.Model):
+    google_file_id = models.CharField(max_length=512)
+    course = models.ForeignKey(Course)
+
+    
 

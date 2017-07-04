@@ -23,6 +23,7 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, get_perms, get
 from social.exceptions import SocialAuthBaseException, AuthException, AuthForbidden
 
 from courses.models import Course, GGVOrganization
+from pretests.models import PretestAccount
 from archiver import serialize_user_data
 
 from .models import Bookmark, GGVUser, SiteMessage, Notification, SitePage, AttendanceTracker
@@ -123,7 +124,7 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
     course = None
 
     def dispatch(self, request, *args, **kwargs):
-        self.course = get_object_or_404(Course, slug=kwargs['crs_slug'])
+        self.course = get_object_or_404(Course, slug=kwargs['crs_slug']) 
         return super(CreateGgvUserView, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
@@ -132,8 +133,16 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
 
     def get_initial(self):
         initial = self.initial.copy()
+        pretest_accounts = PretestAccount.objects.filter(ggv_org=self.course.ggv_organization)
+        pretest_users = []
+        for i in pretest_accounts:
+            pretest_users = i.tokens.all().exclude(email=None)
+        pretest_users = list(set(pretest_users))
+
         initial = {
             'course': self.course, 'language': 'english', 'is_active': False, 'perms': 'access'}
+        self.user_list = pretest_users
+        initial['users'] = self.user_list
         return initial
 
     def form_valid(self, form):
@@ -181,6 +190,10 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         context['licenses'] = user_licenses_used
         context['license_quota'] = self.course.ggv_organization.user_quota
         context['org_courses'] = self.course.ggv_organization.organization_courses.all().exclude(pk=self.course.id)
+        try:
+            context['user_list'] = self.user_list
+        except:
+            pass
 
         # context['unregistered'] = User.objects.filter().filter(social_auth__user__isnull=True)
         # context['deactivated'] = User.objects.filter(social_auth__user__isnull=True)

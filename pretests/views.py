@@ -369,6 +369,31 @@ class PretestUserUpdateView(LoginRequiredMixin, PretestAccountRequiredMixin, Upd
         return context
 
 
+class PretestUserUpdateFromGoogleView(LoginRequiredMixin, PretestAccountRequiredMixin, UpdateView):
+    model = PretestUser
+    template_name = 'pretest_user_edit_from_google.html'
+    form_class = PretestUserUpdateForm
+    pretest_accounts = None
+    access_model = PretestUser
+
+    def get_initial(self):
+        initial = super(PretestUserUpdateFromGoogleView, self).get_initial()
+        initial['users'] = []
+        return initial
+
+    def get_success_url(self): 
+        return reverse('pretests:pretest_user_list', args=[self.get_object().account.id], current_app=self.request.resolver_match.namespace)
+
+    def get_context_data(self, **kwargs):
+        context = super(PretestUserUpdateFromGoogleView, self).get_context_data(**kwargs)
+        try:
+            context['user_list'] = self.user_list
+        except:
+            pass
+
+        return context
+
+
 class PretestAccountListView(LoginRequiredMixin, PretestAccountRequiredMixin, TemplateView):
     template_name = "pretest_account_list.html"
     pretest_accounts = None

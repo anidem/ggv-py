@@ -2,7 +2,7 @@
 
 from django.conf.urls import include, url
 
-from .views import PretestHomeView, PretestMenuView, PretestEndView, PretestLogoutView, PretestWorksheetLaunchView, PretestQuestionResponseView, PretestLanguageChoiceUpdateView, PretestUserUpdateView, PretestUserListView, PretestAccountListView, PretestUserDetailView, PretestEndConfirmView, PretestAccountReportView, PretestResponseGradeView, PretestToggleFlagView
+from .views import PretestHomeView, PretestMenuView, PretestEndView, PretestLogoutView, PretestWorksheetLaunchView, PretestQuestionResponseView, PretestLanguageChoiceUpdateView, PretestUserUpdateView, PretestUserUpdateFromGoogleView,  PretestUserListView, PretestAccountListView, PretestUserDetailView, PretestEndConfirmView, PretestAccountReportView, PretestResponseGradeView, PretestToggleFlagView
 from .utils import PretestCreateTokensView, AccessErrorView
 from .emails import SendPretestTokenView
 app_name = 'pretests'
@@ -16,6 +16,9 @@ urlpatterns = [
 	url(r'^manage/(?P<pk>\d+)/$', PretestUserListView.as_view(), name='pretest_user_list'),
 	url(r'^view/(?P<pk>\d+)/$', PretestUserDetailView.as_view(), name='pretest_user_detail'),
 	url(r'^edit/(?P<pk>\d+)/$', PretestUserUpdateView.as_view(), name='pretest_user_edit'),
+	
+	url(r'^edit-google/(?P<pk>\d+)/$', PretestUserUpdateFromGoogleView.as_view(), name='pretest_user_edit_from_google'),
+	
 	url(r'^email/(?P<pk>\d+)/$', SendPretestTokenView.as_view(), name='pretest_send_token'),
 	url(r'^start/$', PretestMenuView.as_view(), name='pretest_menu'),
 	url(r'^start/language/(?P<pk>\d+)/$', PretestLanguageChoiceUpdateView.as_view(), name='pretest_language_choice'),

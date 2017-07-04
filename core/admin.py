@@ -16,7 +16,7 @@ from notes.models import UserNote
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 
-from core.models import ActivityLog, GGVUser, Bookmark, SiteMessage, SitePage, AttendanceTracker
+from core.models import ActivityLog, GGVUser, Bookmark, SiteMessage, SitePage, AttendanceTracker, TempCourseGoogleDb
 
 UserAdmin.list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_staff', 'last_login', 'date_joined')
 UserAdmin.list_editable = ('is_active',)
@@ -199,6 +199,7 @@ admin.site.register(CourseLesson, CourseLessonAdmin)
 admin.site.register(CourseTag)
 admin.site.register(TaggedCourse)
 admin.site.register(CourseGrader, CourseGraderAdmin)
+admin.site.register(TempCourseGoogleDb)
 admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)
 admin.site.register(Section, SectionAdmin, Media=ExtraMedia)
 admin.site.register(SlideStack, SlideStackAdmin)

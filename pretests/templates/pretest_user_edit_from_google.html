@@ -13,8 +13,9 @@
 {% block content %}
     <div class="col-md-12">
         <!--Add buttons to initiate auth sequence and sign out-->
-        <button id="authorize-button" style="display: none;">Authorize</button>
-        <button id="signout-button" style="display: none;">Sign Out</button>
+        <button id="authorize-button" class="btn btn-md btn-success" style="display: none;">Load Google Data</button>
+        <button id="signout-button" class="btn btn-md btn-success" style="display: none;">Google Data Access Granted</button>
+
         <h4>Users are required to enter the <strong>email address</strong> and <strong>token</strong> indicated below in order to gain access to the pretests.</h4>
         
         {% if object.completion_status %}
@@ -25,6 +26,16 @@
         {% endif %}
     
         <h3><span class="small">Access Token <i class="fa fa-caret-right"></i></span> {{ object.access_token }}</h3>
+
+        <div id="div_id_account_selector" class="form-group" style="display: none"> 
+            <label for="id_account_selector" class="control-label ">Account selector</label>
+            <div class="controls "> 
+            <select class="select form-control" id="id_account_selector" name="account_selector">
+                <option value=" ">--</option>
+            </select>
+            </div> 
+        </div>
+
         <form method="post" action=".">{% csrf_token %}
             {{ form|crispy }}
             <button class="btn btn-sm btn-success" type="submit">{% if object.email %}Update{% else %}Assign Access Token{% endif %}</button>
@@ -34,6 +45,7 @@
     </div>
     <div id="google_db_users"></div>
     <input id="google_id" type="hidden" value="{{ google_db.google_file_id }}"/>
+
     {% for i in user_list %}
         <input id="user_{{ i.id }}" type="hidden" data-email="{{ i.email }}" data-first="{{ i.first_name }}" data-last="{{ i.last_name }}" data-progid="{{ i.ggvuser.program_id }}"/>
     {% endfor %}
@@ -55,8 +67,9 @@
 
 <script type="text/javascript">
   // Client ID and API key from the Developer Console
-  var CLIENT_ID = "404255764431-5q96ldg41ctml8s6fnlhf4tq9gq8akbi.apps.googleusercontent.com";
-
+  // var CLIENT_ID = "404255764431-5q96ldg41ctml8s6fnlhf4tq9gq8akbi.apps.googleusercontent.com";
+  var CLIENT_ID = "820078708149-k2t3jqsrpspluajv5r04dahmh2e71lf5.apps.googleusercontent.com";
+  
   // Array of API discovery doc URLs for APIs used by the quickstart
   var DISCOVERY_DOCS = ["https://sheets.googleapis.com/$discovery/rest?version=v4"];
 
@@ -102,6 +115,8 @@
     if (isSignedIn) {
       authorizeButton.style.display = 'none';
       signoutButton.style.display = 'block';
+      selector_panel = document.getElementById("div_id_account_selector");
+      selector_panel.style.display = 'block';
       listMajors();
     } else {
       authorizeButton.style.display = 'block';
@@ -136,8 +151,6 @@
   }
 
   function appendChoice(user_info) {
-    console.log(user_info.length);
-
     var selector = document.getElementById("id_account_selector");
     var opt = document.createElement("option");
     opt.setAttribute("value", user_info[0]);
@@ -156,9 +169,6 @@
     input.setAttribute("data-email", user_info[3]);
 
     db_list.appendChild(input);
-
-    // db_list.appendChild(document.createTextNode(user_list + "\n"));
-    // var textContent = document.createTextNode(message + '\n');
   }
 
   /**
@@ -167,22 +177,15 @@
    */
   function listMajors() {
     var file_id = document.getElementById('google_id').value;
-    console.log(file_id);
-
     gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: file_id,
-      //'1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms',
-      // lamar file id: '1KGsK2xA__7Wc8PNnw4N2dicVx0plVs_GbZu3wK64Af4',
       range: 'Form Responses 2!A2:V',
     }).then(function(response) {
       var range = response.result;
-      
-      
-
       if (range.values.length > 0) {
+        // appendChoice(['--', '--', '--', '--']);
         for (i = 0; i < range.values.length; i++) {
           var row = range.values[i];
-          // console.log("GEDID: " + row[0]);
 
           if(row[0] !== undefined) {            
               var user_data = [row[0], row[7], row[9], row[21]];
@@ -198,7 +201,6 @@
       appendChoice('Error: ' + response.result.error.message);
     });
   }
-
 </script>
 
 <script async defer src="https://apis.google.com/js/api.js"

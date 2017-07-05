@@ -49,10 +49,8 @@ class PretestUserUpdateForm(ModelForm):
             self.fields['account_selector'].choices = [(' ','--')] + [(i.id, str(i.first_name + ' ' + i.last_name + ', ' + i.email)) for i in self.initial['users']]
             self.fields['account_selector'].label = 'Choose an examinee from a list of users that are part of your organization. (optional):'
         else:
-            # self.fields['account_selector'].choices = [(' ','--')]
-            # self.fields['account_selector'].label = 'Choose an examinee from a list of users that are part of your organization. (optional):'
-            # del self.fields['account_selector']
-            pass
+            # accounts are loaded from google db. remove the selector from this form. selector form is defined in html and javascript.
+            del self.fields['account_selector']
 
     class Meta:
         model = PretestUser

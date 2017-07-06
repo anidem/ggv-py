@@ -24,7 +24,7 @@ from core.views import (
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView,
     CreateGgvUserView, UpdateGgvUserAccountView,  GgvUserView, UpdateGgvUserView, GgvUserActivationView, GgvUserArchiveThenDeleteView, GgvUserDeleteUnusedAccount,
-    FaqView, GgvUsersDeactivationView, GgvUsersActivationView, AttendanceAjaxCodeUpdateView, AttendanceAjaxCodeCreateView, AttendanceAjaxCodeDeleteView, AttendanceUpdateAllView
+    PolicyView, FaqView, GgvUsersDeactivationView, GgvUsersActivationView, AttendanceAjaxCodeUpdateView, AttendanceAjaxCodeCreateView, AttendanceAjaxCodeDeleteView, AttendanceUpdateAllView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import (
@@ -198,6 +198,7 @@ urlpatterns = [
 
 
     url(r'^faq/$', FaqView.as_view(), name='faq'),
+    url(r'^policy/$', PolicyView.as_view(), name='policy'),
     url(r'^home/$', HomeView.as_view(), name='ggvhome'),
     url(r'^', IndexView.as_view(), name='splash'),
  

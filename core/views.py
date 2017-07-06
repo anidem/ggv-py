@@ -664,6 +664,9 @@ class FaqView(TemplateView):
         context["sitepage"] = SitePage.objects.get(title='FAQ')
         return context
 
+class PolicyView(TemplateView):
+    template_name = 'policy.html'
+
 
 """ Error Pages """
 

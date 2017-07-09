@@ -11,7 +11,9 @@ from django.utils.text import slugify
 """
 
 def slugify_file(directory, fstr):
-    ftrim = fstr[:-4] # remove (Web) from filename.
+    ftrim = fstr
+    if fstr[-5:] == '(Web)':
+        ftrim = fstr[:-4] # remove (Web) from filename.
     ftrim = slugify(unicode(ftrim, errors='replace'))
     os.rename(
         os.path.join(directory, fstr),

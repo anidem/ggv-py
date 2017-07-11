@@ -136,7 +136,7 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         pretest_accounts = PretestAccount.objects.filter(ggv_org=self.course.ggv_organization)
         pretest_users = []
         for i in pretest_accounts:
-            pretest_users = i.tokens.all().exclude(email=None)
+            pretest_users += i.tokens.all().exclude(email=None)
         pretest_users = list(set(pretest_users))
 
         initial = {
@@ -192,6 +192,11 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         context['org_courses'] = self.course.ggv_organization.organization_courses.all().exclude(pk=self.course.id)
         try:
             context['user_list'] = self.user_list
+        except:
+            pass
+
+        try:
+            context['google_db'] = self.course.ggv_organization.google_db.all()[0]
         except:
             pass
 

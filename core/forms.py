@@ -48,7 +48,7 @@ class GgvUserAccountCreateForm(ModelForm):
         super(GgvUserAccountCreateForm, self).__init__(*args, **kwargs)
         if self.initial['users']:
             self.fields['account_selector'].choices = [(' ','--')] + [(i.id, str(i.first_name + ' ' + i.last_name + ', ' + i.email)) for i in self.initial['users']]
-            self.fields['account_selector'].label = 'Choose a user from a list of users who have completed their pretests. (optional):'
+            self.fields['account_selector'].label = 'Select user information from a list of users who have completed their pretests. (optional):'
 
     def clean(self):
         data = super(GgvUserAccountCreateForm, self).clean()

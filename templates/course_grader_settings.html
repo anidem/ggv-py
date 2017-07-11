@@ -1,0 +1,24 @@
+<!-- course_grader_settings.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_crumb %}{% endblock page_crumb %}
+
+{% block page_header %}
+
+<div class="col-md-12 text-center"><h2 class="lead"><i class="fa fa-gear"></i> Course Grader for {{ object.course }}</h2></div>
+
+{% endblock page_header %}
+
+{% block content %}
+
+<div class="col-md-12">    
+    <p class="lead">Assigned Essay Question Grader</p>
+    <form method="post" action=".">{% csrf_token %}
+        {{ form.as_p }}
+        <button class="btn btn-sm btn-success" type="submit">Update Grader Info</button>
+    </form>
+</div>
+
+{% endblock content %}

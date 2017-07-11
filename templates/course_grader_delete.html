@@ -1,0 +1,22 @@
+<!-- course_grader_delete.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_crumb %}{% endblock page_crumb %}
+
+{% block page_header %}
+
+<div class="col-md-12 text-center"><h2 class="lead"><i class="fa fa-gear"></i> Delete Course Grader for {{ object.course }}</h2></div>
+
+{% endblock page_header %}
+
+{% block content %}
+
+<div class="col-md-12">    
+    <form method="post" action=".">{% csrf_token %}
+        <button class="btn btn-sm btn-success" type="submit">Delete grader?</button>
+    </form>
+</div>
+
+{% endblock content %}

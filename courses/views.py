@@ -13,7 +13,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils import html, text
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
@@ -25,8 +25,8 @@ from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAc
 from core.utils import UnicodeWriter, GGVExcelWriter, get_daily_log_times, get_daily_log_times_v2, elapsed_time_per_event
 from questions.models import QuestionSet, UserWorksheetStatus
 from slidestacks.models import SlideStack
-from .models import GGVOrganization, Course
-from .forms import CourseUpdateForm
+from .models import GGVOrganization, Course, CourseGrader
+from .forms import CourseUpdateForm, CourseUpdateGraderForm
 
 tz = timezone(settings.TIME_ZONE)
 
@@ -174,6 +174,62 @@ class CourseUpdateView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
     slug_url_kwarg = 'crs_slug'
     form_class = CourseUpdateForm
     access_object = None
+
+
+class CourseGraderEditView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, UpdateView):
+    model = CourseGrader
+    template_name = 'course_grader_settings.html'
+    slug_url_kwarg = 'crs_slug'
+    form_class = CourseUpdateGraderForm
+    access_object = None
+
+    def get_initial(self):
+        initial = super(CourseGraderEditView, self).get_initial()
+        try:
+            initial['grader_list'] = self.get_object().course.instructor_list() + self.get_object().course.manager_list()
+        except:
+            pass
+        return initial
+
+    def get_success_url(self):
+        return reverse('manage_course', kwargs={'crs_slug': self.get_object().course.slug})
+
+
+class CourseGraderCreateView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, CreateView):
+    model = CourseGrader
+    template_name = 'course_grader_settings.html'
+    slug_url_kwarg = 'crs_slug'
+    form_class = CourseUpdateGraderForm
+    access_object = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.course = get_object_or_404(Course, slug=kwargs['crs_slug']) 
+        return super(CourseGraderCreateView, self).dispatch(request, *args, **kwargs)
+
+    def get_initial(self):
+        initial = super(CourseGraderCreateView, self).get_initial()
+        try:
+            initial['course'] = self.course
+            initial['grader'] = self.course.instructor_list() + self.course.manager_list()
+            # initial['grader'] = [(' ','--')] + [(i.id, str(i.first_name + ' ' + i.last_name + ', ' + i.email)) for i in initial['grader_list']]
+            
+        except Exception as e:
+            # print e
+            pass
+        return initial
+
+    def get_success_url(self):
+        return reverse('manage_course', kwargs={'crs_slug': self.kwargs['crs_slug']})
+
+
+class CourseGraderDeleteView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, DeleteView):
+    model = CourseGrader
+    template_name = 'course_grader_delete.html'
+    slug_url_kwarg = 'crs_slug'
+    access_object = None
+
+    def get_success_url(self):
+        return reverse('manage_course', kwargs={'crs_slug': self.get_object().course.slug})
 
 
 class CourseView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, PrivelegedAccessMixin, DetailView):

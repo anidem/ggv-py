@@ -182,4 +182,4 @@ class TextQuestionUpdateForm(ModelForm):
 class QuestionResponseGradeForm(ModelForm):
     class Meta:
         model = QuestionResponse
-        fields = ['score',]
+        fields = ['score', 'feedback']

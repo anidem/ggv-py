@@ -213,10 +213,13 @@
 <div class="col-md-12"><h1></h1></div>
 
 <!-- Graders -->
-<div class="col-md-12"><span class="lead">{{ graders|length }} Grader{{ graders|length|pluralize}}</span></div>
+<div class="col-md-12">
+    <span class="lead">{{ graders|length }} Grader{{ graders|length|pluralize}}</span> 
+    <a href="{% url 'add_course_grader' object.slug %}">add</a>
+</div>
 <div class="col-md-12">
     {% for i in graders %} 
-        {{ i.grader.first_name }} {{ i.grader.last_name }} <span class="small">({{ i.grader.email }})</span> {% if not forloop.last %}, {% endif %}
+        {{ i.grader.first_name }} {{ i.grader.last_name }} <span class="small">({{ i.grader.email }})</span> {% if not forloop.last %}, {% endif %} <a href="{% url 'edit_course_grader' object.slug i.id %}">edit</a> <a href="{% url 'delete_course_grader' object.slug i.id %}">remove</a>
     {% empty %}
         <div class="panel-body">There are no graders assigned to this course.</div>
     {% endfor %}

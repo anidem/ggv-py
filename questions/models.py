@@ -512,6 +512,7 @@ class QuestionResponse(TimeStampedModel):
     content_object = GenericForeignKey('content_type', 'object_id')
     iscorrect = models.BooleanField(blank=True, default=True)
     score = models.IntegerField(default=0)
+    feedback = models.TextField(blank=True, default='')
     grade_request_sent = models.BooleanField(default=False)
 
     def json_response(self):

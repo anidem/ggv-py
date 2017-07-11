@@ -183,17 +183,17 @@ class CourseGraderEditView(LoginRequiredMixin, CourseContextMixin, AccessRequire
     form_class = CourseUpdateGraderForm
     access_object = None
 
-    def get_initial(self):
-        initial = super(CourseGraderEditView, self).get_initial()
-        try:
-            initial['grader_list'] = self.get_object().course.instructor_list() + self.get_object().course.manager_list()
-        except:
-            pass
-        return initial
-
     def get_success_url(self):
         return reverse('manage_course', kwargs={'crs_slug': self.get_object().course.slug})
 
+    def get_context_data(self, **kwargs):
+        context = super(CourseGraderEditView, self).get_context_data(**kwargs)        
+        form = context['form']
+        graders = self.get_object().course.instructor_list() + self.get_object().course.manager_list()
+        form.fields['grader'].choices = [(' ','--')] + [(i.id, str(i.first_name + ' ' + i.last_name + ', ' + i.email)) for i in graders]
+        form.fields['course'].initial = self.get_object().course
+        context['course'] = self.get_object().course
+        return context
 
 class CourseGraderCreateView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, CreateView):
     model = CourseGrader
@@ -206,20 +206,17 @@ class CourseGraderCreateView(LoginRequiredMixin, CourseContextMixin, AccessRequi
         self.course = get_object_or_404(Course, slug=kwargs['crs_slug']) 
         return super(CourseGraderCreateView, self).dispatch(request, *args, **kwargs)
 
-    def get_initial(self):
-        initial = super(CourseGraderCreateView, self).get_initial()
-        try:
-            initial['course'] = self.course
-            initial['grader'] = self.course.instructor_list() + self.course.manager_list()
-            # initial['grader'] = [(' ','--')] + [(i.id, str(i.first_name + ' ' + i.last_name + ', ' + i.email)) for i in initial['grader_list']]
-            
-        except Exception as e:
-            # print e
-            pass
-        return initial
-
     def get_success_url(self):
         return reverse('manage_course', kwargs={'crs_slug': self.kwargs['crs_slug']})
+
+    def get_context_data(self, **kwargs):
+        context = super(CourseGraderCreateView, self).get_context_data(**kwargs)
+        form = context['form']
+        graders = self.course.instructor_list() + self.course.manager_list()
+        form.fields['grader'].choices = [(' ','--')] + [(i.id, str(i.first_name + ' ' + i.last_name + ', ' + i.email)) for i in graders]
+        form.fields['course'].initial = self.course
+        context['course'] = self.course
+        return context
 
 
 class CourseGraderDeleteView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, DeleteView):
@@ -562,7 +559,6 @@ class CourseUserActivityFullReportView(LoginRequiredMixin, CourseContextMixin, A
             for i, j in activity_log.items():
                 ws.append([j[0].date(), j[1]])
                 for k in j[2]:
-                    print k
                     ws.append(['', '', k['event_time'].strftime('%Y-%m-%d %-I:%M %p'), k['activity'].action, html.strip_tags(k['activity'].message), k['activity'].message_detail or ' ', k['score'] or ' '])
 
             sheet_index += 1

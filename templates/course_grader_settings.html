@@ -7,17 +7,17 @@
 
 {% block page_header %}
 
-<div class="col-md-12 text-center"><h2 class="lead"><i class="fa fa-gear"></i> Course Grader for {{ object.course }}</h2></div>
+<div class="col-md-12 text-center"><h2 class="lead"><i class="fa fa-gear"></i> Course Grader for {{ course }}</h2></div>
 
 {% endblock page_header %}
 
 {% block content %}
 
 <div class="col-md-12">    
-    <p class="lead">Assigned Essay Question Grader</p>
+    <p class="lead">Assign a Grader for Essay Questions in {{ course }}</p>
     <form method="post" action=".">{% csrf_token %}
         {{ form.as_p }}
-        <button class="btn btn-sm btn-success" type="submit">Update Grader Info</button>
+        <button class="btn btn-sm btn-success" type="submit">Save Grader Info</button>
     </form>
 </div>
 

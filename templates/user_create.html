@@ -37,18 +37,15 @@
     </h5>
 
 
-
-    
-    <form class="well" method="post" action="." style="padding: 50px;">{% csrf_token %}
-
 <!-- GOOGLE DB LIST -->
     {% if google_db %}
         <div class="well center-block" style="background-color: #ccc">
+            <label for="google_account_selector" class="control-label ">Select user information from your enrollment data sheet (optional):</label>
             <!--Add buttons to initiate auth sequence and sign out-->
-            <button id="authorize-button" class="btn btn-md btn-warning center-block" style="display: none;">Load Google Data</button>
-            <button id="signout-button" class="btn btn-md btn-success center-block" style="display: none;">Google Data Access Granted</button>
+            <button id="authorize-button" class="btn btn-md btn-warning center-block" style="display: none;">Click To Load Google Data</button>
+            <button id="signout-button" class="btn btn-md btn-success center-block" style="display: none;">Google Data Access Granted - Click To Turn Off</button>
             <div id="div_id_google_account_selector" class="form-group" style="display: none"> 
-                <label for="google_account_selector" class="control-label ">Select user information from your enrollment data sheet (optional):</label>
+
                 <div class="controls "> 
                 <select class="select form-control" id="google_account_selector" name="google_account_selector">
                     <option value=" ">--</option>
@@ -60,7 +57,8 @@
         </div>
     {% endif %}
 <!-- END GOOGLE DB LIST -->
-
+    
+    <form id="user_info_form" class="well" method="post" action="." style="padding: 10px;">{% csrf_token %}
         {{ form|crispy }}
         <button class="btn btn-sm btn-success" type="submit">Add User to {{ course }}</button>
     </form>
@@ -217,6 +215,13 @@
     } else {
       authorizeButton.style.display = 'block';
       signoutButton.style.display = 'none';
+      var selector = document.getElementById("google_account_selector");
+      for (var i = selector.options.length - 1 ; i >= 1 ; i--)
+        selector.remove(i);
+      document.getElementById("user_info_form").reset();
+      selector_panel = document.getElementById("div_id_google_account_selector");
+      selector_panel.style.display = 'none';
+
     }
   }
 
@@ -232,6 +237,7 @@
    */
   function handleSignoutClick(event) {
     gapi.auth2.getAuthInstance().signOut();
+
   }
 
   function appendChoice(user_info) {
@@ -263,14 +269,14 @@
     var file_id = document.getElementById('google_id').value;
     gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: file_id,
-      range: 'Form Responses 2!A2:V',
+      range: 'Form Responses 2!CA2:CG',
     }).then(function(response) {
       var range = response.result;
       if (range.values.length > 0) {
         for (i = 0; i < range.values.length; i++) {
           var row = range.values[i];
           if(row[0] !== undefined) {            
-              var user_data = [row[0], row[7], row[9], row[21]];
+              var user_data = [row[4], row[5], row[6], row[0]];
               appendChoice(user_data);
           } else {
             break;

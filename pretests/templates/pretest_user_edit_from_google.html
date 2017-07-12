@@ -13,8 +13,19 @@
 {% block content %}
     <div class="col-md-12">
         <!--Add buttons to initiate auth sequence and sign out-->
-        <button id="authorize-button" class="btn btn-md btn-success" style="display: none;">Load Google Data</button>
-        <button id="signout-button" class="btn btn-md btn-success" style="display: none;">Google Data Access Granted</button>
+        <button id="authorize-button" class="btn btn-md btn-success" style="display: none;">Click To Load Google Data</button>
+        <button id="signout-button" class="btn btn-md btn-success" style="display: none;">Google Data Access Granted - Click To Turn Off</button>
+
+        <div id="div_id_account_selector" class="form-group well" style="display: none; background-color: orange">
+        <form id="google_account_selector_form">
+            <label for="id_account_selector" class="control-label ">Select pretest user information from Google enrollment data sheet (optional):</label>
+            <div class="controls "> 
+            <select class="select form-control" id="id_account_selector" name="account_selector">
+                <option value=" ">--</option>
+            </select>
+            </div>
+          </form>
+        </div>
 
         <h4>Users are required to enter the <strong>email address</strong> and <strong>token</strong> indicated below in order to gain access to the pretests.</h4>
         
@@ -27,16 +38,7 @@
     
         <h3><span class="small">Access Token <i class="fa fa-caret-right"></i></span> {{ object.access_token }}</h3>
 
-        <div id="div_id_account_selector" class="form-group" style="display: none"> 
-            <label for="id_account_selector" class="control-label ">Select pretest user information from Google enrollment data sheet (optional):</label>
-            <div class="controls "> 
-            <select class="select form-control" id="id_account_selector" name="account_selector">
-                <option value=" ">--</option>
-            </select>
-            </div> 
-        </div>
-
-        <form method="post" action=".">{% csrf_token %}
+        <form id="token_assignment" method="post" action=".">{% csrf_token %}
             {{ form|crispy }}
             <button class="btn btn-sm btn-success" type="submit">{% if object.email %}Update{% else %}Assign Access Token{% endif %}</button>
             <a href="{% url 'pretestapp:pretest_user_list' object.account.id %}" class="btn btn-link">cancel</a>
@@ -121,6 +123,13 @@
     } else {
       authorizeButton.style.display = 'block';
       signoutButton.style.display = 'none';
+      var selector = document.getElementById("id_account_selector");
+      for (var i = selector.options.length - 1 ; i >= 1 ; i--)
+        selector.remove(i);
+      document.getElementById("token_assignment").reset();
+      selector_panel = document.getElementById("div_id_account_selector");
+      selector_panel.style.display = 'none';
+
     }
   }
 
@@ -135,7 +144,7 @@
    *  Sign out the user upon button click.
    */
   function handleSignoutClick(event) {
-    gapi.auth2.getAuthInstance().signOut();
+    gapi.auth2.getAuthInstance().signOut();    
   }
 
   /**
@@ -179,7 +188,7 @@
     var file_id = document.getElementById('google_id').value;
     gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: file_id,
-      range: 'Form Responses 2!A2:V',
+      range: 'Form Responses 2!CA2:CG',
     }).then(function(response) {
       var range = response.result;
       if (range.values.length > 0) {
@@ -188,7 +197,7 @@
           var row = range.values[i];
 
           if(row[0] !== undefined) {            
-              var user_data = [row[0], row[7], row[9], row[21]];
+              var user_data = [row[4], row[5], row[6], row[0]];
               appendChoice(user_data);
           } else {
             break;

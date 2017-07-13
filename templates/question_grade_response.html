@@ -4,40 +4,74 @@
 {% load crispy_forms_tags %}
 
 {% block page_header %}
-	<div class="col-md-12 text-center">
-	    <h2>Essay Grading</h2>
-	</div>
+    <div class="col-md-12 text-center">
+        <h2>Essay Grading</h2>
+    </div>
 {% endblock page_header %}
 
 {% block content %}
-	<div class="col-md-4">
-		<dl>
-			<dt>Test:</dt> <dd>{{ question.question_set }} </dd>
-			<dt>Original question:</dt>
-			<dd class="">{{ question.display_text|safe }}</dd>
-			<dt>{{ object.user.email }} ({{ object.user.access_token }}) wrote:</dt>
-			<dt></dt><dd><h1></h1></dd>
-			<dd class="lead">{{ object.response }}</dd>
-		</dl>
-	</div>
-	<div class="col-md-8">
-		{{ question.display_pdf}}
-		{% if question.display_pdf %}
-			<iframe id="pdf_display" src="{{ question.display_pdf.url|slice:"-3" }}html" class="pdfframe"></iframe>
-			}
-		{% endif %}
-	</div>
+<div class="col-md-12">  
+    <div class="row">
+        <div class="col-md-6">
+            <dl>
+                <dt>Worksheet:</dt> <dd><p>{{ question.question_set }}</p> </dd>
+                
+                <dt>Original question:</dt>
+                <dd><p>{{ question.display_text|safe }}</p></dd>
+            </dl>
+            <p>
+                {% if question.display_pdf %}
+                    <iframe id="pdf_display" src="{{ question.display_pdf.url|slice:"-3" }}html" class="pdfframe"></iframe>
+                    }
+                {% endif %}
+                {% if question.display_image %}
+                    <img src="question.display_image.url"> 
+                {% endif %}                
+            </p>
+        </div>
 
-	<div class="col-md-4">
-		<dt>Your Assessment</dt>
-		<dd>
-			<form action="" method="post">{% csrf_token %}
-			    {{ form|crispy }}
-			    <button class="btn btn-sm btn-success" type="submit">Submit Score</button>
-			    <a class="" href="">cancel</a>
-			</form>		
-		</dd>	
-	</div>
+        <div class="col-md-6">
+            <dl>
+                <dt>{{ object.user.first_name }} {{ object.user.last_name }} wrote:</dt>
+                <dd class="well" style="background-color: #fcf8e3"><p>{{ object.response }}</p></dd>
+
+            </dl>
+            <h4>Your Assessment:</h4>
+            <dl>
+                <dt>
+                    Maximum points: <span class="badge">{{ question.max_points }}</span> Minimum to pass: <span class="badge">{{ question.min_correct }}</span>
+                    <!-- Modal trigger -->
+                    <a id="rubric_btn" href="#" title="Click to show rubric for assessing." class="btn btn-link btn-lg" data-toggle="modal" data-target="#rubric"><i class="fa fa-list"></i> View Rubric</a>
+                </dt>
+                <dd>                    
+                    <form action="" method="post">{% csrf_token %}
+                        {{ form|crispy }}
+                        <button class="btn btn-sm btn-success" type="submit">Submit Score</button>
+                        
+                    </form>     
+                </dd>
+            </dl>
+        </div>
+    </div>
+
+    <!-- Modal Content -->
+    <div class="modal fade" id="rubric" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
+                </div>
+                <div class="modal-body">
+                    <p>{{ question.extra_info.rubric|safe }}</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock content %}
 
 

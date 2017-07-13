@@ -520,8 +520,6 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
     email.attach_alternative(html_message, "text/html")
     email.send(fail_silently=True)
 
-
-
 def send_request_to_grade(request, course=None, question_response_obj=None):
     """Sends email to official grader (user pk reads from settings file) to
     grade a written response to a pretest.
@@ -561,3 +559,47 @@ def send_request_to_grade(request, course=None, question_response_obj=None):
     # question_response_obj.save()
     messages.info(request, 'Your writing response will be graded and scored. Please check back in 48 hours. (Su respuesta de escritura será calificada. Por favor, verifique en 48 horas.)' )
     return
+
+def send_score_notification(request, response_obj=None):
+    """Sends two emails:
+    a) to user that a written response has been graded.
+    b) to instructors of the course that written response has been graded.
+    """
+    if not response_obj:
+        return
+
+    try: 
+        user = response_obj.user
+        course = get_objects_for_user(user, 'access', Course)[0]  # getting the first course found with the 'access' (student) permission.
+        worksheet = response_obj.content_object.question_set
+        access_url = reverse('worksheet_user_report', args=[course.slug, worksheet.id, user.id])
+        access_url = 'http://' + request.get_host() + access_url
+    except:
+        return 
+
+    users_name = user.first_name + ' ' + user.last_name
+    score = response_obj.score
+    if score > 0: score = 'PASSED'
+    else: score = 'DID NOT PASS'
+
+    html_message = '<p>Hi {1},</p><p>Your written response to {0} has been graded.</p>'.format(worksheet, users_name)
+    html_message += '<p>Your written response <strong>{0}</strong>.'.format(score)
+    html_message += "<p>Click link to see your assessed score:<a href='{0}'>{0}</a></p>".format(access_url)
+   
+    email = EmailMultiAlternatives(
+        subject=users_name + ' - Your GGV Written Response Has Been Graded',
+        body=html_message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[user.email],
+        )
+
+    email.attach_alternative(html_message, "text/html")
+    email.send(fail_silently=False)
+    messages.info(request, 'User has been emailed at ' + user.email + '.')
+
+    # SEND EMAIL TO INSTRUCTORS HERE?     
+
+    return
+
+
+

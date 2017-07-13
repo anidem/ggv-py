@@ -88,7 +88,7 @@
                 <tr class="hoverpad {% cycle 'row1' 'row2' %}">
                     <td>{{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</td>
                     <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">{{ i.display_text | safe }}</a></td>
-                    <td>{{ j | safe }}</td>
+                    <td><p class=""><strong>{{ j | safe }}</strong></p>{% if q.feedback %}<h6>Feedback:</h6><p class="well bg-success">{{ q.feedback }}</p>{% endif %}</td>
                     <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">
                         {% if j == 'Response not required' %}
                         

@@ -24,7 +24,7 @@ from sendfile import sendfile
 from core.models import ActivityLog, Notification
 from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import PresetBookmarkForm
-from core.emails import SendWorksheetNotificationEmailToInstructors, send_request_to_grade
+from core.emails import SendWorksheetNotificationEmailToInstructors, send_request_to_grade, send_score_notification
 from notes.forms import UserNoteForm
 from lessons.models import Lesson, Section
 from courses.models import Course
@@ -566,7 +566,7 @@ class QuestionResponseGradeView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         messages.info(self.request, 'Your assessment has been saved.')
-        # send_score_notification(self.request, self.get_object())
+        send_score_notification(self.request, self.get_object())
         return reverse('question_response_grade', args=[self.get_object().id])
 
     def get_context_data(self, **kwargs):

@@ -13,6 +13,7 @@ from braces.views import LoginRequiredMixin
 from .mixins import PretestAccountRequiredMixin
 from .models import PretestUser, PretestUserCompletion
 
+
 """PRETEST EMAIL PROCEDURES"""
 class SendPretestTokenView(LoginRequiredMixin, PretestAccountRequiredMixin, DetailView):
     model = PretestUser
@@ -43,8 +44,6 @@ class SendPretestTokenView(LoginRequiredMixin, PretestAccountRequiredMixin, Deta
         email.send(fail_silently=True)
         messages.info(self.request, 'Email has been sent to  ' + str(self.get_object().email))        
         return redirect('pretests:pretest_user_list', pk=self.get_object().account.id)
-
-
 
 def send_request_to_grade(request, pretest_response_obj=None):
     """Sends email to official grader (user pk reads from settings file) to
@@ -79,7 +78,6 @@ def send_request_to_grade(request, pretest_response_obj=None):
     pretest_response_obj.save()
     messages.info(request, 'Your writing response will be graded and scored. Please check back in 48 hours. (Su respuesta de escritura será calificada. Por favor, verifique en 48 horas.)' )
     return
-
 
 def send_completion_notification(request, pretest_completion_obj=None):
     # EMAILS MANAGER

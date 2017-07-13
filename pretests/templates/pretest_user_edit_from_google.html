@@ -188,7 +188,7 @@
     var file_id = document.getElementById('google_id').value;
     gapi.client.sheets.spreadsheets.values.get({
       spreadsheetId: file_id,
-      range: 'Form Responses 2!CA2:CG',
+      range: 'GGV Name Upload!A2:D',
     }).then(function(response) {
       var range = response.result;
       if (range.values.length > 0) {
@@ -197,7 +197,7 @@
           var row = range.values[i];
 
           if(row[0] !== undefined) {            
-              var user_data = [row[4], row[5], row[6], row[0]];
+              var user_data = [row[0], row[1], row[2], row[3]];
               appendChoice(user_data);
           } else {
             break;

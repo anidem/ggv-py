@@ -9,13 +9,11 @@
 {% endblock page_crumb %}
 
 {% block local_nav %}
-    {% if is_manager %}
     <li>
-        <a class="static nav-text" href="{% url 'create_user' course.slug %}">
+        <a class="static nav-text" href="{% url 'create_user' course.slug %}" style="padding-right: 10px">
             <i class="fa fa-user-plus text-primary"></i>
         </a>
     </li>
-    {% endif %}
 {% endblock local_nav %}
 
 {% block page_header %}
@@ -44,22 +42,23 @@
     <a class="btn btn-md" href="./?export=xlsx"> [ <i class="fa fa-download"></i> Download this report as an Excel file ]</a>
 </div>
 
-<div class="col-md-12 text-center">
+<div class="col-md-12 text-left">
+<h4>Filters (click to filter events)</h4>
     <p>
-        <a class="btn btn-md btn-default" href="./?filter=completed">  <i class="fa fa-eye"></i> show only completed worksheets </a>
-        <a class="btn btn-md btn-default" href="./">  <i class="fa fa-eye"></i> show all activity (default) </a>
+        <a class="btn btn-sm btn-default" href="./?filter=completed">  <i class="fa fa-eye"></i> show only completed worksheets </a>
+        <a class="btn btn-sm btn-default" href="./">  <i class="fa fa-eye"></i> show all activity (default) </a>
     </p>
 </div>
-{% if request.user.is_staff %}
-    <div class="col-md-12 text-center">
-        <p>
-        {% for i, j in subject_time.items %}
-            <span class=""><strong>{{i|safe}}</strong>: {{j.0}}:{{j.1}}</span> 
-        {% endfor %}
-        </p>
-    </div>
-{% endif %}
-<div class="col-md-12" style="padding-top: 20px">
+<div class="col-md-12 text-left filters-button-group">
+    <p>
+    <span style="padding-right: 5px"><a href="#" class="" data-filter=".event">Show all </a> </span>
+    {% for i, j in subject_time.items %}
+        <span style="padding-right: 5px"><a href="#" class="" data-filter=".{{ i|slugify }}">{{i}} </a> ({{j.0}}h {{j.1}}mins)</span>
+    {% endfor %}
+    </p>
+</div>
+
+<div id="event_container" class="col-md-12" style="padding-top: 20px">
 
     {% for k, v in activity_log.items %}
         {% if v.2 %}
@@ -76,7 +75,7 @@
             </div>
             {% for j in v.2 %}
                 {% if filter == 'completed' and j.activity.action == 'completed-worksheet' %}        
-                    <div class="row hoverpad text-left" style="padding-bottom: 5px; padding-bottom: 5px">
+                    <div class="row hoverpad text-left event {{ j.event_target.lesson|slugify }}" style="padding-bottom: 5px; padding-bottom: 5px">
                         <div class="col-xs-2"><small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong></div>
                         <div class="col-xs-1 small">
                             {% if  j.event_target.lesson %}
@@ -104,7 +103,7 @@
                     </div>
                 {% elif not filter %}
 
-                    <div class="row hoverpad text-left ">
+                    <div class="row hoverpad text-left event {{ j.event_target.lesson|slugify }}">
                         <div class="col-xs-2"><small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong></div>
                         <div class="col-xs-1 small">
                             {% if  j.event_target.lesson %}
@@ -158,3 +157,18 @@
 </div>
 
 {% endblock content %}
+
+{% block local_js %}
+
+<script type="text/javascript">
+    jQuery(function($) { 
+        $(document).ready(function() {
+            $('.filters-button-group').on( 'click', 'a', function() {
+                var filterValue = $(this).attr('data-filter');
+                $(".event").hide();
+                $(filterValue).show();
+            });            
+        });
+    });
+</script>
+{% endblock local_js %}

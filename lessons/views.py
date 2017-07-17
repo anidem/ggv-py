@@ -10,6 +10,7 @@ from braces.views import LoginRequiredMixin, StaffuserRequiredMixin
 
 from core.mixins import CourseContextMixin, AccessRequiredMixin, PrivelegedAccessMixin
 from core.models import Bookmark, BOOKMARK_TYPES
+from core.utils import activity_stat_worksheet, activity_stat_slides
 from .models import Lesson, Section
 from questions.models import Option
 
@@ -74,6 +75,10 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
                 a['score'] = completions.filter(completed_worksheet=i)
 
             activity_list.append(a)
+
+        #  build user activity stats info
+        context['worksheets_stat'] = activity_stat_worksheet(self.request.user, lesson)
+        context['slides_stat'] = activity_stat_slides(self.request.user, lesson)
 
         context['acts'] = activity_list
         context['sections'] = lesson.sections.all()

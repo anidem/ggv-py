@@ -22,6 +22,7 @@ from django.conf import settings
 from social.exceptions import SocialAuthBaseException, AuthException, AuthForbidden
 
 from courses.models import Course
+from lessons.models import Lesson
 
 from .models import ActivityLog, AttendanceTracker
 
@@ -407,6 +408,40 @@ def update_bookmark_course_context(user_id=None, old_course_id=None, new_course_
 
     print upd_cnt, 'bookmarks updated to course', c.id, c, del_cnt, 'deleted'
 
+def activity_stat_worksheet(u, lesson_obj=None):
+    """ Returns a lesson map mapping total number of worksheets and total user completions excludes pretest lessons
+    """
 
+    if not lesson_obj:  # get stats for all lessons
+        lesson_worksheet_map = {lesson_obj: [lesson_obj.worksheets.all().count(), 0] for lesson_obj in Lesson.objects.all() if lesson_obj.title[-8:] != 'Pretests'}
+        for i in u.completed_worksheets.all():
+            lesson_worksheet_map[i.completed_worksheet.lesson][1] += 1
+    
+    else: # get stats by lesson object parameter
+        lesson_worksheets = lesson_obj.worksheets.all().count()
+        user_completed = u.completed_worksheets.all().filter(completed_worksheet__lesson=lesson_obj).count()
+        lesson_worksheet_map = {lesson_obj: [lesson_worksheets, user_completed]}
+
+    return lesson_worksheet_map
+
+def activity_stat_slides(u, lesson_obj=None):
+    """ Returns a presentation map mapping total number of presentations and total user views.
+    """
+    if not lesson_obj:  # get stats for all lessons
+        lesson_stack_map = {i.title: [i.slidestacks.all().count(), 0] for i in Lesson.objects.all() if i.title[-8:] != 'Pretests'}
+        events = u.activitylog.all().filter(action='access-presentation')
+        stackviews = {i.message.rfind('/'): i.message_detail for i in events}
+        for i, j in stackviews.items():
+            # look up the associated lesson for the event and increment.
+            lesson_stack_map[j][1] += 1
+    
+    else: # get stats by lesson object parameter
+        lesson_stacks = lesson_obj.slidestacks.all().count()
+        events = u.activitylog.all().filter(message_detail=lesson_obj.title).filter(action='access-presentation')
+        # build dict {presentation id: lesson title}
+        stackviews = {i.message.rfind('/'): lesson_obj.title for i in events}
+        lesson_stack_map = {lesson_obj: [lesson_stacks, len(stackviews)]}
+
+    return lesson_stack_map
 
 

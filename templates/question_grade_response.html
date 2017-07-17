@@ -5,7 +5,7 @@
 
 {% block page_header %}
     <div class="col-md-12 text-center">
-        <h2>Essay Grading</h2>
+        <h2>{{ question.question_set.lesson }} Extended Response Grading</h2>
     </div>
 {% endblock page_header %}
 
@@ -14,15 +14,14 @@
     <div class="row">
         <div class="col-md-6">
             <dl>
-                <dt>Worksheet:</dt> <dd><p>{{ question.question_set }}</p> </dd>
+                <dt>Worksheet</dt> <dd><p>{{ question.question_set }}</p> </dd>
                 
-                <dt>Original question:</dt>
+                <dt>Original question</dt>
                 <dd><p>{{ question.display_text|safe }}</p></dd>
             </dl>
             <p>
                 {% if question.display_pdf %}
                     <iframe id="pdf_display" src="{{ question.display_pdf.url|slice:"-3" }}html" class="pdfframe"></iframe>
-                    }
                 {% endif %}
                 {% if question.display_image %}
                     <img src="question.display_image.url"> 
@@ -31,15 +30,17 @@
         </div>
 
         <div class="col-md-6">
+            <h4>{{ object.user.first_name }} {{ object.user.last_name }} Response</h4>
             <dl>
-                <dt>{{ object.user.first_name }} {{ object.user.last_name }} wrote:</dt>
+                <dt></dt>
                 <dd class="well" style="background-color: #fcf8e3"><p>{{ object.response }}</p></dd>
-
             </dl>
-            <h4>Your Assessment:</h4>
+
+            <h4>Instructor/Tutor Assessment</h4>
             <dl>
                 <dt>
-                    Maximum points: <span class="badge">{{ question.max_points }}</span> Minimum to pass: <span class="badge">{{ question.min_correct }}</span>
+                    <h5>Maximum points: <span class="label label-success">{{ question.max_points }}</span> Minimum to pass: <span class="label label-warning">{{ question.min_correct }}</span></h5>
+                    
                     <!-- Modal trigger -->
                     <a id="rubric_btn" href="#" title="Click to show rubric for assessing." class="btn btn-link btn-lg" data-toggle="modal" data-target="#rubric"><i class="fa fa-list"></i> View Rubric</a>
                 </dt>

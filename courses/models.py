@@ -139,6 +139,7 @@ class Course(models.Model):
     control_worksheet_results = models.BooleanField(default=False, choices=ws_control_choices)
     access_code = models.CharField(max_length=8, null=True, blank=True)
     ggv_organization = models.ForeignKey(GGVOrganization, models.PROTECT, null=True, related_name='organization_courses')
+    is_active = models.BooleanField(default=True)
     # tag = models.ForeignKey(CourseTag, models.SET_NULL, null=True, related_name='tagged_courses')
 
     class Meta:

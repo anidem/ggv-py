@@ -89,7 +89,6 @@ class RestrictedAccessZoneMixin(object):
         """
         if self.request.user.is_staff:
             return super(RestrictedAccessZoneMixin, self).dispatch(*args, **kwargs)
-
         
         try:
             perms = get_perms(self.request.user, self.course)

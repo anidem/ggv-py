@@ -195,6 +195,7 @@ class CourseGraderEditView(LoginRequiredMixin, CourseContextMixin, AccessRequire
         context['course'] = self.get_object().course
         return context
 
+
 class CourseGraderCreateView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, CreateView):
     model = CourseGrader
     template_name = 'course_grader_settings.html'

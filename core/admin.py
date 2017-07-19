@@ -125,9 +125,9 @@ class TextQuestionAdmin(admin.ModelAdmin):
 
 class CourseAdmin(GuardedModelAdmin):
     model = Course
-    list_display = ('title', 'ggv_organization', 'slug')
-    list_filter = ('title', 'ggv_organization')
-    list_editable = ('ggv_organization',)
+    list_display = ('title', 'ggv_organization', 'slug', 'is_active')
+    list_filter = ('title', 'ggv_organization', 'is_active')
+    list_editable = ('ggv_organization', 'is_active')
     # inlines = [
     #     LessonInlineAdmin,
     # ]

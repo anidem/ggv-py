@@ -22,15 +22,18 @@ def init_session(sender, **kwargs):
         user = kwargs['user']
         rem_addr = request.META['REMOTE_ADDR']
     
-        course_permissions = get_objects_for_user(
-            user, ['access', 'instructor', 'manage'], Course, any_perm=True).order_by('ggv_organization','title')
+        if user.is_staff:
+            course_permissions = Course.objects.all()
+        else:   
+            course_permissions = get_objects_for_user(
+                user, ['access', 'instructor', 'manage'], Course, any_perm=True).order_by('ggv_organization','title')
 
         lesson_permissions = set()
         for i in course_permissions:
             for j in i.lesson_list():
                 lesson_permissions.add(j.lesson.id)
 
-        request.session['user_courses'] = [i.slug for i in course_permissions]
+        request.session['user_courses'] = [i.slug for i in course_permissions if i.is_active]
         request.session['user_lessons'] = list(lesson_permissions)
 
         ActivityLog(user=user, action='login', message=rem_addr).save()

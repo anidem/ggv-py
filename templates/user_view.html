@@ -12,8 +12,9 @@
 {% block content %}
 
     <div class="col-md-12">
-        <h3 class> {{ object.first_name }} {{ object.last_name }}         	
-        	{% if 'Manager' in role %}
+        <h3 class> {{ object.first_name }} {{ object.last_name }} 
+
+        	{% if 'manage' in roles or user.is_staff %}
         	<span class="small"><a href="{% url 'edit_user_account' course.slug object.id %}">[ <i class="fa fa-edit"></i> edit account ]</a> 
         	<a href="{% url 'user_progress' course.slug object.id %}">[ <i class="fa fa-eye"></i> view account activity ]</a></span>
         	{% endif %}

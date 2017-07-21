@@ -170,6 +170,7 @@ form ul {
 .bk-started { color: blue; }
 .bk-remember { color: purple; }
 .bk-question { color: orange; }
+.bk-proficient { color: gray; }
 
 .flagger { cursor: pointer;}
 .bkset {

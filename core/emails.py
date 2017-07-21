@@ -5,6 +5,7 @@ from django.views.generic import FormView, TemplateView, View
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
 from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
+from django.core.exceptions import PermissionDenied
 from django.contrib import messages
 from django.contrib.messages import get_messages
 from django.conf import settings
@@ -465,6 +466,11 @@ class SendEmailToGgvOrgUsers(LoginRequiredMixin, CourseContextMixin, FormView):
 
     def dispatch(self, request, *args, **kwargs):
         self.ggvorg = GGVOrganization.objects.get(pk=kwargs['pk'])
+        users = self.ggvorg.manager_list()
+        print request.user in users, request.user.is_staff
+        if request.user not in users and not request.user.is_staff:
+            raise PermissionDenied
+
         return super(SendEmailToGgvOrgUsers, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
@@ -494,6 +500,7 @@ class SendEmailToGgvOrgUsers(LoginRequiredMixin, CourseContextMixin, FormView):
         messages.info(self.request, 'Email message has been sent.')
         return super(SendEmailToGgvOrgUsers, self).form_valid(form)  
 
+
 class SendEmailToCourseUsers(LoginRequiredMixin, CourseContextMixin, FormView):
     """
     A view to allow managers/instructors to send a message to all active users of a course.
@@ -509,6 +516,11 @@ class SendEmailToCourseUsers(LoginRequiredMixin, CourseContextMixin, FormView):
 
     def dispatch(self, request, *args, **kwargs):
         self.course = Course.objects.get(slug=kwargs['crs_slug'])
+        users = self.course.manager_list() + self.course.instructor_list()
+
+        if request.user not in users and not request.user.is_staff:
+            raise PermissionDenied
+        
         return super(SendEmailToCourseUsers, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
@@ -538,6 +550,7 @@ class SendEmailToCourseUsers(LoginRequiredMixin, CourseContextMixin, FormView):
         email.send(fail_silently=True)
         messages.info(self.request, 'Email message has been sent.')
         return super(SendEmailToCourseUsers, self).form_valid(form)    
+
 
 class SendEmailToAllActiveUsers(LoginRequiredMixin, StaffuserRequiredMixin, FormView):
     """

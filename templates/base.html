@@ -111,6 +111,9 @@
                                     <li>
                                         <a href="{% url 'edit_course' course.slug %}" class="static"><i class="fa fa-gear"></i> Worksheet Settings</a>
                                     </li>
+                                    <li>
+                                        <a href="{% url 'email_course_users' course.slug %}" class="static"><i class="fa fa-envelope"></i> Send Message to Roster</a>
+                                    </li>                                    
                                 </ul>
                           </li> <!-- end course manage dropdown menu -->
                           {% endif %}
@@ -204,6 +207,11 @@
                                 <li>
                                     <a class="" href="/ggvadmin" target="_blank">
                                         <i class="fa fa-lock"></i> Staff Admin
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="" href="{% url 'email_system_users' %}">
+                                        <i class="fa fa-envelope"></i> Send System Message
                                     </a>
                                 </li>
                             {% endif %}

@@ -142,6 +142,13 @@ class GgvUserStudentSettingsForm(ModelForm):
         fields = ['first_name', 'last_name', 'language', 'clean_logout']
 
 
+class GgvEmailForm(Form):
+    message = forms.CharField(
+        widget=forms.Textarea,
+        label='Use this text area to compose your email text.',
+        help_text='Click Send Message to deliver your email message.'
+        )
+    
 class GgvEmailInstructors(Form):
     message = forms.CharField(
         widget=forms.Textarea,

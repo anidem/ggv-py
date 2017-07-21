@@ -9,14 +9,14 @@ from django.contrib import messages
 from django.contrib.messages import get_messages
 from django.conf import settings
 
-from braces.views import LoginRequiredMixin, CsrfExemptMixin, JSONResponseMixin
+from braces.views import LoginRequiredMixin, CsrfExemptMixin, JSONResponseMixin, StaffuserRequiredMixin
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_perms
 
-from courses.models import Course
+from courses.models import GGVOrganization, Course
 from questions.models import QuestionSet
 
 from .models import GGVUser
-from .forms import GgvEmailStaffForm, GgvEmailQuestionToInstructorsForm, GgvEmailWorksheetErrorReportToStaffForm, GgvEmailInstructors, GgvEmailDeactivationRequestForm, GgvEmailActivationRequestForm, GgvUserAccountCreateForm, GgvEmailManagerRequestAccountForm
+from .forms import GgvEmailForm, GgvEmailStaffForm, GgvEmailQuestionToInstructorsForm, GgvEmailWorksheetErrorReportToStaffForm, GgvEmailInstructors, GgvEmailDeactivationRequestForm, GgvEmailActivationRequestForm, GgvUserAccountCreateForm, GgvEmailManagerRequestAccountForm
 from .mixins import CourseContextMixin
 from .signals import *
 
@@ -450,6 +450,135 @@ class SendEmailToManagerCreateAccountRequest(LoginRequiredMixin, CourseContextMi
         return super(SendEmailToManagerCreateAccountRequest, self).form_valid(form)
 
 
+class SendEmailToGgvOrgUsers(LoginRequiredMixin, CourseContextMixin, FormView):
+    """
+    A view to allow managers to send a message to all active users of an organization.
+
+    recipients: members of a ggv organization (instructors, students)
+    sender: manager or staff 
+    scope: managers
+    """
+    form_class = GgvEmailForm
+    template_name = "ggv_send_email.html"
+    success_url = None
+    course = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.ggvorg = GGVOrganization.objects.get(pk=kwargs['pk'])
+        return super(SendEmailToGgvOrgUsers, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('manage_org', args=[self.ggvorg.pk] )
+
+    def form_valid(self, form):
+        user_sender = self.request.user
+        recipients = self.ggvorg.licensed_user_list()
+        # recipients = [i.email for i in User.objects.filter(is_active=True)]
+
+        message_text = form.cleaned_data.get('message').encode('utf-8')
+        html_message = "<p>{0}</p>".format(message_text)
+        html_message += "<p>This message has been sent by {0} {1}</p>".format(user_sender.first_name, user_sender.last_name)
+        html_message += "<a href='http://www.ggvinteractive.com{0}'>http://www.ggvinteractive.com{0}</a>".format(reverse('ggvhome'))
+
+        email = EmailMultiAlternatives(
+            subject='Message from GGV Interactive',
+            body=html_message,
+            from_email=settings.EMAIL_HOST_USER,
+            to=['ggvsys@gmail.com',],
+            bcc=recipients,
+            headers={'Reply-To': user_sender.email},  # this can be updated after upgrading to django 8+
+            )
+
+        email.attach_alternative(html_message, "text/html")
+        email.send(fail_silently=True)
+        messages.info(self.request, 'Email message has been sent.')
+        return super(SendEmailToGgvOrgUsers, self).form_valid(form)  
+
+class SendEmailToCourseUsers(LoginRequiredMixin, CourseContextMixin, FormView):
+    """
+    A view to allow managers/instructors to send a message to all active users of a course.
+
+    recipients: members of a course (instructors, students)
+    sender: manager or instructor 
+    scope: instructors and students
+    """
+    form_class = GgvEmailForm
+    template_name = "ggv_send_email.html"
+    success_url = None
+    course = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.course = Course.objects.get(slug=kwargs['crs_slug'])
+        return super(SendEmailToCourseUsers, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('manage_course', args=[self.course.slug] )
+
+    def form_valid(self, form):
+        user_sender = self.request.user
+        recipients = self.course.student_list()
+        recipients.extend(self.course.instructor_list())
+        # recipients = [i.email for i in User.objects.filter(is_active=True)]
+
+        message_text = form.cleaned_data.get('message').encode('utf-8')
+        html_message = "<p>{0}</p>".format(message_text)
+        html_message += "<p>This message has been sent by {0} {1}</p>".format(user_sender.first_name, user_sender.last_name)
+        html_message += "<a href='http://www.ggvinteractive.com{0}'>http://www.ggvinteractive.com</a>".format(reverse('manage_course', args=[self.course.slug]))
+
+        email = EmailMultiAlternatives(
+            subject='Message from GGV Interactive',
+            body=html_message,
+            from_email=settings.EMAIL_HOST_USER,
+            to=['ggvsys@gmail.com',],
+            bcc=recipients,
+            headers={'Reply-To': user_sender.email},  # this can be updated after upgrading to django 8+
+            )
+
+        email.attach_alternative(html_message, "text/html")
+        email.send(fail_silently=True)
+        messages.info(self.request, 'Email message has been sent.')
+        return super(SendEmailToCourseUsers, self).form_valid(form)    
+
+class SendEmailToAllActiveUsers(LoginRequiredMixin, StaffuserRequiredMixin, FormView):
+    """
+    A view to allow staff to send a message to all active users in the system.
+
+    recipients: all active user accounts
+    sender: system 
+    scope: staff only
+    """
+    form_class = GgvEmailForm
+    template_name = "ggv_send_email.html"
+    success_url = None
+    course = None
+
+    # def dispatch(self, request, *args, **kwargs):
+    #     self.course = Course.objects.get(slug=kwargs['crs_slug'])
+    #     return super(SendEmailToManagerCreateAccountRequest, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('ggvhome')
+
+    def form_valid(self, form):
+        recipients = [i.email for i in User.objects.filter(is_active=True)]
+
+        message_text = form.cleaned_data.get('message').encode('utf-8')
+        html_message = "<p>{0}</p>".format(message_text)
+        html_message += "<p>{0}</p>".format('This message has been sent by www.ggvinteractive.com. A reply is not necessary.')
+
+        email = EmailMultiAlternatives(
+            subject='Message from GGV Interactive',
+            body=html_message,
+            from_email=settings.EMAIL_HOST_USER,
+            to=['ggvsys@gmail.com',],
+            bcc=recipients,
+            headers={'Reply-To': 'ggvsys@gmail.com'},  # this can be updated after upgrading to django 8+
+            )
+
+        email.attach_alternative(html_message, "text/html")
+        email.send(fail_silently=True)
+        messages.info(self.request, 'Email message has been sent.')
+        return super(SendEmailToAllActiveUsers, self).form_valid(form)
 
 """ BACKEND EMAIL PROCEDURES. FUNCTIONS THAT ARE INITIATED AUTOMATICALLY BY THE SYSTEM. """
 

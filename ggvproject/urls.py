@@ -16,7 +16,10 @@ from core.emails import (
     SendEmailToInstructor,
     SendEmailToManagerDeactivationRequest,
     SendEmailToManagerActivationRequest,
-    SendEmailToManagerCreateAccountRequest
+    SendEmailToManagerCreateAccountRequest,
+    SendEmailToAllActiveUsers,
+    SendEmailToGgvOrgUsers,
+    SendEmailToCourseUsers
     )
 from core.utils import logout_clean
 from core.views import (
@@ -76,6 +79,7 @@ urlpatterns = [
 # GGV Organizations
     url(r'^ggv/organization/(?P<pk>\d+)/$', GgvOrgAdminView.as_view(), name='manage_org'),
     url(r'^ggv/organization/(?P<pk>\d+)/activity-report/$', GgvOrgUserActivityReportView.as_view(), name='report_org_activity'),
+    url(r'^ggv/organization/(?P<pk>\d+)/email-users/$', SendEmailToGgvOrgUsers.as_view(), name='email_org_users'),
 
 # GGV Courses
     url(r'^ggv/(?P<crs_slug>[-\w]+)/$', CourseView.as_view(), name='course'),
@@ -100,6 +104,8 @@ urlpatterns = [
     url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/user/(?P<user>\d+)/$', CourseAttendanceUserView.as_view(), name='course_attendance_user'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/current/$', CourseAttendanceMonthView.as_view(), name='course_attendance_current'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/(?P<year>\d+)/(?P<month>\d+)/$', CourseAttendanceMonthView.as_view(), name='course_attendance_selected'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/email-users/$', SendEmailToCourseUsers.as_view(), name='email_course_users'),
+
 
 
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/$', LessonView.as_view(), name='lesson'),
@@ -192,6 +198,7 @@ urlpatterns = [
     url(r'^ggv/(?P<crs_slug>[-\w]+)/email-manager/activate$', SendEmailToManagerActivationRequest.as_view(), name='email_manager_activate'), 
 
     url(r'^ggv/(?P<crs_slug>[-\w]+)/email-manager/new-account$', SendEmailToManagerCreateAccountRequest.as_view(), name='email_manager_request_account'),
+    url(r'^ggv/system/email-system-users/$', SendEmailToAllActiveUsers.as_view(), name='email_system_users'),
 
 # Administration pages
 

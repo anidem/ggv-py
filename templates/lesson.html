@@ -41,21 +41,21 @@
 {% endblock local_nav %}
 
 {% block page_header %}
-<div class="col-md-12">
+<div class="col-md-12 text-center">
     <div class="text-center icon-{{ object.subject }}"><i class="fa fa-{{ object.icon_class }} fa-5x"></i></div>
     <div class="text-center icon-{{ object.subject }}"><span class="icon-title">{{object}}</span></div>
-    
-    <div class="" style="opacity: 0.7;background-color: black; color: white; padding: 5px; position: absolute; top: 110px; right: 5px">Bookmarks</div>
 
-    <span class="small"><i class="fa fa-desktop icon-slidestack"></i> = presentation </span>
-    <span class="small"><i class="fa fa-pencil-square-o icon-worksheet"></i> = worksheet </span>
-    <span class="small"><i class="fa fa-youtube icon-external_media"></i> = video </span>
-
-</div>
-<div class="col-md-12 text-center bg-warning">
+    <h3>Your Progress</h3>
     <p class="lead">You've completed <strong>{{ worksheets_stat.items.0.1.1 }}</strong> of <strong>{{ worksheets_stat.items.0.1.0 }}</strong> worksheets and viewed <strong>{{ slides_stat.items.0.1.1 }}</strong> of <strong>{{ slides_stat.items.0.1.0 }}</strong> presentations.</p>
 </div>
 
+<div class="col-xs-10">    
+    <span class="small"><i class="fa fa-desktop icon-slidestack"></i> = presentation </span>
+    <span class="small"><i class="fa fa-pencil-square-o icon-worksheet"></i> = worksheet </span>
+    <span class="small"><i class="fa fa-youtube icon-external_media"></i> = video </span>
+</div>
+<div class="col-xs-1"><span style="background-color: #333; color: white; opacity: 0.6; padding:2px">Scores</span></div>
+<div class="col-xs-1"><span style="background-color: #333; color: white; opacity: 0.6; padding:2px">Bookmarks</span></div>
 
 {% endblock page_header %}
 
@@ -63,6 +63,7 @@
 
 <div class="col-md-12 lesson_list" data-course="{{ course.id }}" data-user="{{ user }}">
 	{% for i in acts %}
+        
         {% ifchanged i.act.section %}
             <h2 id="{{ i.act.section|title }}" class="section_heading">
                 {{ i.act.section|title }}
@@ -77,6 +78,7 @@
             </h2>
             <h5>{{ i.act.section.subtitle }}</h5>
         {% endifchanged %}
+
         <div class="block row">
             <div class="block col-md-12">
 
@@ -101,7 +103,7 @@
                       </h4>
                     </div>
 
-                    <div class="col-md-1"><strong>{{ i.score.0.score|floatformat:"0" }}%</strong></div>
+                    <div class="col-md-1">{% if i.act.activity_type == 'worksheet' %} <strong>{{ i.score.0.score|floatformat:"0" }}%</strong>{% endif %}</div>
 
                     <div class="col-md-1 bookmarkpanel">
                     

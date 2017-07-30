@@ -96,11 +96,34 @@
                         
                         {% elif q.get_question_object.get_question_type == 'text' and not q.get_question_object.auto_grade %}
                             
-                            {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span> {% if q.score > 0 %}<strong>score: {{ q.score }}</strong> {% endif %}
-                            {% elif q.score == -1 %}<span class="btn btn-xs btn-info" title="grade pending">grade pending</span>
-                            {% else %}<span class="btn btn-xs btn-warning"><i class="fa fa-close"></i> </span> <strong>score: {{ q.score }}</strong>
-                            {% endif %}
+                            {% if k %} 
+                                <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span> 
+                                {% if q.score > 0 %}<strong>score: {{ q.score }}</strong> {% endif %}
+                            {% elif q.score == -1 %}
+                                <span class="btn btn-xs btn-info" title="grade pending">grade pending</span>
+                            {% else %}
+                                <span class="btn btn-xs btn-warning"><i class="fa fa-close"></i> </span> <strong>score: {{ q.score }} </strong>
 
+                                <!-- Modal trigger -->
+                                <a id="rubric_btn" href="#" title="Click to show what this score means." class="" data-toggle="modal" data-target="#{{i.id}}_rubric"> <i class="fa fa-question-circle"></i></a>
+                                            
+                                <!-- Modal Content -->
+                                <div class="modal fade" id="{{i.id}}_rubric" role="dialog">
+                                    <div class="modal-dialog modal-md">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <p>{{ i.extra_info.rubric|safe }}</p>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endif %}
                         {% else %}
 
                             {% if k %} <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span>

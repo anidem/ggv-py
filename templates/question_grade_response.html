@@ -5,7 +5,7 @@
 
 {% block page_header %}
     <div class="col-md-12 text-center">
-        <h2>{{ question.question_set.lesson }} Extended Response Grading</h2>
+        <h2>{{ question.question_set.lesson }}: {{ question.question_set.section }} Grading</h2>
     </div>
 {% endblock page_header %}
 
@@ -24,7 +24,7 @@
                     <iframe id="pdf_display" src="{{ question.display_pdf.url|slice:"-3" }}html" class="pdfframe"></iframe>
                 {% endif %}
                 {% if question.display_image %}
-                    <img src="question.display_image.url"> 
+                    <img src="{{ question.display_image.url }}" width="100%">
                 {% endif %}                
             </p>
         </div>

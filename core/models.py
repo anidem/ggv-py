@@ -17,6 +17,7 @@ from guardian.shortcuts import get_objects_for_user
 
 from courses.models import Course, GGVOrganization
 
+
 tz = timezone(settings.TIME_ZONE)
 
 ACTIONS = (

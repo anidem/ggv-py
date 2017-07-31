@@ -1,0 +1,41 @@
+<!-- course_grader_log.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block page_crumb %}{% endblock page_crumb %}
+
+{% block page_header %}
+
+<div class="col-md-12 text-center"><h2 class="lead"><i class="fa fa-gear"></i> Course Grading Log For {{ request.user }} </h2></div>
+
+{% endblock page_header %}
+
+{% block content %}
+
+<div class="col-md-12">    
+    <p class="lead">Grading Log</p>
+    <div class="row">
+    	<div class="col-md-3">date</div>
+    	<div class="col-md-3">student</div>
+    	<div class="col-md-3">score</div>
+    	<div class="col-md-3"></div>
+    </div>
+    {% for course, responses in grading_list.items %}
+    	<h4>{{ course }}</h4></dt>
+    	
+    	
+    	{% for response in responses %}
+    		<div class="row">
+    			<div class="col-md-3">{{ response.modified }}</div>
+    			<div class="col-md-3">{{ response.user.first_name }} {{ response.user.last_name }}  ({{ response.user.email }})</div> 
+    			<div class="col-md-3">{{ response.score }}</div>
+    			<div class="col-md-3"><a href="{% url 'question_response_grade' response.pk %}">
+    				{% if response.score == -1 %} grade {% else %} view/edit {% endif %}    				
+    			</a></div>
+    		</div>
+
+    	{% endfor %}
+    {% endfor %}
+</div>
+
+{% endblock content %}

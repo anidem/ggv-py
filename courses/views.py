@@ -10,10 +10,12 @@ import csv
 from django.views.generic import TemplateView, DetailView, UpdateView, CreateView, DeleteView
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
+from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
 from django.conf import settings
 from django.utils import html, text
 from django.shortcuts import redirect, get_object_or_404
+from django.contrib.contenttypes.models import ContentType
 
 from openpyxl import Workbook
 from openpyxl.utils import get_column_letter
@@ -174,6 +176,39 @@ class CourseUpdateView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
     slug_url_kwarg = 'crs_slug'
     form_class = CourseUpdateForm
     access_object = None
+
+
+class CourseGraderLogView(LoginRequiredMixin, TemplateView):
+    template_name = 'course_grader_log.html'
+    slug_url_kwarg = 'crs_slug'
+    access_object = None
+
+    def get(self, request, *args, **kwargs):
+        if request.user.is_staff:
+            self.courses = CourseGrader.objects.all()
+        else:
+            self.courses = request.user.courses_to_grade.all()
+            if not self.courses:
+                raise PermissionDenied          
+
+        return super(CourseGraderLogView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(CourseGraderLogView, self).get_context_data(**kwargs)        
+        essay_content_id = ContentType.objects.get(model='textquestion').id
+        
+        course_listing = {}
+        for i in self.courses:
+            if i.course not in course_listing:
+                course_listing[i.course] = []
+                students = i.course.student_list()
+                for student in students:
+                    text_responses = student.question_responses.filter(content_type__id=essay_content_id).order_by('-modified')
+                    essay_responses = [r for r in text_responses if not r.get_question_object().auto_grade]
+                    course_listing[i.course].extend(essay_responses)
+        
+        context['grading_list'] = course_listing  
+        return context
 
 
 class CourseGraderEditView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, UpdateView):

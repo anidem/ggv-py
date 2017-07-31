@@ -32,7 +32,7 @@ from core.views import (
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import (
     GgvOrgAdminView, GgvOrgUserActivityReportView,
-    CourseView, CourseUpdateView, CourseGraderEditView, CourseGraderCreateView, CourseGraderDeleteView, CourseManageView, CourseUserReportView, CourseUserActivityReportView, CourseUserActivityFullReportView,
+    CourseView, CourseUpdateView, CourseGraderEditView, CourseGraderCreateView, CourseGraderDeleteView, CourseManageView, CourseUserReportView, CourseUserActivityReportView, CourseUserActivityFullReportView, CourseGraderLogView,
     CourseAttendanceMonthView, CourseAttendanceUserView,
     UserManageView, UserProgressView,
     CourseMessageAddView, CourseMessageUpdateView, CourseMessageDeleteView
@@ -87,7 +87,8 @@ urlpatterns = [
     url(r'^ggv/(?P<crs_slug>[-\w]+)/grader/add/$', CourseGraderCreateView.as_view(), name='add_course_grader'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/grader/edit/(?P<pk>\d+)/$', CourseGraderEditView.as_view(), name='edit_course_grader'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/grader/delete/(?P<pk>\d+)/$', CourseGraderDeleteView.as_view(), name='delete_course_grader'),
-    
+    url(r'^ggv/grader/log/$', CourseGraderLogView.as_view(), name='course_grader_log'),
+
     #  course user stats:
     url(r'^ggv/(?P<crs_slug>[-\w]+)/report/$', CourseUserReportView.as_view(), name='report_course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/activity-report/$', CourseUserActivityReportView.as_view(), name='report_course_activity'),

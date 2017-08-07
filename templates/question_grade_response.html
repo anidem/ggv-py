@@ -6,6 +6,7 @@
 {% block page_header %}
     <div class="col-md-12 text-center">
         <h2>{{ question.question_set.lesson }}: {{ question.question_set.section }} Grading</h2>
+        <h5><a class="static" href="{% url 'course_grader_log' %}"> Review Your Previous and Pending Grade Assignments </a></h5>
     </div>
 {% endblock page_header %}
 

@@ -154,6 +154,7 @@
                                     <i class="fa fa-book"></i> Manager Help
                                     </a>
                                 </li>
+
                                 {% endif %}
 
                             </ul>
@@ -190,7 +191,9 @@
                                     </a>
                                 </li>
                                 {% endif %}
-
+                                <li>
+                                    <a class="static nav-text" href="{% url 'course_grader_log' %}"> Grading Log </a>
+                                </li>
                                 <li role="separator" class="divider"></li>
                             {% endif %}
 

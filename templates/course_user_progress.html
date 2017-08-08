@@ -39,7 +39,10 @@
         <a href="{% url 'view_user' course.slug student_user.id %}" class="btn btn-md">[ <i class="fa fa-eye"></i> view acccount ]</a> 
         <a href="{% url 'edit_user_account' course.slug student_user.id %}" class="btn btn-md">[ <i class="fa fa-edit"></i> edit account ]</a>
     {% endif %}
-    <a class="btn btn-md" href="./?export=xlsx"> [ <i class="fa fa-download"></i> Download this report as an Excel file ]</a>
+    {% if is_instructor or is_manager %}
+        <a class="btn btn-md" href="./?export=xlsx"> [ <i class="fa fa-download"></i> Download this report as an Excel file ]</a>
+    {% endif %}
+    
 </div>
 
 <div class="col-md-12 text-left">

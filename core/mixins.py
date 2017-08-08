@@ -71,6 +71,10 @@ class GGVUserViewRestrictedAccessMixin(object):
         if 'access' in self.required_privileges and self.get_object().id == self.request.user.id:
             return super(GGVUserViewRestrictedAccessMixin, self).dispatch(*args, **kwargs)
 
+        if self.access_object == 'user':
+            if 'access' in self.required_privileges and self.kwargs['user'] == str(self.request.user.pk):
+                return super(GGVUserViewRestrictedAccessMixin, self).dispatch(*args, **kwargs)
+
         raise PermissionDenied(self.request, 'access_forbidden.html')
 
 

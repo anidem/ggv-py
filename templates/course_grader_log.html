@@ -14,28 +14,75 @@
 
 <div class="col-md-12">    
     <p class="lead">Grading Log</p>
-    <div class="row">
-    	<div class="col-md-3">date</div>
-    	<div class="col-md-3">student</div>
-    	<div class="col-md-3">score</div>
-    	<div class="col-md-3"></div>
+    <div id="sorter" class="row">
+    	<div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="date" data-order="asc"> <i class="fa fa-sort"></i> date</button></div>
+        <div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="course" data-order="asc"> <i class="fa fa-sort"></i> course</button></div>
+    	<div class="col-xs-4"><button class="btn btn-block btn-sm" data-sort-by="student" data-order="asc"> <i class="fa fa-sort"></i> student</button></div>
+    	<div class="col-xs-2"><button class="btn btn-block btn-sm" data-sort-by="score" data-order="asc"> <i class="fa fa-sort"></i> score</button></div>
+    	<div class="col-xs-1"><button class="btn btn-block btn-sm" data-sort-by="status" data-order="asc"> <i class="fa fa-sort"></i> status</button></div>
     </div>
-    {% for course, responses in grading_list.items %}
-    	<h4>{{ course }}</h4></dt>
-    	
-    	
+    <div class="row" id="container">
+    {% for course, responses in grading_list.items %}    	
     	{% for response in responses %}
-    		<div class="row">
-    			<div class="col-md-3">{{ response.modified }}</div>
-    			<div class="col-md-3">{{ response.user.first_name }} {{ response.user.last_name }}  ({{ response.user.email }})</div> 
-    			<div class="col-md-3">{{ response.score }}</div>
-    			<div class="col-md-3"><a href="{% url 'question_response_grade' response.pk %}">
-    				{% if response.score == -1 %} grade {% else %} view/edit {% endif %}    				
-    			</a></div>
-    		</div>
-
+    		<div class="col-md-12 border-btm item hoverpad">
+                <div class="row ">
+                    <div class="col-md-2 date">{{ response.modified|date:"Y-m-d" }}</div>
+                    <div class="col-md-2 course">{{ course }}</div>
+                    <div class="col-md-4 student">{{ response.user.first_name }} {{ response.user.last_name }}  ({{ response.user.email }})</div> 
+                    <div class="col-md-2 score">{% if response.score == -1 %} <span class="label label-warning label-sm">grade needed</span> {% else %} {{ response.score }} {% endif %} </div>
+                    <div class="col-md-1 status">
+                        <a href="{% url 'question_response_grade' response.pk %}">
+                            {% if response.score == -1 %} grade {% else %} view/edit {% endif %}                    
+                        </a>
+                    </div>
+                </div>
+            </div>
     	{% endfor %}
     {% endfor %}
+    </div>
 </div>
 
 {% endblock content %}
+{% block local_js %}
+    <script src="{% static 'js/isotope.pkgd.min-3.0.4.js'%}"></script>
+
+    <script type="text/javascript">
+        jQuery(function($) {
+
+            var $container = $('#container').isotope({
+                itemSelector: '.item',
+                getSortData: {
+                    date: '.date',
+                    course: '.course',
+                    student: '.student',
+                    score: '.score',
+                    status: '.status',
+                },
+            });
+
+            // sort items on button click
+            $('#sorter .btn-block').on( 'click', function() {
+                var sortByValue = $(this).attr('data-sort-by');
+                var order = "";
+                if ($(this).attr("data-order")==="asc") {
+                    order = true;
+                    $(this).attr("data-order", "");
+
+                } else {
+                    order = false;
+                    $(this).attr("data-order", "asc");
+                }
+                $('#sorter .btn-primary').removeClass('btn-primary');
+                $(this).addClass("btn-primary");
+
+                $container.isotope({
+                    sortBy: sortByValue,
+                    sortAscending: order
+                });
+            });
+
+            $(document).ready(function() {
+            });
+        });
+    </script>
+{% endblock local_js %}

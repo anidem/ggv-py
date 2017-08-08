@@ -46,7 +46,7 @@
     <div class="text-center icon-{{ object.subject }}"><span class="icon-title">{{object}}</span></div>
 
     <h3>Your Progress</h3>
-    <p class="lead">You've completed <strong>{{ worksheets_stat.items.0.1.1 }}</strong> of <strong>{{ worksheets_stat.items.0.1.0 }}</strong> worksheets and viewed <strong>{{ slides_stat.items.0.1.1 }}</strong> of <strong>{{ slides_stat.items.0.1.0 }}</strong> presentations.</p>
+    <p class="lead">You've completed <strong>{{ worksheets_stat.items.0.1.1 }}</strong> of <strong>{{ worksheets_stat.items.0.1.0 }}</strong> worksheets and viewed <strong>{{ slides_stat.items.0.1.1 }}</strong> of <strong>{{ slides_stat.items.0.1.0 }}</strong> presentations. See more details <a href="{% url 'user_progress' course.slug user.pk %}">here</a></p>
 </div>
 
 <div class="col-xs-10">    

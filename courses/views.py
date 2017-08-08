@@ -23,7 +23,7 @@ from openpyxl.styles import Font, Alignment
 from braces.views import LoginRequiredMixin, JSONResponseMixin, AjaxResponseMixin
 
 from core.models import Notification, SiteMessage
-from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin, CourseContextMixin
+from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin, CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from core.utils import UnicodeWriter, GGVExcelWriter, get_daily_log_times, get_daily_log_times_v2, elapsed_time_per_event
 from questions.models import QuestionSet, UserWorksheetStatus
 from slidestacks.models import SlideStack
@@ -638,18 +638,19 @@ class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin
         return context
 
 
-class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
+class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, GGVUserViewRestrictedAccessMixin, PrivelegedAccessMixin, DetailView):
     """
         Displays progress data for a user/student. This data is filtered here to display
         sequential activity related to a users access and completion of worksheets as well
         as when they view presentations.
 
-        Visibility: sysadmin, staff, instructor
+        Visibility: sysadmin, staff, instructor, and students (added aug 8 2017)
     """
     model = Course
     template_name = 'course_user_progress.html'
     slug_url_kwarg = 'crs_slug'
-    access_object = None
+    access_object = 'user'
+    required_privileges = ['access', 'instructor', 'manage']
 
     def get(self, request, *args, **kwargs):
 

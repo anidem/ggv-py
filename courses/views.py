@@ -203,7 +203,7 @@ class CourseGraderLogView(LoginRequiredMixin, TemplateView):
                 course_listing[i.course] = []
                 students = i.course.student_list()
                 for student in students:
-                    text_responses = student.question_responses.filter(content_type__id=essay_content_id).order_by('-modified')
+                    text_responses = student.question_responses.filter(content_type__id=essay_content_id).filter(modified__gt='2017-5-1')
                     essay_responses = [r for r in text_responses if not r.get_question_object().auto_grade]
                     course_listing[i.course].extend(essay_responses)
         

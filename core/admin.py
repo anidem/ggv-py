@@ -142,21 +142,21 @@ class CourseGraderAdmin(admin.ModelAdmin):
     list_display = ('course', 'grader')
     list_filter = ('course__ggv_organization',)
 
-    def formfield_for_foreignkey(self, db_field, request, **kwargs):
-        # if db_field.name == "grader":
-        #     kwargs["queryset"] = User.objects.filter(is_staff=True)
-        return super(CourseGraderAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
+    # def formfield_for_foreignkey(self, db_field, request, **kwargs):
+    #     # if db_field.name == "grader":
+    #     #     kwargs["queryset"] = User.objects.filter(is_staff=True)
+    #     return super(CourseGraderAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
 
 
-class LessonAdmin(GuardedModelAdmin):
-    list_display = ('title', 'subject', 'icon_class', 'language')
+class LessonAdmin(admin.ModelAdmin):
+    list_display = ('id','title', 'subject', 'icon_class', 'language')
     list_editable = ('subject', 'icon_class', 'language')
     inlines = [
         WorksheetInlineAdmin, SlideStackInlineAdmin,
     ]
 
 
-class SectionAdmin(GuardedModelAdmin):
+class SectionAdmin(admin.ModelAdmin):
     list_display = ('id', 'lesson', 'title', 'display_order')
     list_editable = ('lesson', 'title', 'display_order')
     list_filter = ('lesson', )
@@ -207,7 +207,7 @@ admin.site.register(CourseTag)
 admin.site.register(TaggedCourse)
 admin.site.register(CourseGrader, CourseGraderAdmin)
 admin.site.register(TempCourseGoogleDb, TempCourseGoogleDbAdmin)
-admin.site.register(Lesson, LessonAdmin, Media=ExtraMedia)
+admin.site.register(Lesson, Media=ExtraMedia)
 admin.site.register(Section, SectionAdmin, Media=ExtraMedia)
 admin.site.register(SlideStack, SlideStackAdmin)
 admin.site.register(QuestionSet, QuestionSetAdmin, Media=ExtraMedia)

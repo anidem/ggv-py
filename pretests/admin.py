@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import PretestUser, PretestQuestionResponse, PretestAccount, PretestUserCompletion
+from .models import PretestUser, PretestQuestionResponse, PretestAccount, PretestUserCompletion, PretestUserAssignment
 
 
 class PretestAccountAdmin(admin.ModelAdmin):
@@ -11,6 +11,11 @@ class PretestAccountAdmin(admin.ModelAdmin):
 class PretestUserAdmin(admin.ModelAdmin):
     list_display = ('id', 'access_token', 'email', 'account', 'first_name', 'last_name', 'program_id', 'language_pref')
     list_filter = ('account',)
+
+
+class PretestUserAssignmentAdmin(admin.ModelAdmin):
+    list_display = ('id', 'pretestuser', 'pretest',)
+    list_filter = ('pretestuser__email', 'pretestuser__account', 'pretestuser__access_token')
 
 
 class PretestQuestionResponseAdmin(admin.ModelAdmin):
@@ -30,6 +35,7 @@ class PretestUserCompletionAdmin(admin.ModelAdmin):
 
 
 admin.site.register(PretestAccount, PretestAccountAdmin)
+admin.site.register(PretestUserAssignment, PretestUserAssignmentAdmin)
 admin.site.register(PretestUser, PretestUserAdmin)
 admin.site.register(PretestQuestionResponse, PretestQuestionResponseAdmin)
 admin.site.register(PretestUserCompletion, PretestUserCompletionAdmin)

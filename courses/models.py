@@ -114,6 +114,13 @@ class GGVOrganization(models.Model):
 
         return deactivated_list
 
+    def instructor_list(self):
+        courses = self.organization_courses.all()
+        instructors = []
+        for i in courses:
+            instructors.extend(i.instructor_list())
+        return instructors
+
     def manager_list(self):
         courses = self.organization_courses.all()
         managers = []

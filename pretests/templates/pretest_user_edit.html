@@ -6,13 +6,13 @@
 
 {% block page_header %}
 <div class="col-md-12 text-center">
-    <p class="lead"><i class="fa fa-cog"></i> Assign a Token to User</p>
+    <p class="lead"><i class="fa fa-cog"></i> Edit a Token for a Pretester </p>
 </div>
 {% endblock page_header %}
 
 {% block content %}
-    <div class="col-md-12">
-        <h4>Users are required to enter the <strong>email address</strong> and <strong>token</strong> indicated below in order to gain access to the pretests.</h4>
+    <div class="col-md-6">
+        <p><em>Users are required to enter the <strong>email address</strong> and <strong>token</strong> indicated below in order to gain access to the pretests.</em></p>
         
         {% if object.completion_status %}
             <div class="well">
@@ -20,17 +20,85 @@
             <p>The user assigned to this token <strong>has completed</strong> or is <strong>in the process of completing</strong> pretests. Modifying the email for this token may prevent the user from accessing their assigned pretests or their results.</p>
             </div>
         {% endif %}
-    
-        <h3><span class="small">Access Token <i class="fa fa-caret-right"></i></span> {{ object.access_token }}</h3>
+        <p><span class="small">Access Token <i class="fa fa-caret-right"></i></span> {{ object.access_token }}</p>
+        {% if google_db %}<p><a href="{% url 'pretestapp:pretest_user_edit_from_google' object.id %}">Load users from Google Database</a></p>{% endif %}
+    </div>
+    <div class="col-md-6">
+      <dl class="dl-horizontal">
+          <dt>Your pretest quota:</dt><dd>{{ pretest_stat.purchased }}</dd>
+          <dt>Pretests assigned:</dt><dd>{{ pretest_stat.used }}</dd>
+          <dt>Pretests available:</dt>
+            <dd>
+              {% if pretest_stat.available == 0 %}
+                <span class="label label-danger">{{ pretest_stat.available }}</span>
+                <em>contact GGV staff to purchase additional tests.</em>
+              {% else %}
+                <span class="label label-success"> {{ pretest_stat.available }}</span>
+              {% endif %}
+            </dd>
+      </dl>
+    </div>   
+    <div class="col-md-12">
+        <div class="row">
+            <form method="post" action=".">{% csrf_token %}
+                <div class="col-md-6">{{ form|crispy }}</div>
+                <div class="col-md-6">
+                    {% if pretest_selector.eng_pretests.errors %}
+                        <ol>
+                        {% for error in pretest_selector.eng_pretests.errors %}
+                            <li><strong>{{ error|escape }}</strong></li>
+                        {% endfor %}
+                        </ol>
+                    {% endif %}
+                    
 
-        {% if google_db %} <h3 class="bg-danger"><a href="{% url 'pretestapp:pretest_user_edit_from_google' object.id %}">Load users from Google Database</a></h3>{% endif %}
+                    <h5>English Pretest Exams  <span class="small">select all</span> <input type="checkbox" id="eng_all" data-grp=".eng" class="select_all btn btn-lg btn-default"></h5>            
+                    <div id="div_id_eng_pretests" class="form-group">
+                    <ul>
+                    {% for check in pretest_selector.eng_pretests %}
+                        <li>
+                        <label for="{{ check.id_for_label }}">
+                            {% if check.choice_value in completed %}  
+                                <span class="check"><input id="{{check.id_for_label}}" name="{{ check.name }}" type="checkbox" value="{{ check.choice_value }}" {% if check.choice_value in assigned %}checked{% endif %} disabled></span>
+                                <span class="text-muted">{{ check.choice_label }} </span>
+                            {% else %}
+                                <span class="check"><input id="{{check.id_for_label}}" name="{{ check.name }}" type="checkbox" value="{{ check.choice_value }}" {% if check.choice_value in assigned %}checked{% endif %} class="eng"></span>
+                                {{ check.choice_label }}            
+                                
+                            {% endif %}
+                        </label>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                    </div>
 
-        <form method="post" action=".">{% csrf_token %}
-            {{ form|crispy }}
-            <button class="btn btn-sm btn-success" type="submit">{% if object.email %}Update{% else %}Assign Access Token{% endif %}</button>
-            <a href="{% url 'pretestapp:pretest_user_list' object.account.id %}" class="btn btn-link">cancel</a>
-        </form>
-        
+                    <h5>Spanish Pretest Exams  <span class="small">select all</span> <input type="checkbox" id="spn_all" data-grp=".spn" class="select_all btn btn-lg btn-default"></h5>            
+                    <div id="div_id_spn_pretests" class="form-group">
+                    <ul>
+                    {% for check in pretest_selector.spn_pretests %}
+                        <li>
+                        <label for="{{ check.id_for_label }}">
+                            {% if check.choice_value in completed %}
+                                   
+                                <span class="check"><input id="{{check.id_for_label}}" name="{{ check.name }}" type="checkbox" value="{{ check.choice_value }}" {% if check.choice_value in assigned %}checked{% endif %} disabled></span>
+                                <span class="text-muted">{{ check.choice_label }} </span>
+                            {% else %}
+                                            
+                                 <span class="check"><input id="{{check.id_for_label}}" name="{{ check.name }}" type="checkbox" value="{{ check.choice_value }}" {% if check.choice_value in assigned %}checked{% endif %} class="spn"></span>
+                                 {{ check.choice_label }}
+                            {% endif %}
+                        </label>
+                        </li>
+                    {% endfor %}
+                    </ul>
+                    </div>
+                </div>
+                <div class="col-md-12">
+                    <button class="btn btn-sm btn-success" type="submit">{% if object.email %}Update{% else %}Assign Access Token{% endif %}</button>
+                    <a href="{% url 'pretestapp:pretest_user_list' object.account.id %}" class="btn btn-link">cancel</a>
+                </div>
+            </form>
+        </div>
     </div>
     {% for i in user_list %}
         <input id="user_{{ i.id }}" type="hidden" data-email="{{ i.email }}" data-first="{{ i.first_name }}" data-last="{{ i.last_name }}" data-progid="{{ i.ggvuser.program_id }}"/>
@@ -40,6 +108,14 @@
 {% block local_js %}
 <script type="text/javascript" language="JavaScript">
     $(document).ready(function() {
+        $(".select_all").click(function() { 
+            var grp = $(this).attr('data-grp');
+            if($(this).prop("checked"))
+                $(grp).prop( "checked", true );
+            else
+                $(grp).prop( "checked", false );
+        });
+
         $("#id_account_selector").change(function() {
             var data = $(this).val();
             var user_d = $("#user_"+data);

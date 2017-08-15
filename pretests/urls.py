@@ -2,7 +2,7 @@
 
 from django.conf.urls import include, url
 
-from .views import PretestHomeView, PretestMenuView, PretestEndView, PretestLogoutView, PretestWorksheetLaunchView, PretestQuestionResponseView, PretestLanguageChoiceUpdateView, PretestUserUpdateView, PretestUserUpdateFromGoogleView,  PretestUserListView, PretestAccountListView, PretestUserDetailView, PretestEndConfirmView, PretestAccountReportView, PretestResponseGradeView, PretestToggleFlagView
+from .views import PretestHomeView, PretestMenuView, PretestEndView, PretestLogoutView, PretestWorksheetLaunchView, PretestQuestionResponseView, PretestLanguageChoiceUpdateView, PretestUserCreateView, PretestUserUpdateView, PretestUserUpdateFromGoogleView, PretestUserCreateFromGoogleView, PretestUserListView, PretestAccountListView, PretestUserDetailView, PretestEndConfirmView, PretestAccountReportView, PretestAccountReportProtectedView, PretestResponseGradeView, PretestToggleFlagView
 from .utils import PretestCreateTokensView, AccessErrorView
 from .emails import SendPretestTokenView
 app_name = 'pretests'
@@ -15,8 +15,11 @@ urlpatterns = [
 	url(r'^accounts/$', PretestAccountListView.as_view(), name='pretest_account_list'),
 	url(r'^manage/(?P<pk>\d+)/$', PretestUserListView.as_view(), name='pretest_user_list'),
 	url(r'^view/(?P<pk>\d+)/$', PretestUserDetailView.as_view(), name='pretest_user_detail'),
-	url(r'^edit/(?P<pk>\d+)/$', PretestUserUpdateView.as_view(), name='pretest_user_edit'),
 	
+	url(r'^add/(?P<account>\d+)/$', PretestUserCreateView.as_view(), name='pretest_user_add'),
+	url(r'^add-google/(?P<account>\d+)/$', PretestUserCreateFromGoogleView.as_view(), name='pretest_user_add_from_google'),
+	
+	url(r'^edit/(?P<pk>\d+)/$', PretestUserUpdateView.as_view(), name='pretest_user_edit'),	
 	url(r'^edit-google/(?P<pk>\d+)/$', PretestUserUpdateFromGoogleView.as_view(), name='pretest_user_edit_from_google'),
 	
 	url(r'^email/(?P<pk>\d+)/$', SendPretestTokenView.as_view(), name='pretest_send_token'),
@@ -29,5 +32,6 @@ urlpatterns = [
 	url(r'^logout/$', PretestLogoutView.as_view(), name='pretest_logout'),
 	url(r'^grade/(?P<pk>\d+)/$', PretestResponseGradeView.as_view(), name='pretest_response_grade'),
 	url(r'^troper/(?P<pk>\d+)/$', PretestAccountReportView.as_view(), name='pretest_account_report'),
+	url(r'^staff-report/(?P<pk>\d+)/$', PretestAccountReportProtectedView.as_view(), name='pretest_account_staff_report'),
 	url(r'^flag/$', PretestToggleFlagView.as_view(), name='pretest_flagger'),
 	]

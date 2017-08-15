@@ -18,6 +18,7 @@
         <dt>Pretester:</dt><dd> {{ object.first_name }} {{ object.last_name }}</dd>
         <dt>Email:</dt><dd> {{ object.email }}</dd>
         <dt>Program ID:</dt><dd> {{ object.ggvuser.program_id }}</dd>
+        <dt>Language:</dt><dd> {{ object.language_pref }}</dd>
         <dt>Date Created:</dt><dd> {{ object.created|date:"Y-M-d" }}</dd>
         <dt>Pretest Exams:</dt><dd>
         <ul class="list-inline">{% for i in bundle %}<li><em>{{ i }}{% if not forloop.last %},{% endif %}</em></li>{% endfor %}</ul>

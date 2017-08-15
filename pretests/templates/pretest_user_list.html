@@ -7,14 +7,15 @@
 	    <h2><i class="fa fa-cogs"></i> Tokens for {{ account }}</h2>
 	    {% if request.user.is_staff %} 
 	    <h6><a href="{% url 'pretestapp:pretest_account_report' account.id %}">{{ account }} scores</a></h6>
+	    <h6><a href="{% url 'pretestapp:pretest_user_add' account.id %}">add</a></h6>
 	    {% endif %}
 	</div>
 {% endblock page_header %}
 
 {% block content %}
 	<div class="col-md-10 col-md-offset-1">
-		<div class="table-responsive">
-  			<table class="table table-condensed">
+		<div class="">
+  			<table class="table table-condensed table-responsive">
   				<thead>
   					<tr>
   						<th>modified on</th>

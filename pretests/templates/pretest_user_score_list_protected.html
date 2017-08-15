@@ -1,0 +1,41 @@
+<!-- pretest_user_score_list_protected.html -->
+{% extends "pretest_base.html" %}
+{% load staticfiles %}
+
+{% block page_header %}
+	<div class="col-md-12 text-center">
+	    <h2><i class="fa fa-cogs"></i> {{ object }}</h2>
+	    <h3>Pretest Scores</h3>
+	</div>
+{% endblock page_header %}
+
+{% block content %}
+	<div class="col-md-12">
+	<table class="table table-condensed table-responsive">
+		<thead>
+			<tr>
+				<th>date</th>
+				<th>id</th>
+				<th>first</th>
+				<th>name</th>
+				<th>pretest</th>
+				<th>score</th>
+				
+			</tr>
+		</thead>
+		<tbody>
+		{% for i in scores %}
+			<tr>
+			<td>{{ i.5 }}</td>
+			<td>{{ i.0 }}</td>
+			<td>{{ i.1 }}</td>
+			<td>{{ i.2 }}</td>
+			<td>{{ i.3 }}</td>
+			<td><strong>{{ i.4 }}</strong></td>
+					
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+	</div>
+{% endblock content %}

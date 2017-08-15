@@ -1,0 +1,103 @@
+<!-- pretest_user_create.html -->
+{% extends "pretest_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+
+{% block page_header %}
+<div class="col-md-12 text-center">
+    <p class="lead"><i class="fa fa-cog"></i> Create a Token for a Pretester</p>
+</div>
+{% endblock page_header %}
+
+{% block content %}
+    <div class="col-md-6">
+        <p><em>Users are required to enter an <strong>email address</strong> and a <strong>token</strong> in order to gain access to pretests. Please create the user information and pretest selections below. A token will be generated when the new user is saved.</em></p>
+    </div>
+    <div class="col-md-6">
+      <dl class="dl-horizontal">
+          <dt>Your pretest quota:</dt><dd>{{ pretest_stat.purchased }}</dd>
+          <dt>Pretests assigned:</dt><dd>{{ pretest_stat.used }}</dd>
+          <dt>Pretests available:</dt>
+            <dd>
+              {% if pretest_stat.available == 0 %}
+                <span class="label label-danger">{{ pretest_stat.available }}</span>
+                <em>contact GGV staff to purchase additional tests.</em>
+              {% else %}
+                <span class="label label-success"> {{ pretest_stat.available }}</span>
+              {% endif %}
+            </dd>
+      </dl>
+    </div>
+
+    <div class="col-md-12">
+        {% if google_db %}<a href="{% url 'pretestapp:pretest_user_add_from_google' account.id %}">Load users from Google Database</a>{% endif %}
+
+        <div class="row">
+            <form method="post" action=".">{% csrf_token %}
+                <div class="col-md-6">{{ form|crispy }}</div>
+                <div class="col-md-6">                    
+                    <p><strong>Select Exams for New User</strong></p>
+                    <h5>English Pretest Exams  <span class="small">select all</span> <input type="checkbox" id="eng_all" data-grp=".eng" class="select_all btn btn-lg btn-default"></h5>            
+                    <div id="div_id_eng_pretests" class="form-group">
+                        <ul>
+                        {% for check in pretest_selector.eng_pretests %}
+                            <li>
+                            <label for="{{ check.id_for_label }}">
+                                    <span class="check"><input id="{{check.id_for_label}}" name="{{ check.name }}" type="checkbox" value="{{ check.choice_value }}" class="eng"></span> {{ check.choice_label }}            
+                            </label>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+
+                    <h5>Spanish Pretest Exams  <span class="small">select all</span> <input type="checkbox" id="spn_all" data-grp=".spn" class="select_all btn btn-lg btn-default"></h5>            
+                    <div id="div_id_spn_pretests" class="form-group">
+                        <ul>
+                        {% for check in pretest_selector.spn_pretests %}
+                            <li>
+                            <label for="{{ check.id_for_label }}">                                            
+                                     <span class="check"><input id="{{check.id_for_label}}" name="{{ check.name }}" type="checkbox" value="{{ check.choice_value }}" class="spn"></span> {{ check.choice_label }}
+                            </label>
+                            </li>
+                        {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="col-md-12">
+                    <button class="btn btn-sm btn-success" type="submit">Create Access Token</button>
+                    <a href="{% url 'pretestapp:pretest_user_list' account.id %}" class="btn btn-link">cancel</a>
+                </div>
+            </form>
+        </div>
+        
+    </div>
+    {% for i in user_list %}
+        <input id="user_{{ i.id }}" type="hidden" data-email="{{ i.email }}" data-first="{{ i.first_name }}" data-last="{{ i.last_name }}" data-progid="{{ i.ggvuser.program_id }}"/>
+    {% endfor %}
+{% endblock content %}
+
+{% block local_js %}
+<script type="text/javascript" language="JavaScript">
+    $(document).ready(function() {
+
+        $(".select_all").click(function() { 
+            var grp = $(this).attr('data-grp');
+            if($(this).prop("checked"))
+                $(grp).prop( "checked", true );
+            else
+                $(grp).prop( "checked", false );
+        });
+
+        $("#id_account_selector").change(function() {
+            var data = $(this).val();
+            var user_d = $("#user_"+data);
+            $("#id_email").val(user_d.attr('data-email'));
+            $("#id_first_name").val(user_d.attr('data-first'));
+            $("#id_last_name").val(user_d.attr('data-last'));
+            $("#id_program_id").val(user_d.attr('data-progid'));
+        });
+    });
+</script>
+{% endblock local_js %}

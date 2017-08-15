@@ -1,9 +1,10 @@
 # views.py
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, date
 
 from django.forms import ValidationError
 from django.core.exceptions import PermissionDenied
+from django.db import IntegrityError
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.urls import reverse
@@ -20,8 +21,8 @@ from openpyxl import Workbook
 from lessons.models import Lesson
 from questions.models import QuestionSet
 
-from .models import PretestAccount, PretestUser, PretestQuestionResponse, PretestUserCompletion
-from .forms import LoginTokenForm, LanguageChoiceForm, PretestQuestionResponseForm, PretestUserUpdateForm, PretestCompleteConfirmForm, PretestResponseGradeForm
+from .models import PretestAccount, PretestUser, PretestQuestionResponse, PretestUserCompletion, PretestUserAssignment, ENG_PRETESTS_LESSON_ID, SPN_PRETESTS_LESSON_ID
+from .forms import LoginTokenForm, LanguageChoiceForm, PretestQuestionResponseForm, PretestSelectionForm, PretestUserUpdateForm, PretestUserCreateForm, PretestCompleteConfirmForm, PretestResponseGradeForm
 from .mixins import TokenAccessRequiredMixin, PretestQuestionMixin, PretestAccountRequiredMixin
 from .utils import AccessErrorView
 from .emails import send_request_to_grade, send_score_notification, send_completion_notification
@@ -104,15 +105,35 @@ class PretestMenuView(TokenAccessRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super(PretestMenuView, self).get_context_data(**kwargs)
-
-        if self.pretestuser.language_pref == 'spanish':
-            lesson_bundle = Lesson.objects.get(pk=18)
-        else:
-            lesson_bundle = Lesson.objects.get(pk=17)
+        assigned = self.pretestuser.pretest_assignments.all()
+        if assigned:
+            test_bundle = [i.pretest for i in assigned]
         
-        completion_map = {i: (-2, -2) for i in lesson_bundle.activities()}
+        # User was create prior pretest update on aug 15
+        # Retrieve tests based on spanish or english language preference
+        elif self.pretestuser.created.date() < date(2017, 8, 15):
+            if self.pretestuser.language_pref == 'spanish':
+                test_bundle = Lesson.objects.get(pk=SPN_PRETESTS_LESSON_ID).activities()
 
-        for i in self.pretestuser.pretest_user_completions.filter(completed_pretest__lesson=lesson_bundle):
+            else:
+                test_bundle = Lesson.objects.get(pk=ENG_PRETESTS_LESSON_ID).activities()
+
+            # user created before modification unit update == > pretestuserassignment objects:
+            for i in test_bundle:
+                try:
+                    p = PretestUserAssignment(pretestuser=self.pretestuser, pretest=i)
+                    p.save()
+                except IntegrityError as e:
+                    # assignment map already exists
+                    pass
+        else:  # pretestuser account was created after update but does not have tests assigned.
+            test_bundle = []
+
+        print test_bundle
+        completion_map = {i: (-2, -2) for i in test_bundle}
+
+        # for i in self.pretestuser.pretest_user_completions.filter(completed_pretest__lesson=lesson_bundle):
+        for i in self.pretestuser.pretest_user_completions.all():
             if i.is_expired() or i.confirm_completed:
                 completion_map[i.completed_pretest] = i.get_score()
             else:
@@ -340,10 +361,90 @@ class PretestUserDetailView(LoginRequiredMixin, PretestAccountRequiredMixin, Det
         return context
 
 
+class PretestUserCreateView(LoginRequiredMixin, PretestAccountRequiredMixin, CreateView):
+    model = PretestUser
+    template_name = 'pretest_user_create.html'
+    form_class = PretestUserCreateForm
+    pretest_accounts = None
+    access_model = PretestUser
+    account = None
+
+    def get(self, request, *args, **kwargs):
+        self.account = PretestAccount.objects.get(pk=kwargs.get('account')) 
+        return super(PretestUserCreateView, self).get(request, *args, **kwargs)
+
+    def get_initial(self):
+        initial = super(PretestUserCreateView, self).get_initial()
+        try:
+            self.user_list = self.account.get_org_users()
+            initial['users'] = self.user_list
+        except:
+            initial['users'] = []
+
+        initial['account'] = self.account
+        
+        return initial
+
+    def form_valid(self, form):
+
+        # Save the pretestuser object.
+        self.object = form.save()
+        # Gather selected pretests to map to pretestuser object. 
+        selector_form = PretestSelectionForm(self.request.POST)
+        try:            
+            updated_pretests = selector_form.cleaned_data['eng_pretests']
+            updated_pretests.extend(selector_form.cleaned_data['spn_pretests'])
+
+            # Verify that requests for pretests is within quota
+            max_tests = self.object.account.tests_purchased           
+            pretests_in_use = self.object.account.get_pretest_assignments().count()
+            pretests_in_use = pretests_in_use + len(updated_pretests)
+
+            if pretests_in_use <= max_tests:
+                # Create mappings 
+                for i in updated_pretests:
+                    try:                
+                        pretest_obj = QuestionSet.objects.get(pk=i)
+                        p = PretestUserAssignment(pretestuser=self.object, pretest=pretest_obj)
+                        p.save()
+                    except IntegrityError as duplicate:
+                        pass
+            else:
+                form.add_error('eng_pretests', 'The number of selected pretests exceeds purchased pretests.')
+                messages.error(self.request, 'Pretest user token not added. The number of selected pretests exceeds purchased pretests.', extra_tags='danger')
+                return super(PretestUserCreateView, self).form_invalid(form) 
+        except:
+            messages.success(self.request, 'Please be sure to assign pretests to this user.')
+            pass  # no pretests were selected
+
+        messages.success(self.request, 'Pretest user token successfully added.')
+        return super(PretestUserCreateView, self).form_valid(form)
+
+    def get_success_url(self): 
+        return reverse('pretests:pretest_user_list', args=[self.object.account.id], current_app=self.request.resolver_match.namespace)
+
+    def get_context_data(self, **kwargs):
+        context = super(PretestUserCreateView, self).get_context_data(**kwargs)
+        try:
+            context['user_list'] = self.user_list
+            context['google_db'] = self.account.ggv_org.google_db.all()[0]            
+        except:
+            pass
+        context['account'] = self.account
+        assigned = self.account.get_pretest_assignments().count()
+        context['pretest_stat'] = {
+            'purchased': self.account.tests_purchased, 
+            'used': assigned,
+            'available': self.account.tests_purchased - assigned
+        }
+        context['pretest_selector'] = PretestSelectionForm()
+        return context
+
+
 class PretestUserUpdateView(LoginRequiredMixin, PretestAccountRequiredMixin, UpdateView):
     model = PretestUser
     template_name = 'pretest_user_edit.html'
-    form_class = PretestUserUpdateForm
+    form_class = PretestUserCreateForm
     pretest_accounts = None
     access_model = PretestUser
 
@@ -357,7 +458,58 @@ class PretestUserUpdateView(LoginRequiredMixin, PretestAccountRequiredMixin, Upd
             initial['users'] = self.user_list
         except:
             initial['users'] = []
+
+
         return initial
+
+    def form_valid(self, form):
+        # Save the pretestuser object.
+        # self.object = form.save()
+
+        # Gather user's previously assigned pretests.
+        prev_pretest_data = self.get_object().pretest_assignments.all()
+        data = {}
+        data['eng_pretests'] = [i.pretest.pk for i in prev_pretest_data.filter(pretest__lesson__pk=ENG_PRETESTS_LESSON_ID)]
+        data['spn_pretests'] = [i.pretest.pk for i in prev_pretest_data.filter(pretest__lesson__pk=SPN_PRETESTS_LESSON_ID)]
+        
+        selector_form = PretestSelectionForm(self.request.POST, initial=data)
+
+        if selector_form.has_changed():
+            if selector_form.is_valid():
+                # Gather selected pretests to map to pretestuser object. 
+                updated_pretests = selector_form.cleaned_data['eng_pretests']
+                updated_pretests.extend(selector_form.cleaned_data['spn_pretests'])
+                
+                max_tests = self.get_object().account.tests_purchased
+                # print 'TEST QUOTA:', max_tests
+                diff = len(updated_pretests) - prev_pretest_data.count()
+                # print 'PREV:', prev_pretest_data.count(), 'CURR:', len(updated_pretests), 'DIFF ==>', diff
+                
+                pretests_in_use = self.get_object().account.get_pretest_assignments().count()
+                # print 'IN USE:', pretests_in_use
+                
+                pretests_in_use = pretests_in_use + diff
+                # print 'IN USE UPDATED:', pretests_in_use                
+
+                # print 'SAVE OK?', pretests_in_use <= max_tests
+                if pretests_in_use <= max_tests:
+                    self.get_object().pretest_assignments.all().delete()
+                    # Create mappings 
+                    for i in updated_pretests:
+                        try:                
+                            pretest_obj = QuestionSet.objects.get(pk=i)
+                            p = PretestUserAssignment(pretestuser=self.get_object(), pretest=pretest_obj)
+                            p.save()
+                        except IntegrityError as duplicate:
+                            pass
+
+                else:
+                    selector_form.add_error('eng_pretests', 'The number of selected pretests exceeds purchased pretests.')
+                    messages.error(self.request, 'Pretest user token not added. The number of selected pretests exceeds purchased pretests.', extra_tags='danger')
+                    return super(PretestUserUpdateView, self).form_invalid(form)                  
+
+        messages.success(self.request, 'User successfully updated.')
+        return super(PretestUserUpdateView, self).form_valid(form)
 
     def get_success_url(self): 
         return reverse('pretests:pretest_user_list', args=[self.get_object().account.id], current_app=self.request.resolver_match.namespace)
@@ -369,14 +521,108 @@ class PretestUserUpdateView(LoginRequiredMixin, PretestAccountRequiredMixin, Upd
             context['google_db'] = self.get_object().account.ggv_org.google_db.all()[0]
         except:
             pass
+        
+        # load completed (or started) pretests for the user
+        completed = [i.completed_pretest.pk for i in self.get_object().pretest_user_completions.all()]        
+        
+        # load previously selected pretest assignments
+        pretests = self.get_object().pretest_assignments.all()
+        data = {}
+        data['eng_pretests'] = [i.pretest.pk for i in pretests.filter(pretest__lesson__pk=ENG_PRETESTS_LESSON_ID)]
+        data['spn_pretests'] = [i.pretest.pk for i in pretests.filter(pretest__lesson__pk=SPN_PRETESTS_LESSON_ID)]
+        selector_form = PretestSelectionForm(initial=data)
 
+        assigned = self.get_object().account.get_pretest_assignments().count()
+        context['pretest_stat'] = {
+            'purchased': self.get_object().account.tests_purchased, 
+            'used': assigned,
+            'available': self.get_object().account.tests_purchased - assigned
+        }
+
+        context['assigned'] = [str(i.pretest.pk) for i in pretests]
+        context['completed'] = completed
+        context['pretest_selector'] = selector_form
+
+        return context
+
+
+class PretestUserCreateFromGoogleView(LoginRequiredMixin, PretestAccountRequiredMixin, CreateView):
+    model = PretestUser
+    template_name = 'pretest_user_create_from_google.html'
+    form_class = PretestUserCreateForm
+    pretest_accounts = None
+    access_model = PretestUser
+    account = None
+
+    def get(self, request, *args, **kwargs):
+        self.account = PretestAccount.objects.get(pk=kwargs.get('account')) 
+        return super(PretestUserCreateFromGoogleView, self).get(request, *args, **kwargs)
+
+    def get_initial(self):
+        initial = super(PretestUserCreateFromGoogleView, self).get_initial()
+        initial['account'] = self.account
+        initial['users'] = []
+        return initial
+
+    def form_valid(self, form):
+
+        # Save the pretestuser object.
+        self.object = form.save()
+        # Gather selected pretests to map to pretestuser object. 
+        selector_form = PretestSelectionForm(self.request.POST)
+        try:            
+            updated_pretests = selector_form.cleaned_data['eng_pretests']
+            updated_pretests.extend(selector_form.cleaned_data['spn_pretests'])
+
+            # Verify that requests for pretests is within quota
+            max_tests = self.object.account.tests_purchased           
+            pretests_in_use = self.object.account.get_pretest_assignments().count()
+            pretests_in_use = pretests_in_use + len(updated_pretests)
+
+            if pretests_in_use <= max_tests:
+                # Create mappings 
+                for i in updated_pretests:
+                    try:                
+                        pretest_obj = QuestionSet.objects.get(pk=i)
+                        p = PretestUserAssignment(pretestuser=self.object, pretest=pretest_obj)
+                        p.save()
+                    except IntegrityError as duplicate:
+                        pass
+            else:
+                form.add_error('eng_pretests', 'The number of selected pretests exceeds purchased pretests.')
+                messages.error(self.request, 'Pretest user token not added. The number of selected pretests exceeds purchased pretests.', extra_tags='danger')
+                return super(PretestUserCreateFromGoogleView, self).form_invalid(form) 
+        except Exception as e:
+            messages.success(self.request, 'Please be sure to assign pretests to this user.')
+            pass  # no pretests were selected
+
+        messages.success(self.request, 'Pretest user token successfully added.')
+        return super(PretestUserCreateFromGoogleView, self).form_valid(form)
+
+    def get_success_url(self): 
+        return reverse('pretests:pretest_user_list', args=[self.object.account.id], current_app=self.request.resolver_match.namespace)
+
+    def get_context_data(self, **kwargs):
+        context = super(PretestUserCreateFromGoogleView, self).get_context_data(**kwargs)
+        try:
+            context['google_db'] = self.account.ggv_org.google_db.all()[0]
+        except:
+            pass
+        assigned = self.account.get_pretest_assignments().count()
+        context['pretest_stat'] = {
+            'purchased': self.account.tests_purchased, 
+            'used': assigned,
+            'available': self.account.tests_purchased - assigned
+        }
+        context['account'] = self.account
+        context['pretest_selector'] = PretestSelectionForm()
         return context
 
 
 class PretestUserUpdateFromGoogleView(LoginRequiredMixin, PretestAccountRequiredMixin, UpdateView):
     model = PretestUser
     template_name = 'pretest_user_edit_from_google.html'
-    form_class = PretestUserUpdateForm
+    form_class = PretestUserCreateForm # PretestUserUpdateForm
     pretest_accounts = None
     access_model = PretestUser
 
@@ -384,6 +630,55 @@ class PretestUserUpdateFromGoogleView(LoginRequiredMixin, PretestAccountRequired
         initial = super(PretestUserUpdateFromGoogleView, self).get_initial()
         initial['users'] = []
         return initial
+
+    def form_valid(self, form):
+        # Save the pretestuser object.
+        # self.object = form.save()
+
+        # Gather user's previously assigned pretests.
+        prev_pretest_data = self.get_object().pretest_assignments.all()
+        data = {}
+        data['eng_pretests'] = [i.pretest.pk for i in prev_pretest_data.filter(pretest__lesson__pk=ENG_PRETESTS_LESSON_ID)]
+        data['spn_pretests'] = [i.pretest.pk for i in prev_pretest_data.filter(pretest__lesson__pk=SPN_PRETESTS_LESSON_ID)]
+        
+        selector_form = PretestSelectionForm(self.request.POST, initial=data)
+
+        if selector_form.has_changed():
+            if selector_form.is_valid():
+                # Gather selected pretests to map to pretestuser object. 
+                updated_pretests = selector_form.cleaned_data['eng_pretests']
+                updated_pretests.extend(selector_form.cleaned_data['spn_pretests'])
+                
+                max_tests = self.get_object().account.tests_purchased
+                # print 'TEST QUOTA:', max_tests
+                diff = len(updated_pretests) - prev_pretest_data.count()
+                # print 'PREV:', prev_pretest_data.count(), 'CURR:', len(updated_pretests), 'DIFF ==>', diff
+                
+                pretests_in_use = self.get_object().account.get_pretest_assignments().count()
+                # print 'IN USE:', pretests_in_use
+                
+                pretests_in_use = pretests_in_use + diff
+                # print 'IN USE UPDATED:', pretests_in_use                
+
+                # print 'SAVE OK?', pretests_in_use <= max_tests
+                if pretests_in_use <= max_tests:
+                    self.get_object().pretest_assignments.all().delete()
+                    # Create mappings 
+                    for i in updated_pretests:
+                        try:                
+                            pretest_obj = QuestionSet.objects.get(pk=i)
+                            p = PretestUserAssignment(pretestuser=self.get_object(), pretest=pretest_obj)
+                            p.save()
+                        except IntegrityError as duplicate:
+                            pass
+
+                else:
+                    selector_form.add_error('eng_pretests', 'The number of selected pretests exceeds purchased pretests.')
+                    messages.error(self.request, 'Pretest user token not added. The number of selected pretests exceeds purchased pretests.', extra_tags='danger')
+                    return super(PretestUserUpdateFromGoogleView, self).form_invalid(form)                  
+
+        messages.success(self.request, 'User successfully updated.')
+        return super(PretestUserUpdateFromGoogleView, self).form_valid(form)
 
     def get_success_url(self): 
         return reverse('pretests:pretest_user_list', args=[self.get_object().account.id], current_app=self.request.resolver_match.namespace)
@@ -394,8 +689,31 @@ class PretestUserUpdateFromGoogleView(LoginRequiredMixin, PretestAccountRequired
             context['google_db'] = self.get_object().account.ggv_org.google_db.all()[0]
         except:
             pass
+        # load completed (or started) pretests for the user
+        completed = [i.completed_pretest.pk for i in self.get_object().pretest_user_completions.all()]        
+        
+        # load previously selected pretest assignments
+        pretests = self.get_object().pretest_assignments.all()
+        data = {}
+        data['eng_pretests'] = [i.pretest.pk for i in pretests.filter(pretest__lesson__pk=ENG_PRETESTS_LESSON_ID)]
+        data['spn_pretests'] = [i.pretest.pk for i in pretests.filter(pretest__lesson__pk=SPN_PRETESTS_LESSON_ID)]
+        selector_form = PretestSelectionForm(initial=data)
+
+        assigned = self.get_object().account.get_pretest_assignments().count()
+        context['pretest_stat'] = {
+            'purchased': self.get_object().account.tests_purchased, 
+            'used': assigned,
+            'available': self.get_object().account.tests_purchased - assigned
+        }
+
+        context['assigned'] = [str(i.pretest.pk) for i in pretests]
+        context['completed'] = completed
+        context['pretest_selector'] = selector_form
 
         return context
+
+
+# class PretestUserAssignmentUpdate(LoginRequiredMixin, PretestAccountRequiredMixin, UpdateView):
 
 
 class PretestAccountListView(LoginRequiredMixin, PretestAccountRequiredMixin, TemplateView):
@@ -430,6 +748,9 @@ class PretestAccountReportView(DetailView):
     model = PretestAccount
     template_name = "pretest_user_score_list.html"
     
+    def get(self, request, *args, **kwargs):                
+        return super(PretestAccountReportView, self).get(request, *args, **kwargs)
+
     def get_context_data(self, **kwargs):
         context = super(PretestAccountReportView, self).get_context_data(**kwargs)
         account = self.get_object()
@@ -437,6 +758,33 @@ class PretestAccountReportView(DetailView):
         for i in account.tokens.filter(email__isnull=False).order_by('email'):
             for j in i.pretest_user_completions.all():
                 datarow = [i.program_id, j.completed_pretest.title, j.get_score()[0], datetime.strftime(j.created, '%m/%d/%Y')]
+                scores.append(datarow)
+        context['scores'] = scores
+        return context
+
+class PretestAccountReportProtectedView(LoginRequiredMixin, DetailView):
+    model = PretestAccount
+    template_name = "pretest_user_score_list_protected.html"
+    
+    def get(self, request, *args, **kwargs):
+        if self.request.user.is_staff:
+            return super(PretestAccountReportProtectedView, self).get(request, *args, **kwargs)
+        elif not self.get_object().ggv_org:
+            return redirect('pretests:pretest_access_error')
+        
+        org_staff = self.get_object().ggv_org.instructor_list() + self.get_object().ggv_org.manager_list() + [self.get_object().manager]
+        if self.request.user not in org_staff:
+            return redirect('pretests:pretest_access_error')
+
+        return super(PretestAccountReportProtectedView, self).get(request, *args, **kwargs)
+
+    def get_context_data(self, **kwargs):
+        context = super(PretestAccountReportProtectedView, self).get_context_data(**kwargs)
+        account = self.get_object()
+        scores = []
+        for i in account.tokens.filter(email__isnull=False).order_by('email'):
+            for j in i.pretest_user_completions.all():
+                datarow = [i.program_id, i.first_name, i.last_name, j.completed_pretest.title, j.get_score()[0], datetime.strftime(j.created, '%m/%d/%Y')]
                 scores.append(datarow)
         context['scores'] = scores
         return context

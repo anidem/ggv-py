@@ -72,7 +72,7 @@
 
                     <!-- staff only: generate tokens for an account -->
                     {% if request.user.is_staff %}
-                      <li><a href="{% url 'pretestapp:pretest_gen_tokens' %}"><i class="fa fa-plus"></i> Tokens</a></li>
+                      {% comment %} <li><a href="{% url 'pretestapp:pretest_gen_tokens' %}"><i class="fa fa-plus"></i> Tokens</a></li> {% endcomment %}
                     {% endif %}
                     
                     <!-- account listing for managing tokens and users -->

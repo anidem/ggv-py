@@ -13,6 +13,9 @@ import pytz
 from courses.models import GGVOrganization
 from lessons.models import Lesson
 
+SPN_PRETESTS_LESSON_ID = 18
+ENG_PRETESTS_LESSON_ID = 17
+
 
 def generate_token():
     import random
@@ -30,14 +33,18 @@ class PretestAccount(models.Model):
     contact_phone = models.CharField(max_length=20, null=True, blank=True)
     ggv_org = models.ForeignKey(GGVOrganization, null=True, blank=True)
     tokens_purchased = models.PositiveIntegerField(default=0)
+    tests_purchased = models.PositiveIntegerField(default=0)
 
     def pretest_user_list(self):
         """Returns a list of tuples (pretest user account object and number of exams they have started)
         """
         users = []
-        for i in self.tokens.all().order_by('-modified'):
+        for i in self.tokens.filter(email__isnull=False).order_by('-modified'):
             users.append((i, i.completion_status().count()))
-        return users 
+        return users
+
+    def get_pretest_assignments(self):
+        return PretestUserAssignment.objects.filter(pretestuser__account=self)
     
     def get_org_users(self):
         users = self.ggv_org.licensed_user_list()
@@ -49,7 +56,7 @@ class PretestAccount(models.Model):
 
 class PretestUser(TimeStampedModel):
     """
-    Models a non authenticated user who is granted access to a pretest worksheet.
+    Models a non authenticated user who is granted access to a pretest worksheet via a token.
     """
     account = models.ForeignKey(PretestAccount, related_name='tokens')
     # prepare to link a pretestuser to an existing user account. Note: this user account is typically inactive.
@@ -63,7 +70,9 @@ class PretestUser(TimeStampedModel):
         ('english', 'english'), ('spanish', 'spanish')))
     expired = models.BooleanField(default=False)
 
-    def save(self, *args, **kwargs):        
+    def save(self, *args, **kwargs):
+        super(PretestUser, self).save(*args, **kwargs)
+
         if not self.access_token:
             while True:
                 self.access_token = generate_token()
@@ -72,15 +81,23 @@ class PretestUser(TimeStampedModel):
                     break
                 except:
                     pass
-        else:
-            super(PretestUser, self).save(*args, **kwargs)
-
+        
     def completion_status(self):
         return self.pretest_user_completions.all()
+
+    def assigned_pretests(self):
+        tests = self.pretest_assignments.all()
+        completed = self.pretest_user_completions.all()
+        return {'tests': tests, 'completed': completed}
 
     def pretest_bundle(self):
         """Returns the set of pretests the user is associated with.
         """
+        # Retrieve maps from PretestUserAssignment table.
+        assigned = self.pretest_assignments.all()
+        if assigned:
+            return [i.pretest for i in assigned]
+        
         attempts = self.pretest_user_completions.all()
         if attempts:
             return attempts[0].completed_pretest.lesson.activities()
@@ -127,9 +144,15 @@ class PretestUserCompletion(TimeStampedModel):
 
 
 class PretestUserAssignment(models.Model):
-    """2017-03-02 This is not in use as of yet."""
-    pretestuser = models.ForeignKey(PretestUser, related_name='pretest_assignments')
-    lesson = models.ForeignKey(Lesson, related_name='pretest_lessons')
+    """Maps pretestuser objects with a pretest."""
+    from questions.models import QuestionSet
+
+    pretestuser = models.ForeignKey(PretestUser, null=False, related_name='pretest_assignments')
+    # lesson = models.ForeignKey(Lesson, related_name='pretest_lessons')
+    pretest = models.ForeignKey(QuestionSet, null=False)
+
+    class Meta:
+        unique_together = ('pretestuser', 'pretest')
 
 
 class PretestQuestionResponse(TimeStampedModel):

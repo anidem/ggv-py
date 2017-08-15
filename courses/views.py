@@ -27,6 +27,7 @@ from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAc
 from core.utils import UnicodeWriter, GGVExcelWriter, get_daily_log_times, get_daily_log_times_v2, elapsed_time_per_event
 from questions.models import QuestionSet, UserWorksheetStatus
 from slidestacks.models import SlideStack
+from pretests.models import PretestAccount
 from .models import GGVOrganization, Course, CourseGrader
 from .forms import CourseUpdateForm, CourseUpdateGraderForm
 
@@ -358,6 +359,11 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         context['deactivated'] = deactivated_students
         context['unvalidated'] = course.unvalidated_list()
         context['graders'] = course.assigned_graders.all()
+
+        if self.request.user.has_perm('manage') or self.request.user.has_perm('instructor'):
+            pretest_account = PretestAccount.objects.filter(ggv_org=course.ggv_organization)
+            if pretest_account:
+                context['pretest_account'] = pretest_account[0]
         return context
 
 

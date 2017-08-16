@@ -132,5 +132,8 @@ FILEBROWSER_MEDIA_ROOT = 'media'
 
 FILEBROWSER_VERSIONS_BASEDIR = '_versions'
 
+BOOTSTRAP_PREFIX = '\//maxcdn.bootstrapcdn.com/bootstrap/3.2.0'
+
+
 
 

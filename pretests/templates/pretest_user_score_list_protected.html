@@ -11,31 +11,74 @@
 
 {% block content %}
 	<div class="col-md-12">
-	<table class="table table-condensed table-responsive">
-		<thead>
-			<tr>
-				<th>date</th>
-				<th>id</th>
-				<th>first</th>
-				<th>name</th>
-				<th>pretest</th>
-				<th>score</th>
-				
-			</tr>
-		</thead>
-		<tbody>
+		<div class="row text-center" id="sorter">
+			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by="date" data-order="asc"> <i class="fa fa-sort"></i> date</button></div>
+			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by="id" data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
+			<div class="col-md-3"><button class="btn btn-md btn-block" data-sort-by="first" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+			<div class="col-md-3"><button class="btn btn-md btn-block" data-sort-by="last" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+			<div class="col-md-3"><button class="btn btn-md btn-block" data-sort-by="pretest" data-order="asc"> <i class="fa fa-sort"></i> pretest</button></div>
+			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by="score" data-order="asc"> <i class="fa fa-sort"></i> score</button></div>
+		</div>
+	
+		<div class="row" id="container">
 		{% for i in scores %}
-			<tr>
-			<td>{{ i.5 }}</td>
-			<td>{{ i.0 }}</td>
-			<td>{{ i.1 }}</td>
-			<td>{{ i.2 }}</td>
-			<td>{{ i.3 }}</td>
-			<td><strong>{{ i.4 }}</strong></td>
-					
-			</tr>
+		<div class="col-md-12 item hoverpad">
+			<div class="row">
+				<div class="col-md-1 date"><p>{{ i.5 }}</p></div>
+				<div class="col-md-1 id"><p>{{ i.0 }}</p></div>
+				<div class="col-md-3 first"><p>{{ i.1 }}</p></div>
+				<div class="col-md-3 last"><p>{{ i.2 }}</p></div>
+				<div class="col-md-3 pretest"><p>{{ i.3 }}</p></div>
+				<div class="col-md-1 score"><p><strong>{{ i.4 }}</strong></p></div>
+			</div>
+		</div>
 		{% endfor %}
-		</tbody>
-	</table>
+		</div>
 	</div>
 {% endblock content %}
+
+{% block local_js %}
+<script src="{% static 'js/isotope.pkgd.min-3.0.4.js'%}"></script>
+
+<script type="text/javascript">
+	$(function() {
+        var $container = $('#container').isotope({
+            itemSelector: '.item',
+            getSortData: {
+                date: '.date',
+                id: '.id',
+                first: '.first',
+                last: '.last',
+                pretest: '.pretest',
+                score: '.score',
+            },
+        });
+
+        // sort items on button click
+        $('#sorter .btn-block').on( 'click', function() {
+            var sortByValue = $(this).attr('data-sort-by');
+            var order = "";
+            if ($(this).attr("data-order")==="asc") {
+                order = true;
+                $(this).attr("data-order", "");
+
+            } else {
+                order = false;
+                $(this).attr("data-order", "asc");
+            }
+            $('#sorter .btn-primary').removeClass('btn-primary');
+            $(this).addClass("btn-primary");
+
+            $container.isotope({
+                sortBy: sortByValue,
+                sortAscending: order
+            });
+        });
+
+        $(document).ready(function() {
+            
+        });
+
+	});
+</script>
+{% endblock local_js %}

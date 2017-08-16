@@ -84,3 +84,6 @@ SESSION_SECURITY_WARN_AFTER =  5000 # 5 mins to move mouse
 SESSION_SECURITY_EXPIRE_AFTER = 5001 # expire after 30 mins
 
 GRADER_ID = 1
+
+BOOTSTRAP_PREFIX = 'http://localhost/bootstrap-3.2.0'
+

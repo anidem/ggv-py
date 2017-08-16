@@ -13,52 +13,94 @@
 {% endblock page_header %}
 
 {% block content %}
-	<div class="col-md-10 col-md-offset-1">
-		<div class="">
-  			<table class="table table-condensed table-responsive">
-  				<thead>
-  					<tr>
-  						<th>modified on</th>
-  						<th>status</th>
-  						<th>id</th>
-  						<th>email</th>
-  						<th>token</th>
-  						<th>first</th>
-  						<th>last</th>
-  						<th>edit</th>
-  						<th>email token</th>
-  					</tr>
-  				</thead>
-  				<tbody>
-				{% for i in pretest_users %}
-					<tr>
-					<td>{{ i.0.modified|date:"Y-M-d" }}</td>
-					<td>
-					{% if i.1 > 0%}
-						<span class="label label-danger">{{ i.1 }}</span>
-						<a href="{%  url 'pretestapp:pretest_user_detail' i.0.id %}"> view </a>
-					{% elif i.1 == 0 and i.0.email %}
-						<span class="label label-warning">{{ i.1 }}</span>
-						<a href="{%  url 'pretestapp:pretest_user_detail' i.0.id %}"> view </a>
-					{% else %}
-						<span class="label label-success">&nbsp;&nbsp;</span>
-					{% endif %}
-					</td>
-					<td>{{ i.0.program_id }}</td>
-					<td>{{ i.0.email }}</td>
-					<td>{{ i.0.access_token }}</td>
-					<td>{{ i.0.first_name }}</td>
-					<td>{{ i.0.last_name }}</td>
-					<td><a href="{% url 'pretestapp:pretest_user_edit' i.0.id %}">edit</a></td>
-					<td>
+	<div class="col-md-12">
+		<div class="row" id="sorter">
+			<div class="col-md-2"><button class="btn btn-md btn-block" data-sort-by='date' data-order="asc"> <i class="fa fa-sort"></i> last modified</button></div>
+			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by='status' data-order="asc"> <i class="fa fa-sort"></i> status</button></div>
+			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by='id' data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
+			<div class="col-md-2"><button class="btn btn-md btn-block" data-sort-by='email' data-order="asc"> <i class="fa fa-sort"></i> email</button></div>
+			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by='token' data-order="asc"> <i class="fa fa-sort"></i> token</button></div>
+			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by='first' data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by='last' data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+		</div>
+
+		<div class="row" id="container">
+			{% for i in pretest_users %}
+			<div class="col-md-12 item hoverpad">
+				<div class="row">				
+					<div class="col-md-2 date">{{ i.0.modified|date:"Y-M-d" }}</div>
+					<div class="col-md-1 status">
+						{% if i.1 > 0%}
+							<span class="label label-danger">{{ i.1 }}</span>
+							<a href="{%  url 'pretestapp:pretest_user_detail' i.0.id %}"> view </a>
+						{% elif i.1 == 0 and i.0.email %}
+							<span class="label label-warning">{{ i.1 }}</span>
+							<a href="{%  url 'pretestapp:pretest_user_detail' i.0.id %}"> view </a>
+						{% else %}
+							<span class="label label-success">&nbsp;&nbsp;</span>
+						{% endif %}
+					</div>
+					<div class="col-md-1 prog_id">{{ i.0.program_id }}</div>
+					<div class="col-md-2 email">{{ i.0.email }}</div>
+					<div class="col-md-1 token">{{ i.0.access_token }}</div>
+					<div class="col-md-1 first">{{ i.0.first_name }}</div>
+					<div class="col-md-1 last">{{ i.0.last_name }}</div>
+					<div class="col-md-1"><a href="{% url 'pretestapp:pretest_user_edit' i.0.id %}">edit</a></div>
+					<div class="col-md-2">
 					{% if i.0.email %}
 						<a href="{% url 'pretestapp:pretest_send_token' i.0.id %}">email token</a>
 					{% endif %}
-					</td>
-					</tr>
-				{% endfor %}
-				</tbody>
-  			</table>
-		</div>		
+					</div>
+				</div>
+			</div>
+			{% endfor %}			
+		</div>	
 	</div>
 {% endblock content %}
+
+{% block local_js %}
+<script src="{% static 'js/isotope.pkgd.min-3.0.4.js'%}"></script>
+
+<script type="text/javascript">
+	$(function() {
+        var $container = $('#container').isotope({
+            itemSelector: '.item',
+            getSortData: {
+                date: '.date',
+                status: '.status',
+                id: '.prog_id',
+                email: '.email',
+                token: '.token',
+                first: '.first',
+                last: '.last',
+            },
+        });
+
+        // sort items on button click
+        $('#sorter .btn-block').on( 'click', function() {
+            var sortByValue = $(this).attr('data-sort-by');
+            var order = "";
+            if ($(this).attr("data-order")==="asc") {
+                order = true;
+                $(this).attr("data-order", "");
+
+            } else {
+                order = false;
+                $(this).attr("data-order", "asc");
+            }
+            $('#sorter .btn-primary').removeClass('btn-primary');
+            $(this).addClass("btn-primary");
+
+            $container.isotope({
+                sortBy: sortByValue,
+                sortAscending: order
+            });
+        });
+
+        $(document).ready(function() {
+            
+        });
+
+	});
+</script>
+{% endblock local_js %}

@@ -6,8 +6,8 @@
 	<div class="col-md-12 text-center">
 	    <h2><i class="fa fa-cogs"></i> Tokens for {{ account }}</h2>
 	    {% if request.user.is_staff %} 
-	    <h6><a href="{% url 'pretestapp:pretest_account_report' account.id %}">{{ account }} scores</a></h6>
-	    <h6><a href="{% url 'pretestapp:pretest_user_add' account.id %}">add</a></h6>
+	    <h6><a href="{% url 'pretestapp:pretest_account_staff_report' account.id %}">{{ account }} scores</a></h6>
+	    <h6><a href="{% url 'pretestapp:pretest_user_add' account.id %}" class="btn btn-md btn-link">add</a></h6>
 	    {% endif %}
 	</div>
 {% endblock page_header %}

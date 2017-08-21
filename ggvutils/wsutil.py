@@ -146,9 +146,95 @@ def slug_curr_dir(): # filter(os.path.isdir, os.listdir(os.getcwd()))
         )
 
 def update_worksheet_json_questions_from_file(json_dir=None, json_file_name=None, wid=None, fake=False):
+    optsmap ={'A': '1', 'B': '2', 'C': '3', 'D': '4', 'a': '1', 'b': '2', 'c': '3', 'd': '4' }
 
-    # TODO
-    pass
+    json_file = open('%s/%s' % (json_dir, json_file_name)) 
+    data = json.loads(json_file.read()) # deserializes it
+    print 'PROCESSING ==>', json_file
+    json_file.close()
+
+    worksheet_title = 'no title'
+    worksheet_obj = None
+
+    # Setup a new worksheet
+    if wid:
+        worksheet_obj = QuestionSet.objects.get(pk=wid)
+    else:
+        return
+    
+    print 'UPDATING WORKSHEET  ==> ', worksheet_obj.title
+    
+    if not fake: worksheet_obj.save()
+
+    # Iterate over each question --> i = json question object
+    for i in data:
+        try:
+            if i.get('type') == 'text':
+                question = TextQuestion()
+                question.display_text = i.get('question')
+                question.display_order = i.get('order')
+                question.correct = i.get('correct')
+                if i.get('image') == '':
+                    imgpath = ''
+                elif i.get('image')[-3:] == 'pdf':
+                    question.display_pdf = 'pdf/' + i.get('image')
+                else:
+                    question.display_image = 'img/' + i.get('image')
+                
+                question.question_set = worksheet_obj
+                if not fake: question.save()
+            else:
+                question = OptionQuestion()
+                question.display_text = i.get('question')
+                question.display_order = i.get('order')
+                if i.get('image') == '':
+                    imgpath = ''
+                elif i.get('image')[-3:] == 'pdf':
+                    question.display_pdf = 'pdf/' + i.get('image')
+                else:
+                    question.display_image = 'img/' + i.get('image')
+
+                question.input_select = i.get('type')
+                question.question_set = worksheet_obj
+                if not fake: question.save()
+                
+                corstr =  i.get('correct')
+                corlist = corstr.split(',')
+
+                # retrieve the list of options (option 1, option 2, ...)
+                opts = dict((k, v) for k, v in sorted(i.items()) if k.startswith('option'))
+                
+                # process each retrieved option
+                for k, v in opts.items():
+                    try:
+                        order = k[7:] # get the number portion of the key: e.g.,option 1 --> 1
+                        opt = Option()
+                        opt.display_text = v
+                        opt.display_order = order
+                        for c in corlist:
+                            try:
+                                opt.correct = order == optsmap[c]
+                            except:
+                                opt.correct = order == c
+
+                        opt.question = question
+                    except Exception as e:
+                        print '%s (%s)' % (e.message, type(e))
+                        print 'VALUE=*%s*'% (v)
+                        print 'WORKSHEET:', worksheet_obj
+                    
+                    if not fake: opt.save()
+
+        except Exception as e:
+            print e
+
+        try:
+            print 'Updated %s with %s' % (worksheet_obj.title, question.display_text[:10])
+             
+        except Exception as e:
+            type, value, traceback = sys.exc_info()
+            print traceback, value, i    
+    return
 
 
 def import_new_json_questions_from_file(json_dir=None, json_file_name=None, lid=None, sid=None, fake=False):

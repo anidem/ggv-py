@@ -109,7 +109,7 @@ class PretestMenuView(TokenAccessRequiredMixin, TemplateView):
         if assigned:
             test_bundle = [i.pretest for i in assigned]
         
-        # User was create prior pretest update on aug 15
+        # User was created prior to pretest update on aug 15
         # Retrieve tests based on spanish or english language preference
         elif self.pretestuser.created.date() < date(2017, 8, 15):
             if self.pretestuser.language_pref == 'spanish':
@@ -129,10 +129,8 @@ class PretestMenuView(TokenAccessRequiredMixin, TemplateView):
         else:  # pretestuser account was created after update but does not have tests assigned.
             test_bundle = []
 
-        print test_bundle
         completion_map = {i: (-2, -2) for i in test_bundle}
 
-        # for i in self.pretestuser.pretest_user_completions.filter(completed_pretest__lesson=lesson_bundle):
         for i in self.pretestuser.pretest_user_completions.all():
             if i.is_expired() or i.confirm_completed:
                 completion_map[i.completed_pretest] = i.get_score()

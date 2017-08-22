@@ -344,8 +344,10 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
             except:
                 pass  # deactivated_students[i] has no activity on record. Move on, nothing to see here.
 
+        manager_list = course.manager_list()
+        instructor_list = course.instructor_list()
         instructors = []        
-        for i in course.instructor_list():
+        for i in instructor_list:
             try:
                 activity = i.activitylog.all()[0]
                 instructors.append((i, {'recent_act': activity.action, 'recent_time': activity.timestamp}))
@@ -353,14 +355,14 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
                 pass  # instructor[i] has no activity on record. Move on, nothing to see here.
 
         context['is_manager'] = self.request.user.has_perm('manage', course)
-        context['managers'] = course.manager_list()
+        context['managers'] = manager_list
         context['instructors'] = instructors
         context['students'] = students
         context['deactivated'] = deactivated_students
         context['unvalidated'] = course.unvalidated_list()
         context['graders'] = course.assigned_graders.all()
 
-        if self.request.user.has_perm('manage') or self.request.user.has_perm('instructor'):
+        if self.request.user in instructor_list or self.request.user in manager_list or self.request.user.is_staff:
             pretest_account = PretestAccount.objects.filter(ggv_org=course.ggv_organization)
             if pretest_account:
                 context['pretest_account'] = pretest_account[0]

@@ -359,17 +359,19 @@ class PretestUserDetailView(LoginRequiredMixin, PretestAccountRequiredMixin, Det
         return context
 
 
-class PretestUserCreateView(LoginRequiredMixin, PretestAccountRequiredMixin, CreateView):
+class PretestUserCreateView(LoginRequiredMixin, CreateView):
     model = PretestUser
     template_name = 'pretest_user_create.html'
     form_class = PretestUserCreateForm
     pretest_accounts = None
-    access_model = PretestUser
+    access_model = PretestAccount
     account = None
 
     def get(self, request, *args, **kwargs):
-        self.account = PretestAccount.objects.get(pk=kwargs.get('account')) 
-        return super(PretestUserCreateView, self).get(request, *args, **kwargs)
+        self.account = PretestAccount.objects.get(pk=kwargs.get('account'))
+        if request.user.pk == self.account.manager.pk or request.user.is_staff:
+            return super(PretestUserCreateView, self).get(request, *args, **kwargs)
+        return redirect('pretests:pretest_access_error')
 
     def get_initial(self):
         initial = super(PretestUserCreateView, self).get_initial()

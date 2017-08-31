@@ -1,4 +1,4 @@
-<!-- base.html -->
+<!-- base_local.html -->
 {% load staticfiles %}
 {% load guardian_tags %}
 <!DOCTYPE html>
@@ -26,14 +26,17 @@
   <title>{% block page_title %} GGV Interactive {% endblock page_title %}</title>
 
   <!-- Bootstrap --> 
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <!-- <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">-->
+  <link rel="stylesheet" href="http://localhost/bootstrap-3.2.0/css/bootstrap.min.css">
 
   <!-- Optional theme -->
-  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+  <!--<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">-->
+  <link rel="stylesheet" href="http://localhost/bootstrap-3.2.0/css/bootstrap-theme.min.css">
 
 
   <!-- Font Awesome for icons -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  <!--  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">-->
+  <link rel="stylesheet" href="http://localhost/font-awesome-4.7.0/css/font-awesome.min.css">
   
   <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
   <link rel="stylesheet" href="{% static 'css/ggv.css' %}">
@@ -188,17 +191,19 @@
                                 {% if 'manage' in roles %}
                                 <li>
                                     <a class="" href="{% url 'manage_org' course.ggv_organization.id %}">
-                                        <i class="fa fa-cogs"></i> Manage <small>{{ course.ggv_organization }}</small>
+                                        <i class="fa fa-road"></i> Manage <small>{{ course.ggv_organization }}</small>
                                     </a>
                                 </li>
                                 {% endif %}
                                 <li>
-                                    <a class="static nav-text" href="{% url 'course_grader_log' %}"> Grading Log </a>
+                                    <a class="static nav-text" href="{% url 'course_grader_log' %}">
+                                        <i class="fa fa-check-circle"></i> Grading Log
+                                    </a>
                                 </li>
                                 <li role="separator" class="divider"></li>
                             {% endif %}
 
-                            {% if request.user.pretest_user_account.all %}
+                            {% if request.user.is_staff or request.user.pretest_user_account.all %}
                                 <li>
                                     <a class="" href="/pretest/accounts/">
                                         <i class="fa fa-cogs"></i> Pretest Manager
@@ -277,19 +282,21 @@
     </div> -->
 
   <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+  <script src="http://localhost/jquery-2.1.1.min.js"></script>
 
-<script
+<!--  <script
   src="https://code.jquery.com/jquery-2.2.4.min.js"
   integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
   crossorigin="anonymous"></script>
   <script 
   src="http://code.jquery.com/ui/1.12.1/jquery-ui.min.js" 
   integrity="sha256-VazP97ZCwtekAsvgPBSUwPFKdrwD3unUfSGVYrahUqU=" 
-  crossorigin="anonymous"></script>
+  crossorigin="anonymous"></script> -->
   
 
   <!-- Latest compiled and minified JavaScript -->
-<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+  <!--  <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>-->
+<script src="http://localhost/bootstrap-3.2.0/js/bootstrap.min.js"></script>
 
  <!-- Django session security -->
   {% include 'session_security/all.html' %}

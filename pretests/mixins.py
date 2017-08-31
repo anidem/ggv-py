@@ -140,6 +140,7 @@ class PretestQuestionMixin(object):
             return super(PretestQuestionMixin, self).dispatch(*args, **kwargs)
 
         except Exception as e:
+            print e
             messages.error(self.request, 'A problem with the testing page as occurred. System admins have been contacted.', extra_tags='danger')
             
             return redirect('pretests:pretest_home')

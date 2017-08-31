@@ -52,7 +52,7 @@
             <form id="token_assignment" method="post" action=".">{% csrf_token %}
                 <div class="col-md-6">{{ form|crispy }}</div>
                 <div class="col-md-6">
-                    <p><strong>Select Exams for New User</strong></p>
+                    <p><strong>Select pretest exams for this user</strong></p>
                     <h5>English Pretest Exams  <span class="small">select all</span> <input type="checkbox" id="eng_all" data-grp=".eng" class="select_all btn btn-lg btn-default"></h5>            
                     <div id="div_id_eng_pretests" class="form-group">
                         <ul>

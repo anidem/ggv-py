@@ -59,7 +59,7 @@
                         <li>
                         <label for="{{ check.id_for_label }}">
                             {% if check.choice_value in completed %}  
-                                <span class="check"><input id="{{check.id_for_label}}" name="{{ check.name }}" type="checkbox" value="{{ check.choice_value }}" {% if check.choice_value in assigned %}checked{% endif %} disabled></span>
+                                <span class="check"><input id="{{check.id_for_label}}" name="{{ check.name }}" type="checkbox" value="{{ check.choice_value }}" {% if check.choice_value in assigned %}checked{% endif %} class="eng" disabled></span>
                                 <span class="text-muted">{{ check.choice_label }} </span>
                             {% else %}
                                 <span class="check"><input id="{{check.id_for_label}}" name="{{ check.name }}" type="checkbox" value="{{ check.choice_value }}" {% if check.choice_value in assigned %}checked{% endif %} class="eng"></span>
@@ -80,7 +80,7 @@
                         <label for="{{ check.id_for_label }}">
                             {% if check.choice_value in completed %}
                                    
-                                <span class="check"><input id="{{check.id_for_label}}" name="{{ check.name }}" type="checkbox" value="{{ check.choice_value }}" {% if check.choice_value in assigned %}checked{% endif %} disabled></span>
+                                <span class="check"><input id="{{check.id_for_label}}" name="{{ check.name }}" type="checkbox" value="{{ check.choice_value }}" {% if check.choice_value in assigned %}checked{% endif %} class="spn" disabled></span>
                                 <span class="text-muted">{{ check.choice_label }} </span>
                             {% else %}
                                             

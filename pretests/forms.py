@@ -102,8 +102,7 @@ class PretestSelectionForm(forms.Form):
     spn_pretests = forms.MultipleChoiceField(required=False, label='', widget=forms.CheckboxSelectMultiple, choices=spn_pretest_choices,)    
     
     def __init__(self, *args, **kwargs):
-        super(PretestSelectionForm, self).__init__(*args, **kwargs)
-
+        super(PretestSelectionForm, self).__init__(*args, **kwargs)        
 
     class Meta:
         fields = ['eng_select_all', 'eng_pretests', 'spn_pretests', 'spn_select_all']

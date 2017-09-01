@@ -2,6 +2,7 @@
 
 from collections import OrderedDict
 from pytz import timezone
+import datetime as dt
 from datetime import datetime
 import calendar
 import time
@@ -149,14 +150,15 @@ class GgvOrgUserActivityReportView(LoginRequiredMixin, DetailView):
                 for i in c.student_report():                
                     user = User.objects.get(username=i[3])  # get user from username
                     activity_log = get_daily_log_times_v2(user, c)
-                    
+                    # print scope
+                    # get activity log info for scope
                     try:
                         daily = activity_log[scope]
                     except:
                         daily = [0, 0, []]
                     
                     ws.append([i[0], c.title, i[1], i[2], i[3], scope, daily[1]])
-                    
+                    # compile events
                     for k in daily[2]:
                         ws.append(['', '', '', '', '', '', '', k['event_time'], k['activity'].action, k['activity'].message_detail or ' ', k['score'] or ' '])
 
@@ -661,7 +663,6 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
     required_privileges = ['access', 'instructor', 'manage']
 
     def get(self, request, *args, **kwargs):
-
         return super(UserProgressView, self).get(request, *args, **kwargs)
 
     def render_to_response(self, context, **response_kwargs):
@@ -694,25 +695,51 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
 
             # Write user information row and format
             ws.append([context['student_user'].ggvuser.program_id or '', context['student_user'].first_name + ' ' + context['student_user'].last_name, context['student_user'].email, ' Report date: ' + daystr])
+            
+            # Write user information time on each subject
+            for i, j in context['subject_time'].items():
+                ws.append([i, str(j[0]) + ' hours' + str(j[1]) + ' mins'])
+
             ws.append([])  # Blank row
+
             for i in USER_INFO_CELLS:
                 ws[i].font = Font(size=14, name='Arial', bold=True)
 
             # Write data column header and format
             for col_num in xrange(len(DATA_COLS)):
                 offset = col_num+1
-                cell = ws.cell(row=3, column=offset)
+                cell = ws.cell(row=10, column=offset)
                 cell.value = DATA_COLS[col_num][1]
                 cell.font = Font(size=12, name='Arial')
                 cell.alignment=Alignment(wrap_text=True)
                 # set column width
                 ws.column_dimensions[get_column_letter(col_num+1)].width = DATA_COLS[col_num][2]
 
-            # Write data rows
-            for i, j in context['activity_log'].items():
-                ws.append([j[0].date(), j[1]])
-                for k in j[2]:
-                    ws.append(['', '', k['event_time'], k['activity'].action, html.strip_tags(k['activity'].message), k['activity'].message_detail or ' ', k['score'] or ' '])
+            # Write data rows for all activity or within date range
+
+            try:
+                start = context['start']
+                end = context['end']
+            except:
+                # range not provided
+                start, end = None, None
+            
+            if start and end:  # compile report within date range
+                dates = [start + dt.timedelta(days=d) for d in range(0, (end-start).days+1)]
+                for i in dates:
+                    try:
+                        day = context['activity_log'][str(i.date())]
+                        ws.append([day[0].date(), day[1]])
+                        for k in day[2]:
+                            ws.append(['', '', k['event_time'], k['activity'].action, html.strip_tags(k['activity'].message), k['activity'].message_detail or ' ', k['score'] or ' '])
+                    except:
+                        # 'no activity on current day'
+                        pass
+            else:  # compile report for all activity
+                for i, j in context['activity_log'].items():
+                    ws.append([j[0].date(), j[1]])
+                    for k in j[2]:
+                        ws.append(['', '', k['event_time'], k['activity'].action, html.strip_tags(k['activity'].message), k['activity'].message_detail or ' ', k['score'] or ' '])
 
             writer.save(response)
             return response
@@ -728,13 +755,37 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         context['activity_log'] = get_daily_log_times_v2(user, course) # 'login', 'logout', 'access-worksheet'
 
         # if self.request.user.is_staff:
-        subject_time = elapsed_time_per_event(user)[1]
+        start = self.request.GET.get('start', '')
+        end = self.request.GET.get('end', '')
+        if start and end:  # compile subject times within date range
+            context['start'] = datetime.strptime(start, "%Y-%m-%d")
+            context['end'] = datetime.strptime(end, "%Y-%m-%d")
+            
+            subject_time = elapsed_time_per_event(user, context['start'], context['end'])[1]
+            
+        else:
+            subject_time = elapsed_time_per_event(user)[1]
+        
         for i, j in subject_time.items():
             subject_time[i] = j/3600, (j%3600)/60
+        
         context['subject_time'] = subject_time
 
         if 'completed' in self.request.GET.get('filter', ''):
             context['filter'] = 'completed'       
+        return context
+
+class UserProgressViewDateSelector(UserProgressView):
+    model = Course
+    template_name = 'course_user_progress_custom.html'
+    slug_url_kwarg = 'crs_slug'
+    access_object = 'user'
+    required_privileges = ['access', 'instructor', 'manage']
+
+    def get_context_data(self, **kwargs):
+        context = super(UserProgressViewDateSelector, self).get_context_data(**kwargs)
+        # user = User.objects.get(pk=self.kwargs['user'])
+        # context['student_user'] = user
         return context
 
 

@@ -41,6 +41,7 @@
     {% endif %}
     {% if is_instructor or is_manager %}
         <a class="btn btn-md" href="./?export=xlsx"> [ <i class="fa fa-download"></i> Download this report as an Excel file ]</a>
+        <a class="btn btn-md" href="{% url 'user_progress_custom' object.slug student_user.pk %}"> [ <i class="fa fa-download"></i> Custom Report ]</a>
     {% endif %}
     
 </div>

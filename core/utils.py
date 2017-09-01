@@ -224,7 +224,6 @@ def get_daily_log_times_v2 (user=None, course=None, exclusions=[]):
         curr = event.timestamp_tz()
         curr_datestr = curr.strftime('%Y-%m-%d')
         try:
-
             acts[curr_datestr][2].append(event.as_dict(course, exclusions))
 
         except KeyError as e:
@@ -278,8 +277,12 @@ def elapsed_daily_activity(user=None):
 
     return log
 
-def elapsed_time_per_event(user=None):
-    activity = user.activitylog.all()
+def elapsed_time_per_event(user=None, start=None, end=None):
+    """ start and end are optional but must be datetime objects """
+    if start and end:
+        activity = user.activitylog.all().filter(timestamp__date__range=(start, end))
+    else:
+        activity = user.activitylog.all()
     log = []
     subject_time = {}
 

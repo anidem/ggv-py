@@ -34,7 +34,7 @@ from courses.views import (
     GgvOrgAdminView, GgvOrgUserActivityReportView,
     CourseView, CourseUpdateView, CourseGraderEditView, CourseGraderCreateView, CourseGraderDeleteView, CourseManageView, CourseUserReportView, CourseUserActivityReportView, CourseUserActivityFullReportView, CourseGraderLogView,
     CourseAttendanceMonthView, CourseAttendanceUserView,
-    UserManageView, UserProgressView,
+    UserManageView, UserProgressView, UserProgressViewDateSelector,
     CourseMessageAddView, CourseMessageUpdateView, CourseMessageDeleteView
     )
 from lessons.views import LessonView, SectionUpdateView
@@ -98,6 +98,7 @@ urlpatterns = [
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/$', CourseManageView.as_view(), name='manage_course'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/manage/user/(?P<user>\d+)/$', UserManageView.as_view(), name='manage_user'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/progress/user/(?P<user>\d+)/$', UserProgressView.as_view(), name='user_progress'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/progress/user/custom/(?P<user>\d+)/$', UserProgressViewDateSelector.as_view(), name='user_progress_custom'),
 
     url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/update/(?P<pk>\d+)/$', AttendanceAjaxCodeUpdateView.as_view(), name='course_attendance_update'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/attendance/delete/(?P<pk>\d+)/$', AttendanceAjaxCodeDeleteView.as_view(), name='course_attendance_delete'),

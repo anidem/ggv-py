@@ -9,35 +9,37 @@
 
 {% block local_nav %}
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Activities <b class="caret"></b></a>
-
-  <ul class="dropdown-menu scrollable-menu">
-    {% for i in acts %}
-      <li>
+    {% if user.ggvuser.language_pref == 'spanish' %}
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actividades <b class="caret"></b></a>
+    {% else %}
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Activities <b class="caret"></b></a>
+    {% endif %}
+    
+    <ul class="dropdown-menu scrollable-menu">
+        {% for i in acts %}
+        <li>
         {% if i.act.activity_type == 'slidestack' %}
             <a href="/stacks/{{i.act.asset}}"><i class="fa fa-desktop icon-slidestack"></i> {{ i.act.title }}</a>
-            {% comment %}
-            <a href="{% url 'slideview' course.slug i.act.id %}"><i class="fa fa-desktop icon-slidestack"></i> {{ i.act.title }}</a>{% endcomment %}
         {% else %}
 
             <a href="{% url 'question_response' course.slug i.act.id 1 %}"><i class="fa fa-pencil-square-o"></i> {{ i.act.title|truncatewords:5 }}</a>
         {% endif %}
-      </li>
-    {% endfor %}
-  </ul>
-</li>
-<li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <b class="caret"></b></a>
-  <ul class="dropdown-menu section_drop scrollable-menu">
-    {% for i in sections %}<li><a href="#{{ i|title }}">{{ i|title }}</a></li>{% endfor %}
-  </ul>
+        </li>
+        {% endfor %}
+    </ul>
 </li>
 
-{% if instructor %}
 <li class="dropdown">
-    <a href="{% url 'lesson_key' course.slug object.id %}">Master Key</a>
+    {% if user.ggvuser.language_pref == 'spanish' %}
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modulos <b class="caret"></b></a>
+    {% else %}
+        <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <b class="caret"></b></a>
+    {% endif %}
+
+    <ul class="dropdown-menu section_drop scrollable-menu">
+        {% for i in sections %}<li><a href="#{{ i|title }}">{{ i|title }}</a></li>{% endfor %}
+    </ul>
 </li>
-{% endif %}
 {% endblock local_nav %}
 
 {% block page_header %}
@@ -45,17 +47,34 @@
     <div class="text-center icon-{{ object.subject }}"><i class="fa fa-{{ object.icon_class }} fa-5x"></i></div>
     <div class="text-center icon-{{ object.subject }}"><span class="icon-title">{{object}}</span></div>
 
-    <h3>Your Progress</h3>
-    <p class="lead">You've completed <strong>{{ worksheets_stat.items.0.1.1 }}</strong> of <strong>{{ worksheets_stat.items.0.1.0 }}</strong> worksheets and viewed <strong>{{ slides_stat.items.0.1.1 }}</strong> of <strong>{{ slides_stat.items.0.1.0 }}</strong> presentations. See more details <a href="{% url 'user_progress' course.slug user.pk %}">here</a></p>
+    {% if user.ggvuser.language_pref == 'spanish' %}
+        <h3>Su Progreso</h3>
+        <p class="lead">Has completado <strong>{{ worksheets_stat.items.0.1.1 }}</strong> de <strong>{{ worksheets_stat.items.0.1.0 }}</strong> hojas de trabajo y visto <strong>{{ slides_stat.items.0.1.1 }}</strong> de <strong>{{ slides_stat.items.0.1.0 }}</strong> presentaciones. Vea más detalles <a href="{% url 'user_progress' course.slug user.pk %}">aquí.</a></p>
+    {% else %}
+        <h3>Your Progress</h3>
+        <p class="lead">You've completed <strong>{{ worksheets_stat.items.0.1.1 }}</strong> of <strong>{{ worksheets_stat.items.0.1.0 }}</strong> worksheets and viewed <strong>{{ slides_stat.items.0.1.1 }}</strong> of <strong>{{ slides_stat.items.0.1.0 }}</strong> presentations. See more details <a href="{% url 'user_progress' course.slug user.pk %}">here.</a></p>    
+    {% endif %}
 </div>
 
-<div class="col-xs-10">    
-    <span class="small"><i class="fa fa-desktop icon-slidestack"></i> = presentation </span>
-    <span class="small"><i class="fa fa-pencil-square-o icon-worksheet"></i> = worksheet </span>
-    <span class="small"><i class="fa fa-youtube icon-external_media"></i> = video </span>
+<div class="col-xs-10"> 
+    {% if user.ggvuser.language_pref == 'spanish' %}
+        <span class="small"><i class="fa fa-desktop icon-slidestack"></i> = presentación </span>
+        <span class="small"><i class="fa fa-pencil-square-o icon-worksheet"></i> = hoja de trabajo </span>
+        <span class="small"><i class="fa fa-youtube icon-external_media"></i> = video </span>        
+    {% else %}
+        <span class="small"><i class="fa fa-desktop icon-slidestack"></i> = presentation </span>
+        <span class="small"><i class="fa fa-pencil-square-o icon-worksheet"></i> = worksheet </span>
+        <span class="small"><i class="fa fa-youtube icon-external_media"></i> = video </span>
+    {% endif %}
 </div>
-<div class="col-xs-1"><span style="background-color: #333; color: white; opacity: 0.6; padding:2px">Scores</span></div>
-<div class="col-xs-1"><span style="background-color: #333; color: white; opacity: 0.6; padding:2px">Bookmarks</span></div>
+
+{% if user.ggvuser.language_pref == 'spanish' %}
+    <div class="col-xs-1"><span style="background-color: #333; color: white; opacity: 0.6; padding:2px">Puntuaciones</span></div>
+    <div class="col-xs-1"><span style="background-color: #333; color: white; opacity: 0.6; padding:2px">Marcadores</span></div>
+{% else %}
+    <div class="col-xs-1"><span style="background-color: #333; color: white; opacity: 0.6; padding:2px">Scores</span></div>
+    <div class="col-xs-1"><span style="background-color: #333; color: white; opacity: 0.6; padding:2px">Bookmarks</span></div>
+{% endif %}
 
 {% endblock page_header %}
 

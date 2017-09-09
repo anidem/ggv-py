@@ -27,7 +27,7 @@
 
 <div class="col-md-12 text-center">
     <p class="lead">
-        Student Progress Report
+        {% if request.user.ggvuser.language_pref == 'spanish' %}Informe de Progreso del Estudiante{% else %}Student Progress Report{% endif %}
     </p>
 </div>
 {% endblock page_header %}
@@ -42,41 +42,63 @@
     {% if is_instructor or is_manager %}
         <a class="btn btn-md" href="./?export=xlsx"> [ <i class="fa fa-download"></i> Download this report as an Excel file ]</a>
         <a class="btn btn-md" href="{% url 'user_progress_custom' object.slug student_user.pk %}"> [ <i class="fa fa-download"></i> Custom Report ]</a>
-    {% endif %}
-    
+    {% endif %}    
 </div>
 
 <div class="col-md-12 text-left">
-<h4>Filters (click to filter events)</h4>
-    <p>
-        <a class="btn btn-sm btn-default" href="./?filter=completed">  <i class="fa fa-eye"></i> show only completed worksheets </a>
-        <a class="btn btn-sm btn-default" href="./">  <i class="fa fa-eye"></i> show all activity (default) </a>
-    </p>
+    {% if request.user.ggvuser.language_pref == 'spanish' %}
+        <h4>Filters (click to filter events)</h4>
+        <p>
+            <a class="btn btn-sm btn-default" href="./?filter=completed">  <i class="fa fa-eye"></i> Mostrar solo hojas de trabajo completada </a>
+            <a class="btn btn-sm btn-default" href="./">  <i class="fa fa-eye"></i> Mostrar todos actividades </a>
+        </p>
+    {% else %}
+        <h4>Filters (click to filter events)</h4>
+        <p>
+            <a class="btn btn-sm btn-default" href="./?filter=completed">  <i class="fa fa-eye"></i> show only completed worksheets </a>
+            <a class="btn btn-sm btn-default" href="./">  <i class="fa fa-eye"></i> show all activity (default) </a>
+        </p>
+    {% endif %}
 </div>
 <div class="col-md-12 text-left filters-button-group">
     <p>
-    <span style="padding-right: 5px"><a href="#" class="" data-filter=".event">Show all </a> </span>
+    <span style="padding-right: 5px"><a href="#" class="" data-filter=".event">{% if request.user.ggvuser.language_pref == 'spanish' %}Mostrar toda {% else %}Show all {% endif %}</a> </span>
     {% for i, j in subject_time.items %}
         <span style="padding-right: 5px"><a href="#" class="" data-filter=".{{ i|slugify }}">{{i}} </a> ({{j.0}}h {{j.1}}mins)</span>
     {% endfor %}
     </p>
 </div>
 
-<div id="event_container" class="col-md-12" style="padding-top: 20px">
+<div id="event_container" class="col-md-12" style="padding-top: 20px">{% if request.user.ggvuser.language_pref == 'spanish' %}{% else %}{% endif %}
 
     {% for k, v in activity_log.items %}
         {% if v.2 %}
-            <div class="row" style="padding-top: 20px; border-bottom: 1px solid gray">
-                <h4>{{ v.0|date }} <span class="pull-right" style="font-size: 0.7em"><sup>(hours:mins)</sup></span>  <span class="pull-right">{{ v.1 }} </span></h4>
-            </div>
-            <div class="row">
-                <div class="col-xs-2">Date/Time <sup><small>MST</small></sup></div>
-                <div class="col-xs-1">Subject</div>
-                <div class="col-xs-1">Activity</div>
-                <div class="col-xs-3">Module</div>
-                <div class="col-xs-4">Content</div>
-                <div class="col-xs-1">Current Score</div>
-            </div>
+            {% if request.user.ggvuser.language_pref == 'spanish' %}
+                <div class="row" style="padding-top: 20px; border-bottom: 1px solid gray">
+                    <h4>{{ v.0|date }} <span class="pull-right" style="font-size: 0.7em"><sup>(horas:minutos)</sup></span>  <span class="pull-right">{{ v.1 }} </span></h4>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2">Fecha y Hora <sup><small>MST</small></sup></div>
+                    <div class="col-xs-1">Tema</div>
+                    <div class="col-xs-1">Actividad</div>
+                    <div class="col-xs-3">Modulo</div>
+                    <div class="col-xs-4">Contenido</div>
+                    <div class="col-xs-1">Puntuación Actual</div>
+                </div>
+            {% else %}
+                <div class="row" style="padding-top: 20px; border-bottom: 1px solid gray">
+                    <h4>{{ v.0|date }} <span class="pull-right" style="font-size: 0.7em"><sup>(hours:mins)</sup></span>  <span class="pull-right">{{ v.1 }} </span></h4>
+                </div>
+                <div class="row">
+                    <div class="col-xs-2">Date/Time <sup><small>MST</small></sup></div>
+                    <div class="col-xs-1">Subject</div>
+                    <div class="col-xs-1">Activity</div>
+                    <div class="col-xs-3">Module</div>
+                    <div class="col-xs-4">Content</div>
+                    <div class="col-xs-1">Current Score</div>
+                </div>
+            {% endif %}
+
             {% for j in v.2 %}
                 {% if filter == 'completed' and j.activity.action == 'completed-worksheet' %}        
                     <div class="row hoverpad text-left event {{ j.event_target.lesson|slugify }}" style="padding-bottom: 5px; padding-bottom: 5px">
@@ -90,17 +112,16 @@
                         </div>
 
                         
-                        <div class="col-xs-1 small">completed</div>
+                        <div class="col-xs-1 small">{% if request.user.ggvuser.language_pref == 'spanish' %}terminado{% else %}completed{% endif %}</div>
                         
                         <div class="col-xs-3">{{j.event_target.section}}</div>
 
                         <div class="col-xs-4">
                                 <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
-                                 {{j.event_target }} {% if j.activity.action == 'completed-worksheet' %}<a href="{{ j.report_url }}">(view report) {% endif %}</a>
+                                 {{j.event_target }} {% if j.activity.action == 'completed-worksheet' %}<a href="{{ j.report_url }}">{% if request.user.ggvuser.language_pref == 'spanish' %}(vista del informe){% else %}(view report){% endif %} {% endif %}</a>
                         </div>
 
                         <div class="col-xs-1">
-
                             {% if j.score >= 0 %} <strong>{{ j.score|floatformat:"0" }}%</strong> 
                             {% else %} <strong><span class="text-danger">cleared</span></strong>{% endif %}
                         </div>
@@ -118,11 +139,11 @@
                         </div>
 
                         {% if j.activity.action == 'completed-worksheet' %}
-                            <div class="col-xs-1 small">completed</div>
+                            <div class="col-xs-1 small">{% if request.user.ggvuser.language_pref == 'spanish' %}terminado{% else %}completed{% endif %}</div>
                         {% elif j.activity.action == 'access-worksheet' %}
-                            <div class="col-xs-1 small">viewed</div>
+                            <div class="col-xs-1 small">{% if request.user.ggvuser.language_pref == 'spanish' %}visto{% else %}viewed{% endif %}</div>
                         {% elif j.activity.action == 'access-presentation' %}
-                            <div class="col-xs-1 small">viewed</div>
+                            <div class="col-xs-1 small">{% if request.user.ggvuser.language_pref == 'spanish' %}visto{% else %}viewed{% endif %}</div>
                         {% else %}
                             <div class="col-xs-1 small">&nbsp;</div>
                         {% endif %}
@@ -132,7 +153,7 @@
                                 <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
                                 {{j.event_target }}
                                 {% if j.event_target.id %}
-                                <a href="{% url 'worksheet_user_report' j.course.slug j.event_target.id student_user.id %}">(view report)</a>
+                                <a href="{% url 'worksheet_user_report' j.course.slug j.event_target.id student_user.id %}">{% if request.user.ggvuser.language_pref == 'spanish' %}(vista del informe){% else %}(view report){% endif %}</a>
                                 {% endif %}
                             {% elif j.activity.action == 'access-presentation' %}
                                 <i class="fa fa-desktop fa-1x icon-slidestack"></i>

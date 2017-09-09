@@ -273,6 +273,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
         context['worksheet'] = self.worksheet
         context['instructor'] = self.request.user in context[
             'course'].instructor_list() or self.request.user.is_staff
+        context['language_pref'] = self.request.user.ggvuser.language_pref
 
         if self.worksheet.lesson.id == 1:   # English math lesson.
             context['calculator'] = settings.MEDIA_URL + 'pdf/0-calculator-eng.pdf'

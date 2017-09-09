@@ -1,6 +1,13 @@
 <!-- question_worksheet_report.html -->
 {% extends "base.html" %}
 
+{% if language_pref == 'spanish' %} {% else %} {% endif %}
+{% if language_pref == 'spanish' %}
+
+{% else %}
+
+{% endif %}
+
 {% block page_crumb %}{% endblock page_crumb %}
 
 
@@ -12,7 +19,7 @@
 </div>
 
 <div class="col-md-12 text-center">
-    <p class="lead">Worksheet Report</p>
+    <p class="lead">{% if language_pref == 'spanish' %}Informe de la Hoja de Trabajo{% else %}Worksheet Report{% endif %}</p>
 </div>
 
 {% endblock page_header%}
@@ -52,7 +59,12 @@
     </ul>
         {% if student == request.user and grade < 80 %}
         <p>
-            <span><mark class="bg-danger">Your result is below 80%. Please contact your tutor/instructor for help. You can also review and correct your questions on your own.</mark></span>
+            {% if request.user.ggvuser.language_pref == 'spanish' %}
+                <span><mark class="bg-danger">Su resultado es inferior al 80%. Póngase en contacto con su tutor / instructor para obtener ayuda. También puede revisar y corregir sus preguntas por su cuenta.</mark></span>
+            {% else %}
+                <span><mark class="bg-danger">Your result is below 80%. Please contact your tutor/instructor for help. You can also review and correct your questions on your own.</mark></span>
+            {% endif %}
+            
         </p>
         {% endif %}                     
 
@@ -69,15 +81,27 @@
                         <span class="small">({{correct}}/{{numquestions}})</span>
                     </h2>
 
-                    <h6>
-                        <span class="label label-xs label-success small pull-right"><i class="fa fa-check"></i> correct</span> 
-                        <span class="label label-xs label-warning small pull-right"><i class="fa fa-close"></i> incorrect</span> 
-                    </h6>
+                    {% if request.user.ggvuser.language_pref == 'spanish' %}
+                        <h6>
+                            <span class="label label-xs label-success small pull-right"><i class="fa fa-check"></i> correcto</span> 
+                            <span class="label label-xs label-warning small pull-right"><i class="fa fa-close"></i> incorrecto</span> 
+                        </h6>
 
-                    <th><small><em>#</em></small></th>
-                    <th><small><em>Question</em></small></th>
-                    <th><small><em>Response</em></small></th>
-                    <th><small><em>Result</em></small></th>
+                        <th><small><em>#</em></small></th>
+                        <th><small><em>La Pregunta</em></small></th>
+                        <th><small><em>Su Respuesta</em></small></th>
+                        <th><small><em>Resultado</em></small></th>
+                    {% else %}
+                        <h6>
+                            <span class="label label-xs label-success small pull-right"><i class="fa fa-check"></i> correct</span> 
+                            <span class="label label-xs label-warning small pull-right"><i class="fa fa-close"></i> incorrect</span> 
+                        </h6>
+
+                        <th><small><em>#</em></small></th>
+                        <th><small><em>Question</em></small></th>
+                        <th><small><em>Your Response</em></small></th>
+                        <th><small><em>Result</em></small></th>
+                    {% endif %}
                 </tr>
                 {% endif %}
             </thead>
@@ -87,9 +111,15 @@
 
                 <tr class="hoverpad {% cycle 'row1' 'row2' %}">
                     <td>{{ forloop.counter }}. {% if h %}<i class="fa fa-flag flagger bkset"></i>{% endif %}</td>
-                    <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">{{ i.display_text | safe }}</a></td>
-                    <td><p class=""><strong>{{ j | safe }}</strong></p>{% if q.feedback %}<h6>Feedback:</h6><p class="well bg-success">{{ q.feedback }}</p>{% endif %}</td>
-                    <td><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">
+                    <td style="width: 40%"><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">{{ i.display_text | safe }}</a></td>
+                    <td style="width: 40%">
+                        <p class=""><strong>{{ j | safe }}</strong></p>
+                        {% if q.feedback %}
+                            <h6>{% if request.user.ggvuser.language_pref == 'spanish' %}Comentarios: {% else %}Feedback: {% endif %}</h6>
+                            <p class="well bg-success">{{ q.feedback }}</p>
+                        {% endif %}
+                    </td>
+                    <td style="width: 20%"><a href="{% url 'question_response' course.slug worksheet.id forloop.counter %}" class="static">
                         {% if j == 'Response not required' %}
                         
                             <span>n/a</span>
@@ -100,9 +130,9 @@
                                 <span class="btn btn-xs btn-success"><i class="fa fa-check"></i></span> 
                                 {% if q.score > 0 %}<strong>score: {{ q.score }}</strong> {% endif %}
                             {% elif q.score == -1 %}
-                                <span class="btn btn-xs btn-info" title="grade pending">grade pending</span>
+                                <span class="btn btn-xs btn-info" title="grade pending">{% if request.user.ggvuser.language_pref == 'spanish' %}grado pendiente {% else %}grade pending {% endif %}</span>
                             {% else %}
-                                <span class="btn btn-xs btn-warning"><i class="fa fa-close"></i> </span> <strong>score: {{ q.score }} </strong>
+                                <span class="btn btn-xs btn-warning"><i class="fa fa-close"></i> </span> <strong>{% if request.user.ggvuser.language_pref == 'spanish' %}puntuación:{% else %}score:{% endif %} {{ q.score }} </strong>
 
                                 <!-- Modal trigger -->
                                 <a id="rubric_btn" href="#" title="Click to show what this score means." class="" data-toggle="modal" data-target="#{{i.id}}_rubric"> <i class="fa fa-question-circle"></i></a>
@@ -112,13 +142,13 @@
                                     <div class="modal-dialog modal-md">
                                         <div class="modal-content">
                                             <div class="modal-header">
-                                                <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">{% if request.user.ggvuser.language_pref == 'spanish' %}Cerrar {% else %} {% endif %}Close</button>
                                             </div>
                                             <div class="modal-body">
                                                 <p>{{ i.extra_info.rubric|safe }}</p>
                                             </div>
                                             <div class="modal-footer">
-                                                <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
+                                                <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">{% if request.user.ggvuser.language_pref == 'spanish' %}Cerrar {% else %} {% endif %}Close</button>
                                             </div>
                                         </div>
                                     </div>

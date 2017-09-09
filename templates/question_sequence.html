@@ -19,18 +19,34 @@
 </div>
 
 <div class="col-md-4 text-right">
-    <p class="small">
-        <span class="small">Need help with this question?</span>
-        <a class="btn btn-warning btn-xs" href="{% url 'email_instructor_question' course.slug worksheet.id question_position %}?q={{request.path}}">
-             <i class="fa fa-envelope"></i> Email Instructor
-        </a>
-    </p>
-    <p class="small">
-        <span class="small">Found an error or having technical problems?</span>
-        <a class="btn btn-danger btn-xs" href="{% url 'email_staff_ws_error' course.slug worksheet.id question_position %}?q={{request.path}}">
-            <i class="fa fa-envelope"></i> Email GGV Staff
-        </a>
-    </p>
+    {% if language_pref == 'spanish' %}
+        <p class="small">
+            <span class="small">¿Necesita ayuda con esta pregunta?</span>
+            <a class="btn btn-warning btn-xs" href="{% url 'email_instructor_question' course.slug worksheet.id question_position %}?q={{request.path}}">
+                 <i class="fa fa-envelope"></i> Envíe por correo electrónico su instructor
+            </a>
+        </p>
+        <p class="small">
+            <span class="small">¿Encontró un error o tiene problemas técnicos?</span>
+            <a class="btn btn-danger btn-xs" href="{% url 'email_staff_ws_error' course.slug worksheet.id question_position %}?q={{request.path}}">
+                <i class="fa fa-envelope"></i> Envíe por correo electrónico GGV Personal
+            </a>
+        </p>
+    {% else %}
+        <p class="small">
+            <span class="small">Need help with this question?</span>
+            <a class="btn btn-warning btn-xs" href="{% url 'email_instructor_question' course.slug worksheet.id question_position %}?q={{request.path}}">
+                 <i class="fa fa-envelope"></i> Email Instructor
+            </a>
+        </p>
+        <p class="small">
+            <span class="small">Found an error or having technical problems?</span>
+            <a class="btn btn-danger btn-xs" href="{% url 'email_staff_ws_error' course.slug worksheet.id question_position %}?q={{request.path}}">
+                <i class="fa fa-envelope"></i> Email GGV Staff
+            </a>
+        </p>
+    {% endif %}
+
 </div>
 
 {% endblock page_header %}
@@ -50,11 +66,11 @@
 
                 <div class="lead">
                     {{ question_position }}/{{ question_list|length }}.
-                    <i class="fa fa-flag flagger {% if bookmark %}bkset{% endif %}" title="Flag this question to review later" data-target="{{ bookmark.id }}" data-form="#flag_form"></i>
+                    <i class="fa fa-flag flagger {% if bookmark %}bkset{% endif %}" title={% if language_pref == 'spanish' %}"Marcar esta pregunta para revisarla más tarde" {% else %}"Flag this question to review later" {% endif %} data-target="{{ bookmark.id }}" data-form="#flag_form"></i>
                     <h6></h6>
                     {% if calculator %}
                     <!-- Modal trigger -->
-                    <a id="calculator_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title="Click to view calculator shortcuts." data-toggle="modal" data-target="#calculator">
+                    <a id="calculator_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title={% if language_pref == 'spanish' %}"Haga clic para ver los métodos abreviados de la calculadora." {% else %}"Click to view calculator shortcuts." {% endif %} data-toggle="modal" data-target="#calculator">
                       <i class="fa fa-calculator"></i>
                     </a>
                     <!-- Modal Content -->
@@ -64,13 +80,13 @@
                           <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                             <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
-                            <p class="text-center"><a class="btn btn-link" href="{{ calculator|slice:"-3" }}html" target="_blank">print</a></p>
+                            <p class="text-center"><a class="btn btn-link" href="{{ calculator|slice:"-3" }}html" target="_blank">{% if language_pref == 'spanish' %}imprimir{% else %}print{% endif %}</a></p>
                           </div>
                           <div class="modal-body">
                             <iframe  id="pdf_calculator" class="pdfframe"></iframe>
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">{% if language_pref == 'spanish' %}Cerrar{% else %}Close{% endif %}</button>
                           </div>
                         </div>
                       </div>
@@ -79,10 +95,10 @@
 
                     {% if formula %}
                     <!-- Modal trigger -->
-                    <a id="formula_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title="Click to view formulas." data-toggle="modal" data-target="#formula">
+                    <a id="formula_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title={% if language_pref == 'spanish' %}"Haga clic para ver las fórmulas."{% else %}"Click to view formulas."{% endif %} data-toggle="modal" data-target="#formula">
                        <i class="fa fa-book"></i>
                     </a>
-                    <a id="graph_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title="Print graph paper." data-toggle="modal" data-target="#graph_paper">
+                    <a id="graph_btn" href="#" style="padding: 0 5px 0 5px" class="pull-right" title={% if language_pref == 'spanish' %}"Imprimir papel cuadriculado"{% else %}"Print graph paper."{% endif %} data-toggle="modal" data-target="#graph_paper">
                        <i class="fa fa-th"></i>
                     </a>
 
@@ -92,14 +108,14 @@
                         <div class="modal-content">
                           <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
-                            <p class="text-center"><a class="btn btn-link" href="{{ formula|slice:"-3" }}html" target="_blank">print</a></p>
+                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">{% if language_pref == 'spanish' %}Cerrar{% else %}Close{% endif %}</button>
+                            <p class="text-center"><a class="btn btn-link" href="{{ formula|slice:"-3" }}html" target="_blank">{% if language_pref == 'spanish' %}imprimir{% else %}print{% endif %}</a></p>
                           </div>
                           <div class="modal-body">
                             <iframe id="pdf_formula" class="pdfframe"></iframe>
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">{% if language_pref == 'spanish' %}Cerrar{% else %}Close{% endif %}</button>
                           </div>
                         </div>
                       </div>
@@ -111,14 +127,14 @@
                         <div class="modal-content">
                           <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
-                            <p class="text-center"><a class="btn btn-link" href="{{ graph_paper }}" target="_blank">print</a></p>
+                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">{% if language_pref == 'spanish' %}Cerrar{% else %}Close{% endif %}</button>
+                            <p class="text-center"><a class="btn btn-link" href="{{ graph_paper }}" target="_blank">{% if language_pref == 'spanish' %}imprimir{% else %}print{% endif %}</a></p>
                           </div>
                           <div class="modal-body">
                             <img src="{{ graph_paper }}" width="100%">
                           </div>
                           <div class="modal-footer">
-                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">Close</button>
+                            <button type="button" class="btn btn-xs btn-default" data-dismiss="modal">{% if language_pref == 'spanish' %}Cerrar{% else %}Close{% endif %}</button>
                           </div>
                         </div>
                       </div>
@@ -134,13 +150,13 @@
                         {% endcomment %}
                         {% endif %}
 
-                        <a href="{% url 'worksheet_user_report' course.slug worksheet.id user.id %}"  class="btn btn-xs btn-primary" title="Click to view your worksheet results when you have completed worksheet.">
+                        <a href="{% url 'worksheet_user_report' course.slug worksheet.id user.id %}"  class="btn btn-xs btn-primary" title={% if language_pref == 'spanish' %}"Haga clic para ver los resultados de su hoja de trabajo cuando haya completado su hoja de trabajo"{% else %}"Click to view your worksheet results when you have completed worksheet."{% endif %}>
                             <i class="fa fa-check"></i> <i class="fa fa-th-list"></i>
                         </a>
 
 
-                        <a class="btn btn-xs btn-success" title="Click to view the number of questions on the worksheet.
-" data-toggle="collapse" href="#progress-panel" aria-expanded="false" aria-controls="collapseExample">
+                        <a class="btn btn-xs btn-success" title={% if language_pref == 'spanish' %}"Navegador de Preguntas - Haga clic para ver una pregunta en la hoja de trabajo." {% else %}"Question Navigator - Click to view a question on the worksheet.
+" {% endif %} data-toggle="collapse" href="#progress-panel" aria-expanded="false" aria-controls="collapseExample">
                         <i class="fa fa-question"></i> <i class="fa fa-list"></i>
                         </a>
                         <div id="progress-panel" class="well collapse">
@@ -171,7 +187,7 @@
                 {% if question.extra_info %}
                         <div>
                             <a class="btn btn-primary btn-xs" data-toggle="collapse" href="#essay-instruction-panel" aria-expanded="false">
-                             {% if worksheet.lesson.language == 'eng' %}instructions{% else %}instrucciones{% endif %} <i class="fa fa-caret-down"></i>
+                             {% if language_pref == 'english' %}instructions{% else %}instrucciones{% endif %} <i class="fa fa-caret-down"></i>
                             </a>                             
                             <div id="essay-instruction-panel" class="well collapse">
                                 {{ question.extra_info.extra_instructions|safe }}
@@ -179,14 +195,14 @@
                             </div>
                             
                             <a class="btn btn-primary btn-xs" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">
-                             {% if worksheet.lesson.language == 'eng' %}scoring{% else %}calificar{% endif %} <i class="fa fa-caret-down"></i>
+                             {% if language_pref == 'english' %}scoring{% else %}calificar{% endif %} <i class="fa fa-caret-down"></i>
                             </a>
                             <div id="essay-rubric-panel" class="well collapse">
                                 {{ question.extra_info.rubric|safe }}
                                 <a class="btn btn-default" data-toggle="collapse" href="#essay-rubric-panel" aria-expanded="false">OK</a>
                             </div>
                             <a class="btn btn-primary btn-xs" data-toggle="collapse" href="#essay-help-panel" aria-expanded="false">
-                             {% if worksheet.lesson.language == 'eng' %}help{% else %}ayuda{% endif %} <i class="fa fa-caret-down"></i>
+                             {% if language_pref == 'english' %}help{% else %}ayuda{% endif %} <i class="fa fa-caret-down"></i>
                             </a>
                             <div id="essay-help-panel" class="well collapse">
                                 {{ question.extra_info.extra_help|safe }}
@@ -199,7 +215,7 @@
                     {% if question.response_required %}
                         {% for hidden in form.hidden_fields %} {{ hidden }} {% endfor %}
 
-                        <p class="label label-danger">{% for e in form.response.errors  %}An answer is required.{% endfor %}</p>
+                        <p class="label label-danger">{% for e in form.response.errors  %}{% if language_pref == 'spanish' %}Se requiere una respuesta. {% else %}An answer is required. {% endif %}{% endfor %}</p>
                         <p></p>
 
                         {% for field in form.response %}
@@ -218,16 +234,16 @@
                 </form>
                 <p>
                     {%if user_completed and previous_position %}
-                        <a href="{% url 'question_response' course.slug worksheet.id previous_position %}" class="btn">Previous</a>
+                        <a href="{% url 'question_response' course.slug worksheet.id previous_position %}" class="btn">{% if language_pref == 'spanish' %}Anterior {% else %}Previous {% endif %}</a>
                     {% endif %}
                     {% if form.response and question.response_required %}
-                        <button id="chk_response_btn" class="btn btn-default">Submit Answer</button>
+                        <button id="chk_response_btn" class="btn btn-default">{% if language_pref == 'spanish' %}Enviar respuesta {% else %}Submit Answer {% endif %}</button>
                     {% elif next_position and not user_completed %}
-                        <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Continue</a>
+                        <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">{% if language_pref == 'spanish' %}Continuar {% else %}Continue {% endif %}</a>
                     {% endif %}
 
                     {% if user_completed and next_position  %}
-                        <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">Next</a>
+                        <a href="{% url 'question_response' course.slug worksheet.id next_position %}" class="btn">{% if language_pref == 'spanish' %}Siguiente {% else %}Next {% endif %}</a>
                     {% endif %}
                 </p>
             </div>
@@ -235,14 +251,14 @@
         <!-- RIGHT panel: Question media (images, pdfs) -->
             {% if question.display_image %}
                 <div class="col-md-8">
-                    <a href="{{ question.display_image.url }}" target="_blank">print</a>
+                    <a href="{{ question.display_image.url }}" target="_blank">{% if language_pref == 'spanish' %}imprimir{% else %}print{% endif %}</a>
                     <div><img class="fit" src="{{ question.display_image.url }}"></div>
                 </div>
             {% endif %}
 
             {% if question.display_pdf %}
                 <div class="col-md-8">
-                        <a href="{{ question.display_pdf.url }}" target="_blank">print</a>
+                        <a href="{{ question.display_pdf.url }}" target="_blank">{% if language_pref == 'spanish' %}imprimir{% else %}print{% endif %}</a>
                     <!-- <div class="pdfframe"> -->
                         <iframe id="pdf_display"  class="pdfframe" style="background-color: white"></iframe>
                     <!-- </div> -->
@@ -251,7 +267,7 @@
 
             {% if worksheet.display_pdf %}
                 <div class="col-md-8">
-                    <a href="{{ worksheet.display_pdf.url }}" target="_blank">print</a>
+                    <a href="{{ worksheet.display_pdf.url }}" target="_blank">{% if language_pref == 'spanish' %}imprimir{% else %}print{% endif %}</a>
                     <!-- <div class="pdfframe"> -->
                         <iframe id="ws_pdf_display" class="pdfframe"></iframe>
                     <!-- </div> -->
@@ -292,7 +308,8 @@
     <div class="modal-content">
         <div class="modal-body text-center">
             <i class="fa fa-spinner fa-spin fa-5x"></i> 
-            <h2 class="lead">Processing your response. Please wait.</h2>
+            <h2 class="lead">{% if language_pref == 'spanish' %}Procesando su respuesta. Por favor espera. {% else %}Processing your response. Please wait. {% endif %}</h2>
+
         </div>
     </div>
   </div>

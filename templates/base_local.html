@@ -126,120 +126,222 @@
                     {% if request.user.is_authenticated %}
                         <!-- email / help dropdown menu -->
                         <li class="dropdown">                 
+                            {% if request.user.ggvuser.language_pref == 'spanish' %}
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                  <i class="fa fa-question-circle text-warning"></i> Ayuda <i class="fa fa-caret-down"></i>
+                              </a>
+                            
 
-                            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                                <i class="fa fa-question-circle text-warning"></i> Help <i class="fa fa-caret-down"></i>
-                            </a>
-
-                            <ul class="dropdown-menu scrollable-menu">
-                                {% if course and 'access' in roles %}
+                              <ul class="dropdown-menu scrollable-menu">
+                                  {% if course and 'access' in roles %}
+                                    <li>
+                                        <a class="static nav-text" href="{% url 'email_instructor' course.slug %}?q={{request.path}}">
+                                        <i class="fa fa-envelope text-warning"></i> Envíe por correo electrónico su instructor
+                                        </a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
+                                  {% endif %}
                                   <li>
-                                      <a class="static nav-text" href="{% url 'email_instructor' course.slug %}?q={{request.path}}">
-                                      <i class="fa fa-envelope text-warning"></i> Email Instructor
+                                      <a class="static nav-text" href="{% url 'email_staff' %}?q={{request.path}}">
+                                      <i class="fa fa-envelope text-danger"></i> Envíe por correo electrónico GGV Personal
                                       </a>
                                   </li>
-                                  <li role="separator" class="divider"></li>
-                                {% endif %}
-                                <li>
-                                    <a class="static nav-text" href="{% url 'email_staff' %}?q={{request.path}}">
-                                    <i class="fa fa-envelope text-danger"></i> Email GGV Technical Staff
-                                    </a>
-                                </li>
-                                {% if 'instructor' in roles or 'manage' in roles %}
-                                <li>
-                                    <a class="static nav-text" target="_blank" href="/media/pdf/ggv-academic-plan.pdf">
-                                    <i class="fa fa-book"></i> Academic Plan
-                                    </a>
-                                </li>
-                                {% endif %}
-                                {% if 'manage' in roles %}
-                                <li>
-                                    <a class="static nav-text" href="#">
-                                    <i class="fa fa-book"></i> Manager Help
-                                    </a>
-                                </li>
 
-                                {% endif %}
+                                  {% if 'instructor' in roles or 'manage' in roles %}
+                                  <li>
+                                      <a class="static nav-text" target="_blank" href="/media/pdf/ggv-academic-plan.pdf">
+                                      <i class="fa fa-book"></i> Plan Académico
+                                      </a>
+                                  </li>
+                                  {% endif %}
+                                  {% if 'manage' in roles %}
+                                  <li>
+                                      <a class="static nav-text" href="#">
+                                      <i class="fa fa-book"></i> Manager Help
+                                      </a>
+                                  </li>
 
-                            </ul>
-                            
-                        </li> <!-- end email / help dropdown menu -->
-                        
+                                  {% endif %}
+                              </ul>
+                            {% else %}
+                              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                                  <i class="fa fa-question-circle text-warning"></i> Help <i class="fa fa-caret-down"></i>
+                              </a>
+                              <ul class="dropdown-menu scrollable-menu">
+                                  {% if course and 'access' in roles %}
+                                    <li>
+                                        <a class="static nav-text" href="{% url 'email_instructor' course.slug %}?q={{request.path}}">
+                                        <i class="fa fa-envelope text-warning"></i> Email Instructor
+                                        </a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
+                                  {% endif %}
+                                  <li>
+                                      <a class="static nav-text" href="{% url 'email_staff' %}?q={{request.path}}">
+                                      <i class="fa fa-envelope text-danger"></i> Email GGV Technical Staff
+                                      </a>
+                                  </li>
+
+                                  {% if 'instructor' in roles or 'manage' in roles %}
+                                  <li>
+                                      <a class="static nav-text" target="_blank" href="/media/pdf/ggv-academic-plan.pdf">
+                                      <i class="fa fa-book"></i> Academic Plan
+                                      </a>
+                                  </li>
+                                  {% endif %}
+                                  {% if 'manage' in roles %}
+                                  <li>
+                                      <a class="static nav-text" href="#">
+                                      <i class="fa fa-book"></i> Manager Help
+                                      </a>
+                                  </li>
+
+                                  {% endif %}
+                              </ul>
+                            {% endif %}                            
+                        </li> <!-- end email / help dropdown menu -->                        
                     {% endif %}
-
-
 
                     <!-- login/logout / settings dropdown menu -->
                     <li class="dropdown">
                         {% if request.user.is_authenticated %}
-                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
-                            <i class="{{role_icon}} text-primary"></i>
-                            {{request.user.email}} <i class="fa fa-caret-down"></i>
-                        </a>
+                          {% if request.user.ggvuser.language_pref == 'spanish' %}
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                <i class="{{role_icon}} text-primary"></i>
+                                {{request.user.email}} <i class="fa fa-caret-down"></i>
+                            </a>
 
-                        <ul class="dropdown-menu section_drop scrollable-menu">
+                            <ul class="dropdown-menu section_drop scrollable-menu">
 
-                            {% if course %}
-                                <li class="disabled"><a href="#"><i class="{{role_icon}} text-primary"></i> Current role: {{ role }}</a></li> 
-                                <li role="separator" class="divider"></li>
-                                <li>
-                                    <a class="" href="{% url 'edit_user' course.slug request.user.id %}">
-                                        <i class="fa fa-gear"></i> Preferences
-                                    </a>
-                                </li>
+                                {% if course %}
+                                    <li class="disabled"><a href="#"><i class="{{role_icon}} text-primary"></i> Posición Actual: {{ role }}</a></li> 
+                                    <li role="separator" class="divider"></li>
+                                    <li>
+                                        <a class="" href="{% url 'edit_user' course.slug request.user.id %}">
+                                            <i class="fa fa-gear"></i> Preferences
+                                        </a>
+                                    </li>
 
-                                {% if 'manage' in roles %}
-                                <li>
-                                    <a class="" href="{% url 'manage_org' course.ggv_organization.id %}">
-                                        <i class="fa fa-road"></i> Manage <small>{{ course.ggv_organization }}</small>
-                                    </a>
-                                </li>
+                                    {% if 'manage' in roles %}
+                                    <li>
+                                        <a class="" href="{% url 'manage_org' course.ggv_organization.id %}">
+                                            <i class="fa fa-gears"></i> Manage <small>{{ course.ggv_organization }}</small>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    <li>
+                                        <a class="static nav-text" href="{% url 'course_grader_log' %}">
+                                            <i class="fa fa-check-circle"></i> Grading Log
+                                        </a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
                                 {% endif %}
-                                <li>
-                                    <a class="static nav-text" href="{% url 'course_grader_log' %}">
-                                        <i class="fa fa-check-circle"></i> Grading Log
-                                    </a>
-                                </li>
-                                <li role="separator" class="divider"></li>
-                            {% endif %}
 
-                            {% if request.user.is_staff or request.user.pretest_user_account.all %}
-                                <li>
-                                    <a class="" href="/pretest/accounts/">
-                                        <i class="fa fa-cogs"></i> Pretest Manager
-                                    </a>
-                                </li>                              
-                            {% endif %}
-                            {% if pretest_account %}
-                                <li>
-                                    <a class="" href="/pretest/staff-report/{{pretest_account.pk}}/">
-                                        <i class="fa fa-cogs"></i> Pretest Scores
-                                    </a>
-                                </li>
-                            {% endif %}
-                            {% if request.user.is_staff %}
-                                <li role="separator" class="divider"></li>
-                                <li>
-                                    <a class="" href="/ggvadmin" target="_blank">
-                                        <i class="fa fa-lock"></i> Staff Admin
-                                    </a>
-                                </li>
-                                <li>
-                                    <a class="" href="{% url 'email_system_users' %}">
-                                        <i class="fa fa-envelope"></i> Send System Message
-                                    </a>
-                                </li>
-                            {% endif %}
-
-                            <li>
-                                {% if request.user.ggvuser.clean_logout %}
-                                    <a href="{% url 'logout_clean'  %}"> <i class="fa fa-sign-out"></i> Logout</a>
-                                {% else %}
-                                    <a href="{% url 'logout' %}"> <i class="fa fa-sign-out"></i> Logout</a>
+                                {% if request.user.is_staff or request.user.pretest_user_account.all %}
+                                    <li>
+                                        <a class="" href="/pretest/accounts/">
+                                            <i class="fa fa-cogs"></i> Pretest Manager
+                                        </a>
+                                    </li>                              
                                 {% endif %}
-                            </li>
+                                {% if pretest_account %}
+                                    <li>
+                                        <a class="" href="/pretest/staff-report/{{pretest_account.pk}}/">
+                                            <i class="fa fa-cogs"></i> Pretest Scores
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if request.user.is_staff %}
+                                    <li role="separator" class="divider"></li>
+                                    <li>
+                                        <a class="" href="/ggvadmin" target="_blank">
+                                            <i class="fa fa-lock"></i> Staff Admin
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="" href="{% url 'email_system_users' %}">
+                                            <i class="fa fa-envelope"></i> Send System Message
+                                        </a>
+                                    </li>
+                                {% endif %}
 
-                        </ul>
+                                <li>
+                                    {% if request.user.ggvuser.clean_logout %}
+                                        <a href="{% url 'logout_clean'  %}"> <i class="fa fa-sign-out"></i> Cerrar Sesión</a>
+                                    {% else %}
+                                        <a href="{% url 'logout' %}"> <i class="fa fa-sign-out"></i> Cerrar Sesión</a>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                          {% else %}
+                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
+                                <i class="{{role_icon}} text-primary"></i>
+                                {{request.user.email}} <i class="fa fa-caret-down"></i>
+                            </a>
+
+                            <ul class="dropdown-menu section_drop scrollable-menu">
+
+                                {% if course %}
+                                    <li class="disabled"><a href="#"><i class="{{role_icon}} text-primary"></i> Current role: {{ role }}</a></li> 
+                                    <li role="separator" class="divider"></li>
+                                    <li>
+                                        <a class="" href="{% url 'edit_user' course.slug request.user.id %}">
+                                            <i class="fa fa-gear"></i> Preferences
+                                        </a>
+                                    </li>
+
+                                    {% if 'manage' in roles %}
+                                    <li>
+                                        <a class="" href="{% url 'manage_org' course.ggv_organization.id %}">
+                                            <i class="fa fa-gears"></i> Manage <small>{{ course.ggv_organization }}</small>
+                                        </a>
+                                    </li>
+                                    {% endif %}
+                                    <li>
+                                        <a class="static nav-text" href="{% url 'course_grader_log' %}">
+                                            <i class="fa fa-check-circle"></i> Grading Log
+                                        </a>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
+                                {% endif %}
+
+                                {% if request.user.is_staff or request.user.pretest_user_account.all %}
+                                    <li>
+                                        <a class="" href="/pretest/accounts/">
+                                            <i class="fa fa-cogs"></i> Pretest Manager
+                                        </a>
+                                    </li>                              
+                                {% endif %}
+                                {% if pretest_account %}
+                                    <li>
+                                        <a class="" href="/pretest/staff-report/{{pretest_account.pk}}/">
+                                            <i class="fa fa-cogs"></i> Pretest Scores
+                                        </a>
+                                    </li>
+                                {% endif %}
+                                {% if request.user.is_staff %}
+                                    <li role="separator" class="divider"></li>
+                                    <li>
+                                        <a class="" href="/ggvadmin" target="_blank">
+                                            <i class="fa fa-lock"></i> Staff Admin
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="" href="{% url 'email_system_users' %}">
+                                            <i class="fa fa-envelope"></i> Send System Message
+                                        </a>
+                                    </li>
+                                {% endif %}
+
+                                <li>
+                                    {% if request.user.ggvuser.clean_logout %}
+                                        <a href="{% url 'logout_clean'  %}"> <i class="fa fa-sign-out"></i> Logout</a>
+                                    {% else %}
+                                        <a href="{% url 'logout' %}"> <i class="fa fa-sign-out"></i> Logout</a>
+                                    {% endif %}
+                                </li>
+                            </ul>
+                          {% endif %}
                         {% else %}
                             <a href="/login/google-oauth2/">Signin</a>
                         {% endif %}

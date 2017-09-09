@@ -18,8 +18,13 @@
 
 {% block page_header %}
 <div class="col-md-12 text-center">
-    <h2><i class="fa fa-home"></i> GGV Curriculum Page</h2>
+    {% if request.user.ggvuser.language_pref == 'spanish' %}
+        <h2><i class="fa fa-home"></i> Página del CurrÍculo de Estudios GGV</h2>
+    {% else %}
+        <h2><i class="fa fa-home"></i> GGV Curriculum Page</h2>       
+    {% endif %}
     <p class="lead">{{ course }}</p>    
+    
 </div>
 {% endblock page_header %}
 

@@ -26,7 +26,7 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
 
         opts = dict(BOOKMARK_TYPES)
         for i, j in opts.items():
-            if lesson.language == 'span':
+            if self.request.user.ggvuser.language_pref == 'spanish':
                 opts[i] = j.split(',')[1]
             else:
                 opts[i] = j.split(',')[0]
@@ -84,6 +84,7 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         context['sections'] = lesson.sections.all()
         context['is_staff'] = self.request.user.is_staff
         context['instructor'] = self.request.user in context['course'].instructor_list() or self.request.user.is_staff
+        context['language_pref'] = self.request.user.ggvuser.language_pref
 
         return context
 

@@ -9,7 +9,7 @@
 
 {% block local_nav %}
 <li class="dropdown">
-    {% if user.ggvuser.language_pref == 'spanish' %}
+    {% if language_pref == 'spanish' %}
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Actividades <b class="caret"></b></a>
     {% else %}
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Activities <b class="caret"></b></a>
@@ -30,7 +30,7 @@
 </li>
 
 <li class="dropdown">
-    {% if user.ggvuser.language_pref == 'spanish' %}
+    {% if language_pref == 'spanish' %}
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modulos <b class="caret"></b></a>
     {% else %}
         <a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <b class="caret"></b></a>
@@ -47,7 +47,7 @@
     <div class="text-center icon-{{ object.subject }}"><i class="fa fa-{{ object.icon_class }} fa-5x"></i></div>
     <div class="text-center icon-{{ object.subject }}"><span class="icon-title">{{object}}</span></div>
 
-    {% if user.ggvuser.language_pref == 'spanish' %}
+    {% if language_pref == 'spanish' %}
         <h3>Su Progreso</h3>
         <p class="lead">Has completado <strong>{{ worksheets_stat.items.0.1.1 }}</strong> de <strong>{{ worksheets_stat.items.0.1.0 }}</strong> hojas de trabajo y visto <strong>{{ slides_stat.items.0.1.1 }}</strong> de <strong>{{ slides_stat.items.0.1.0 }}</strong> presentaciones. Vea más detalles <a href="{% url 'user_progress' course.slug user.pk %}">aquí.</a></p>
     {% else %}
@@ -57,7 +57,7 @@
 </div>
 
 <div class="col-xs-10"> 
-    {% if user.ggvuser.language_pref == 'spanish' %}
+    {% if language_pref == 'spanish' %}
         <span class="small"><i class="fa fa-desktop icon-slidestack"></i> = presentación </span>
         <span class="small"><i class="fa fa-pencil-square-o icon-worksheet"></i> = hoja de trabajo </span>
         <span class="small"><i class="fa fa-youtube icon-external_media"></i> = video </span>        
@@ -68,7 +68,7 @@
     {% endif %}
 </div>
 
-{% if user.ggvuser.language_pref == 'spanish' %}
+{% if language_pref == 'spanish' %}
     <div class="col-xs-1"><span style="background-color: #333; color: white; opacity: 0.6; padding:2px">Puntuaciones</span></div>
     <div class="col-xs-1"><span style="background-color: #333; color: white; opacity: 0.6; padding:2px">Marcadores</span></div>
 {% else %}

@@ -23,7 +23,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment
 from braces.views import LoginRequiredMixin, JSONResponseMixin, AjaxResponseMixin
 
-from core.models import Notification, SiteMessage
+from core.models import Notification, SiteMessage, BOOKMARK_TYPES
 from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin, CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from core.utils import UnicodeWriter, GGVExcelWriter, get_daily_log_times, get_daily_log_times_v2, elapsed_time_per_event
 from questions.models import QuestionSet, UserWorksheetStatus
@@ -754,7 +754,6 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         context['student_user'] = user
         context['activity_log'] = get_daily_log_times_v2(user, course) # 'login', 'logout', 'access-worksheet'
 
-        # if self.request.user.is_staff:
         start = self.request.GET.get('start', '')
         end = self.request.GET.get('end', '')
         if start and end:  # compile subject times within date range
@@ -772,7 +771,18 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         context['subject_time'] = subject_time
 
         if 'completed' in self.request.GET.get('filter', ''):
-            context['filter'] = 'completed'       
+            context['filter'] = 'completed'
+
+        opts = dict(BOOKMARK_TYPES)
+        for i, j in opts.items():
+            if user.ggvuser.language_pref == 'spanish':
+                opts[i] = j.split(',')[1]
+            else:
+                opts[i] = j.split(',')[0]
+
+        context['bookmark_type_opts'] = opts  
+        
+
         return context
 
 class UserProgressViewDateSelector(UserProgressView):

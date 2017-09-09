@@ -45,31 +45,55 @@
     {% endif %}    
 </div>
 
-<div class="col-md-12 text-left">
+<div class="col-md-12 text-left filters-button-group">
+
     {% if request.user.ggvuser.language_pref == 'spanish' %}
-        <h4>Filters (click to filter events)</h4>
+        <h5>Filtrar por hojas de trabajo completadas</h5>
         <p>
-            <a class="btn btn-sm btn-default" href="./?filter=completed">  <i class="fa fa-eye"></i> Mostrar solo hojas de trabajo completada </a>
-            <a class="btn btn-sm btn-default" href="./">  <i class="fa fa-eye"></i> Mostrar todos actividades </a>
+            <a class="" href="./"> [ Mostrar todos actividades ] </a>
+            <a class="" href="./?filter=completed"> [ Mostrar solo hojas de trabajo completada ] </a>
         </p>
-    {% else %}
-        <h4>Filters (click to filter events)</h4>
+        <h5>Filtrar por tema</h5>
         <p>
-            <a class="btn btn-sm btn-default" href="./?filter=completed">  <i class="fa fa-eye"></i> show only completed worksheets </a>
-            <a class="btn btn-sm btn-default" href="./">  <i class="fa fa-eye"></i> show all activity (default) </a>
+            <span style="padding-right: 5px"><a href="#" class="" data-filter=".event">[ Mostrar todos ]</a> </span>
+            {% for i, j in subject_time.items %}
+                <span style="padding-right: 5px"><a href="#" class="" data-filter=".{{ i|slugify }}">[ {{i}} ] </a> ({{j.0}}h {{j.1}}mins)</span>
+            {% endfor %}
+        </p>
+
+        <h5>Filtrar por los marcadores</h5>
+        <p>
+            <span style="padding-right: 5px"><a href="#" class="" data-filter=".event">[ Mostrar todos ]</a> </span>
+            {% for i, j in bookmark_type_opts.items %}
+                <span style="padding-right: 5px"><a href="#" class="" data-filter=".{{ i }}">[ {{j}} ] </a></span>
+            {% endfor %}
+        </p>
+
+    {% else %}
+        <h5>Filter by completed worksheets</h5>
+        <p>
+            <a class="" href="./"> [ show all activity ] </a>
+            <a class="" href="./?filter=completed"> [ show only completed worksheets ] </a>
+        </p>
+        <h5>Filter by subject</h5>
+        <p>
+            <span style="padding-right: 5px"><a href="#" class="" data-filter=".event">[ Show all ]</a> </span>
+            {% for i, j in subject_time.items %}
+                <span style="padding-right: 5px"><a href="#" class="" data-filter=".{{ i|slugify }}">[ {{i}} ] </a> ({{j.0}}h {{j.1}}mins)</span>
+            {% endfor %}
+        </p>
+
+        <h5>Filter by bookmark</h5>
+        <p>
+            <span style="padding-right: 5px"><a href="#" class="" data-filter=".event">[ Show all ]</a> </span>
+            {% for i, j in bookmark_type_opts.items %}
+                <span style="padding-right: 5px"><a href="#" class="" data-filter=".{{ i }}">[ {{j}} ] </a></span>
+            {% endfor %}
         </p>
     {% endif %}
 </div>
-<div class="col-md-12 text-left filters-button-group">
-    <p>
-    <span style="padding-right: 5px"><a href="#" class="" data-filter=".event">{% if request.user.ggvuser.language_pref == 'spanish' %}Mostrar toda {% else %}Show all {% endif %}</a> </span>
-    {% for i, j in subject_time.items %}
-        <span style="padding-right: 5px"><a href="#" class="" data-filter=".{{ i|slugify }}">{{i}} </a> ({{j.0}}h {{j.1}}mins)</span>
-    {% endfor %}
-    </p>
-</div>
 
-<div id="event_container" class="col-md-12" style="padding-top: 20px">{% if request.user.ggvuser.language_pref == 'spanish' %}{% else %}{% endif %}
+<div id="event_container" class="col-md-12" style="padding-top: 20px">
 
     {% for k, v in activity_log.items %}
         {% if v.2 %}
@@ -101,8 +125,11 @@
 
             {% for j in v.2 %}
                 {% if filter == 'completed' and j.activity.action == 'completed-worksheet' %}        
-                    <div class="row hoverpad text-left event {{ j.event_target.lesson|slugify }}" style="padding-bottom: 5px; padding-bottom: 5px">
-                        <div class="col-xs-2"><small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong></div>
+                    <div class="row hoverpad text-left event {{ j.event_target.lesson|slugify }} {{j.event_target_bk}}" style="padding-bottom: 5px; padding-bottom: 5px">
+                        <div class="col-xs-2">
+                            {% if j.event_target_bk %}<sup><small>{{j.event_target_bk}}</small></sup> <i title="" class="bookmarker bk-{{j.event_target_bk}} fa fa-circle"></i>{% endif %} 
+                            <small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong>
+                        </div>
                         <div class="col-xs-1 small">
                             {% if  j.event_target.lesson %}
                              <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">{{ j.event_target.lesson }}</a>
@@ -126,10 +153,14 @@
                             {% else %} <strong><span class="text-danger">cleared</span></strong>{% endif %}
                         </div>
                     </div>
+
                 {% elif not filter %}
 
-                    <div class="row hoverpad text-left event {{ j.event_target.lesson|slugify }}">
-                        <div class="col-xs-2"><small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong></div>
+                    <div class="row hoverpad text-left event {{ j.event_target.lesson|slugify }} {{j.event_target_bk}}">
+                        <div class="col-xs-2">
+                            {% if j.event_target_bk %}<sup><small>{{j.event_target_bk}}</small></sup> <i title="" class="bookmarker bk-{{j.event_target_bk}} fa fa-circle"></i>{% endif %}                            
+                            <small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong>
+                        </div>
                         <div class="col-xs-1 small">
                             {% if  j.event_target.lesson %}
                              <a href="{% url 'lesson' j.course.slug j.event_target.lesson.id %}#{{ j.event_target.section|title }}">{{ j.event_target.lesson }}</a>

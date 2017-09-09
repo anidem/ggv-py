@@ -173,13 +173,15 @@ class ActivityLog(models.Model):
         from slidestacks.models import SlideStack
         if self.action in exclusions:
             return None
+
         e = {
             'activity': self, 
             'report_url': self.message, 
             'event_time': self.timestamp_tz(), 
             'course': course, 
             'event_target': None, 
-            'score': None
+            'score': None,
+            'event_target_bk': None,
         }
         event_target_id = None
         try:
@@ -209,6 +211,11 @@ class ActivityLog(models.Model):
                 e['event_target'] = SlideStack.objects.get(pk=event_target_id)
             except Exception as exp:
                 pass
+
+        try:
+            e['event_target_bk'] = e['event_target'].bookmarks.filter(creator=self.user)[0]
+        except:
+            e['event_target_bk'] = ''
 
         return e
 

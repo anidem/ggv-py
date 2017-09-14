@@ -423,7 +423,7 @@ class UserReportView(LoginRequiredMixin, CourseContextMixin, DetailView):
         context['correct'] = report['correct']
         context['grade'] = report['grade']
         context['student'] = user
-        context['is_instructor'] = 'instructor' in get_perms(self.request.user, context['course'])
+        context['is_instructor'] = 'instructor' in get_perms(self.request.user, context['course']) or 'manage' in get_perms(self.request.user, context['course'])
         try:
             context['ws_status'] = UserWorksheetStatus.objects.filter(user=user).get(completed_worksheet=worksheet)
         except ObjectDoesNotExist:

@@ -336,7 +336,7 @@ class SiteMessage(models.Model):
 
 
 class SitePage(models.Model):
-    title = models.TextField()
+    title = models.CharField(max_length=512)
     content = models.TextField()
 
     def __unicode__(self):

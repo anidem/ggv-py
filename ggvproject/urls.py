@@ -207,7 +207,7 @@ urlpatterns = [
     url(r'^admin/doc/', include('django.contrib.admindocs.urls')),
     url(r'^ggvadmin/filebrowser/', include(site.urls)),
     url(r'^grappelli/', include('grappelli.urls')),  # grappelli URLS
-    url(r'^ggvadmin',  admin.site.urls, name='staff_admin'),  # admin site
+    url(r'^ggvadmin/',  admin.site.urls, name='staff_admin'),  # admin site
 
 
     url(r'^faq/$', FaqView.as_view(), name='faq'),
@@ -215,7 +215,7 @@ urlpatterns = [
     url(r'^home/$', HomeView.as_view(), name='ggvhome'),
     url(r'^', IndexView.as_view(), name='splash'),
  
-] 
+] #+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
 # if settings.DEBUG:
 #     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

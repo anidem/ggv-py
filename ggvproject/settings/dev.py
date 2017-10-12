@@ -33,7 +33,7 @@ EMAIL_HOST_PASSWORD = os.environ['EMAIL_HOST_PASSWORD']
 EMAIL_PORT = 587
 
 STATIC_ROOT = '/Library/WebServer/Documents/static'
-STATIC_URL = 'http://ggv2.developers.com/static/'
+# STATIC_URL = 'http://ggv2.developers.com/static/'
 
 MEDIA_ROOT = '/Library/WebServer/Documents/ggv/media'
 MEDIA_URL = 'http://localhost/ggv/media/'

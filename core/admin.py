@@ -15,6 +15,7 @@ from supportmedia.models import ExternalMedia
 from notes.models import UserNote
 from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
+from django.contrib.staticfiles.templatetags.staticfiles import static
 
 from core.models import ActivityLog, GGVUser, Bookmark, SiteMessage, SitePage, AttendanceTracker, TempCourseGoogleDb
 
@@ -24,8 +25,8 @@ UserAdmin.list_editable = ('is_active',)
 
 class ExtraMedia:
     js = [
-        '/static/grappelli/tinymce/jscripts/tiny_mce/tiny_mce.js',
-        '/static/js/tinymce_setup.js',
+        static('js/tinymce/js/tinymce/tinymce.min.js'),
+        static('js/tiny_mce_admin_setup.js'),
     ]
 
 
@@ -200,6 +201,14 @@ class TempCourseGoogleDbAdmin(admin.ModelAdmin):
     list_display = ('google_file_id', 'ggv_org')
 
 
+# class SitePageAdmin(admin.ModelAdmin):
+#     class Media:
+#         js = [
+#             static('js/tinymce/js/tinymce/tinymce.min.js'),
+#             static('js/tiny_mce_admin_setup.js'),
+#         ]
+
+
 admin.site.register(GGVOrganization, GGVOrganizationAdmin)
 admin.site.register(Course, CourseAdmin, Media=ExtraMedia)
 admin.site.register(CourseLesson, CourseLessonAdmin)
@@ -222,7 +231,7 @@ admin.site.register(AttendanceTracker, AttendanceTrackerAdmin)
 admin.site.register(GGVUser, GGVUserAdmin)
 admin.site.register(Bookmark)
 admin.site.register(SiteMessage)
-admin.site.register(SitePage)
+admin.site.register(SitePage, Media=ExtraMedia)
 admin.site.register(UserNote)
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)

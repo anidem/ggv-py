@@ -669,6 +669,12 @@ class FaqView(TemplateView):
         context["sitepage"] = SitePage.objects.get(title='FAQ')
         return context
 
+
+class HelpView(DetailView):
+    model = SitePage
+    template_name = 'help_page.html'
+    
+
 class PolicyView(TemplateView):
     template_name = 'policy.html'
 

@@ -201,12 +201,8 @@ class TempCourseGoogleDbAdmin(admin.ModelAdmin):
     list_display = ('google_file_id', 'ggv_org')
 
 
-# class SitePageAdmin(admin.ModelAdmin):
-#     class Media:
-#         js = [
-#             static('js/tinymce/js/tinymce/tinymce.min.js'),
-#             static('js/tiny_mce_admin_setup.js'),
-#         ]
+class SitePageAdmin(admin.ModelAdmin):
+    list_display = ('id', 'title', 'get_help_url')
 
 
 admin.site.register(GGVOrganization, GGVOrganizationAdmin)
@@ -231,7 +227,7 @@ admin.site.register(AttendanceTracker, AttendanceTrackerAdmin)
 admin.site.register(GGVUser, GGVUserAdmin)
 admin.site.register(Bookmark)
 admin.site.register(SiteMessage)
-admin.site.register(SitePage, Media=ExtraMedia)
+admin.site.register(SitePage, SitePageAdmin, Media=ExtraMedia)
 admin.site.register(UserNote)
 admin.site.unregister(User)
 admin.site.register(User, UserAdmin)

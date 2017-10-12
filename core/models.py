@@ -339,6 +339,9 @@ class SitePage(models.Model):
     title = models.CharField(max_length=512)
     content = models.TextField()
 
+    def get_help_url(self):
+        return reverse('help_page', args=[self.pk])
+
     def __unicode__(self):
         return self.title
 

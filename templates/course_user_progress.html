@@ -102,11 +102,12 @@
                     <h4>{{ v.0|date }} <span class="pull-right" style="font-size: 0.7em"><sup>(horas:minutos)</sup></span>  <span class="pull-right">{{ v.1 }} </span></h4>
                 </div>
                 <div class="row">
+                    <div class="col-xs-1">Marcadores</div>
                     <div class="col-xs-2">Fecha y Hora <sup><small>MST</small></sup></div>
                     <div class="col-xs-1">Tema</div>
                     <div class="col-xs-1">Actividad</div>
                     <div class="col-xs-3">Modulo</div>
-                    <div class="col-xs-4">Contenido</div>
+                    <div class="col-xs-3">Contenido</div>
                     <div class="col-xs-1">Puntuación Actual</div>
                 </div>
             {% else %}
@@ -114,11 +115,12 @@
                     <h4>{{ v.0|date }} <span class="pull-right" style="font-size: 0.7em"><sup>(hours:mins)</sup></span>  <span class="pull-right">{{ v.1 }} </span></h4>
                 </div>
                 <div class="row">
+                    <div class="col-xs-1">Bookmarks</div>
                     <div class="col-xs-2">Date/Time <sup><small>MST</small></sup></div>
                     <div class="col-xs-1">Subject</div>
                     <div class="col-xs-1">Activity</div>
                     <div class="col-xs-3">Module</div>
-                    <div class="col-xs-4">Content</div>
+                    <div class="col-xs-3">Content</div>
                     <div class="col-xs-1">Current Score</div>
                 </div>
             {% endif %}
@@ -126,9 +128,11 @@
             {% for j in v.2 %}
                 {% if filter == 'completed' and j.activity.action == 'completed-worksheet' %}        
                     <div class="row hoverpad text-left event {{ j.event_target.lesson|slugify }} {{j.event_target_bk}}" style="padding-bottom: 5px; padding-bottom: 5px">
-                        <div class="col-xs-2">
-                            {% if j.event_target_bk %}<sup><small>{{j.event_target_bk}}</small></sup> <i title="" class="bookmarker bk-{{j.event_target_bk}} fa fa-circle"></i>{% endif %} 
-                            <small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong>
+                        <div class="col-xs-1">
+                            {% if j.event_target_bk %}<sup><small>{{j.event_target_bk}}</small></sup> <i title="" class="bookmarker bk-{{j.event_target_bk}} fa fa-circle"></i>{% endif %}
+                        </div>
+                        <div class="col-xs-2">                             
+                            <small>{{ v.0|date:"n-j-y" }} <strong>{{ j.event_time|time }}</strong></small>
                         </div>
                         <div class="col-xs-1 small">
                             {% if  j.event_target.lesson %}
@@ -143,7 +147,7 @@
                         
                         <div class="col-xs-3">{{j.event_target.section}}</div>
 
-                        <div class="col-xs-4">
+                        <div class="col-xs-3">
                                 <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
                                  {{j.event_target }} {% if j.activity.action == 'completed-worksheet' %}<a href="{{ j.report_url }}">{% if request.user.ggvuser.language_pref == 'spanish' %}(vista del informe){% else %}(view report){% endif %} {% endif %}</a>
                         </div>
@@ -157,9 +161,11 @@
                 {% elif not filter %}
 
                     <div class="row hoverpad text-left event {{ j.event_target.lesson|slugify }} {{j.event_target_bk}}">
-                        <div class="col-xs-2">
-                            {% if j.event_target_bk %}<sup><small>{{j.event_target_bk}}</small></sup> <i title="" class="bookmarker bk-{{j.event_target_bk}} fa fa-circle"></i>{% endif %}                            
-                            <small>{{ v.0|date }}</small> <strong>{{ j.event_time|time }}</strong>
+                        <div class="col-xs-1">
+                            {% if j.event_target_bk %}<sup><small>{{j.event_target_bk}}</small></sup> <i title="" class="bookmarker bk-{{j.event_target_bk}} fa fa-circle"></i>{% endif %}
+                        </div>
+                        <div class="col-xs-2">                             
+                            <small>{{ v.0|date:"n-j-y" }} <strong>{{ j.event_time|time }}</strong></small>
                         </div>
                         <div class="col-xs-1 small">
                             {% if  j.event_target.lesson %}
@@ -179,7 +185,7 @@
                             <div class="col-xs-1 small">&nbsp;</div>
                         {% endif %}
                         <div class="col-xs-3">{{j.event_target.section}}</div>
-                        <div class="col-xs-4">
+                        <div class="col-xs-3">
                             {% if j.activity.action == 'completed-worksheet' or j.activity.action == 'access-worksheet'%}
                                 <i class="fa fa-pencil-square-o fa-1x icon-worksheet"></i>
                                 {{j.event_target }}

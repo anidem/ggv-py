@@ -66,9 +66,20 @@ class GgvOrgAdminView(LoginRequiredMixin, DetailView):
 
         if self.request.user in org.manager_list(): context['roles'] = ['manage']
         
-        
-        
+        # calculate pretest quota info for the entire organization
+        pretest_accounts = org.pretest_account_associations.all()
+        assigned, purchased = 0, 0
+        for i in pretest_accounts:
+            assigned = assigned + i.get_pretest_assignments().count()
+            purchased = purchased + i.tests_purchased
 
+        context['pretest_stat'] = {
+            'purchased': purchased, 
+            'used': assigned,
+            'available': purchased - assigned
+        }
+        
+        context['pretest_stat']
         # context['is_manager'] = self.request.user.has_perm('manage', course)
         # context['managers'] = course.manager_list()
         # context['instructors'] = instructors

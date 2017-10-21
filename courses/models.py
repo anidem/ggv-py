@@ -57,7 +57,7 @@ class GGVOrganization(models.Model):
             
             courses = [t.course for t in TaggedCourse.objects.filter(tag=tag)]
         
-        licensesd = {"active":{}, "unvalidated":{}}
+        licensed = {"active":{}, "unvalidated":{}}
         manager_count = 0
         instructor_count = 0
         student_count = 0
@@ -72,11 +72,11 @@ class GGVOrganization(models.Model):
                     status = 'unvalidated'
                 
                 try:
-                    licensesd[status][user_obj]['courses'].append(course_obj)
-                    licensesd[status][user_obj]['perms'].update(perms)
+                    licensed[status][user_obj]['courses'].append(course_obj)
+                    licensed[status][user_obj]['perms'].update(perms)
 
                 except KeyError:                   
-                    licensesd[status][user_obj] = {'courses': [course_obj], 'perms': set(perms), 'status': user_obj.is_active}
+                    licensed[status][user_obj] = {'courses': [course_obj], 'perms': set(perms), 'status': user_obj.is_active}
                                       
                     if 'manage' in perms:
                         manager_count += 1
@@ -87,21 +87,19 @@ class GGVOrganization(models.Model):
                     else:
                         unvalidated_count += 1
 
-        # for k, v in licensesd.items():
-        #     print k, len(v)
-        #     for i, j in v.items():
-        #         print '\t', i, j
-
         license_data = {
             'courses': courses,
             'tag_filter': tag,
-            'active': licensesd['active'], 
-            'unvalidated': licensesd['unvalidated'], 
+            'active': licensed['active'], 
+            'unvalidated': licensed['unvalidated'], 
             'count': manager_count + instructor_count + student_count + unvalidated_count, 
             'manager_count': manager_count,
             'instructor_count': instructor_count,
             'student_count': student_count,
-            'unvalidated_count': unvalidated_count
+            'unvalidated_count': unvalidated_count,
+            'manager_quota': self.manager_quota,
+            'instructor_quota': self.instructor_quota,
+            'student_quota': self.student_quota,
         }
         
         return license_data

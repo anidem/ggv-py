@@ -31,9 +31,9 @@
 
     <h5 class="">
         <span class="label {% if license_count >= license_quota %}label-danger{% else %}label-success{% endif %}">{{ license_count }} of {{ license_quota }} licenses used.</span>
-        <span class="label label-default">{{ licenses.student_count }} students</span>
-        <span class="label label-default">{{ licenses.instructor_count }} instructors</span>
-        <span class="label label-default">{{ licenses.manager_count }} managers</span>
+        <span class="label label-default">{{ licenses.student_count }} / {{ licenses.student_quota }} students</span>
+        <span class="label label-default">{{ licenses.instructor_count }} / {{ licenses.instructor_quota }} instructors</span>
+        <span class="label label-default">{{ licenses.manager_count }} / {{ licenses.manager_quota }} managers</span>
     </h5>
 
 

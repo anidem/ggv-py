@@ -7,12 +7,27 @@
 	    <h2><i class="fa fa-cogs"></i> Tokens for {{ account }}</h2>
 	    
 	    <h6><a href="{% url 'pretestapp:pretest_account_staff_report' account.id %}">{{ account }} scores</a></h6>
-	    <h6><a href="{% url 'pretestapp:pretest_user_add' account.id %}" class="btn btn-md btn-link">add</a></h6>
+	    <h6><a href="{% url 'pretestapp:pretest_user_add' account.id %}" class="btn btn-md btn-link">Click here to add a new pretest user</a></h6>
 	    
 	</div>
 {% endblock page_header %}
 
 {% block content %}
+	<div class="col-md-12">
+		<dl class="dl-horizontal">
+		  <dt>Your pretest quota:</dt><dd>{{ pretest_stat.purchased }}</dd>
+		  <dt>Pretests assigned:</dt><dd>{{ pretest_stat.used }}</dd>
+		  <dt>Pretests available:</dt>
+		    <dd>
+		      {% if pretest_stat.available == 0 %}
+		        <span class="label label-danger">{{ pretest_stat.available }}</span>
+		        <em>contact GGV staff to purchase additional tests.</em>
+		      {% else %}
+		        <span class="label label-success"> {{ pretest_stat.available }}</span>
+		      {% endif %}
+		    </dd>
+		</dl>
+	</div>
 	<div class="col-md-12">
 		<div class="row" id="sorter">
 			<div class="col-md-2"><button class="btn btn-md btn-block" data-sort-by='date' data-order="asc"> <i class="fa fa-sort"></i> last modified</button></div>

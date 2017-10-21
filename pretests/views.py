@@ -616,6 +616,13 @@ class PretestUserListView(LoginRequiredMixin, PretestAccountRequiredMixin, Detai
         context['account'] = self.get_object()
         context['pretest_users'] = context['account'].pretest_user_list()
         context['pretest_accounts'] = self.pretest_accounts
+
+        assigned = self.get_object().get_pretest_assignments().count()
+        context['pretest_stat'] = {
+            'purchased': self.get_object().tests_purchased, 
+            'used': assigned,
+            'available': self.get_object().tests_purchased - assigned
+        }
         return context
 
 

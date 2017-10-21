@@ -2,6 +2,7 @@
 import json
 from pytz import timezone
 from datetime import datetime
+from operator import attrgetter
 
 from django import utils
 from django import forms
@@ -138,6 +139,7 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         for i in pretest_accounts:
             pretest_users += i.tokens.all().exclude(email=None)
         pretest_users = list(set(pretest_users))
+        pretest_users.sort(key=attrgetter('first_name'))
 
         initial = {
             'course': self.course, 'language': 'english', 'is_active': False, 'perms': 'access'}
@@ -183,6 +185,7 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         context['instructors'] = self.course.instructor_list()
         
         user_licenses_used = self.course.ggv_organization.licenses_in_use()
+
         # print user_licenses_used['student_count'], user_licenses_used['instructor_count'], user_licenses_used['manager_count'], user_licenses_used['count']
         context['active'] = user_licenses_used['active']
         context['unvalidated'] = user_licenses_used['unvalidated']

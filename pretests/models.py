@@ -31,8 +31,8 @@ class PretestAccount(models.Model):
     manager = models.ForeignKey(User, null=False, related_name='pretest_user_account')
     contact_email = models.EmailField()
     contact_phone = models.CharField(max_length=20, null=True, blank=True)
-    ggv_org = models.ForeignKey(GGVOrganization, null=True, blank=True)
-    tokens_purchased = models.PositiveIntegerField(default=0)
+    ggv_org = models.ForeignKey(GGVOrganization, null=True, blank=True, related_name='pretest_account_associations')
+    tokens_purchased = models.PositiveIntegerField(default=0, help_text='We no longer use this. Customers purchase Tests and assign them as needed.')
     tests_purchased = models.PositiveIntegerField(default=0)
 
     def pretest_user_list(self):

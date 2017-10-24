@@ -31,8 +31,8 @@ jQuery(function($) {
                 flagbtn = $( flagger.attr('data-update') );
                 flagpnl = $( flagger.attr('data-panel') );
                 flagged = flagbtn.find('i.bookmarker');
+
                 if(json.bookmark_id) {
-                    // console.log("bk set: "+json.mark_type);
                     flagger.find('.bktarget').val(json.bookmark_id);
                     flagger.find('.bklabel').val(json.mark_type);
                     flagged.removeClass('fa-circle-o');

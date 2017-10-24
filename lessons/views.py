@@ -25,12 +25,14 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         lesson = self.get_object()
 
         opts = dict(BOOKMARK_TYPES)
+        print opts
         for i, j in opts.items():
             if self.request.user.ggvuser.language_pref == 'spanish':
                 opts[i] = j.split(',')[1]
             else:
                 opts[i] = j.split(',')[0]
 
+        print opts
         context['bookmark_type_opts'] = opts
 
         activity_list = []
@@ -47,7 +49,8 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
                 bookmark = bookmarks.filter(content_type=activity_type).get(object_id=i.id)
 
                 label = bookmark.get_mark_type_display()
-                if lesson.language == 'span':
+                # if lesson.language == 'span':
+                if self.request.user.ggvuser.language_pref == 'spanish':
                     label = label.split(',')[1]
                 else:
                     label = label.split(',')[0]

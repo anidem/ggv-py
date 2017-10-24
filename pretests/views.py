@@ -299,11 +299,11 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
         if self.stack['count'] >= len(self.stack['responses']):
             context['status'] = self.status_obj
 
-        if self.worksheet.id == 150 and context['question_position'] > 7:   # English pretest math.
-            context['calculator'] = settings.MEDIA_URL + 'pdf/0-calculator-eng.pdf'
+        if self.worksheet.id == 150:   # English pretest math.
+            # context['calculator'] = settings.MEDIA_URL + 'pdf/0-calculator-eng.pdf'
             context['formula'] = settings.MEDIA_URL + 'pdf/0_A-GGV_Formula_Sheet_Eng.pdf'
-        elif self.worksheet.id == 154 and context['question_position'] > 7:  # Spanish pretest math.
-            context['calculator'] = settings.MEDIA_URL + 'pdf/0-calculator-spn.pdf'
+        elif self.worksheet.id == 154:  # Spanish pretest math.
+            # context['calculator'] = settings.MEDIA_URL + 'pdf/0-calculator-spn.pdf'
             context['formula'] = settings.MEDIA_URL + 'pdf/0_A-GGV_Formula_Sheet_Spn.pdf'
 
         try:

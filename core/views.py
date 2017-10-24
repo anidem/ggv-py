@@ -624,7 +624,8 @@ class BookmarkAjaxUpdateView(LoginRequiredMixin, CourseContextMixin, CsrfExemptM
             updated_bk.save()
 
             label = updated_bk.get_mark_type_display()
-            if 'span' in request.POST['lesson_lang']:
+            # if 'span' in request.POST['lesson_lang']:
+            if self.request.user.ggvuser.language_pref == 'spanish':
                 label = label.split(',')[1]
             else:
                 label = label.split(',')[0]

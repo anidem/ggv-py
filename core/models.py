@@ -35,7 +35,7 @@ BOOKMARK_TYPES = (
     ('todo', 'Need to Finish,Acabar'),
     ('started', 'Start,Comienza'),
     ('completed', 'Completed,Completado'),
-    ('proficient', 'Proficient,Proficient'),
+    ('proficient', 'Proficient,Competente'),
     ('question', 'Question,Pregunta'),
     ('none', 'None,Borrar'),
 )

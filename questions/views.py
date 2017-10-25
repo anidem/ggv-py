@@ -346,6 +346,13 @@ class OptionQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateVie
         course = self.kwargs['crs_slug']
         return reverse_lazy('option_question', args=[course, self.get_object().id])
 
+    def get_initial(self):
+        initial = self.initial.copy()
+        # TODO get the form object and set queryset to filter below.
+        # initial['content_area'].queryset = self.get_object().question_set.lesson.sections.all()
+        # for i in initial['content_area']: print i
+        return initial
+
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form(self.get_form_class())

@@ -111,7 +111,7 @@ class OptionQuestionUpdateForm(ModelForm):
             pdfroot = settings.MEDIA_ROOT + '/'
             opts = pdfroot + self.instance.display_pdf.name + ' --dest-dir ' + pdfroot + 'pdf/'
             cmd = 'pdf2htmlEX ' + opts
-            print cmd
+            # print cmd
             os.system(cmd)
         except:
             pass

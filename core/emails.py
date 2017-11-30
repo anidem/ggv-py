@@ -279,19 +279,32 @@ class SendEmailToManagerDeactivationRequest(CsrfExemptMixin, LoginRequiredMixin,
     
     def post(self, request, *args, **kwargs):
         try:   
-            deactivate_list = request.POST.getlist('deactivate_list')   
+            deactivate_list = request.POST.getlist('deactivations')   
             urlstr = request.GET['q']
             users = ''
             for i in deactivate_list:
-                u = User.objects.get(pk=i)
-                users = users + u.ggvuser.program_id + ' ' + u.first_name + ' ' + u.last_name + ' (' + u.email + '),  '
+                if i:
+                    d = i.split('_')
+                    u = User.objects.get(pk=d[0])
+                    if d[1] == 'cancel':
+                        u.ggvuser.deactivation_pending = False
+                        u.ggvuser.deactivation_type = None
+                        u.ggvuser.save()
+                        continue
+                    else:
+                        u.ggvuser.deactivation_pending = True
+                        u.ggvuser.deactivation_type = d[1]
+                        u.ggvuser.save()
+                    
+                    # users = users + u.ggvuser.program_id + ' ' + u.first_name + ' ' + u.last_name + ' (' + u.email + ') REASON: ' + d[1] + ' ,  '
+                    users = users + u.first_name + ' ' + u.last_name + ' ,  '
 
             user_sender = self.request.user
 
             user_org = self.course.ggv_organization
 
             url_org =  'http://' + self.request.get_host() + reverse('manage_org', args=[user_org.id])
-
+            url_crs =  'http://' + self.request.get_host() + reverse('manage_course', args=[self.course.slug])
             manager_list = []
             for i in self.course.manager_list():  # Bypassing user settings to control email messages from ggv system
                 manager_list.append(i.email)
@@ -306,13 +319,10 @@ class SendEmailToManagerDeactivationRequest(CsrfExemptMixin, LoginRequiredMixin,
             for i in course_slugs:
                 course_titles += Course.objects.get(slug=i).title + ', '
 
-            html_message = "<p>Hi GGV Site Manager, {sender} has sent you the following message:</p> ".format(sender=user_sender.get_full_name())
+            html_message = "<p>Hi GGV Site Manager, {sender} is requesting to deactivate users.</p> ".format(sender=user_sender.get_full_name())
+            html_message += '<p>You can manage deactivations here ==> <a href=\"{org_crs}\">{crs}</a></p>'.format(org_crs=url_crs, crs=self.course)
 
-            html_message += "<h3>Please deactivate the following accounts.</h3> <p>{0}</p>".format(users)
-
-            html_message += '<p>Requestor Info::</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)
-
-            html_message += '<p>Manage deactivations here ==> <a href=\"{org_url}\">{org}</a></p>'.format(org_url=url_org, org=user_org)
+            html_message += '<p>Requestor Info:</p><p>Email: <b>{email}</b></p><p>Member of: <b>{courses}</b></p>'.format(email=user_sender.email, courses=course_titles)            
 
             email = EmailMultiAlternatives(
                 subject=self.request.user.get_full_name() + ' is requesting deactivation for users.',
@@ -467,7 +477,7 @@ class SendEmailToGgvOrgUsers(LoginRequiredMixin, CourseContextMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         self.ggvorg = GGVOrganization.objects.get(pk=kwargs['pk'])
         users = self.ggvorg.manager_list()
-        print request.user in users, request.user.is_staff
+        # print request.user in users, request.user.is_staff
         if request.user not in users and not request.user.is_staff:
             raise PermissionDenied
 

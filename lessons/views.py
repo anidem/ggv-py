@@ -25,14 +25,12 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         lesson = self.get_object()
 
         opts = dict(BOOKMARK_TYPES)
-        print opts
         for i, j in opts.items():
             if self.request.user.ggvuser.language_pref == 'spanish':
                 opts[i] = j.split(',')[1]
             else:
                 opts[i] = j.split(',')[0]
 
-        print opts
         context['bookmark_type_opts'] = opts
 
         activity_list = []

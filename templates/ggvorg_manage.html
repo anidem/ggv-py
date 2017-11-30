@@ -52,7 +52,7 @@
 
 <div class="col-md-6">
     <h3 class="lead border-btm">
-        {{ courses|length }} Courses <small><a href="{% url 'email_org_users' object.pk %}"><i class="fa fa-envelope"></i> email all members</a></>
+        {{ courses|length }} Courses <small><a href="{% url 'email_org_users' object.pk %}"><i class="fa fa-envelope"></i> email all members</a></small>
         <small class="pull-right">
             <i class="fa fa-download"></i>
             <a href="{% url 'report_org_activity' object.id %}" class="small text-info"> daily report </a>
@@ -158,7 +158,23 @@
                         {% endfor %}
                     </small></div>
                 </a>
-                <div class="col-xs-2">{% if not u.is_superuser and not u.is_staff and not u == user %} <input type="checkbox" name="deactivate_list" value="{{ u.id }}"> {% endif %}</div>
+                <div class="col-xs-2">
+                    {% if not u.is_superuser and not u.is_staff and not u == user %} 
+                        <input type="checkbox" class="deactivate_check"  name="deactivations" {% if u.ggvuser.deactivation_pending %}value="{{ u.id }}_{{ u.ggvuser.deactivation_type }}" checked {% endif %}/>
+                        <span class="small deactivation_status" {% if not u.ggvuser.deactivation_pending %}style="display: none"{% endif %}>
+                        {% if u.ggvuser.deactivation_pending %} deactivation pending {% endif %}
+                        </span>
+                        <select {% if not u.ggvuser.deactivation_pending %}style="display: none"{% endif %} class="deactivate_selector" name="deactivate_list" data-user="{{ u.id }}">
+                            <option value="label" disabled"">Choose reason:</option>
+                            <option value="{{ u.id }}_graduated" class="deactivate_option" {% if u.ggvuser.deactivation_type == "graduated" %}selected{% endif %}>Graduated</option>
+                            <option value="{{ u.id }}_relocated" class="deactivate_option" {% if u.ggvuser.deactivation_type == "relocated" %}selected{% endif %}>Relocated</option>
+                            <option value="{{ u.id }}_employed" class="deactivate_option" {% if u.ggvuser.deactivation_type == "employed" %}selected{% endif %}>Employed</option>
+                            <option value="{{ u.id }}_inactivity" class="deactivate_option" {% if u.ggvuser.deactivation_type == "inactivity" %}selected{% endif %}>Inactivity</option>
+                            <option value="{{ u.id }}_cancel" class="deactivate_option" data-special="cancel">Cancel my request</option>
+                        </select>
+                    {% endif %}
+                    
+                </div>
             </div>
         {% empty %}
             <p>No active accounts for {{ object }}</p>
@@ -199,7 +215,7 @@
                 <div class="col-xs-1 d_firstname"><small>{{ i.first_name }}</small></div>
                 <div class="col-xs-1 d_lastname"><small>{{ i.last_name }}</small></div>
                 <div class="col-xs-2 d_username"><small>{{ i }}</small></div>
-                <div class="col-xs-3 d_deactivate"><small>{% if i.ggvuser.last_deactivation_date %}{{ i.ggvuser.last_deactivation_date|date:"Y - M d" }}{% else %}{{ i.last_login|date:"Y - M d"}}{% endif %}</small></div>
+                <div class="col-xs-3 d_deactivate"><small>{% if i.ggvuser.last_deactivation_date %}{{ i.ggvuser.last_deactivation_date|date:"Y - M d" }}{% else %}{{ i.last_login|date:"Y - M d"}}  {% endif %} ({{i.ggvuser.deactivation_type }})</small></div>
                 <div class="col-xs-2 d_course"><small>{{ course }}</small></div>
                 </a>
                 <div class="col-xs-2"><input type="checkbox" name="activate_list" value="{{ i.id }}"></div>
@@ -305,6 +321,54 @@
                     },
 
                 });
+
+            $('.deactivate_check').change(function(event) {
+                var is_checked = $(this).is(':checked');
+                var opts = $(this).siblings('.deactivate_selector');
+                var stat = $(this).siblings('.deactivation_status');
+                if (is_checked) {
+                    // deactivation request is being made
+                    // show drop down to select reason for request
+                    opts.show();
+                    // set the box to unchecked to wait for selection event
+                    $(this).prop( "checked", false );
+                } else {
+                    // deactivation request cancelled
+                    $(this).val('');
+                    opts.val('label')
+                    stat.html('').hide();
+                    opts.hide();
+                }
+            });
+
+            $('.deactivate_selector').change(function () {
+                var selected = $(this).val();
+                var checkbox = $(this).siblings('.deactivate_check');
+                var stat = $(this).siblings('.deactivation_status');
+                if (selected ===  "label") {
+                    checkbox.val('');
+                    checkbox.prop( "checked", false );
+                    $(this).val('label');
+                    $(this).toggle();
+                    stat.html('').hide();
+                } else if (selected.split('_')[1] === "cancel") {
+                    if (checkbox.val() === 'on') {
+                        checkbox.prop( "checked", false );
+                        $(this).val('label');
+                        $(this).toggle();
+                        stat.html('').hide();
+                    } else {
+                        checkbox.prop( "checked", true );
+                        checkbox.val(selected);                        
+                        // $(this).show();
+                        stat.html('deactivation cancelled').show();
+                    }
+                } else {
+                    checkbox.prop( "checked", true );
+                    checkbox.val(selected);
+                    stat.html('deactivation pending').show();
+                }                
+            });
 
                 $('#deactivate-btn').on('click', function () {
                     if ($('#container_sorts input:checked').length)

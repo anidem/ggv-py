@@ -23,7 +23,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment
 from braces.views import LoginRequiredMixin, JSONResponseMixin, AjaxResponseMixin
 
-from core.models import Notification, SiteMessage, BOOKMARK_TYPES
+from core.models import Notification, SiteMessage, BOOKMARK_TYPES, DEACTIVATION_TYPES
 from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin, CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from core.utils import UnicodeWriter, GGVExcelWriter, get_daily_log_times, get_daily_log_times_v2, elapsed_time_per_event
 from questions.models import QuestionSet, UserWorksheetStatus
@@ -345,7 +345,7 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         for i in course.student_list():
             try:
                 activity = i.activitylog.all()[0]
-                students.append((i, {'recent_act': activity.action, 'recent_time': activity.timestamp}))
+                students.append((i, {'recent_act': activity.action, 'recent_time': activity.timestamp}, i.ggvuser))
             except:
                 pass  # student[i] has no activity on record. Move on, nothing to see here.
 
@@ -353,7 +353,7 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         for i in course.deactivated_list():
             try:
                 activity = i.activitylog.all()[0]
-                deactivated_students.append((i, {'recent_act': activity.action, 'recent_time': activity.timestamp}))
+                deactivated_students.append((i, {'recent_act': activity.action, 'recent_time': activity.timestamp}, i.ggvuser))
             except:
                 pass  # deactivated_students[i] has no activity on record. Move on, nothing to see here.
 
@@ -374,6 +374,7 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         context['deactivated'] = deactivated_students
         context['unvalidated'] = course.unvalidated_list()
         context['graders'] = course.assigned_graders.all()
+        context['deactivation_types'] = DEACTIVATION_TYPES
 
         if self.request.user in instructor_list or self.request.user in manager_list or self.request.user.is_staff:
             pretest_account = PretestAccount.objects.filter(ggv_org=course.ggv_organization)

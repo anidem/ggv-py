@@ -394,17 +394,27 @@ class GgvUserActivationView(LoginRequiredMixin, UpdateView):
 class GgvUsersDeactivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):
     
     def post(self, request, *args, **kwargs):
-        try:   
-            deactivate_list = request.POST.getlist('deactivate_list')
-            request.POST.getlist('activate_list')  
+        try:
+            deactivate_list = request.POST.getlist('deactivations')
             urlstr = request.POST['url']
+            
             for i in deactivate_list:
-                u = User.objects.get(pk=i)
-                u.is_active = False
-                u.ggvuser.last_deactivation_date = utils.timezone.now()
-                u.ggvuser.save()
-                u.save()
+                if i:  # verify that value was not null
+                    d = i.split('_')
+                    u = User.objects.get(pk=d[0])
+                    if d[1] == 'cancel':
+                        u.ggvuser.deactivation_pending = False
+                        u.ggvuser.deactivation_type = None
+                    else:
+                        u.is_active = False
+                        u.ggvuser.last_deactivation_date = utils.timezone.now()
+                        u.ggvuser.deactivation_type = d[1]
+                        u.ggvuser.deactivation_pending = False
+                    
+                    u.ggvuser.save()
+                    u.save()
         except Exception as e:
+           
             pass  # silently fail
 
         return redirect(urlstr)
@@ -427,6 +437,8 @@ class GgvUsersActivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMi
                     u = User.objects.get(pk=i)
                     u.is_active = True
                     u.ggvuser.last_deactivation_date = None
+                    u.ggvuser.deactivation_pending = False
+                    u.ggvuser.deactivation_type = None
                     u.ggvuser.save()
                     u.save()
                     license_count += 1

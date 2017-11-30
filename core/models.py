@@ -49,6 +49,12 @@ ATTENDANCE_CODES = (
     (5, 'Limited Activity')
 )
 
+DEACTIVATION_TYPES = (
+    ('graduated', 'Graduated'),
+    ('relocated', 'Relocated'),
+    ('employed', 'Employed'),
+    ('inactivity', 'Inactivity'),
+)
 
 class GGVUser(models.Model):
     user = models.OneToOneField(User)
@@ -59,6 +65,8 @@ class GGVUser(models.Model):
     receive_notify_email = models.BooleanField(default=False)
     receive_email_messages = models.BooleanField(default=False)
     last_deactivation_date = models.DateTimeField(null=True, blank=True)
+    deactivation_type = models.CharField(max_length=48, null=True, blank=True, choices=DEACTIVATION_TYPES)
+    deactivation_pending = models.BooleanField(default=False)
     survey_viewed = models.BooleanField(default=False, blank=True)
 
     def getGgvOrganizationMap(self):
@@ -71,7 +79,7 @@ class GGVUser(models.Model):
             except KeyError:
                 orgs[c.ggv_organization] = [crs_object]
             
-            print c.ggv_organization, c.ggv_organization.licenses_in_use()      
+            # print c.ggv_organization, c.ggv_organization.licenses_in_use()      
         return orgs
 
     def attendance_by_month(self, year=None, month=None):

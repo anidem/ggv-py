@@ -154,7 +154,7 @@
             <div class="col-md-2"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
             <div class="col-md-2"><button class="btn btn-block btn-sm" data-sort-by="created" data-order="asc"> <i class="fa fa-sort"></i> created</button></div>
             <div class="col-md-2"><button class="btn btn-block btn-sm" data-sort-by="deactivated" data-order="asc"> <i class="fa fa-sort"></i> deactivated</button></div>
-            <div class="col-md-3"><button id="activate-btn" class="btn btn-block btn-sm btn-success"><i class="fa fa-check-square-o"></i>{% if is_manager %} activate {% else %} request activation {% endif %}</button></div>
+            <div class="col-md-3"><button id="activate-btn" class="btn btn-block btn-sm btn-success"><i class="fa fa-check-square-o"></i>{% if is_manager %} activate {% else %} send request to activate <br/> checked accounts {% endif %}</button></div>
         </div>
     </div>
     <form id="activate-form" method="post" action="{% if is_manager %} {% url 'activate_users' %}?q={{object.slug}} {% else %} {% url 'email_manager_activate' object.slug %}?q={{object.slug}} {% endif %}">{% csrf_token %}
@@ -172,7 +172,12 @@
             <div class="col-md-2 created">{{ i.0.date_joined|date:"Y - M d" }}</div>
             <div class="col-md-2 deactivated">{{ i.0.ggvuser.last_deactivation_date|date:"Y - M d" }} ({{i.0.ggvuser.deactivation_type }})</div>
             </a>
-            <div class="col-md-3"><input type="checkbox" name="activate_list" value="{{ i.0.id }}"></div>
+            <div class="col-md-3">
+                <input type="checkbox" name="activate_list" class="activate_check" value="{{ i.0.id }}"{% if i.2.activation_pending %} checked {% endif %}/>
+                <span class="small activation_status" {% if not i.2.activation_pending %}style="display: none"{% endif %}>
+                            {% if i.2.activation_pending %} activation pending {% endif %}
+                </span>
+            </div>
         </div>
         {% empty %}
             
@@ -393,6 +398,19 @@
                     sortBy: sortByValue,
                     sortAscending: order
                 });
+            });
+
+            $('.activate_check').change(function(event) {
+                var is_checked = $(this).is(':checked');
+                var stat = $(this).siblings('.activation_status');
+                if (is_checked) {
+                    // deactivation request is being made
+                    stat.html('activation pending').show();
+                } else {
+                    // deactivation request cancelled
+                    $(this).val('');
+                    stat.html('').hide();
+                }
             });
 
             $('.deactivate_check').change(function(event) {

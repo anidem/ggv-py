@@ -67,6 +67,7 @@ class GGVUser(models.Model):
     last_deactivation_date = models.DateTimeField(null=True, blank=True)
     deactivation_type = models.CharField(max_length=48, null=True, blank=True, choices=DEACTIVATION_TYPES)
     deactivation_pending = models.BooleanField(default=False)
+    activation_pending = models.BooleanField(default=False)
     survey_viewed = models.BooleanField(default=False, blank=True)
 
     def getGgvOrganizationMap(self):

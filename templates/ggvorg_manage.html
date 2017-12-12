@@ -218,7 +218,12 @@
                 <div class="col-xs-3 d_deactivate"><small>{% if i.ggvuser.last_deactivation_date %}{{ i.ggvuser.last_deactivation_date|date:"Y - M d" }}{% else %}{{ i.last_login|date:"Y - M d"}}  {% endif %} ({{i.ggvuser.deactivation_type }})</small></div>
                 <div class="col-xs-2 d_course"><small>{{ course }}</small></div>
                 </a>
-                <div class="col-xs-2"><input type="checkbox" name="activate_list" value="{{ i.id }}"></div>
+                <div class="col-xs-2">
+                    <input type="checkbox" name="activate_list" class="activate_check" value="{{ i.id }}"{% if i.ggvuser.activation_pending %} checked {% endif %}/>
+                    <span class="small activation_status" {% if not i.ggvuser.activation_pending %}style="display: none"{% endif %}>
+                            {% if i.ggvuser.activation_pending %} activation pending {% endif %}
+                    </span>
+                </div>
             </div>
             
             {% endfor %}
@@ -322,6 +327,19 @@
 
                 });
 
+            $('.activate_check').change(function(event) {
+                var is_checked = $(this).is(':checked');
+                var stat = $(this).siblings('.activation_status');
+                if (is_checked) {
+                    // deactivation request is being made
+                    stat.html('activation pending').show();
+                } else {
+                    // deactivation request cancelled
+                    $(this).val('');
+                    stat.html('').hide();
+                }
+            });
+            
             $('.deactivate_check').change(function(event) {
                 var is_checked = $(this).is(':checked');
                 var opts = $(this).siblings('.deactivate_selector');

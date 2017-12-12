@@ -357,6 +357,8 @@ class SendEmailToManagerActivationRequest(CsrfExemptMixin, LoginRequiredMixin, C
             users = ''
             for i in activate_list:
                 u = User.objects.get(pk=i)
+                u.ggvuser.activation_pending = True
+                u.ggvuser.save()
                 users = users + u.ggvuser.program_id + ' ' + u.first_name + ' ' + u.last_name + ' (' + u.email + '),  '
 
             user_sender = self.request.user

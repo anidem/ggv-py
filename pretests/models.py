@@ -36,11 +36,13 @@ class PretestAccount(models.Model):
     tests_purchased = models.PositiveIntegerField(default=0)
 
     def pretest_user_list(self):
-        """Returns a list of tuples (pretest user account object and number of exams they have started)
+        """Returns a list of tuples (pretest user account object, number of exams they have started, exams assigned)
         """
         users = []
         for i in self.tokens.filter(email__isnull=False).order_by('-modified'):
-            users.append((i, i.completion_status().count()))
+            assignments = i.assigned_pretests()
+            test_list = [t.pretest.title for t in assignments['tests']]
+            users.append((i, assignments['completed'].count(), test_list))
         return users
 
     def get_pretest_assignments(self):

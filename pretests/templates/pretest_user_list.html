@@ -30,7 +30,7 @@
 	</div>
 	<div class="col-md-12">
 		<div class="row" id="sorter">
-			<div class="col-md-2"><button class="btn btn-md btn-block" data-sort-by='date' data-order="asc"> <i class="fa fa-sort"></i> last modified</button></div>
+			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by='date' data-order="asc"> <i class="fa fa-sort"></i> last modified</button></div>
 			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by='status' data-order="asc"> <i class="fa fa-sort"></i> status</button></div>
 			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by='id' data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
 			<div class="col-md-2"><button class="btn btn-md btn-block" data-sort-by='email' data-order="asc"> <i class="fa fa-sort"></i> email</button></div>
@@ -43,7 +43,7 @@
 			{% for i in pretest_users %}
 			<div class="col-md-12 item hoverpad">
 				<div class="row">				
-					<div class="col-md-2 date">{{ i.0.modified|date:"Y-M-d" }}</div>
+					<div class="col-md-1 date" data-modified="{{ i.0.modified|date:'U' }}">{{ i.0.modified|date:"Y-M-d" }}</div>
 					<div class="col-md-1 status">
 						{% if i.1 > 0%}
 							<span class="label label-danger">{{ i.1 }}</span>
@@ -60,6 +60,10 @@
 					<div class="col-md-1 token">{{ i.0.access_token }}</div>
 					<div class="col-md-1 first">{{ i.0.first_name }}</div>
 					<div class="col-md-1 last">{{ i.0.last_name }}</div>
+					<div class="col-md-1 pretests">
+						<div class="label label-success" data-toggle="popover" data-trigger="hover" data-html="true" title="Assigned Pre Tests" data-content="<ul class='list-group'><small>{% for t in i.2 %} <li class='list-group-item'>{{ t }}</li> {% endfor %}</small></ul>">pre tests</div>
+						
+				    </div>
 					<div class="col-md-1"><a href="{% url 'pretestapp:pretest_user_edit' i.0.id %}">edit</a></div>
 					<div class="col-md-2">
 					{% if i.0.email %}
@@ -81,7 +85,8 @@
         var $container = $('#container').isotope({
             itemSelector: '.item',
             getSortData: {
-                date: '.date',
+                //date: '.date',
+                date: '[data-modified] parseInt',
                 status: '.status',
                 id: '.prog_id',
                 email: '.email',

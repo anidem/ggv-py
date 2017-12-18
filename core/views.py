@@ -32,6 +32,7 @@ from .forms import BookmarkForm, GgvUserAccountCreateForm, GgvUserSettingsForm, 
 from .mixins import CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from .signals import *
 from .utils import update_attendance_for_all_users
+from .emails import send_deactivation_notification
 
 tz = timezone(settings.TIME_ZONE)
 
@@ -410,11 +411,10 @@ class GgvUsersDeactivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponse
                         u.ggvuser.last_deactivation_date = utils.timezone.now()
                         u.ggvuser.deactivation_type = d[1]
                         u.ggvuser.deactivation_pending = False
-                    
+                        send_deactivation_notification(request, user_obj=u, reason=d[1])
                     u.ggvuser.save()
                     u.save()
         except Exception as e:
-           
             pass  # silently fail
 
         return redirect(urlstr)

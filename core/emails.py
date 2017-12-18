@@ -756,4 +756,31 @@ def send_score_notification(request, response_obj=None):
     return
 
 
+def send_deactivation_notification(request, user_obj=None, reason=''):
+    """Sends email to a user notifying them that they have been deactivated by a manager."""
+    if not user_obj:
+        return
+    
+    access_url = 'http://' + request.get_host()
+
+    html_message = u"<p>Hi {0} {1},</p>".format(user_obj.first_name, user_obj.last_name)
+    html_message += "<p>Your account at <a href='{0}'>GGV Interactive</a> has been deactivated.".format(access_url)
+    html_message += "<h3>Reason given: {0}</h3>".format(reason)
+    html_message += "<p>Please contact your site manager ({0}) if you think this was done in error. </p>".format(request.user.email)
+
+
+    email = EmailMultiAlternatives(
+        subject='GGV Curriculum - Account Deactivated',
+        body=html_message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=[user_obj.email,],
+        headers={'Reply-To': request.user.email},
+        )
+
+    email.attach_alternative(html_message, "text/html")
+    email.send(fail_silently=True)
+    
+    return
+
+
 

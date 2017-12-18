@@ -32,7 +32,7 @@ from .forms import BookmarkForm, GgvUserAccountCreateForm, GgvUserSettingsForm, 
 from .mixins import CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from .signals import *
 from .utils import update_attendance_for_all_users
-from .emails import send_deactivation_notification
+from .emails import send_deactivation_notification, send_activation_notification
 
 tz = timezone(settings.TIME_ZONE)
 
@@ -384,6 +384,7 @@ class GgvUserActivationView(LoginRequiredMixin, UpdateView):
 
     def get_success_url(self):
         try:
+            send_activation_notification(self.request, user_obj=self.get_object())
             # Hack to return the user back to the course manage list.
             urlstr = self.request.META['HTTP_REFERER']
             urlstr = urlstr[urlstr.find('q=')+2:]
@@ -442,6 +443,7 @@ class GgvUsersActivationView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMi
                     u.ggvuser.save()
                     u.save()
                     license_count += 1
+                    send_activation_notification(request, user_obj=u)
                 else:
                     messages.warning(request, 'License quota has been exceeded. Some or all requested accounts may not have been activated.')
                     break

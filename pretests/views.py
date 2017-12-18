@@ -667,7 +667,7 @@ class PretestAccountReportProtectedView(LoginRequiredMixin, DetailView):
         scores = []
         for i in account.tokens.filter(email__isnull=False).order_by('email'):
             for j in i.pretest_user_completions.all():
-                datarow = [i.program_id, i.first_name, i.last_name, j.completed_pretest.title, j.get_score()[0], datetime.strftime(j.created, '%m/%d/%Y')]
+                datarow = [i.program_id, i.first_name, i.last_name, j.completed_pretest.title, j.get_score()[0], datetime.strftime(j.created, '%m/%d/%Y'), i.access_token]
                 scores.append(datarow)
         context['scores'] = scores
         return context

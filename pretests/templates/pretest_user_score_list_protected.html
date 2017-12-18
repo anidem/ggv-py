@@ -14,8 +14,9 @@
 		<div class="row text-center" id="sorter">
 			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by="date" data-order="asc"> <i class="fa fa-sort"></i> date</button></div>
 			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by="id" data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
-			<div class="col-md-3"><button class="btn btn-md btn-block" data-sort-by="first" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
-			<div class="col-md-3"><button class="btn btn-md btn-block" data-sort-by="last" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by="token" data-order="asc"> <i class="fa fa-sort"></i> token</button></div>
+			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by="first" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by="last" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
 			<div class="col-md-3"><button class="btn btn-md btn-block" data-sort-by="pretest" data-order="asc"> <i class="fa fa-sort"></i> pretest</button></div>
 			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by="score" data-order="asc"> <i class="fa fa-sort"></i> score</button></div>
 		</div>
@@ -26,8 +27,9 @@
 			<div class="row">
 				<div class="col-md-1 date"><p>{{ i.5 }}</p></div>
 				<div class="col-md-1 id"><p>{{ i.0 }}</p></div>
-				<div class="col-md-3 first"><p>{{ i.1 }}</p></div>
-				<div class="col-md-3 last"><p>{{ i.2 }}</p></div>
+				<div class="col-md-1 token"><p>{{ i.6 }}</p></div>
+				<div class="col-md-1 first"><p>{{ i.1 }}</p></div>
+				<div class="col-md-1 last"><p>{{ i.2 }}</p></div>
 				<div class="col-md-3 pretest"><p>{{ i.3 }}</p></div>
 				<div class="col-md-1 score"><p><strong>{{ i.4 }}</strong></p></div>
 			</div>

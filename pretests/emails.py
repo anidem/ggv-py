@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # This Python file uses the following encoding: utf-8
 # emails.py
 from django.core.mail import send_mail, EmailMessage, EmailMultiAlternatives
@@ -91,21 +92,22 @@ def send_completion_notification(request, pretest_completion_obj=None):
     access_url = 'http://' + request.get_host() + access_url
 
     pretest = pretest_completion_obj.completed_pretest
-    pretester = pretest_completion_obj.pretestuser.first_name + ' ' + pretest_completion_obj.pretestuser.last_name
+    # pretester = pretest_completion_obj.pretestuser.first_name + ' ' + pretest_completion_obj.pretestuser.last_name
+    pretester = pretest_completion_obj.pretestuser
     pretest_account = pretest_completion_obj.pretestuser.account
  
-    html_message = '<p>{0} has completed a pretest: <strong>{1}</strong></p>'.format(pretester, pretest)
+    html_message = u'<p>{0} {1} has completed a pretest: <strong>{2}</strong></p>'.format(pretester.first_name, pretester.last_name, pretest)
     html_message += "<p>View results here:<a href='{0}'>{0}</a></p>".format(access_url)
     html_message += '<h4>Pretest User Info:</h4>'
-    html_message += '<p>Name: {0}</p>'.format(pretester)
-    html_message += '<p>Access Token: {0}</p>'.format(pretest_completion_obj.pretestuser.access_token)
+    html_message += u'<p>Name: {0} {1}</p>'.format(pretester.first_name, pretester.last_name)
+    html_message += '<p>Access Token: {0}</p>'.format(pretester.access_token)
 
     if pretest_account.ggv_org:
         html_message += '<p>GGV Interactive Account: {0}</p>'.format(pretest_account.ggv_org)
-        html_message += '<p>GGV Interactive Program ID: {0}</p>'.format(pretest_completion_obj.pretestuser.program_id)
+        html_message += '<p>GGV Interactive Program ID: {0}</p>'.format(pretester.program_id)
           
     email = EmailMultiAlternatives(
-        subject=pretester + ' has completed a pretest',
+        subject=pretester.first_name + u' ' + pretester.last_name + u' has completed a pretest',
         body=html_message,
         from_email=settings.EMAIL_HOST_USER,
         to=[pretest_account.manager.email],
@@ -130,31 +132,31 @@ def send_score_notification(request, pretest_response_obj=None):
     access_url = 'http://' + request.get_host() + access_url
 
     pretest = pretest_response_obj.content_object.question_set
-    pretester = pretest_response_obj.pretestuser.first_name + ' ' + pretest_response_obj.pretestuser.last_name
+    pretester = pretest_response_obj.pretestuser
     pretest_account =  pretest_response_obj.pretestuser.account
     score = pretest_response_obj.score
     if score > 0: score = 'PASSED'
     else: score = 'DID NOT PASS'
 
     msg = ' .'
-    html_message = '<p>Hi {1},</p><p>Your written response to {0} has been graded.</p>'.format(pretest, pretester)
+    html_message = u'<p>Hi {1} {2},</p><p>Your written response to {0} has been graded.</p>'.format(pretest, pretester.first_name, pretester.last_name)
     html_message += '<p>Your written response <strong>{0}</strong>.'.format(score)
     html_message += "<p>Click link to see your assessed score:<a href='{0}'>{0}</a></p>".format(access_url)
    
     email = EmailMultiAlternatives(
-        subject=pretester + ' - GGV Pretest Written Response Has Been Graded',
+        subject=pretester.first_name + u' ' + pretester.last_name + u' - GGV Pretest Written Response Has Been Graded',
         body=html_message,
         from_email=settings.EMAIL_HOST_USER,
-        to=[pretest_response_obj.pretestuser.email],
+        to=[pretester.email],
         )
 
     email.attach_alternative(html_message, "text/html")
     email.send(fail_silently=False)
-    messages.info(request, 'Pretest user has been emailed at ' + pretest_response_obj.pretestuser.email + '.')
+    messages.info(request, 'Pretest user has been emailed at ' + pretester.email + '.')
 
     # SEND EMAIL TO MANAGER
     try:
-        pretest_completion_obj = PretestUserCompletion.objects.filter(pretestuser=pretest_response_obj.pretestuser).get(completed_pretest=pretest)
+        pretest_completion_obj = PretestUserCompletion.objects.filter(pretestuser=pretester).get(completed_pretest=pretest)
         send_completion_notification(request, pretest_completion_obj)
     except Exception as e:
         pass        

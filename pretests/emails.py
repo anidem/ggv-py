@@ -25,12 +25,16 @@ class SendPretestTokenView(LoginRequiredMixin, PretestAccountRequiredMixin, Deta
     def dispatch(self, request, *args, **kwargs):
         access_url = reverse('pretests:pretest_home_shortcut',args=[self.get_object().access_token,], current_app=self.request.resolver_match.namespace)
         access_url = 'http://' + request.get_host() + access_url
+        assigned_tests = ''
+        for t in self.get_object().pretest_assignments.all():
+            assigned_tests += t.pretest.title + ', '
 
         html_message = ''
         html_message += "<h2>Hi, you have been granted access to the GGV Pretest System for the GED. Please use the following information to access your exams.</h2>"
-        html_message += "<h1>Quick Access:</h1><h2><a href='{0}'>{0}</a></h2>".format(access_url, self.get_object().access_token)
-        html_message += "<h1>EMAIL: {0}</h1>".format(self.get_object().email)
-        html_message += "<h1>TOKEN: {0}</h1>".format(self.get_object().access_token)
+        html_message += "<h3>Quick Access:</h3><h4><a href='{0}'>{0}</a></h4>".format(access_url, self.get_object().access_token)
+        html_message += "<h3>EMAIL: {0}</h3>".format(self.get_object().email)
+        html_message += "<h3>TOKEN: {0}</h3>".format(self.get_object().access_token)
+        html_message += "<h3>PRETESTS: <small>{0}</small></h3>".format(assigned_tests)
         html_message += "<p>Please email {0} with any questions. </p>".format(self.request.user.email)
 
         email = EmailMultiAlternatives(

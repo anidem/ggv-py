@@ -215,7 +215,7 @@
 
     <div id="container_1" class="row">
         {% for i in unvalidated %}
-        <div class="item hoverpad col-md-12" data-created="{{ i.date_joined|date:'U' }}">
+        <div class="item hoverpad col-md-12 small" data-created="{{ i.date_joined|date:'U' }}">
             <a href="{% url 'view_user' course.slug i.id %}" class="static">
             <div class="col-md-1 site_id">{{ i.ggvuser.program_id }}</div>
             <div class="col-md-2 firstname">{{ i.first_name }}</div>
@@ -233,6 +233,46 @@
     </form>
 </div>
 
+
+<div class="col-md-12"><h1></h1></div>
+
+<!-- Account Requests -->
+<!-- <div class="col-md-12"><span class="lead">Requested Accounts</span></div>
+
+<div class="col-md-12">
+    <div id="requestsort" class="row">
+        <div class="col-md-12">
+            <div class="col-md-1"><button class="btn btn-block btn-sm" data-sort-by="siteid" data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+            <div class="col-md-3"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm" data-sort-by="date_created" data-order="asc"> <i class="fa fa-sort"></i> date created</button></div>
+            <div class="col-md-2">{% if is_manager %}<button id="remove-unaccessed-btn" class="btn btn-block btn-sm btn-default"><i class="fa fa-check-square-o"></i> remove access</button>{% endif %}</div>
+        </div>
+    </div>
+        
+    <form id="remove-unaccessed-form" method="post" action="{% url 'delete_unused_user' %}?q={{object.slug}}">{% csrf_token %}
+        <input type="hidden" name="org" value="{{ object.ggv_organization.id }}">
+        <input type="hidden" name="url" value="{{ request.build_absolute_uri }}">
+
+        <div id="container_1" class="row">
+            {% for i in deactivated %}
+            <div class="item hoverpad col-md-12 small" data-created="{{ i.0.date_joined|date:'U' }}">
+                <a href="{% url 'view_user' course.slug i.0.id %}" class="static">
+                <div class="col-md-1 site_id">{{ i.0.ggvuser.program_id }}</div>
+                <div class="col-md-2 firstname">{{ i.0.first_name }}</div>
+                <div class="col-md-2 lastname">{{ i.0.last_name }}</div>
+                <div class="col-md-3 username">{{ i.0.0.username }} </div>
+                <div class="col-md-2 date_created">{{ i.0.date_joined|date:"Y - M d" }}</div>
+                </a>
+                <div class="col-md-2">{% if is_manager %}<input type="checkbox" name="unaccessed_list" value="{{ i.0.id }}">{% endif %}</div>
+            </div>
+            {% empty %}
+                <div class="panel-body">No account requests were found.</div>
+            {% endfor %}
+        </div>
+    </form>
+</div> -->
 
 <div class="col-md-12"><h1></h1></div>
 
@@ -270,6 +310,7 @@
 
 {% block local_js %}
     <script src="{% static 'js/isotope.pkgd.min.js'%}"></script>
+    <script src="{% static 'js/isortope-min.js' %}"></script>
 
     <script type="text/javascript">
         jQuery(function($) {
@@ -317,6 +358,15 @@
                     username: '.username'
                 },
             });
+
+            // var $table_container = $('#table_container').isotope({
+            //     getSortData: {
+            //         firstname: '.firstname',
+            //         lastname: '.lastname',
+            //         date_created: '[data-created] parseInt',
+            //         username: '.username'
+            //     },
+            // });
 
             // sort items on button click
             $('#instructor_sorts .btn-block').on( 'click', function() {
@@ -397,6 +447,27 @@
                 $(this).addClass("btn-primary");
 
                 $container1.isotope({
+                    sortBy: sortByValue,
+                    sortAscending: order
+                });
+            });
+
+            // sort items on button click
+            $('#table_container .btn-block').on( 'click', function() {
+                var sortByValue = $(this).attr('data-sort-by');
+                var order = "";
+                if ($(this).attr("data-order")==="asc") {
+                    order = true;
+                    $(this).attr("data-order", "");
+
+                } else {
+                    order = false;
+                    $(this).attr("data-order", "asc");
+                }
+                $('#table_container .btn-primary').removeClass('btn-primary');
+                $(this).addClass("btn-primary");
+
+                $table_container.isotope({
                     sortBy: sortByValue,
                     sortAscending: order
                 });

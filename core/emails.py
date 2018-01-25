@@ -1,6 +1,8 @@
 # This Python file uses the following encoding: utf-8
 # core/emails.py
 
+from operator import attrgetter
+
 from django.views.generic import FormView, TemplateView, View
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse, reverse_lazy
@@ -15,9 +17,10 @@ from guardian.shortcuts import assign_perm, get_objects_for_user, get_perms
 
 from courses.models import GGVOrganization, Course
 from questions.models import QuestionSet
+from pretests.models import PretestAccount
 
 from .models import GGVUser
-from .forms import GgvEmailForm, GgvEmailStaffForm, GgvEmailQuestionToInstructorsForm, GgvEmailWorksheetErrorReportToStaffForm, GgvEmailInstructors, GgvEmailDeactivationRequestForm, GgvEmailActivationRequestForm, GgvUserAccountCreateForm, GgvEmailManagerRequestAccountForm
+from .forms import GgvEmailForm, GgvEmailStaffForm, GgvEmailQuestionToInstructorsForm, GgvEmailWorksheetErrorReportToStaffForm, GgvEmailInstructors, GgvEmailDeactivationRequestForm, GgvEmailActivationRequestForm, GgvUserAccountCreateForm
 from .mixins import CourseContextMixin
 from .signals import *
 
@@ -416,7 +419,7 @@ class SendEmailToManagerCreateAccountRequest(LoginRequiredMixin, CourseContextMi
     sender: system sends but indicates the current user email in reply-to field.
     scope: global
     """
-    form_class = GgvEmailManagerRequestAccountForm
+    form_class = GgvUserAccountCreateForm#GgvEmailManagerRequestAccountForm
     template_name = "ggv_send_account_request.html"
     success_url = None
     course = None
@@ -427,6 +430,21 @@ class SendEmailToManagerCreateAccountRequest(LoginRequiredMixin, CourseContextMi
 
     def get_success_url(self):
         return reverse('course', args=[self.course.slug])
+
+    def get_initial(self):
+        initial = self.initial.copy()
+        pretest_accounts = PretestAccount.objects.filter(ggv_org=self.course.ggv_organization)
+        pretest_users = []
+        for i in pretest_accounts:
+            pretest_users += i.tokens.all().exclude(email=None)
+        pretest_users = list(set(pretest_users))
+        pretest_users.sort(key=attrgetter('first_name'))
+
+        initial = {
+            'course': self.course, 'language': 'english', 'is_active': False, 'perms': 'access'}
+        self.user_list = pretest_users
+        initial['users'] = self.user_list
+        return initial
 
     def form_valid(self, form):
         user_sender = self.request.user
@@ -461,6 +479,21 @@ class SendEmailToManagerCreateAccountRequest(LoginRequiredMixin, CourseContextMi
         email.send(fail_silently=True)
         messages.info(self.request, 'Your request for a new account has been sent to the managers for your account.')
         return super(SendEmailToManagerCreateAccountRequest, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(SendEmailToManagerCreateAccountRequest, self).get_context_data(**kwargs)
+        
+        try:
+            context['user_list'] = self.user_list
+        except:
+            pass
+
+        try:
+            context['google_db'] = self.course.ggv_organization.google_db.all()[0]
+        except:
+            pass
+
+        return context
 
 
 class SendEmailToGgvOrgUsers(LoginRequiredMixin, CourseContextMixin, FormView):

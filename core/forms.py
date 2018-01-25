@@ -13,6 +13,7 @@ from .models import Bookmark
 LANG_CHOICES = (('english', 'English'), ('spanish', 'Spanish'))
 ACCESS_CHOICES = (('access', 'Student Access'), ('instructor', 'Instructor Access'))
 LABELS = {
+    'pretesters': 'Pretest Users who have completed pretestes and are ready to begin using the GGV Curriculum',
     'language': 'Preferred language:',
     'program_id': 'Please enter a unique identifier (maximum 32 numbers or letters) for this user if your organization assigns ids to users. This is optional. A default identifier will be generated if one is not specified.<br><br>Program ID',
     'access_level': 'Select access level/account type:',
@@ -199,8 +200,10 @@ class GgvEmailActivationRequestForm(Form):
 
 
 class GgvEmailManagerRequestAccountForm(Form):
+    # NOT IN USE AS OF JAN 25 2018
     # course = forms.ModelChoiceField(
     #     queryset=Course.objects.all(), widget=forms.HiddenInput())
+    pretest_users = forms.ChoiceField(choices=[], label=LABELS['pretesters'], required=False)
     username = forms.EmailField(widget=forms.EmailInput(), label=LABELS['username'])
     first_name = forms.CharField()
     last_name = forms.CharField()

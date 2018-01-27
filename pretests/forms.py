@@ -116,7 +116,7 @@ class PretestUserCreateForm(ModelForm):
         super(PretestUserCreateForm, self).__init__(*args, **kwargs)
         self.fields['email'].required = True
         if self.initial['users']:
-            self.fields['account_selector'].choices = [(' ','--')] + [(i.id, str(i.first_name + ' ' + i.last_name + ', ' + i.email)) for i in self.initial['users']]
+            self.fields['account_selector'].choices = [(' ','--')] + [(i.id, unicode(i.first_name + u' ' + i.last_name + u', ' + i.email)) for i in self.initial['users']]
             self.fields['account_selector'].label = 'Choose an examinee from a list of users that are part of your organization. (optional):'
         else:
             # accounts are loaded from google db. remove the selector from this form. google selector form is defined in html and javascript.

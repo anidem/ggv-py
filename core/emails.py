@@ -411,91 +411,6 @@ class SendEmailToManagerActivationRequest(CsrfExemptMixin, LoginRequiredMixin, C
         return redirect('manage_course', crs_slug=urlstr)
 
 
-class SendEmailToManagerCreateAccountRequest(LoginRequiredMixin, CourseContextMixin, FormView):
-    """
-    A view to allow instructors to send a new account request to managers of a ggv organization.
-
-    recipients: GGV Organization Manager
-    sender: system sends but indicates the current user email in reply-to field.
-    scope: global
-    """
-    form_class = GgvUserAccountCreateForm#GgvEmailManagerRequestAccountForm
-    template_name = "ggv_send_account_request.html"
-    success_url = None
-    course = None
-
-    def dispatch(self, request, *args, **kwargs):
-        self.course = Course.objects.get(slug=kwargs['crs_slug'])
-        return super(SendEmailToManagerCreateAccountRequest, self).dispatch(request, *args, **kwargs)
-
-    def get_success_url(self):
-        return reverse('course', args=[self.course.slug])
-
-    def get_initial(self):
-        initial = self.initial.copy()
-        pretest_accounts = PretestAccount.objects.filter(ggv_org=self.course.ggv_organization)
-        pretest_users = []
-        for i in pretest_accounts:
-            pretest_users += i.tokens.all().exclude(email=None)
-        pretest_users = list(set(pretest_users))
-        pretest_users.sort(key=attrgetter('first_name'))
-
-        initial = {
-            'course': self.course, 'language': 'english', 'is_active': False, 'perms': 'access'}
-        self.user_list = pretest_users
-        initial['users'] = self.user_list
-        return initial
-
-    def form_valid(self, form):
-        user_sender = self.request.user
-        perm = form.cleaned_data.get('perms')
-        if perm == 'access':
-            perm = 'student'
-
-        recipients = [i.email for i in self.course.manager_list()]
-        if not recipients:
-            recipients = [e.email for e in User.objects.filter(is_staff=True).filter(is_active=True)]
-
-        html_message = "<p>Hi, {sender} is requesting a new account on behalf of the person indicated below.</p> ".format(sender=user_sender.get_full_name())
-
-        html_message += "<h3>New user:</h3>"
-        html_message += "<p>Username (email): {0}</p>".format(form.cleaned_data.get('username'))
-        html_message += "<p>First Name: {0}</p>".format(form.cleaned_data.get('first_name'))
-        html_message += "<p>Last Name: {0}</p>".format(form.cleaned_data.get('last_name'))
-        html_message += "<p>Access Level: {0}</p>".format(perm)
-        html_message += "<p>Progam ID: {0}</p>".format(form.cleaned_data.get('program_id'))
-        html_message += "<p>Language: {0}</p>".format(form.cleaned_data.get('language'))
-        html_message += "<p>Course: {0}</p>".format(self.course)
-
-        email = EmailMultiAlternatives(
-            subject=self.request.user.get_full_name() + ' is requesting a new account',
-            body=html_message,
-            from_email=settings.EMAIL_HOST_USER,
-            to=recipients,
-            headers={'Reply-To': user_sender.email},  # this can be updated after upgrading to django 8+
-            )
-
-        email.attach_alternative(html_message, "text/html")
-        email.send(fail_silently=True)
-        messages.info(self.request, 'Your request for a new account has been sent to the managers for your account.')
-        return super(SendEmailToManagerCreateAccountRequest, self).form_valid(form)
-
-    def get_context_data(self, **kwargs):
-        context = super(SendEmailToManagerCreateAccountRequest, self).get_context_data(**kwargs)
-        
-        try:
-            context['user_list'] = self.user_list
-        except:
-            pass
-
-        try:
-            context['google_db'] = self.course.ggv_organization.google_db.all()[0]
-        except:
-            pass
-
-        return context
-
-
 class SendEmailToGgvOrgUsers(LoginRequiredMixin, CourseContextMixin, FormView):
     """
     A view to allow managers to send a message to all active users of an organization.
@@ -788,7 +703,6 @@ def send_score_notification(request, response_obj=None):
 
     return
 
-
 def send_deactivation_notification(request, user_obj=None, reason=''):
     """Sends email to a user notifying them that they have been deactivated by a manager."""
     if not user_obj:
@@ -840,5 +754,37 @@ def send_activation_notification(request, user_obj=None):
     
     return
 
+def send_account_request(request, account_request_obj=None):
+    if not account_request_obj:
+        return
+    user_sender = request.user
+    recipients = [i.email for i in account_request_obj.course.manager_list()]
+    if not recipients:
+        recipients = [e.email for e in User.objects.filter(is_staff=True).filter(is_active=True)]
+
+    access_url = 'http://' + request.get_host() + reverse('manage_course', args=[account_request_obj.course.slug])
+    access_url += '?prefill='+str(account_request_obj.pk)
+    html_message = "<p>Hi, {sender} is requesting a new account on behalf of the person indicated below.</p> ".format(sender=user_sender.get_full_name())
+
+    html_message += "<h3>New user:</h3>"
+    html_message += "<p>Username (email): {0}</p>".format(account_request_obj)
+    html_message += u"<p>First Name: {0}</p>".format(account_request_obj.first_name)
+    html_message += u"<p>Last Name: {0}</p>".format(account_request_obj.last_name)
+    html_message += "<p>Progam ID: {0}</p>".format(account_request_obj.program_id)
+    html_message += "<p>Course: {0}</p>".format(account_request_obj.course)
+    html_message += "<p>Reason: {0}</p>".format(account_request_obj.note)
+    html_message += "<p>Complete this request or make other changes <a href='{0}'>here</a></p>".format(access_url)
+
+    email = EmailMultiAlternatives(
+        subject=request.user.get_full_name() + ' is requesting a new account',
+        body=html_message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=recipients,
+        headers={'Reply-To': user_sender.email},  # this can be updated after upgrading to django 8+
+        )
+
+    email.attach_alternative(html_message, "text/html")
+    email.send(fail_silently=True)
+    messages.info(request, 'Your request for a new account has been sent to the managers for your account.')
 
 

@@ -27,12 +27,12 @@ from courses.models import Course, GGVOrganization
 from pretests.models import PretestAccount
 from archiver import serialize_user_data
 
-from .models import Bookmark, GGVUser, SiteMessage, Notification, SitePage, AttendanceTracker
-from .forms import BookmarkForm, GgvUserAccountCreateForm, GgvUserSettingsForm, GgvUserAccountUpdateForm, GgvUserStudentSettingsForm, GgvEmailQuestionToInstructorsForm, AttendanceTrackerUpdateForm, AttendanceTrackerCreateForm
+from .models import Bookmark, GGVUser, SiteMessage, Notification, SitePage, AttendanceTracker, GGVAccountRequest
+from .forms import BookmarkForm, GgvUserAccountCreateForm, GgvUserSettingsForm, GgvUserAccountUpdateForm, GgvUserStudentSettingsForm, GgvEmailQuestionToInstructorsForm, AttendanceTrackerUpdateForm, AttendanceTrackerCreateForm, GgvUserRequestAccountForm
 from .mixins import CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from .signals import *
 from .utils import update_attendance_for_all_users
-from .emails import send_deactivation_notification, send_activation_notification
+from .emails import send_deactivation_notification, send_activation_notification, send_account_request
 
 tz = timezone(settings.TIME_ZONE)
 
@@ -124,10 +124,21 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
     template_name = 'user_create.html'
     form_class = GgvUserAccountCreateForm
     course = None
+    account_request_obj = None
 
     def dispatch(self, request, *args, **kwargs):
         self.course = get_object_or_404(Course, slug=kwargs['crs_slug']) 
         return super(CreateGgvUserView, self).dispatch(request, *args, **kwargs)
+
+    def get(self, request, *args, **kwargs):
+        prefill = request.GET.get('prefill')  # determine if url contains prefill reference
+        if prefill:
+            try:
+                self.account_request_obj = GGVAccountRequest.objects.get(pk=prefill)
+            except:
+                self.account_request_obj = None
+
+        return super(CreateGgvUserView, self).get(request, *args, **kwargs)
 
     def get_success_url(self):
         # Return the user back to the add form.
@@ -142,10 +153,24 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
         pretest_users = list(set(pretest_users))
         pretest_users.sort(key=attrgetter('first_name'))
 
-        initial = {
-            'course': self.course, 'language': 'english', 'is_active': False, 'perms': 'access'}
+        if self.account_request_obj:  #  Add user form is prefilled from account request object
+            initial = {
+                'course': self.account_request_obj.course,
+                'username': self.account_request_obj.email,
+                'first_name': self.account_request_obj.first_name,
+                'last_name': self.account_request_obj.last_name,
+                'program_id': self.account_request_obj.program_id,
+                'language': 'english', 
+                'is_active': False, 
+                'perms': 'access'
+            }
+        else:
+            initial = {
+                'course': self.course, 'language': 'english', 'is_active': False, 'perms': 'access'}
+        
         self.user_list = pretest_users
         initial['users'] = self.user_list
+        
         return initial
 
     def form_valid(self, form):
@@ -177,6 +202,12 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
 
         assign_perm(perms, self.object, course)
         messages.success(self.request, 'User successfully added.')
+
+        try:
+            account_request_obj = GGVAccountRequest.objects.filter(email=self.object.email)
+            account_request_obj.delete()
+        except:
+            pass  # previously requested account not found. proceed normally.
         return super(CreateGgvUserView, self).form_valid(form)
 
     def get_context_data(self, **kwargs):
@@ -470,6 +501,72 @@ class GgvUserDeleteUnusedAccount(CsrfExemptMixin, LoginRequiredMixin, JSONRespon
 
         return redirect(urlstr)
 
+
+class CreateGgvUserAccountRequestView(LoginRequiredMixin, CourseContextMixin, CreateView):
+    model = GGVAccountRequest
+    template_name = 'user_account_request.html'
+    form_class = GgvUserRequestAccountForm
+    course = None
+
+    def dispatch(self, request, *args, **kwargs):
+        self.course = Course.objects.get(slug=kwargs['crs_slug'])
+        return super(CreateGgvUserAccountRequestView, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('manage_course', args=[self.course.slug])
+
+    def get_initial(self):
+        initial = self.initial.copy()
+        pretest_accounts = PretestAccount.objects.filter(ggv_org=self.course.ggv_organization)
+        pretest_users = []
+        for i in pretest_accounts:
+            pretest_users += i.tokens.all().exclude(email=None)
+        pretest_users = list(set(pretest_users))
+        pretest_users.sort(key=attrgetter('first_name'))
+        initial = {
+            'course': self.course, 'requestor': self.request.user}
+        self.user_list = pretest_users
+        initial['users'] = self.user_list
+        return initial
+
+    def form_valid(self, form):
+        self.object = form.save()
+        send_account_request(self.request, account_request_obj=self.object)
+        return super(CreateGgvUserAccountRequestView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(CreateGgvUserAccountRequestView, self).get_context_data(**kwargs)
+        
+        try:
+            context['user_list'] = self.user_list
+        except:
+            pass
+
+        try:
+            context['google_db'] = self.course.ggv_organization.google_db.all()[0]
+        except:
+            pass
+
+        return context
+
+
+class UpdateGgvUserAccountRequestView(LoginRequiredMixin, CourseContextMixin, UpdateView):
+    model = GGVAccountRequest
+    template_name = 'user_account_request_edit.html'
+    fields = ['email', 'first_name', 'last_name', 'program_id', 'course', 'note',]
+
+    def get_success_url(self):
+        return reverse('manage_course', args=[self.get_object().course.slug])
+
+
+class DeleteGgvUserAccountRequestView(LoginRequiredMixin, CourseContextMixin, View):
+    """Deletes an account request object from db."""
+
+    def get(self, request, *args, **kwargs):
+        account_request_obj = get_object_or_404(GGVAccountRequest, id=kwargs['pk'])
+        course = account_request_obj.course
+        account_request_obj.delete()
+        return redirect('manage_course', crs_slug=course.slug)
 
 class GgvUserArchiveThenDeleteView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):
     def post(self, request, *args, **kwargs):

@@ -17,7 +17,7 @@ from django.contrib.auth.models import User
 from django.contrib.auth.admin import UserAdmin
 from django.contrib.staticfiles.templatetags.staticfiles import static
 
-from core.models import ActivityLog, GGVUser, Bookmark, SiteMessage, SitePage, AttendanceTracker, TempCourseGoogleDb
+from core.models import ActivityLog, GGVUser, Bookmark, SiteMessage, SitePage, AttendanceTracker, TempCourseGoogleDb, GGVAccountRequest
 
 UserAdmin.list_display = ('email', 'first_name', 'last_name', 'is_active', 'is_staff', 'last_login', 'date_joined')
 UserAdmin.list_editable = ('is_active',)
@@ -225,6 +225,7 @@ admin.site.register(UserWorksheetStatus)
 admin.site.register(ActivityLog, ActivityLogAdmin)
 admin.site.register(AttendanceTracker, AttendanceTrackerAdmin)
 admin.site.register(GGVUser, GGVUserAdmin)
+admin.site.register(GGVAccountRequest)
 admin.site.register(Bookmark)
 admin.site.register(SiteMessage)
 admin.site.register(SitePage, SitePageAdmin, Media=ExtraMedia)

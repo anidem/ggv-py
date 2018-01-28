@@ -1,0 +1,27 @@
+<!-- user_account_request_edit.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_header %}
+<div class="col-xs-12">
+    <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i>
+    <a href="{% url 'manage_course' course.slug %}">Roster Details</button></a>
+</div>
+<div class="row" style="padding: 10px"><h1></h1></div>
+
+<div class="col-md-12 text-center">
+    <p class="lead">Edit a User Account Request</p>
+</div>
+{% endblock page_header %}
+
+{% block content %}
+    <div class="col-md-12">
+        <h3>Modify request info for {{ object.first_name }} {{ object.last_name }}</h3>
+        <h5><a href="{% url 'manage_course' object.course.slug %}">[ cancel ]</a> </h5>
+        <form method="post" action=".">{% csrf_token %}
+            {{ form|crispy }}
+            <button class="btn btn-sm btn-success" type="submit">Save</button> <a href="{% url 'manage_course' object.course.slug %}">[ cancel ]</a>
+        </form>
+    </div>
+{% endblock content %}

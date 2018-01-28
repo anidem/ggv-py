@@ -16,7 +16,6 @@ from core.emails import (
     SendEmailToInstructor,
     SendEmailToManagerDeactivationRequest,
     SendEmailToManagerActivationRequest,
-    SendEmailToManagerCreateAccountRequest,
     SendEmailToAllActiveUsers,
     SendEmailToGgvOrgUsers,
     SendEmailToCourseUsers
@@ -26,7 +25,7 @@ from core.views import (
     IndexView, HomeView,
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView,
-    CreateGgvUserView, UpdateGgvUserAccountView,  GgvUserView, UpdateGgvUserView, GgvUserActivationView, GgvUserArchiveThenDeleteView, GgvUserDeleteUnusedAccount,
+    CreateGgvUserView, UpdateGgvUserAccountView,  GgvUserView, UpdateGgvUserView, CreateGgvUserAccountRequestView, UpdateGgvUserAccountRequestView, DeleteGgvUserAccountRequestView, GgvUserActivationView, GgvUserArchiveThenDeleteView, GgvUserDeleteUnusedAccount,
     PolicyView, FaqView, HelpView, GgvUsersDeactivationView, GgvUsersActivationView, AttendanceAjaxCodeUpdateView, AttendanceAjaxCodeCreateView, AttendanceAjaxCodeDeleteView, AttendanceUpdateAllView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
@@ -171,9 +170,12 @@ urlpatterns = [
     url(r'^ggv/(?P<crs_slug>[-\w]+)/user/(?P<pk>[-\d]+)/$', GgvUserView.as_view(), name='view_user'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/user/edit-account/(?P<pk>[-\d]+)/$', UpdateGgvUserAccountView.as_view(), name='edit_user_account'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/user/edit/(?P<pk>[-\d]+)/$', UpdateGgvUserView.as_view(), name='edit_user'),
+    
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/user/request/$', CreateGgvUserAccountRequestView.as_view(), name='request_user_account'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/user/request/edit/(?P<pk>[-\d]+)/$', UpdateGgvUserAccountRequestView.as_view(), name='edit_request_user_account'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/user/request/delete/(?P<pk>[-\d]+)/$', DeleteGgvUserAccountRequestView.as_view(), name='delete_request_user_account'),
 
     url(r'^ggv/user/deactivate/(?P<pk>[-\d]+)/$', GgvUserActivationView.as_view(), name='update_user_activation'),
-
     url(r'^ggv/users/deactivate/$', GgvUsersDeactivationView.as_view(), name='deactivate_users'),
     url(r'^ggv/users/activate/$', GgvUsersActivationView.as_view(), name='activate_users'),
     url(r'^ggv/users/delete-unused/$', GgvUserDeleteUnusedAccount.as_view(), name='delete_unused_user'),
@@ -199,7 +201,6 @@ urlpatterns = [
     url(r'^ggv/(?P<crs_slug>[-\w]+)/email-manager/deactivate$', SendEmailToManagerDeactivationRequest.as_view(), name='email_manager_deactivate'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/email-manager/activate$', SendEmailToManagerActivationRequest.as_view(), name='email_manager_activate'), 
 
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/email-manager/new-account$', SendEmailToManagerCreateAccountRequest.as_view(), name='email_manager_request_account'),
     url(r'^ggv/system/email-system-users/$', SendEmailToAllActiveUsers.as_view(), name='email_system_users'),
 
 # Administration pages

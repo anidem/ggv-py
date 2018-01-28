@@ -14,6 +14,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 
 from guardian.shortcuts import get_objects_for_user
+from model_utils.models import TimeStampedModel
 
 from courses.models import Course, GGVOrganization
 
@@ -124,6 +125,24 @@ class GGVUser(models.Model):
 
     def __unicode__(self):
         return self.user.username
+
+
+class GGVAccountRequest(TimeStampedModel):
+    """Stores information for new ggvuser account requests. Objects should be deleted after add or reject.
+    This class may be incorporated into the planned ggv pre-enrollment flow and may be
+    replaced by a more elaborate pre enrollment db design.
+    """
+
+    first_name = models.CharField(max_length=256)
+    last_name = models.CharField(max_length=256)
+    email = models.EmailField()
+    program_id = models.CharField(max_length=128, null=True, blank=True)
+    note = models.TextField(null=True, blank=True)
+    course = models.ForeignKey(Course, null=True, related_name='account_requests')
+    requestor = models.ForeignKey(User)
+
+    def __unicode__(self):
+        return self.email
 
 
 class AttendanceTracker(models.Model):

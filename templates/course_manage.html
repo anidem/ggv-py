@@ -15,7 +15,7 @@
     </li>
     {% elif is_instructor %}
     <li>
-        <a class="static nav-text" href="{% url 'email_manager_request_account' course.slug %}">
+        <a class="static nav-text" href="{% url 'request_user_account' course.slug %}">
             <i class="fa fa-user-plus text-primary"></i>
         </a>
     </li>
@@ -223,8 +223,7 @@
             <div class="col-md-3 username">{{ i.username }} </div>
             <div class="col-md-2 date_created">{{ i.date_joined|date:"Y - M d" }}</div>
             </a>
-            <div class="col-md-2">{% if is_manager %}<input type="checkbox" name="unaccessed_list" value="{{ i.id }}">{% endif %}</div>
-            
+            <div class="col-md-2">{% if is_manager %}<input type="checkbox" name="unaccessed_list" value="{{ i.id }}">{% endif %}</div>            
         </div>
         {% empty %}
             <div class="panel-body">All accounts haved been validated.</div>
@@ -237,42 +236,53 @@
 <div class="col-md-12"><h1></h1></div>
 
 <!-- Account Requests -->
-<!-- <div class="col-md-12"><span class="lead">Requested Accounts</span></div>
+<div class="col-md-12"><span class="lead">Requested Accounts</span></div>
 
 <div class="col-md-12">
     <div id="requestsort" class="row">
         <div class="col-md-12">
             <div class="col-md-1"><button class="btn btn-block btn-sm" data-sort-by="siteid" data-order="asc"> <i class="fa fa-sort"></i> id</button></div>
-            <div class="col-md-2"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
-            <div class="col-md-2"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
-            <div class="col-md-3"><button class="btn btn-block btn-sm" data-sort-by="username" data-order="asc"> <i class="fa fa-sort"></i> username</button></div>
-            <div class="col-md-2"><button class="btn btn-block btn-sm" data-sort-by="date_created" data-order="asc"> <i class="fa fa-sort"></i> date created</button></div>
-            <div class="col-md-2">{% if is_manager %}<button id="remove-unaccessed-btn" class="btn btn-block btn-sm btn-default"><i class="fa fa-check-square-o"></i> remove access</button>{% endif %}</div>
+            <div class="col-md-1"><button class="btn btn-block btn-sm btn-primary" data-sort-by="firstname" data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
+            <div class="col-md-1"><button class="btn btn-block btn-sm" data-sort-by="lastname" data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm" data-sort-by="email" data-order="asc"> <i class="fa fa-sort"></i> email</button></div>
+            <div class="col-md-1"><button class="btn btn-block btn-sm" data-sort-by="date_created" data-order="asc"> <i class="fa fa-sort"></i> date</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm" data-sort-by="requestor" data-order="asc"> <i class="fa fa-sort"></i> requested by</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm" disabled>reason</button></div>
+            <div class="col-md-2"></div>
         </div>
     </div>
         
-    <form id="remove-unaccessed-form" method="post" action="{% url 'delete_unused_user' %}?q={{object.slug}}">{% csrf_token %}
-        <input type="hidden" name="org" value="{{ object.ggv_organization.id }}">
-        <input type="hidden" name="url" value="{{ request.build_absolute_uri }}">
 
-        <div id="container_1" class="row">
-            {% for i in deactivated %}
-            <div class="item hoverpad col-md-12 small" data-created="{{ i.0.date_joined|date:'U' }}">
-                <a href="{% url 'view_user' course.slug i.0.id %}" class="static">
-                <div class="col-md-1 site_id">{{ i.0.ggvuser.program_id }}</div>
-                <div class="col-md-2 firstname">{{ i.0.first_name }}</div>
-                <div class="col-md-2 lastname">{{ i.0.last_name }}</div>
-                <div class="col-md-3 username">{{ i.0.0.username }} </div>
-                <div class="col-md-2 date_created">{{ i.0.date_joined|date:"Y - M d" }}</div>
-                </a>
-                <div class="col-md-2">{% if is_manager %}<input type="checkbox" name="unaccessed_list" value="{{ i.0.id }}">{% endif %}</div>
+        <div id="container_requests" class="row">
+            {% for i in account_requests %}
+            <div class="item hoverpad col-md-12 small" data-created="{{ i.modified|date:'U' }}">
+                <div class="col-md-1 site_id">{{ i.program_id }}</div>
+                <div class="col-md-1 firstname">{{ i.first_name }}</div>
+                <div class="col-md-1 lastname">{{ i.last_name }}</div>
+                <div class="col-md-2 email">{{ i.email }} </div>
+                <div class="col-md-1 date_created"><small>{{ i.created|date:"Y - M d" }}</small></div>
+                <div class="col-md-2 requestor"><small>{{ i.requestor.last_name }}, {{ i.requestor.first_name }}</small></div>
+                <div class="col-md-2"><small>{{ i.note }}</small></div>
+                
+                    {% if is_manager %}
+                        <div class="col-md-1">
+                        <a class="btn btn-sm btn-success" href="{% url 'create_user' course.slug %}?prefill={{ i.pk }}"><i class="fa fa-user-plus"></i> add</a>
+                        </div>
+                        <div class="col-md-1">
+                        <a class="btn btn-sm btn-danger" href="{% url 'delete_request_user_account' course.slug i.pk %}"><i class="fa fa-delete"></i> deny/delete</a>
+                        </div>
+                    {% else %}
+                        <div class="col-md-2">
+                        <a class="btn btn-xs btn-warning" href="{% url 'edit_request_user_account' course.slug i.pk %}" class="static"><i class="fa fa-pencil"></i> edit</a>
+                        </div>
+                    {% endif %}
+                
             </div>
             {% empty %}
                 <div class="panel-body">No account requests were found.</div>
             {% endfor %}
         </div>
-    </form>
-</div> -->
+</div>
 
 <div class="col-md-12"><h1></h1></div>
 
@@ -356,6 +366,15 @@
                     lastname: '.lastname',
                     date_created: '[data-created] parseInt',
                     username: '.username'
+                },
+            });
+            var $container_requests = $('#container_requests').isotope({
+                getSortData: {
+                    firstname: '.firstname',
+                    lastname: '.lastname',
+                    date_created: '[data-created] parseInt',
+                    email: '.email',
+                    requestor: '.requestor'
                 },
             });
 
@@ -447,6 +466,27 @@
                 $(this).addClass("btn-primary");
 
                 $container1.isotope({
+                    sortBy: sortByValue,
+                    sortAscending: order
+                });
+            });
+
+            // sort items on button click
+            $('#requestsort .btn-block').on( 'click', function() {
+                var sortByValue = $(this).attr('data-sort-by');
+                var order = "";
+                if ($(this).attr("data-order")==="asc") {
+                    order = true;
+                    $(this).attr("data-order", "");
+
+                } else {
+                    order = false;
+                    $(this).attr("data-order", "asc");
+                }
+                $('#requestsort .btn-primary').removeClass('btn-primary');
+                $(this).addClass("btn-primary");
+
+                $container_requests.isotope({
                     sortBy: sortByValue,
                     sortAscending: order
                 });

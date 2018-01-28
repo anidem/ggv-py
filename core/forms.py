@@ -4,7 +4,7 @@ from django.forms import Form, ModelForm, ModelChoiceField, ChoiceField, Boolean
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.contrib.auth.models import User
 
-from core.models import GGVUser, AttendanceTracker
+from core.models import GGVUser, AttendanceTracker, GGVAccountRequest
 from courses.models import Course
 from .models import Bookmark
 
@@ -13,7 +13,7 @@ from .models import Bookmark
 LANG_CHOICES = (('english', 'English'), ('spanish', 'Spanish'))
 ACCESS_CHOICES = (('access', 'Student Access'), ('instructor', 'Instructor Access'))
 LABELS = {
-    'pretesters': 'Pretest Users who have completed pretestes and are ready to begin using the GGV Curriculum',
+    'pretesters': 'Pretest Users who have completed pretests and are ready to begin using the GGV Curriculum',
     'language': 'Preferred language:',
     'program_id': 'Please enter a unique identifier (maximum 32 numbers or letters) for this user if your organization assigns ids to users. This is optional. A default identifier will be generated if one is not specified.<br><br>Program ID',
     'access_level': 'Select access level/account type:',
@@ -21,7 +21,8 @@ LABELS = {
     'is_active': 'Is activated? Uncheck this to deactivate user. User will not be able to access ggv.',
     'clean_logout': 'Google account security. Keep this CHECKED to ensure that this Google account is safely logged out of the browser. This is recommended. UNCHECK to ensure that this Google account remains active in the browser after signing out of GGV.',
     'receive_notifications': 'Choose to receive notifications on student activity. (E.g., worksheet completions, bookmarking, etc.)',
-    'receive_email_messages': 'Choose to receive email messages from the GGV system.'
+    'receive_email_messages': 'Choose to receive email messages from the GGV system.',
+    'note': 'Specify a reason or other info regarding this account request (Optional).'
     }
 
 
@@ -48,7 +49,7 @@ class GgvUserAccountCreateForm(ModelForm):
     def __init__(self, *args, **kwargs):
         super(GgvUserAccountCreateForm, self).__init__(*args, **kwargs)
 
-        if self.initial['users']:            
+        if self.initial['users']:  # This list is initialized in the calling view.          
             self.fields['account_selector'].choices = [(' ','--')] + [(i.id, unicode(i.first_name + u' ' + i.last_name + u', ' + i.email)) for i in self.initial['users']]
             self.fields['account_selector'].label = 'Select user information from a list of users who have completed their pretests. (optional):'
 
@@ -106,6 +107,28 @@ class GgvUserAccountUpdateForm(ModelForm):
         }
 
 
+class GgvUserRequestAccountForm(ModelForm):
+    account_selector = forms.ChoiceField(choices=[(' ','--')], required=False)
+
+    def __init__(self, *args, **kwargs):
+        super(GgvUserRequestAccountForm, self).__init__(*args, **kwargs)
+
+        if self.initial['users']:  # This list is initialized in the calling view.          
+            self.fields['account_selector'].choices = [(' ','--')] + [(i.id, unicode(i.first_name + u' ' + i.last_name + u', ' + i.email)) for i in self.initial['users']]
+            self.fields['account_selector'].label = 'Select user information from a list of users who have completed their pretests. (optional):'
+
+    class Meta:
+        model = GGVAccountRequest
+        fields = ['account_selector', 'email', 'first_name', 'last_name', 'program_id',
+                  'course', 'note', 'requestor']
+        widgets = {
+            'requestor': forms.HiddenInput(), 
+        }
+        labels = {
+            'note': LABELS['note'],
+        }
+
+
 """ User accessible settings. """
 
 class GgvUserSettingsForm(ModelForm):
@@ -151,6 +174,7 @@ class GgvEmailForm(Form):
         help_text='Click Send Message to deliver your email message.'
         )
     
+
 class GgvEmailInstructors(Form):
     message = forms.CharField(
         widget=forms.Textarea,
@@ -196,28 +220,7 @@ class GgvEmailActivationRequestForm(Form):
         widget=forms.Textarea,
         label='You are requesting that the site manager activate the following list of users.',
         help_text='After pressing Send Message, the site manager will receive your request in their email.'
-        )
-
-
-class GgvEmailManagerRequestAccountForm(Form):
-    # NOT IN USE AS OF JAN 25 2018
-    # course = forms.ModelChoiceField(
-    #     queryset=Course.objects.all(), widget=forms.HiddenInput())
-    pretest_users = forms.ChoiceField(choices=[], label=LABELS['pretesters'], required=False)
-    username = forms.EmailField(widget=forms.EmailInput(), label=LABELS['username'])
-    first_name = forms.CharField()
-    last_name = forms.CharField()
-    perms = forms.ChoiceField(widget=forms.RadioSelect(), choices=ACCESS_CHOICES, label=LABELS['access_level'])
-    program_id = forms.CharField(label=LABELS['program_id'], required=False)
-    language = forms.ChoiceField(choices=LANG_CHOICES, label=LABELS['language'], required=False)
-
-    # class Meta:
-    #     model = User
-    #     fields = ['username', 'first_name', 'last_name', 'program_id',
-    #               'language', 'perms', 'course', 'is_active']
-    #     widgets = {
-    #         'is_active': forms.HiddenInput(),
-    #     }    
+        )   
 
 
 class BookmarkForm(ModelForm):

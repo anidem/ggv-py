@@ -373,6 +373,7 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         context['students'] = students
         context['deactivated'] = deactivated_students
         context['unvalidated'] = course.unvalidated_list()
+        context['account_requests'] = course.account_requests.all()
         context['graders'] = course.assigned_graders.all()
         context['deactivation_types'] = DEACTIVATION_TYPES
 

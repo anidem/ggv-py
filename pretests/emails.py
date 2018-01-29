@@ -34,7 +34,7 @@ class SendPretestTokenView(LoginRequiredMixin, PretestAccountRequiredMixin, Deta
         html_message += "<h3>Quick Access:</h3><h4><a href='{0}'>{0}</a></h4>".format(access_url, self.get_object().access_token)
         html_message += "<h3>EMAIL: {0}</h3>".format(self.get_object().email)
         html_message += "<h3>TOKEN: {0}</h3>".format(self.get_object().access_token)
-        html_message += "<h3>PRETESTS: <small>{0}</small></h3>".format(assigned_tests)
+        html_message += u"<h3>PRETESTS: <small>{0}</small></h3>".format(assigned_tests)
         html_message += "<p>Please email {0} with any questions. </p>".format(self.request.user.email)
 
         email = EmailMultiAlternatives(

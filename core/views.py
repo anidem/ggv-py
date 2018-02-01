@@ -202,6 +202,7 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
 
         assign_perm(perms, self.object, course)
         messages.success(self.request, 'User successfully added.')
+        send_activation_notification(self.request, user_obj=self.object)
 
         try:
             account_request_obj = GGVAccountRequest.objects.filter(email=self.object.email)
@@ -567,6 +568,7 @@ class DeleteGgvUserAccountRequestView(LoginRequiredMixin, CourseContextMixin, Vi
         course = account_request_obj.course
         account_request_obj.delete()
         return redirect('manage_course', crs_slug=course.slug)
+
 
 class GgvUserArchiveThenDeleteView(CsrfExemptMixin, LoginRequiredMixin, JSONResponseMixin, View):
     def post(self, request, *args, **kwargs):

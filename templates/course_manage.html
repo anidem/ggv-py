@@ -14,11 +14,13 @@
         </a>
     </li>
     {% elif is_instructor %}
-    <li>
+    <li></li>
+    <!--<li>
         <a class="static nav-text" href="{% url 'request_user_account' course.slug %}">
             <i class="fa fa-user-plus text-primary"></i>
         </a>
     </li>
+-->
     {% endif %}
 {% endblock local_nav %}
 

@@ -202,7 +202,7 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
 
         assign_perm(perms, self.object, course)
         messages.success(self.request, 'User successfully added.')
-        send_activation_notification(self.request, user_obj=self.object)
+        # send_activation_notification(self.request, user_obj=self.object)
 
         try:
             account_request_obj = GGVAccountRequest.objects.filter(email=self.object.email)

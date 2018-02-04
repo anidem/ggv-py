@@ -1,7 +1,9 @@
 
 from collections import OrderedDict
 from datetime import datetime, date
+from operator import attrgetter
 
+from django import forms
 from django.forms import ValidationError
 from django.core.exceptions import PermissionDenied
 from django.db import IntegrityError
@@ -15,11 +17,16 @@ from django.contrib import messages
 from django.utils.text import slugify
 from django.conf import settings
 
+from guardian.shortcuts import get_objects_for_user
 from braces.views import LoginRequiredMixin, StaffuserRequiredMixin, JSONResponseMixin, AjaxResponseMixin
 from openpyxl import Workbook
 
+from courses.models import Course
 from lessons.models import Lesson
 from questions.models import QuestionSet
+from core.models import GGVAccountRequest
+from core.forms import GgvUserRequestAccountForm
+from core.emails import send_account_request
 
 from .models import PretestAccount, PretestUser, PretestQuestionResponse, PretestUserCompletion, PretestUserAssignment, ENG_PRETESTS_LESSON_ID, SPN_PRETESTS_LESSON_ID
 from .forms import LoginTokenForm, LanguageChoiceForm, PretestQuestionResponseForm, PretestSelectionForm, PretestUserUpdateForm, PretestUserCreateForm, PretestCompleteConfirmForm, PretestResponseGradeForm
@@ -689,6 +696,45 @@ class PretestResponseGradeView(LoginRequiredMixin, StaffuserRequiredMixin, Updat
         return context 
 
 
+class PretestCreateGgvUserAccountRequestView(LoginRequiredMixin, PretestAccountRequiredMixin, CreateView):
+    model = GGVAccountRequest
+    template_name = 'pretest_user_account_request.html'
+    form_class = GgvUserRequestAccountForm
+    pretest_accounts = None
+    access_model = User
 
+    def dispatch(self, request, *args, **kwargs):
+        self.pretest_user_account = PretestUser.objects.get(pk=kwargs['pretest_user_account'])
+        return super(PretestCreateGgvUserAccountRequestView, self).dispatch(request, *args, **kwargs)
 
+    def get_success_url(self):
+        return reverse('pretests:pretest_user_list', args=[self.pretest_user_account.account.id], current_app=self.request.resolver_match.namespace)
 
+    def get_initial(self):
+        initial = self.initial.copy()
+
+        # pretest_accounts = self.pretest_accounts
+        # pretest_users = []
+        # for i in pretest_accounts:
+        #     pretest_users += i.tokens.all().exclude(email=None)
+
+        # pretest_users = list(set(pretest_users))
+        # pretest_users.sort(key=attrgetter('first_name'))
+
+        initial = {'requestor': self.request.user, 'email': self.pretest_user_account.email, 'first_name': self.pretest_user_account.first_name, 'last_name': self.pretest_user_account.last_name, 'program_id': self.pretest_user_account.program_id}
+        # self.user_list = pretest_users
+        initial['users'] = None
+        return initial
+
+    def form_valid(self, form):
+        self.object = form.save()
+        send_account_request(self.request, account_request_obj=self.object)
+        return super(PretestCreateGgvUserAccountRequestView, self).form_valid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super(PretestCreateGgvUserAccountRequestView, self).get_context_data(**kwargs)
+        courses = get_objects_for_user(self.request.user, ['courses.instructor', 'courses.manage'], any_perm=True)
+        
+        context['form'].fields['course'] = forms.ModelChoiceField(queryset=courses)
+        context['form'].fields.pop('account_selector', None)
+        return context

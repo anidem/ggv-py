@@ -1,0 +1,27 @@
+<!-- pretest_user_account_request.html -->
+{% extends "pretest_base.html" %}
+{% load staticfiles %}
+{% load crispy_forms_tags %}
+
+{% block page_header %}
+<div class="col-md-12 text-center">
+    <p class="lead">Send a Request for New Account</p>
+</div>
+{% endblock page_header %}
+
+{% block content %}
+<div class="col-md-8 col-md-offset-2">
+	<form action="" method="post">{% csrf_token %}
+	    {{ form|crispy }}
+	    <input type="submit" value="Send Request" />
+	</form>
+</div>
+
+{% for i in user_list %}
+    <input id="user_{{ i.id }}" type="hidden" data-email="{{ i.email }}" data-first="{{ i.first_name }}" data-last="{{ i.last_name }}" data-progid="{{ i.program_id }}"/>
+{% endfor %}
+
+{% endblock content %}
+
+
+

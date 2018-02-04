@@ -8,7 +8,8 @@
 	    
 	    <h6><a href="{% url 'pretestapp:pretest_account_staff_report' account.id %}">{{ account }} scores</a></h6>
 	    <h6><a href="{% url 'pretestapp:pretest_user_add' account.id %}" class="btn btn-md btn-link">Click here to add a new pretest user</a></h6>
-	    
+
+	    <!--<h6><a href="" class="btn btn-md btn-link">Click here to request a ggvuser account for a student who has pretested</a></h6>-->
 	</div>
 {% endblock page_header %}
 
@@ -37,12 +38,14 @@
 			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by='token' data-order="asc"> <i class="fa fa-sort"></i> token</button></div>
 			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by='first' data-order="asc"> <i class="fa fa-sort"></i> first</button></div>
 			<div class="col-md-1"><button class="btn btn-md btn-block" data-sort-by='last' data-order="asc"> <i class="fa fa-sort"></i> last</button></div>
+			<div class="col-md-1"><button class="btn btn-md btn-block" disabled>pretests</button></div>
+			
 		</div>
 
 		<div class="row" id="container">
 			{% for i in pretest_users %}
 			<div class="col-md-12 item hoverpad">
-				<div class="row">				
+				<div class="row small">				
 					<div class="col-md-1 date" data-modified="{{ i.0.modified|date:'U' }}"><small>{{ i.0.modified|date:"Y-m-d" }}</small></div>
 					<div class="col-md-1 status">
 						<span class="{% if i.1 == i.2|length and i.1 > 0 %}label label-success{% endif %}">{{ i.1 }}/{{ i.2|length }}</span>
@@ -57,7 +60,10 @@
 						<div class="label label-default" data-toggle="popover" data-trigger="hover" data-html="true" title="Assigned Pre Tests" data-content="<ul class='list-group'><small>{% for t in i.2 %} <li class='list-group-item'>{{ t }}</li> {% endfor %}</small></ul>">{{ i.2|length }} pretests</div>
 						
 				    </div>
-					<div class="col-md-1"><a href="{% url 'pretestapp:pretest_user_edit' i.0.id %}">edit</a></div>
+					<div class="col-md-1">
+						<a href="{% url 'pretestapp:pretest_user_edit' i.0.id %}" class=""> [edit] </a>
+						<a href="{% url 'pretestapp:pretest_request_user_account' i.0.id %}" title="Request a GGV user account"> [add]</a>
+					</div>
 					<div class="col-md-1">
 					{% if i.0.email %}
 						<a href="{% url 'pretestapp:pretest_send_token' i.0.id %}">email token</a>

@@ -116,13 +116,13 @@ class GgvUserRequestAccountForm(ModelForm):
         if self.initial['users']:  # This list is initialized in the calling view.          
             self.fields['account_selector'].choices = [(' ','--')] + [(i.id, unicode(i.first_name + u' ' + i.last_name + u', ' + i.email)) for i in self.initial['users']]
             self.fields['account_selector'].label = 'Select user information from a list of users who have completed their pretests. (optional):'
-
+    
     class Meta:
         model = GGVAccountRequest
         fields = ['account_selector', 'email', 'first_name', 'last_name', 'program_id',
                   'course', 'note', 'requestor']
         widgets = {
-            'requestor': forms.HiddenInput(), 
+            'requestor': forms.HiddenInput(),
         }
         labels = {
             'note': LABELS['note'],

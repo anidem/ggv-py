@@ -2,7 +2,7 @@
 
 from django.conf.urls import include, url
 
-from .views import PretestHomeView, PretestMenuView, PretestEndView, PretestLogoutView, PretestWorksheetLaunchView, PretestQuestionResponseView, PretestLanguageChoiceUpdateView, PretestUserCreateView, PretestUserUpdateView, PretestUserUpdateFromGoogleView, PretestUserCreateFromGoogleView, PretestUserListView, PretestAccountListView, PretestUserDetailView, PretestEndConfirmView, PretestAccountReportView, PretestAccountReportProtectedView, PretestResponseGradeView, PretestToggleFlagView
+from .views import PretestHomeView, PretestMenuView, PretestEndView, PretestLogoutView, PretestWorksheetLaunchView, PretestQuestionResponseView, PretestLanguageChoiceUpdateView, PretestUserCreateView, PretestUserUpdateView, PretestUserUpdateFromGoogleView, PretestUserCreateFromGoogleView, PretestUserListView, PretestAccountListView, PretestUserDetailView, PretestEndConfirmView, PretestAccountReportView, PretestAccountReportProtectedView, PretestResponseGradeView, PretestToggleFlagView, PretestCreateGgvUserAccountRequestView
 from .utils import PretestCreateTokensView, AccessErrorView
 from .emails import SendPretestTokenView
 app_name = 'pretests'
@@ -21,6 +21,8 @@ urlpatterns = [
 	
 	url(r'^edit/(?P<pk>\d+)/$', PretestUserUpdateView.as_view(), name='pretest_user_edit'),	
 	url(r'^edit-google/(?P<pk>\d+)/$', PretestUserUpdateFromGoogleView.as_view(), name='pretest_user_edit_from_google'),
+
+	url(r'^ggvuser/request/(?P<pretest_user_account>\d+)/$', PretestCreateGgvUserAccountRequestView.as_view(), name='pretest_request_user_account'),
 	
 	url(r'^email/(?P<pk>\d+)/$', SendPretestTokenView.as_view(), name='pretest_send_token'),
 	url(r'^start/$', PretestMenuView.as_view(), name='pretest_menu'),

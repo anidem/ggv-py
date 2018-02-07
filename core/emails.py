@@ -729,15 +729,20 @@ def send_deactivation_notification(request, user_obj=None, reason=''):
     
     return
 
-def send_activation_notification(request, user_obj=None):
+def send_activation_notification(request, user_obj=None, user_note=None):
     """Sends email to a user notifying them that they have been activated to login to system."""
     if not user_obj:
         return
     
+    if not user_note:
+        user_note = ''
+
+
     access_url = 'http://' + request.get_host()
 
     html_message = u"<p>Hi {0} {1},</p>".format(user_obj.first_name, user_obj.last_name)
     html_message += "<p>Your account at <a href='{0}'>GGV Interactive</a> has been activated.".format(access_url)
+    html_message += "<p>Additional Information For You: {0}</p>".format(user_note)
     html_message += "<p>Please email your site manager ({0}) if you have questions about this activation. </p>".format(request.user.email)
 
 

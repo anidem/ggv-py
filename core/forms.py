@@ -22,7 +22,8 @@ LABELS = {
     'clean_logout': 'Google account security. Keep this CHECKED to ensure that this Google account is safely logged out of the browser. This is recommended. UNCHECK to ensure that this Google account remains active in the browser after signing out of GGV.',
     'receive_notifications': 'Choose to receive notifications on student activity. (E.g., worksheet completions, bookmarking, etc.)',
     'receive_email_messages': 'Choose to receive email messages from the GGV system.',
-    'note': 'Specify a reason or other info regarding this account request (Optional).'
+    'note': 'Specify a reason or other info regarding this account request (Optional).',
+    'user_note': 'Enter an initial message to relay to the new user (student) when they are notified of their account status. (Optional).'
     }
 
 
@@ -45,6 +46,7 @@ class GgvUserAccountCreateForm(ModelForm):
     perms = forms.ChoiceField(widget=forms.RadioSelect(), choices=ACCESS_CHOICES, label=LABELS['access_level'])
     username = forms.EmailField(widget=forms.EmailInput(), label=LABELS['username'])
     program_id = forms.CharField(label=LABELS['program_id'], required=False)
+    user_note = forms.CharField(widget=forms.Textarea, label='Additional information sent to user in their activation email.', required=False)
 
     def __init__(self, *args, **kwargs):
         super(GgvUserAccountCreateForm, self).__init__(*args, **kwargs)
@@ -66,7 +68,7 @@ class GgvUserAccountCreateForm(ModelForm):
     class Meta:
         model = User
         fields = ['account_selector', 'perms', 'username', 'first_name', 'last_name', 'program_id',
-                  'language', 'course', 'is_active']
+                  'language', 'course', 'is_active', 'user_note']
         widgets = {
             'is_active': forms.HiddenInput(), 
         }
@@ -120,12 +122,13 @@ class GgvUserRequestAccountForm(ModelForm):
     class Meta:
         model = GGVAccountRequest
         fields = ['account_selector', 'email', 'first_name', 'last_name', 'program_id',
-                  'course', 'note', 'requestor']
+                  'course', 'note', 'user_note', 'requestor']
         widgets = {
-            'requestor': forms.HiddenInput(),
+            'requestor': forms.HiddenInput()
         }
         labels = {
             'note': LABELS['note'],
+            'user_note': LABELS['user_note'],
         }
 
 

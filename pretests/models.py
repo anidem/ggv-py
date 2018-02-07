@@ -42,7 +42,7 @@ class PretestAccount(models.Model):
         for i in self.tokens.filter(email__isnull=False).order_by('-modified'):
             assignments = i.assigned_pretests()
             test_list = [t.pretest.title for t in assignments['tests']]
-            users.append((i, assignments['completed'].count(), test_list))
+            users.append([i, assignments['completed'].count(), test_list])
         return users
 
     def get_pretest_assignments(self):

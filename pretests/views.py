@@ -622,6 +622,12 @@ class PretestUserListView(LoginRequiredMixin, PretestAccountRequiredMixin, Detai
         context = super(PretestUserListView, self).get_context_data(**kwargs)        
         context['account'] = self.get_object()
         context['pretest_users'] = context['account'].pretest_user_list()
+
+        for i in context['pretest_users']:
+            account_request = GGVAccountRequest.objects.filter(email=i[0].email)
+            if account_request: i.append(True)
+            else: i.append(False)
+
         context['pretest_accounts'] = self.pretest_accounts
 
         assigned = self.get_object().get_pretest_assignments().count()
@@ -705,6 +711,8 @@ class PretestCreateGgvUserAccountRequestView(LoginRequiredMixin, PretestAccountR
 
     def dispatch(self, request, *args, **kwargs):
         self.pretest_user_account = PretestUser.objects.get(pk=kwargs['pretest_user_account'])
+        self.pretest_account = PretestAccount.objects.get(pk=kwargs['account'])
+        self.ggv_org = self.pretest_account.ggv_org
         return super(PretestCreateGgvUserAccountRequestView, self).dispatch(request, *args, **kwargs)
 
     def get_success_url(self):
@@ -720,9 +728,10 @@ class PretestCreateGgvUserAccountRequestView(LoginRequiredMixin, PretestAccountR
 
         # pretest_users = list(set(pretest_users))
         # pretest_users.sort(key=attrgetter('first_name'))
-
-        initial = {'requestor': self.request.user, 'email': self.pretest_user_account.email, 'first_name': self.pretest_user_account.first_name, 'last_name': self.pretest_user_account.last_name, 'program_id': self.pretest_user_account.program_id}
         # self.user_list = pretest_users
+
+        initial = {'requestor': self.request.user, 'email': self.pretest_user_account.email, 'first_name': self.pretest_user_account.first_name, 'last_name': self.pretest_user_account.last_name, 'program_id': self.pretest_user_account.program_id, 'is_ggv_manager': False}
+        
         initial['users'] = None
         return initial
 
@@ -734,7 +743,8 @@ class PretestCreateGgvUserAccountRequestView(LoginRequiredMixin, PretestAccountR
     def get_context_data(self, **kwargs):
         context = super(PretestCreateGgvUserAccountRequestView, self).get_context_data(**kwargs)
         courses = get_objects_for_user(self.request.user, ['courses.instructor', 'courses.manage'], any_perm=True)
-        
+
+        context['is_ggv_manager'] = self.request.user in self.ggv_org.manager_list()
         context['form'].fields['course'] = forms.ModelChoiceField(queryset=courses)
         context['form'].fields.pop('account_selector', None)
         return context

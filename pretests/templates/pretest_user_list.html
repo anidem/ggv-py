@@ -41,7 +41,6 @@
 			<div class="col-md-1"><button class="btn btn-md btn-block" disabled>pretests</button></div>
 			
 		</div>
-
 		<div class="row" id="container">
 			{% for i in pretest_users %}
 			<div class="col-md-12 item hoverpad">
@@ -60,14 +59,21 @@
 						<div class="label label-default" data-toggle="popover" data-trigger="hover" data-html="true" title="Assigned Pre Tests" data-content="<ul class='list-group'><small>{% for t in i.2 %} <li class='list-group-item'>{{ t }}</li> {% endfor %}</small></ul>">{{ i.2|length }} pretests</div>
 						
 				    </div>
-					<div class="col-md-1">
-						<a href="{% url 'pretestapp:pretest_user_edit' i.0.id %}" class=""> [edit] </a>
-						<a href="{% url 'pretestapp:pretest_request_user_account' i.0.id %}" title="Request a GGV user account"> [add]</a>
-					</div>
-					<div class="col-md-1">
-					{% if i.0.email %}
-						<a href="{% url 'pretestapp:pretest_send_token' i.0.id %}">email token</a>
-					{% endif %}
+					<div class="col-md-2">
+						<div class="row">
+							<div class="col-md-4"><a href="{% url 'pretestapp:pretest_user_edit' i.0.id %}" title="Add or remove pretest assignments and make other edits to this pretest user account." class="btn btn-link btn-xs"><i class="fa fa-pencil"></i> edit</a></div>
+							{% if i.0.email %}
+								<div class="col-md-4"><a href="{% url 'pretestapp:pretest_send_token' i.0.id %}" title="Email pretest info to pretest user." class="btn btn-link btn-xs"><i class="fa fa-send"></i> token</a></div>
+							{% endif %}
+							<div class="col-md-4">
+								{% if not i.3 %} 
+									<a href="{% url 'pretestapp:pretest_request_user_account' account.id i.0.id %}" title="Request a GGV user account for this pretest user." class="btn btn-link btn-xs"><i class="fa fa-plus"></i> GGV</a>
+								
+								{% else %}
+									<span title="Request for a GGV account for this pretest user's email is pending." class="label label-warning">pending</span>
+								{% endif %}
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>

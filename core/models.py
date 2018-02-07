@@ -140,6 +140,7 @@ class GGVAccountRequest(TimeStampedModel):
     note = models.TextField(null=True, blank=True)
     course = models.ForeignKey(Course, null=True, related_name='account_requests')
     requestor = models.ForeignKey(User)
+    user_note = models.TextField(null=True, blank=True)
 
     def __unicode__(self):
         return self.email

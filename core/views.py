@@ -162,7 +162,8 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
                 'program_id': self.account_request_obj.program_id,
                 'language': 'english', 
                 'is_active': False, 
-                'perms': 'access'
+                'perms': 'access',
+                'user_note': self.account_request_obj.user_note
             }
         else:
             initial = {
@@ -202,7 +203,7 @@ class CreateGgvUserView(LoginRequiredMixin, CourseContextMixin, CreateView):
 
         assign_perm(perms, self.object, course)
         messages.success(self.request, 'User successfully added.')
-        # send_activation_notification(self.request, user_obj=self.object)
+        send_activation_notification(self.request, user_obj=self.object, user_note=form.cleaned_data['user_note'])
 
         try:
             account_request_obj = GGVAccountRequest.objects.filter(email=self.object.email)

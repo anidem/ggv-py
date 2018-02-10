@@ -538,7 +538,6 @@ class CreateGgvUserAccountRequestView(LoginRequiredMixin, CourseContextMixin, Cr
 
     def get_context_data(self, **kwargs):
         context = super(CreateGgvUserAccountRequestView, self).get_context_data(**kwargs)
-        
         try:
             context['user_list'] = self.user_list
         except:
@@ -548,6 +547,8 @@ class CreateGgvUserAccountRequestView(LoginRequiredMixin, CourseContextMixin, Cr
             context['google_db'] = self.course.ggv_organization.google_db.all()[0]
         except:
             pass
+
+        context['form'].fields['course'].queryset=get_objects_for_user(self.request.user, ['courses.instructor'])
 
         return context
 

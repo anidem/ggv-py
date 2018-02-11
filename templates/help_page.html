@@ -41,7 +41,16 @@
     <!-- Begin page content -->
     <div class="container-fluid">
         <div class="row center-block" style="padding-top: 50px">
-            <div class="col-md-10 col-md-offset-1"><h2>{{ object.title }}</h2></div>
+            <div class="col-md-10 col-md-offset-1">
+                <h2>{{ object.title }}
+                    {% if request.user.is_staff %}
+                    <a href="{% url 'help_page_edit' object.slug %}" class="btn btn-link btn-sm"><i class="fa fa-pencil"></i> edit</a>
+                    <a href="{% url 'help_page_create' %}" class="btn btn-link btn-sm"><i class="fa fa-plus"></i> create new page</a>
+                    <a href="{% url 'help_page_list' %}" class="btn btn-link btn-sm"><i class="fa fa-list"></i> list all pages</a>
+                    {% endif %}          
+                </h2>
+            </div>
+            
             <div class="col-md-10 col-md-offset-1">
 
                 {{ object.content|safe }}

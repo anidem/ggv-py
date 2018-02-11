@@ -260,6 +260,11 @@
                                             <i class="fa fa-envelope"></i> Send System Message
                                         </a>
                                     </li>
+                                    <li>
+                                        <a class="" href="{% url 'help_page_list' %}">
+                                            <i class="fa fa-list"></i> Help Pages
+                                        </a>
+                                    </li>
                                 {% endif %}
 
                                 <li>
@@ -328,6 +333,11 @@
                                             <i class="fa fa-envelope"></i> Send System Message
                                         </a>
                                     </li>
+                                    <li>
+                                        <a class="" href="{% url 'help_page_list' %}">
+                                            <i class="fa fa-list"></i> Help Pages
+                                        </a>
+                                    </li>                                    
                                 {% endif %}
 
                                 <li>
@@ -392,21 +402,24 @@
   crossorigin="anonymous"></script>
   
 
-  <!-- Latest compiled and minified JavaScript -->
+<!-- Latest compiled and minified JavaScript -->
 <script src="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
 
- <!-- Django session security -->
-  {% include 'session_security/all.html' %}
+<!-- Django session security -->
+{% include 'session_security/all.html' %}
 
-  <!-- Math Fonts MathJax -->
-  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js??config=TeX-AMS-MML_HTMLorMML"></script>
+<!-- Math Fonts MathJax -->
+<script src='https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.2/MathJax.js?config=TeX-MML-AM_CHTML'></script>
 
-  <script type="text/javascript">
-  $(function () {
-    $('[data-toggle="popover"]').popover();
-    $('[data-toggle="tooltip"]').tooltip();
-  })
-  </script>
+<!-- Local tinymce lib -->
+<script src="{% static 'js/tinymce/js/tinymce/tinymce.min.js' %}"></script>
+
+<script type="text/javascript">
+$(function () {
+  $('[data-toggle="popover"]').popover();
+  $('[data-toggle="tooltip"]').tooltip();
+})
+</script>
 
 
 {% block local_js %}{% endblock local_js %}

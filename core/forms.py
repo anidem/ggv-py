@@ -4,7 +4,7 @@ from django.forms import Form, ModelForm, ModelChoiceField, ChoiceField, Boolean
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.contrib.auth.models import User
 
-from core.models import GGVUser, AttendanceTracker, GGVAccountRequest
+from core.models import GGVUser, AttendanceTracker, GGVAccountRequest, SitePage
 from courses.models import Course
 from .models import Bookmark
 
@@ -306,4 +306,11 @@ class AttendanceTrackerUpdateForm(ModelForm):
         fields = ['code']
 
 
+class SitePageCreateForm(ModelForm):
 
+    class Meta:
+        model = SitePage
+        fields = ['title', 'content']
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 10, 'cols': 70, 'class': 'editor'})
+        }

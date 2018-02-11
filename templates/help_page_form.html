@@ -1,20 +1,18 @@
-<!-- question_worksheet_update.html -->
+<!-- help_page_form.html -->
 {% extends "base.html" %}
 {% load staticfiles %}
 {% load crispy_forms_tags %}
 
 {% block content %}
-    <form action="." method="post" enctype="multipart/form-data">{% csrf_token %}
-        {{ form | crispy }}
-        <input type="submit" value="update"/>
-    </form>
+  <form action="." method="post">{% csrf_token %}
+      {{ form|crispy }}
+      <input type="submit" value="Save Page" />
+  </form>
 {% endblock content %}
 
 {% block local_js %}
-    <!--<script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>-->
-    <!--<script src="//cdn.tinymce.com/4/tinymce.min.js"></script>-->
     <script>
-    tinymce.init({
+      tinymce.init({
         menubar: false,
         plugins: "code",
         selector:"textarea.editor",
@@ -24,4 +22,3 @@
     });
     </script>
 {% endblock local_js %}
-

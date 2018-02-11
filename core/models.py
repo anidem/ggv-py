@@ -12,6 +12,7 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
+from django.utils.text import slugify
 
 from guardian.shortcuts import get_objects_for_user
 from model_utils.models import TimeStampedModel
@@ -366,10 +367,18 @@ class SiteMessage(models.Model):
 
 class SitePage(models.Model):
     title = models.CharField(max_length=512)
-    content = models.TextField()
+    content = models.TextField(blank=True)
+    slug = models.SlugField(max_length=255)
 
     def get_help_url(self):
-        return reverse('help_page', args=[self.pk])
+        return reverse('help_page', args=[self.slug])
+
+    def get_absolute_url(self):
+        return reverse('help_page', args=[self.slug])
+
+    def save(self, *args, **kwargs):
+        self.slug = slugify(self.title)
+        super(SitePage, self).save(*args, **kwargs)  # Call the "real" save() method.
 
     def __unicode__(self):
         return self.title

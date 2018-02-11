@@ -26,7 +26,8 @@ from core.views import (
     BookmarkAjaxCreateView, BookmarkAjaxDeleteView, BookmarkAjaxUpdateView,
     AccessForbiddenView,
     CreateGgvUserView, UpdateGgvUserAccountView,  GgvUserView, UpdateGgvUserView, CreateGgvUserAccountRequestView, UpdateGgvUserAccountRequestView, DeleteGgvUserAccountRequestView, GgvUserActivationView, GgvUserArchiveThenDeleteView, GgvUserDeleteUnusedAccount,
-    PolicyView, FaqView, HelpView, GgvUsersDeactivationView, GgvUsersActivationView, AttendanceAjaxCodeUpdateView, AttendanceAjaxCodeCreateView, AttendanceAjaxCodeDeleteView, AttendanceUpdateAllView
+    PolicyView, FaqView, GgvUsersDeactivationView, GgvUsersActivationView, AttendanceAjaxCodeUpdateView, AttendanceAjaxCodeCreateView, AttendanceAjaxCodeDeleteView, AttendanceUpdateAllView,
+    HelpView, HelpCreateView, HelpUpdateView, HelpListView,
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import (
@@ -210,9 +211,14 @@ urlpatterns = [
     url(r'^grappelli/', include('grappelli.urls')),  # grappelli URLS
     url(r'^ggvadmin/',  admin.site.urls, name='staff_admin'),  # admin site
 
+    url(r'^help/add/$', HelpCreateView.as_view(), name='help_page_create'),
+    url(r'^help/edit/(?P<slug>[-\w]+)/$', HelpUpdateView.as_view(), name='help_page_edit'),
+    url(r'^help/list/$', HelpListView.as_view(), name='help_page_list'),
+    url(r'^help/(?P<slug>[-\w]+)/$', HelpView.as_view(), name='help_page'),
+
+
 
     url(r'^faq/$', FaqView.as_view(), name='faq'),
-    url(r'^help/(?P<pk>\d+)/$', HelpView.as_view(), name='help_page'),
     url(r'^policy/$', PolicyView.as_view(), name='policy'),
     url(r'^home/$', HomeView.as_view(), name='ggvhome'),
     url(r'^', IndexView.as_view(), name='splash'),

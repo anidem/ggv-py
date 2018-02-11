@@ -1,0 +1,24 @@
+<!-- help_page_list.html -->
+{% extends "base.html" %}
+{% load staticfiles %}
+
+{% block content %}
+
+    <div class="col-md-6 col-md-offset-1">
+        <h2>Site Page List </h2>
+    </div>
+    <div class="col-md-2 col-md-offset-1">
+        <h2><a href="{% url 'help_page_create' %}" class="btn btn-link btn-sm"><i class="fa fa-plus"></i> create new page</a></h2>
+    </div>
+
+    <div class="col-md-10 col-md-offset-1"><hr></div>  
+
+    {% for i in object_list %}
+        <div class="col-md-6 col-md-offset-1">
+            <a href="{% url 'help_page' i.slug %}" class="btn btn-link btn-sm">{{ i.title }}</a>
+        </div>
+        <div class="col-md-2 col-md-offset-1">
+            <a href="{% url 'help_page_edit' i.slug %}" class="btn btn-link btn-sm"><i class="fa fa-pencil"></i> edit</a>
+        </div>
+    {% endfor %}
+{% endblock content %}

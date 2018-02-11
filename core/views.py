@@ -18,7 +18,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 
-from braces.views import CsrfExemptMixin, JSONResponseMixin, JsonRequestResponseMixin, AjaxResponseMixin, LoginRequiredMixin
+from braces.views import CsrfExemptMixin, JSONResponseMixin, JsonRequestResponseMixin, AjaxResponseMixin, LoginRequiredMixin, StaffuserRequiredMixin
 from guardian.models import UserObjectPermission
 from guardian.shortcuts import assign_perm, get_objects_for_user, get_perms, get_user_perms, remove_perm
 from social.exceptions import SocialAuthBaseException, AuthException, AuthForbidden
@@ -28,7 +28,7 @@ from pretests.models import PretestAccount
 from archiver import serialize_user_data
 
 from .models import Bookmark, GGVUser, SiteMessage, Notification, SitePage, AttendanceTracker, GGVAccountRequest
-from .forms import BookmarkForm, GgvUserAccountCreateForm, GgvUserSettingsForm, GgvUserAccountUpdateForm, GgvUserStudentSettingsForm, GgvEmailQuestionToInstructorsForm, AttendanceTrackerUpdateForm, AttendanceTrackerCreateForm, GgvUserRequestAccountForm
+from .forms import BookmarkForm, GgvUserAccountCreateForm, GgvUserSettingsForm, GgvUserAccountUpdateForm, GgvUserStudentSettingsForm, GgvEmailQuestionToInstructorsForm, AttendanceTrackerUpdateForm, AttendanceTrackerCreateForm, GgvUserRequestAccountForm, SitePageCreateForm
 from .mixins import CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from .signals import *
 from .utils import update_attendance_for_all_users
@@ -792,7 +792,27 @@ class FaqView(TemplateView):
 class HelpView(DetailView):
     model = SitePage
     template_name = 'help_page.html'
-    
+
+
+class HelpCreateView(LoginRequiredMixin, StaffuserRequiredMixin, CreateView):
+    model = SitePage
+    template_name = 'help_page_form.html'
+    form_class = SitePageCreateForm
+    raise_exception = True
+ 
+
+class HelpUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, UpdateView):
+    model = SitePage
+    template_name = 'help_page_form.html'
+    form_class = SitePageCreateForm
+    raise_exception = True
+
+
+class HelpListView(LoginRequiredMixin, StaffuserRequiredMixin, ListView):
+    model = SitePage
+    template_name = 'help_page_list.html'
+    raise_exception = True
+
 
 class PolicyView(TemplateView):
     template_name = 'policy.html'

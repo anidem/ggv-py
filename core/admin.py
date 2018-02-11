@@ -202,7 +202,8 @@ class TempCourseGoogleDbAdmin(admin.ModelAdmin):
 
 
 class SitePageAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'get_help_url')
+    list_display = ('id', 'title', 'get_help_url', 'slug')
+    prepopulated_fields = {"slug": ("title",)}
 
 
 admin.site.register(GGVOrganization, GGVOrganizationAdmin)

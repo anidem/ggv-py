@@ -73,27 +73,6 @@
 <!-- LESSON BTNS -->
 
     <div class="row icon eng {% if user.ggvuser.language_pref == 'spanish' %}collapse{% endif %}">
-
-        <p><a href="" class="static btn-link" data-toggle="modal" data-target="#steps-to-completion"><img src="{% static 'img/steps.png' %}" height="32px"> Steps to Completion</a></p>
-
-        <!-- Modal -->
-        <div class="modal fade" id="steps-to-completion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Steps To Completion</h4>
-              </div>
-              <div class="modal-body">
-                <iframe src="{% static 'img/' %}steps-to-completion.html" class="pdfframe"></iframe>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close"></i></button>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {% for i in eng_lessons %}
         	<div class="col-md-3 icon-{{ i.lesson.subject }}">
         		<a class="static" href="{{ i.get_absolute_url }}">
@@ -104,14 +83,31 @@
                 <div class="well text-left">
                     <p><a href="" class="static btn-link" data-toggle="modal" data-target="#{{i.lesson.subject}}-ed-plan"><img src="{% static 'img/ed-plan.png' %}" height="32px"> Educational Plan</a></p>
                     <p><a href="" class="static btn-link" data-toggle="modal" data-target="#{{i.lesson.subject}}-study-guide"><img src="{% static 'img/study-guide.png' %}" height="32px"> Study Guide</a></p>
+                    <p><a href="" class="static btn-link" data-toggle="modal" data-target="#steps-to-completion"><img src="{% static 'img/steps.png' %}" height="32px"> Steps to Completion</a></p>
                 </div>
                 <!-- Modal -->
+                <div class="modal fade" id="steps-to-completion" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Steps To Completion</h4>
+                      </div>
+                      <div class="modal-body">
+                        <iframe src="{% static 'img/' %}steps-to-completion.html" class="pdfframe"></iframe>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="modal fade" id="{{i.lesson.subject}}-ed-plan" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                   <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">{{ i.lesson.title }} Study Guide</h4>
+                        <h4 class="modal-title" id="myModalLabel">{{ i.lesson.title }} Educational Plan</h4>
                       </div>
                       <div class="modal-body">
                         <iframe src="{% static 'img/' %}{{i.lesson.subject}}-ed-plan.html" class="pdfframe"></iframe>
@@ -145,25 +141,6 @@
 
     <div class="row icon span {% if user.ggvuser.language_pref != 'spanish' %}collapse{% endif %}">
 
-        <p><a href="" class="static btn-link" data-toggle="modal" data-target="#steps-to-completion-span"><img src="{% static 'img/steps.png' %}" height="32px"> Steps to Completion</a></p>
-
-        <!-- Modal -->
-        <div class="modal fade" id="steps-to-completion-span" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-          <div class="modal-dialog modal-lg" role="document">
-            <div class="modal-content">
-              <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="myModalLabel">Steps To Completion</h4>
-              </div>
-              <div class="modal-body">
-                <iframe src="{% static 'img/' %}steps-to-completion-span.html" class="pdfframe"></iframe>
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close"></i></button>
-              </div>
-            </div>
-          </div>
-        </div>
         {% for i in span_lessons %}
             <div class="col-md-3 icon-{{ i.lesson.subject }}">
                 <a class="static" href="{{ i.get_absolute_url }}">
@@ -172,16 +149,34 @@
                 </a>
                 {% if i.lesson.subject != 'default' %}
                 <div class="well text-left">
-                    <p><a href="" class="static btn-link" data-toggle="modal" data-target="#{{i.lesson.subject}}-ed-plan-span"><img src="{% static 'img/ed-plan.png' %}" height="32px"> Educational Plan</a></p>
-                    <p><a href="" class="static btn-link" data-toggle="modal" data-target="#{{i.lesson.subject}}-study-guide-span"><img src="{% static 'img/study-guide.png' %}" height="32px"> Study Guide</a></p>
+                    <p><a href="" class="static btn-link" data-toggle="modal" data-target="#{{i.lesson.subject}}-ed-plan-span"><img src="{% static 'img/ed-plan.png' %}" height="32px"> Plan Educativo</a></p>
+                    <p><a href="" class="static btn-link" data-toggle="modal" data-target="#{{i.lesson.subject}}-study-guide-span"><img src="{% static 'img/study-guide.png' %}" height="32px"> Guía de Estudio</a></p>
+                    <p><a href="" class="static btn-link" data-toggle="modal" data-target="#steps-to-completion-span"><img src="{% static 'img/steps.png' %}" height="32px"> Pasos Para Completar</a></p>
                 </div>
+
                 <!-- Modal -->
+                <div class="modal fade" id="steps-to-completion-span" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                  <div class="modal-dialog modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="myModalLabel">Pasos Para Completar</h4>
+                      </div>
+                      <div class="modal-body">
+                        <iframe src="{% static 'img/' %}steps-to-completion-span.html" class="pdfframe"></iframe>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close"></i></button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
                 <div class="modal fade" id="{{i.lesson.subject}}-ed-plan-span" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                   <div class="modal-dialog modal-lg" role="document">
                     <div class="modal-content">
                       <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">{{ i.lesson.title }} Study Guide</h4>
+                        <h4 class="modal-title" id="myModalLabel">{{ i.lesson.title }} Plan Educativo</h4>
                       </div>
                       <div class="modal-body">
                         <iframe src="{% static 'img/' %}{{i.lesson.subject}}-ed-plan.html" class="pdfframe"></iframe>
@@ -197,7 +192,7 @@
                     <div class="modal-content">
                       <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                        <h4 class="modal-title" id="myModalLabel">{{ i.lesson.title }} Study Guide</h4>
+                        <h4 class="modal-title" id="myModalLabel">{{ i.lesson.title }} Guía de Estudio</h4>
                       </div>
                       <div class="modal-body">
                         <iframe src="{% static 'img/' %}{{i.lesson.subject}}-study-guide.html" class="pdfframe"></iframe>

@@ -200,7 +200,7 @@
                     {% endif %}
 
                     <!-- login/logout / settings dropdown menu -->
-                    <li class="dropdown"  id="user_prefs" data-last_act="{{last_activity}}" data-placement="bottom" role="button" data-toggle="popover" data-trigger="focus" data-html="true" data-content="<p>Continue with {{last_activity}}?</p>">
+                    <li class="dropdown">
                         {% if request.user.is_authenticated %}
                           {% if request.user.ggvuser.language_pref == 'spanish' %}
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" aria-expanded="true">
@@ -276,7 +276,7 @@
                                 </li>
                             </ul>
                           {% else %}
-                            <a href="#" class="dropdown-toggle"  data-toggle="dropdown" aria-expanded="true" >
+                            <a href="#" class="dropdown-toggle"  data-toggle="dropdown" aria-expanded="true">
                                 <i class="{{role_icon}} text-primary"></i>
                                 {{request.user.email}} <i class="fa fa-caret-down"></i>
                             </a>

@@ -308,6 +308,17 @@ class CourseView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, Pr
         context['deactivated'] = course.deactivated_list()
         context['unvalidated'] = course.unvalidated_list()
 
+        # this provides a link to last activity in log.
+        context['last_activity'] = ''
+        try:
+            acts = self.request.user.activitylog.all()[0]
+
+            if acts.action == 'login':
+                acts = self.request.user.activitylog.all().exclude(action='login').exclude(action='logout')[:1]
+                context['last_activity'] = acts[0].message
+        except:
+            context['last_activity'] = ''
+
         # this provides access to the user's full list of courses.
         context['courses'] = [
             Course.objects.get(slug=i) for i in self.request.session['user_courses']]

@@ -24,21 +24,6 @@
         <h2><i class="fa fa-home"></i> GGV Curriculum Page</h2>       
     {% endif %}
     <p class="lead">{{ course }}</p>    
-    
-
-    <div id="prev_act" class="modal fade" tabindex="-1" role="dialog" data-last_act="{{ last_activity }}">
-      <div class="modal-dialog" role="document">
-        <div class="modal-content">
-          <div class="modal-body">
-            <p>Continue with {{last_activity|safe}}?</p>
-          </div>
-          <div class="modal-footer text-center">
-            <button type="button" class="btn btn-block btn-default" data-dismiss="modal">No Thanks</button>
-          </div>
-        </div><!-- /.modal-content -->
-      </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
-
 </div>
 {% endblock page_header %}
 
@@ -381,8 +366,9 @@
             });
 
             $(document).ready(function() { 
-                if ($("#prev_act").data('last_act')) {
-                    $("#prev_act").modal("show");   
+                if ($("#user_prefs").data('last_act')) {
+                    $("#user_prefs").popover('show')
+                    // $("#prev_act").hide();   
                 }
             });
         });

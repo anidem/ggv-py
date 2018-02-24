@@ -418,6 +418,13 @@ form ul {
 
 .tooltip-msg {  background-color: #fff; color: #000; border: 1px #888 solid }
 
+.django-msg.alert {
+    position: fixed;
+    top: 50;
+    right: 0;
+    width: 200px;
+    z-index: 999;
+}
 
 
 

@@ -2,6 +2,7 @@
 from django import forms
 from django.views.generic import DetailView, UpdateView, ListView
 from django.contrib.contenttypes.models import ContentType
+from django.contrib import messages
 from django.core.urlresolvers import reverse_lazy
 
 
@@ -86,6 +87,16 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         context['is_staff'] = self.request.user.is_staff
         context['instructor'] = self.request.user in context['course'].instructor_list() or self.request.user.is_staff
         context['language_pref'] = self.request.user.ggvuser.language_pref
+
+        # provides a link to last activity in this lesson.
+        try:
+            acts = self.request.user.activitylog.all().filter(message_detail=self.get_object().title)[:1]
+            context['last_activity'] = acts[0].message
+            msg = u'<h4 class="text-center">Continue where you left off?</h4>'
+            msg += u'<h4 class="text-center">' + acts[0].message + '</h4>'
+            messages.info(self.request, msg, extra_tags='safe')
+        except:
+            pass  # no previous activity detected for this lesson
 
         return context
 

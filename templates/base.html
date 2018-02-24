@@ -363,21 +363,28 @@
 
     <!-- Begin page content -->
     <div class="container-fluid">
-      <div class="row">{% block page_header %} {% endblock page_header %}</div>
-      <div class="row">
-        <div class="col-md-6 col-md-offset-3"> 
-            {% if messages %}
-              {% for message in messages %}
-                <div class="{% if message.tags %}bg-{{ message.tags }} {% endif %}alert alert-dismissible" role="alert">
-                    <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                     <p>{{ message }}</p>
-                </div>
-              {% endfor %}
-            {% endif %}
-        </div>
+
+      {% if messages %}
+        {% for message in messages %}
+          <div class="django-msg {% if message.tags %}bg-{{ message.tags }} {% endif %}alert alert-dismissible" role="alert">
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+              {% if 'safe' in message.tags %}
+                <p>{{ message|safe }}</p>
+              {% else %}
+               <p>{{ message }}</p>
+              {% endif %}
+          </div>
+        {% endfor %}
+      {% endif %}
+      <div class="row"> <!-- previous container django messages -->
+        <div class="col-md-6 col-md-offset-3"></div>
       </div>
+
+      <div class="row">{% block page_header %} {% endblock page_header %}</div>
+
       <div class="row">{% block content %} {% endblock content %}</div>
     </div>
+
     <!-- End page content -->
 
 

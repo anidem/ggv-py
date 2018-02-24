@@ -553,7 +553,7 @@ class SendEmailToAllActiveUsers(LoginRequiredMixin, StaffuserRequiredMixin, Form
         messages.info(self.request, 'Email message has been sent.')
         return super(SendEmailToAllActiveUsers, self).form_valid(form)
 
-""" BACKEND EMAIL PROCEDURES. FUNCTIONS THAT ARE INITIATED AUTOMATICALLY BY THE SYSTEM. """
+""" BACKEND EMAIL PROCEDURES. FUNCTIONS THAT ARE INITIATED AUTOMATICALLY BY THE SYSTEM (no forms). """
 
 def SendWorksheetNotificationEmailToInstructors(request=None, course=None, worksheet=None):
     """
@@ -568,7 +568,7 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
 
     use case: System emails instructor when a student completes a quiz.
     """
-    user_sender = request.user.first_name + ' ' + request.user.last_name + ' (' + request.user.email + ')'
+    user_sender = request.user.first_name + u' ' + request.user.last_name + u' (' + request.user.email + u')'
     # print user_sender
     # user_sender = user_sender.decode('utf-8')
 
@@ -628,10 +628,6 @@ def send_request_to_grade(request, course=None, question_response_obj=None):
     """
     if not question_response_obj:
         return
-
-    # if question_response_obj.grade_request_sent:
-    #     return
-
     
     access_url = reverse('question_response_grade', args=[question_response_obj.id])
     access_url = 'http://' + request.get_host() + access_url
@@ -792,4 +788,42 @@ def send_account_request(request, account_request_obj=None):
     email.send(fail_silently=True)
     messages.info(request, 'Your request for a new account has been sent to the managers for your account.')
 
+def send_clear_worksheet_request(request=None, course=None, worksheet=None):
+    """Sends email to instructor(s) of a course on behalf of a student. 
+    Request indicates that student would like the instructor(s) to clear the worksheet responses
+    for a worksheet.
+    """ 
+    user_sender = u''
+    recipients = []
+    try:
+        user_sender = request.user.first_name + u' ' + request.user.last_name + u' (' + request.user.email + u')'
+        for i in course.instructor_list():
+            if i.ggvuser.receive_notify_email:
+                recipients.append(i.email)
+
+        if not recipients:  # Nobody to send to. Recipient list is empty!
+            messages.info(request, 'Your instructor(s) did not receive your email to clear your worksheet results but other administrative staff will be contacted.')
+
+            for i in course.manager_list():
+                recipients.append(i.email)
+
+        worksheet_results_url = 'http://' + request.get_host() + reverse('worksheet_user_report', args=[course.slug, worksheet.id, request.user.id])
+
+    except Exception as e:
+        return
+
+    html_message = u'<p>Hi {0} Instructor(s),</p><p>A student in your course, {1}, is requesting that an instructor clear their responses to the following worksheet.</p>'.format(course.title, user_sender)
+    html_message += u'<p>Please access the worksheet report link to complete this request.'
+    html_message += u"<p><a href='{0}'>{0}</a></p>".format(worksheet_results_url)
+   
+    email = EmailMultiAlternatives(
+        subject='GGV Student is Requesting to Clear a Worksheet',
+        body=html_message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=recipients,
+        )
+
+    email.attach_alternative(html_message, "text/html")
+    email.send(fail_silently=False)
+    messages.info(request, 'Instructors have been emailed with your request.')
 

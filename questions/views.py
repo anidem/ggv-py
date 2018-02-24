@@ -24,7 +24,7 @@ from sendfile import sendfile
 from core.models import ActivityLog, Notification
 from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import PresetBookmarkForm
-from core.emails import SendWorksheetNotificationEmailToInstructors, send_request_to_grade, send_score_notification
+from core.emails import SendWorksheetNotificationEmailToInstructors, send_request_to_grade, send_score_notification, send_clear_worksheet_request
 from notes.forms import UserNoteForm
 from lessons.models import Lesson, Section
 from courses.models import Course
@@ -565,6 +565,16 @@ class UserResponsesResetView(LoginRequiredMixin, CourseContextMixin, DetailView)
                 raise PermissionDenied  # return a forbidden response
             
             # return super(UserResponsesResetView, self).get(request, *args, **kwargs)    
+
+
+class UserResponsesResetRequestView(LoginRequiredMixin, CourseContextMixin, DetailView):
+    model = QuestionSet
+    template_name = ''
+
+    def get(self, request, *args, **kwargs):
+            course = Course.objects.get(slug=self.kwargs['crs_slug'])
+            send_clear_worksheet_request(request=request, course=course, worksheet=self.get_object())
+            return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.get_object().id, request.user.id)))
 
 
 class QuestionResponseGradeView(LoginRequiredMixin, UpdateView):

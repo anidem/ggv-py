@@ -43,7 +43,7 @@ from questions.views import (
     OptionQuestionView, OptionQuestionUpdateView,
     TextQuestionView, TextQuestionUpdateView,
     QuestionAssetHandlerView,
-    UserReportView, FullReportView, UserResponsesResetView, QuestionResponseGradeView,
+    UserReportView, FullReportView, UserResponsesResetView, QuestionResponseGradeView, UserResponsesResetRequestView,
     LessonKeyView, WorksheetKeyView, WorksheetCompletedView, RestrictResultsUpdateView, TestDocView
     )
 from slidestacks.views import SlideView, SlideAssetHandlerView, SlideStackInfoView, SlideStackUpdateView, slide_view
@@ -128,6 +128,7 @@ urlpatterns = [
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<i>\d+)/(?P<j>\d+)/$', QuestionResponseView.as_view(), name='question_response'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/report/(?P<user>\d+)/$', UserReportView.as_view(), name='worksheet_user_report'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/reset/(?P<user>\d+)/$', UserResponsesResetView.as_view(), name='reset_worksheet_responses'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/request-reset/$', UserResponsesResetRequestView.as_view(), name='reset_worksheet_responses_request'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/fullreport/$', FullReportView.as_view(), name='worksheet_report'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/key/$', WorksheetKeyView.as_view(), name='worksheet_key'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/status-update/(?P<pk>\d+)/$', RestrictResultsUpdateView.as_view(), name='worksheet_report_access'),

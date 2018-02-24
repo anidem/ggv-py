@@ -17,7 +17,7 @@ def convert_questions_to_option(ws_id=None):
     # questions = ws.get_ordered_question_list()
 
     # or specify pks for each question to convert:
-    pks = [857, 858, 859, 860] # SPAN: 857, 858, 859, 860 # ENG: 844, 845, 846, 848
+    pks = [844, 845, 846, 848] # SPAN: 857, 858, 859, 860 # ENG: 844, 845, 846, 848
     questions = []
     for i in pks:
         questions.append(TextQuestion.objects.get(pk=i))

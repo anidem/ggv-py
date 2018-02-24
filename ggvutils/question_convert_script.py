@@ -3,7 +3,7 @@
 # ALERT: THIS SCRIPT WILL DELETE DATA! Backup before attempting or modify to do a "dry run"
 
 from questions.models import *
-from utils.wsutil import convert_text_to_option
+from .wsutil import convert_text_to_option
 
 def convert_questions_to_option(ws_id=None):
     # UNCOMMENT AND MODIFTY THIS ACCORDINGLY
@@ -14,13 +14,13 @@ def convert_questions_to_option(ws_id=None):
       status.delete()
 
     # Either retrieve all questions from a worksheet:
-    questions = ws.get_ordered_question_list()
+    # questions = ws.get_ordered_question_list()
 
     # or specify pks for each question to convert:
-    # pks = []
-    # questions = []
-    # for i in pks:
-    #     questions.append(TextQuestion.objects.get(pk=i))
+    pks = [857, 858, 859, 860] # SPAN: 857, 858, 859, 860 # ENG: 844, 845, 846, 848
+    questions = []
+    for i in pks:
+        questions.append(TextQuestion.objects.get(pk=i))
 
 
     # clear all bookmarks for each question

@@ -25,15 +25,15 @@
         <li class="lead"><strong>{{ student.first_name }} {{ student.last_name }}</strong></li>
 
         <li class="pull-right">
-            {% if is_instructor or user.is_staff %}
+            {% if is_instructor or is_manager or user.is_staff %}
                 <span>
                     <a href="{% url 'reset_worksheet_responses' course.slug worksheet.id student.id %}" class="btn btn-xs btn-danger" name="reset_responses" data-toggle="tooltip" data-placement="left" title="Erases this student's responses to this worksheet. Student will have to reanswer all questions."><i class="fa fa-exclamation-triangle"></i> clear student responses</a>
-                    
                 </span>
             {% else %}
-                <span>
+                <span></span>
+               <!--  <span>
                     <a href="{% url 'reset_worksheet_responses_request' course.slug worksheet.id %}" class="btn btn-xs btn-danger" name="reset_responses" data-toggle="tooltip" data-placement="left" title="Clear all of your responses to try again."><i class="fa fa-exclamation-triangle"></i> request to clear your responses?</a>                    
-                </span>
+                </span> -->
 
             {% endif %}
         </li>

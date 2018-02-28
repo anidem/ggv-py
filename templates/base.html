@@ -26,7 +26,7 @@
   <title>{% block page_title %} GGV Interactive {% endblock page_title %}</title>
 
   <!-- Bootstrap --> 
-<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
 
   <!-- Optional theme -->
   <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
@@ -37,6 +37,20 @@
   
   <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
   <link rel="stylesheet" href="{% static 'css/ggv.css' %}">
+
+{% if request.user.is_staff %}
+  <!-- Start of Rocket.Chat Livechat Script -->
+}
+<script type="text/javascript">
+(function(w, d, s, u) {
+  w.RocketChat = function(c) { w.RocketChat._.push(c) }; w.RocketChat._ = []; w.RocketChat.url = u;
+  var h = d.getElementsByTagName(s)[0], j = d.createElement(s);
+  j.async = true; j.src = 'https://ggvtalk.herokuapp.com/packages/rocketchat_livechat/assets/rocketchat-livechat.min.js?_=201702160944';
+  h.parentNode.insertBefore(j, h);
+})(window, document, 'script', 'https://ggvtalk.herokuapp.com/livechat');
+</script>
+<!-- End of Rocket.Chat Livechat Script -->
+{% endif %}
 
   {% block local_head %} {% endblock local_head %}
 </head>
@@ -431,19 +445,25 @@ $(function () {
 
 
 {% block local_js %}{% endblock local_js %}
+{% if request.user.is_staff %}
 
-{% if user.is_staff %}
 <!-- Start of Rocket.Chat Livechat Script -->
 <script type="text/javascript">
-(function(w, d, s, u) {
-  w.RocketChat = function(c) { w.RocketChat._.push(c) }; w.RocketChat._ = []; w.RocketChat.url = u;
-  var h = d.getElementsByTagName(s)[0], j = d.createElement(s);
-  j.async = true; j.src = 'https://ggvtalk.herokuapp.com/packages/rocketchat_livechat/assets/rocketchat-livechat.min.js?_=201702160944';
-  h.parentNode.insertBefore(j, h);
-})(window, document, 'script', 'https://ggvtalk.herokuapp.com/livechat');
+RocketChat(function() {
+    this.setCustomField('ggv-user', '{{ request.user.first_name }}');
+    // this.setCustomField('name', '{{ request.user.first_name }}', true);
+    // this.setCustomField('email', '{{ request.user.email }}', true);
+
+    // this.setDepartment('TEST DEPT');
+});
+
 </script>
 <!-- End of Rocket.Chat Livechat Script -->
 {% endif %}
+
+
+
+
 </body>
 
 

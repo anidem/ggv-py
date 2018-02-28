@@ -92,13 +92,14 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
         try:
             acts = self.request.user.activitylog.all().filter(message_detail=self.get_object().title)[:1]
             context['last_activity'] = acts[0].message
-            msg = u'<h4 class="text-center">Continue where you left off?</h4>'
-            msg += u'<h4 class="text-center">' + acts[0].message + '</h4>'
+            msg = u'<p class="text-center">Continue where you left off?</p>'
+            msg += u'<p class="text-center">' + context['last_activity'] + '</p>'
             messages.info(self.request, msg, extra_tags='safe')
         except:
-            pass  # no previous activity detected for this lesson
+            context['last_activity'] = ''  # no previous activity detected for this lesson
 
         return context
+
 
 class SectionUpdateView(LoginRequiredMixin, StaffuserRequiredMixin, CourseContextMixin, UpdateView):
     model = Section

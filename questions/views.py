@@ -545,9 +545,10 @@ class UserResponsesResetView(LoginRequiredMixin, CourseContextMixin, DetailView)
     def get(self, request, *args, **kwargs):
             course = Course.objects.get(slug=self.kwargs['crs_slug'])
             is_instructor = 'instructor' in get_perms(self.request.user, course)
+            is_manager = 'manage' in get_perms(self.request.user, course)
             user = User.objects.get(pk=self.kwargs['user'])
 
-            if self.request.user.is_staff or is_instructor:
+            if self.request.user.is_staff or is_instructor or is_manager:
                 try:
                     ws = self.get_object()
                     responses = ws.get_user_response_objects(user)

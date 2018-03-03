@@ -1,0 +1,43 @@
+<div class="row">
+	<div class="col-md-10 col-md-offset-1">
+		<div id="preamble-sequence" class="carousel slide" data-interval="false" data-ride="carousel">
+			<!-- Indicators -->
+			<ol class="carousel-indicators">
+				<li data-target="#preamble-sequence" data-slide-to="0" class="active"></li>
+				<li data-target="#preamble-sequence" data-slide-to="1"></li>
+				<li data-target="#preamble-sequence" data-slide-to="2"></li>
+			</ol>
+
+			<!-- Wrapper for slides -->
+
+			<div class="carousel-inner row" role="listbox">
+				<div id="plan" class="item active">
+					<div class="col-md-12">
+						<a class="pull-right btn btn-lg btn-link" href="#preamble-sequence" role="button" data-slide="next" style="background-image: none"> Study Guide <span class="badge">2</span> <i class="fa fa-arrow-right"></i></a>
+					</div>
+					<div class="col-md-12"> <h1 class="text-center">1. {{ plan.title }}</h1><hr></div>
+					<div class="col-md-12">{{plan.content|safe}}</div>
+				</div>
+
+				<div id="guide" class="item">
+					<div class="col-md-12">
+						<a class="pull-left btn btn-lg btn-link" href="#preamble-sequence" role="button" data-slide="prev" style="background-image: none"><i class="fa fa-arrow-left"></i> <span class="badge">1</span> Educational Plan</a>
+						<a class="pull-right btn btn-lg btn-link" href="#preamble-sequence" role="button" data-slide="next" style="background-image: none"> Steps to Completion <span class="badge">3</span> <i class="fa fa-arrow-right"></i></a>
+					</div>
+					<div class="col-md-12"><h1 class="text-center">2. {{ guide.title }}</h1><hr></div>
+					<div class="col-md-12">{{guide.content|safe}}</div>
+				</div>
+
+				<div id="steps" class="item">
+					<div class="col-md-12">
+						<a class="pull-left btn btn-lg btn-link" href="#preamble-sequence" role="button" data-slide="prev" style="background-image: none"><i class="fa fa-arrow-left"></i> <span class="badge">2</span> Study Guide</a>
+						<a class="pull-right btn btn-lg btn-link" href="{% url 'lesson' course.slug object.pk %}" role="button" data-slide="next" style="background-image: none">Get Started! <i class="fa fa-arrow-right"></i></a>
+					</div>
+					<div class="col-md-12"><h1 class="text-center">3. {{ steps.title }}<hr></h1></div>
+					<div class="col-md-12">{{steps.content|safe}}</div>
+				</div>
+			</div>	
+		</div>
+	</div>
+</div>
+

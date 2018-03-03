@@ -377,7 +377,8 @@ class SitePage(models.Model):
         return reverse('help_page', args=[self.slug])
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.title)
+        if not self.slug:
+            self.slug = slugify(self.title)
         super(SitePage, self).save(*args, **kwargs)  # Call the "real" save() method.
 
     def __unicode__(self):

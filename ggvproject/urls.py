@@ -37,7 +37,7 @@ from courses.views import (
     UserManageView, UserProgressView, UserProgressViewDateSelector,
     CourseMessageAddView, CourseMessageUpdateView, CourseMessageDeleteView
     )
-from lessons.views import LessonView, SectionUpdateView
+from lessons.views import LessonView, SectionUpdateView, LessonPreambleView
 from questions.views import (
     WorksheetHomeView, WorksheetUpdateView, WorksheetLaunchView, QuestionResponseView,
     OptionQuestionView, OptionQuestionUpdateView,
@@ -112,6 +112,7 @@ urlpatterns = [
 
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/$', LessonView.as_view(), name='lesson'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/key/$', LessonKeyView.as_view(), name='lesson_key'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/lesson/(?P<pk>\d+)/preamble/$', LessonPreambleView.as_view(), name='lesson_preamble'),
 
     url(r'^ggv/(?P<crs_slug>[-\w]+)/add/message/$', CourseMessageAddView.as_view(), name='add_course_msg'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/edit/message/(?P<pk>\d+)/$', CourseMessageUpdateView.as_view(), name='edit_course_msg'),

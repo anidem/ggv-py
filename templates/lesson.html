@@ -21,7 +21,6 @@
         {% if i.act.activity_type == 'slidestack' %}
             <a href="/stacks/{{i.act.asset}}"><i class="fa fa-desktop icon-slidestack"></i> {{ i.act.title }}</a>
         {% else %}
-
             <a href="{% url 'question_response' course.slug i.act.id 1 %}"><i class="fa fa-pencil-square-o"></i> {{ i.act.title|truncatewords:5 }}</a>
         {% endif %}
         </li>
@@ -80,27 +79,17 @@
 
 {% block content %}
 
-<!-- {% if last_activity %}
-<div class="support_doc" data-last_act="{{ last_activity }}"></div>
-
-{% else %}
-<div class="modal fade support_doc" id="{{object.subject}}-ed-plan" data-last_act="{{ last_activity }}" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">{{ object.title }} Educational Plan (scroll below to view document)</h4>
-      </div>
-      <div class="modal-body">
-        <iframe src="{% static 'img/' %}{{object.subject}}-ed-plan.html" class="pdfframe"></iframe>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-close"></i></button>
-      </div>
+{% if last_activity == 'preamble' %}
+<div id="preamble" class="modal fade" style="width: 100%" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-last_activity="{{ last_activity }}" data-keyboard="false">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            {% include 'lesson_preamble.html' %}
+        </div>
     </div>
-  </div>
 </div>
-{% endif %} -->
+{% endif %}
+
+
 
 <div class="col-md-12 lesson_list" data-course="{{ course.id }}" data-user="{{ user }}">
 	{% for i in acts %}
@@ -197,12 +186,11 @@
     <script src="{% static 'js/lessons.js'%}"></script>
     <script type="text/javascript">
         jQuery(function($) {
+            
             $(document).ready(function() { 
-                // if ($(".support_doc").data('last_act')==="") {
-                    // $(".support_doc").modal("show");
-                    // $("#prev_act").hide();   
-                // }
-                
+                if ($("#preamble").data("last_activity") === "preamble") {
+                    $("#preamble").modal("show");
+                }                
             });
         })
     </script>

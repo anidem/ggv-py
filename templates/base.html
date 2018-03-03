@@ -40,7 +40,7 @@
 
 {% if request.user.is_staff %}
   <!-- Start of Rocket.Chat Livechat Script -->
-}
+
 <script type="text/javascript">
 (function(w, d, s, u) {
   w.RocketChat = function(c) { w.RocketChat._.push(c) }; w.RocketChat._ = []; w.RocketChat.url = u;
@@ -378,20 +378,20 @@
     <!-- Begin page content -->
     <div class="container-fluid">
 
-      {% if messages %}
-        {% for message in messages %}
-          <div class="django-msg {% if message.tags %}bg-{{ message.tags }} {% endif %}alert alert-dismissible" role="alert">
-              <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-              {% if 'safe' in message.tags %}
-                <p>{{ message|safe }}</p>
-              {% else %}
-               <p>{{ message }}</p>
-              {% endif %}
-          </div>
-        {% endfor %}
-      {% endif %}
+
       <div class="row"> <!-- previous container django messages -->
-        <div class="col-md-6 col-md-offset-3"></div>
+        {% if messages %}
+          {% for message in messages %}
+            <div class="django-msg {% if message.tags %}bg-{{ message.tags }} {% endif %}alert alert-dismissible" role="alert">
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                {% if 'safe' in message.tags %}
+                  <p>{{ message|safe }}</p>
+                {% else %}
+                 <p>{{ message }}</p>
+                {% endif %}
+            </div>
+          {% endfor %}
+        {% endif %}
       </div>
 
       <div class="row">{% block page_header %} {% endblock page_header %}</div>

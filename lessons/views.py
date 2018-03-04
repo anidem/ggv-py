@@ -172,7 +172,9 @@ class LessonPreambleView(LoginRequiredMixin, CourseContextMixin, DetailView):
         guide = subject+'-guide'
         steps = 'steps-to-completion'
 
-        if self.request.user.ggvuser.language_pref == 'spanish':
+        context['language_pref'] = self.request.user.ggvuser.language_pref
+
+        if context['language_pref'] == 'spanish':
             plan += '-span'
             guide += '-span'
             steps += '-span'

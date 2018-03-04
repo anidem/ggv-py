@@ -46,12 +46,13 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
                 msg += u'<p class="text-center">' + self.last_activity + '</p>'
                 messages.info(self.request, msg, extra_tags='safe')
         
-        if not last_lesson_act:
-            # No prior lesson related events exist. Activate preamble.
-            msg_url = reverse('lesson_preamble', args=[self.kwargs['crs_slug'],self.get_object().pk])
-            message = u'<a href="' + msg_url + u'">' + self.get_object().title + u'</a>'
-            ActivityLog(user=request.user, action='preamble', message=message, message_detail=self.get_object().title).save()
-            self.last_activity = 'preamble'  # activate modal in lesson view
+        # temporary shutoff
+        # if not last_lesson_act:
+        #     # No prior lesson related events exist. Activate preamble.
+        #     msg_url = reverse('lesson_preamble', args=[self.kwargs['crs_slug'],self.get_object().pk])
+        #     message = u'<a href="' + msg_url + u'">' + self.get_object().title + u'</a>'
+        #     ActivityLog(user=request.user, action='preamble', message=message, message_detail=self.get_object().title).save()
+        #     self.last_activity = 'preamble'  # activate modal in lesson view
             
             # turn this on if we simply want to redirect
             # return redirect('lesson_preamble', crs_slug=self.kwargs['crs_slug'], pk=self.get_object().pk)                       
@@ -129,15 +130,14 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
 
 
         subject = self.get_object().subject
-        plan = subject+'-educational-plan'
+        plan = subject+'-ed-plan'
         guide = subject+'-guide'
         steps = 'steps-to-completion'
 
-        # uncomment after spanish materials have converted
-        # if self.request.user.ggvuser.language_pref == 'spanish':
-        #     plan += '-span'
-        #     guide += '-span'
-        #     steps += '-span'
+        if self.request.user.ggvuser.language_pref == 'spanish':
+            plan += '-span'
+            guide += '-span'
+            steps += '-span'
 
         context['plan'] = SitePage.objects.get(slug=plan)
         context['guide'] = SitePage.objects.get(slug=guide)
@@ -168,20 +168,18 @@ class LessonPreambleView(LoginRequiredMixin, CourseContextMixin, DetailView):
     def get_context_data(self, **kwargs):
         context = super(LessonPreambleView, self).get_context_data(**kwargs)
         subject = self.get_object().subject
-        plan = subject+'-educational-plan'
+        plan = subject+'-ed-plan'
         guide = subject+'-guide'
         steps = 'steps-to-completion'
 
-        # uncomment after spanish materials have converted
-        # if self.request.user.ggvuser.language_pref == 'spanish':
-        #     plan += '-span'
-        #     guide += '-span'
-        #     steps += '-span'
+        if self.request.user.ggvuser.language_pref == 'spanish':
+            plan += '-span'
+            guide += '-span'
+            steps += '-span'
 
         context['plan'] = SitePage.objects.get(slug=plan)
         context['guide'] = SitePage.objects.get(slug=guide)
         context['steps'] = SitePage.objects.get(slug=steps)
-
 
 
         return context

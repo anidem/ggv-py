@@ -23,7 +23,7 @@ from openpyxl.utils import get_column_letter
 from openpyxl.styles import Font, Alignment
 from braces.views import LoginRequiredMixin, JSONResponseMixin, AjaxResponseMixin
 
-from core.models import Notification, SiteMessage, BOOKMARK_TYPES, DEACTIVATION_TYPES
+from core.models import Notification, SiteMessage, BOOKMARK_TYPES, DEACTIVATION_TYPES, SitePage
 from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin, CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from core.utils import UnicodeWriter, GGVExcelWriter, get_daily_log_times, get_daily_log_times_v2, elapsed_time_per_event
 from questions.models import QuestionSet, UserWorksheetStatus
@@ -318,7 +318,31 @@ class CourseView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, Pr
             context['site_message'] = None
 
         context['course_home_view'] = True
+
+        eng_lessons = []
+        for i in context['eng_lessons']:
+            try:
+                plan = SitePage.objects.get(slug=i.lesson.subject+'-ed-plan')
+                guide = SitePage.objects.get(slug=i.lesson.subject+'-guide')
+                steps = SitePage.objects.get(slug='steps-to-completion')
+                eng_lessons.append((i, (plan, guide, steps)))
+            except:
+                eng_lessons.append((i, (None, None, None)))
+                
+        span_lessons = []
+        for i in context['span_lessons']:
+            try:
+                plan = SitePage.objects.get(slug=i.lesson.subject+'-ed-plan-span')
+                guide = SitePage.objects.get(slug=i.lesson.subject+'-guide-span')
+                steps = SitePage.objects.get(slug='steps-to-completion-span')
+                span_lessons.append((i, (plan, guide, steps)))
+            except:
+                span_lessons.append((i, (None, None, None)))
+
+
         
+        context['english_lessons'] = eng_lessons
+        context['spanish_lessons'] = span_lessons
         return context
 
 

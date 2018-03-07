@@ -17,7 +17,7 @@ from .models import SlideStack
 
 class slide_view(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, DetailView):
 
-    """ IFrame version until SlideView is debugged. """
+    """ IFrame version that requires unprotected access to slidestacks. """
 
     model = SlideStack
     template_name = 'slidestack_view.html'
@@ -56,17 +56,20 @@ class slide_view(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, De
 
 
 class SlideView(LoginRequiredMixin, AccessRequiredMixin, RedirectView):
+    """ Experimental component that routes all file access for ispring stacks through 
+    this view and subsequently the SlideAssetHandlerView. If successful we can protect the ispring
+    data from unauthorized access by configuring web server directory permissions
+    """
     slide = None
     lesson = None
     access_object = 'activity'
 
     def dispatch(self, *args, **kwargs):
         try:
-            slideroot = kwargs.pop('slideroot')
-            self.slide = SlideStack.objects.get(pk=slideroot)
+            asset = kwargs.pop('asset')
+            self.slide = SlideStack.objects.get(asset=asset)
             self.lesson = self.slide.lesson
         except Exception as e:
-            print e
             pass
 
         return super(SlideView, self).dispatch(*args, **kwargs)
@@ -77,10 +80,13 @@ class SlideView(LoginRequiredMixin, AccessRequiredMixin, RedirectView):
             return request
 
         abs_filename = os.path.join(
-            os.path.join(settings.STACKS_ROOT, self.slide.asset), 'html5.html')
+            os.path.join(settings.STACKS_ROOT, self.slide.asset), 'index.html')
+
+        msg_detail = self.lesson.title
+        msg = '<a href="%s">%s</a>' % (request.path, self.slide.title)
 
         ActivityLog(
-            user=self.request.user, action='access', message=self.slide.id).save()
+                user=self.request.user, action='access-presentation', message=msg, message_detail=msg_detail).save()
         return sendfile(request, abs_filename)
 
 
@@ -88,13 +94,11 @@ class SlideAssetHandlerView(LoginRequiredMixin, RedirectView):
 
     def get(self, request, *args, **kwargs):
         asset = kwargs.pop('asset')
-        slideroot = kwargs.pop('slideroot')
-        slide = SlideStack.objects.get(pk=slideroot)
+        file = kwargs.pop('file')
         abs_filename = os.path.join(
-            os.path.join(settings.STACKS_ROOT, slide.asset),
-            os.path.join(settings.STACKS_DATA_DIR, asset)
+            os.path.join(settings.STACKS_ROOT, asset),
+            os.path.join(settings.STACKS_DATA_DIR, file)
         )
-
         return sendfile(request, abs_filename)
 
 

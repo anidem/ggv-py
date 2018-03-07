@@ -139,10 +139,12 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
             guide += '-span'
             steps += '-span'
 
-        context['plan'] = SitePage.objects.get(slug=plan)
-        context['guide'] = SitePage.objects.get(slug=guide)
-        context['steps'] = SitePage.objects.get(slug=steps)
-
+        try:
+            context['plan'] = SitePage.objects.get(slug=plan)
+            context['guide'] = SitePage.objects.get(slug=guide)
+            context['steps'] = SitePage.objects.get(slug=steps)
+        except:
+            pass
 
 
         return context
@@ -179,9 +181,12 @@ class LessonPreambleView(LoginRequiredMixin, CourseContextMixin, DetailView):
             guide += '-span'
             steps += '-span'
 
-        context['plan'] = SitePage.objects.get(slug=plan)
-        context['guide'] = SitePage.objects.get(slug=guide)
-        context['steps'] = SitePage.objects.get(slug=steps)
+        try:
+            context['plan'] = SitePage.objects.get(slug=plan)
+            context['guide'] = SitePage.objects.get(slug=guide)
+            context['steps'] = SitePage.objects.get(slug=steps)
+        except:
+            pass
 
 
         return context

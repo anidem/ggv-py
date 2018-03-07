@@ -120,9 +120,12 @@ urlpatterns = [
 
 # GGV lesson activities
 
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<pk>[-\w]+)/$', slide_view.as_view(), name='slideview'),
-    # url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<slideroot>[-\w]+)/$', 'slidestacks.views.slide_view', name='slideview'),
-    url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<slideroot>[-\w]+)/data/(?P<asset>.+)/$', SlideAssetHandlerView.as_view(), name='slide_asset'),
+    # the slide shell
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/slidestack/(?P<pk>\d+)/$', slide_view.as_view(), name='slideview'),
+
+    # experimental: the iframe injection urls to ensure user is routed through authentication
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/stacks/(?P<asset>[-\w]+)/$', SlideView.as_view(), name='slideview_protected'),
+    url(r'^ggv/(?P<crs_slug>[-\w]+)/stacks/(?P<asset>[-\w]+)/data/(?P<file>.+)$', SlideAssetHandlerView.as_view(), name='slide_asset'),
 
     # url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<i>\d+)/$', QuestionResponseView.as_view(), name='question_response'),
     url(r'^ggv/(?P<crs_slug>[-\w]+)/worksheet/(?P<pk>\d+)/$', WorksheetLaunchView.as_view(), name='worksheet_launch'),

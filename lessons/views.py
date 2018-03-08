@@ -46,7 +46,7 @@ class LessonView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, De
                 msg += u'<p class="text-center">' + self.last_activity + '</p>'
                 messages.info(self.request, msg, extra_tags='safe')
         
-        temporary shutoff
+        # temporary shutoff
         if not last_lesson_act:
             # No prior lesson related events exist. Activate preamble.
             msg_url = reverse('lesson_preamble', args=[self.kwargs['crs_slug'],self.get_object().pk])

@@ -38,7 +38,7 @@
   <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
   <link rel="stylesheet" href="{% static 'css/ggv.css' %}">
 
-{% if request.user.is_staff %}
+{% if course.chat_room_name %}
   <!-- Start of Rocket.Chat Livechat Script -->
 
 <script type="text/javascript">
@@ -445,16 +445,13 @@ $(function () {
 
 
 {% block local_js %}{% endblock local_js %}
-{% if request.user.is_staff %}
+{% if course.chat_room_name %}
 
 <!-- Start of Rocket.Chat Livechat Script -->
 <script type="text/javascript">
 RocketChat(function() {
     this.setCustomField('ggv-user', '{{ request.user.first_name }}');
-    // this.setCustomField('name', '{{ request.user.first_name }}', true);
-    // this.setCustomField('email', '{{ request.user.email }}', true);
-
-    // this.setDepartment('TEST DEPT');
+    this.setDepartment('{{ course.chat_room_name }}'); // Admins Only'
 });
 
 </script>

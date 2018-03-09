@@ -1,4 +1,4 @@
-<!-- base.html -->
+<!-- base_slide.html -->
 {% load staticfiles %}
 {% load guardian_tags %}
 <!DOCTYPE html>
@@ -37,6 +37,20 @@
   <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
 
   {% block local_head %} {% endblock local_head %}
+
+{% if course.chat_room_name %}
+  <!-- Start of Rocket.Chat Livechat Script -->
+
+<script type="text/javascript">
+(function(w, d, s, u) {
+  w.RocketChat = function(c) { w.RocketChat._.push(c) }; w.RocketChat._ = []; w.RocketChat.url = u;
+  var h = d.getElementsByTagName(s)[0], j = d.createElement(s);
+  j.async = true; j.src = 'https://ggvtalk.herokuapp.com/packages/rocketchat_livechat/assets/rocketchat-livechat.min.js?_=201702160944';
+  h.parentNode.insertBefore(j, h);
+})(window, document, 'script', 'https://ggvtalk.herokuapp.com/livechat');
+</script>
+<!-- End of Rocket.Chat Livechat Script -->
+{% endif %}
 </head>
 
 <body>
@@ -110,5 +124,20 @@
 
 
 {% block local_js %}{% endblock local_js %}
+
+{% if course.chat_room_name %}
+
+<!-- Start of Rocket.Chat Livechat Script -->
+<script type="text/javascript">
+RocketChat(function() {
+    this.setCustomField('ggv-user', '{{ request.user.first_name }}');
+    this.setDepartment('{{ course.chat_room_name }}'); // Admins Only'
+});
+
+</script>
+<!-- End of Rocket.Chat Livechat Script -->
+
+{% endif %}
+
 </body>
 </html>

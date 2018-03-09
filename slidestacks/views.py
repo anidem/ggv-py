@@ -41,6 +41,7 @@ class slide_view(LoginRequiredMixin, AccessRequiredMixin, CourseContextMixin, De
     def get_context_data(self, **kwargs):
         context = super(slide_view, self).get_context_data(**kwargs)
         activities = self.get_object().section.activities()
+        context['course'] = self.course
         context['next_act'] = ''
         context['section'] = self.get_object().section
         context['stacks_url'] = settings.STACKS_URL

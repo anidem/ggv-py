@@ -733,8 +733,13 @@ def send_activation_notification(request, user_obj=None, user_note=None):
     if not user_note:
         user_note = ''
 
-
     access_url = 'http://' + request.get_host()
+
+    courses = get_objects_for_user(user_obj, ['courses.access',])
+    cc_recipients = []
+    for i in courses:
+        for j in i.instructor_list():
+            cc_recipients.append(j.email)
 
     html_message = u"<p>Hi {0} {1},</p>".format(user_obj.first_name, user_obj.last_name)
     html_message += "<p>Your account at <a href='{0}'>GGV Interactive</a> has been activated.".format(access_url)
@@ -747,6 +752,7 @@ def send_activation_notification(request, user_obj=None, user_note=None):
         body=html_message,
         from_email=settings.EMAIL_HOST_USER,
         to=[user_obj.email,],
+        cc=cc_recipients,
         headers={'Reply-To': request.user.email},
         )
 

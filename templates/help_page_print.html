@@ -1,8 +1,51 @@
-<!-- lesson_preamble_page.html -->
-{% extends "base.html" %}
+<!-- help_page_print.html -->
 {% load staticfiles %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="initial-scale = 1.0, minimum-scale = 1.0, maximum-scale = 1.0, user-scalable = no, width = device-width" />
 
-{% block content %}
-	<div class="col-md-12">{{ object.content|safe }}</div>
-{% endblock content %}
+  <!-- Default font -->
+  <link href='http://fonts.googleapis.com/css?family=Open+Sans:300italic,400,300,700' rel='stylesheet' type='text/css'>
 
+  <!-- Fonts - Math -->
+  <link href='http://fonts.googleapis.com/css?family=Cinzel' rel='stylesheet' type='text/css'>
+
+  <!-- Fonts - Writing -->
+  <link href='http://fonts.googleapis.com/css?family=Shadows+Into+Light' rel='stylesheet' type='text/css'>
+
+  <!-- Fonts - Science -->
+  <link href='http://fonts.googleapis.com/css?family=Orbitron' rel='stylesheet' type='text/css'>
+
+  <!-- Fonts - Social Studies -->
+  <link href='http://fonts.googleapis.com/css?family=Josefin+Sans' rel='stylesheet' type='text/css'>
+  
+  <title>Print {{ object.title }}</title>
+
+  <!-- Bootstrap --> 
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap-theme.min.css">
+
+
+  <!-- Font Awesome for icons -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
+  
+  <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+  <link rel="stylesheet" href="{% static 'css/ggv.css' %}">
+
+</head>
+
+<body>
+    <!-- Begin page content -->
+    <div class="container-fluid">
+        <div class="row center-block" style="padding-top: 50px">
+            <div class="col-md-12">{{ object.content|safe }}</div>
+        </div>
+    </div>
+    <!-- End page content -->
+</body>
+</html>

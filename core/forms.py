@@ -4,7 +4,7 @@ from django.forms import Form, ModelForm, ModelChoiceField, ChoiceField, Boolean
 from django.core.exceptions import NON_FIELD_ERRORS
 from django.contrib.auth.models import User
 
-from core.models import GGVUser, AttendanceTracker, GGVAccountRequest, SitePage
+from core.models import GGVUser, AttendanceTracker, GGVAccountRequest, SitePage, SiteMessage
 from courses.models import Course
 from .models import Bookmark
 
@@ -23,7 +23,8 @@ LABELS = {
     'receive_notifications': 'Choose to receive notifications on student activity. (E.g., worksheet completions, bookmarking, etc.)',
     'receive_email_messages': 'Choose to receive email messages from the GGV system.',
     'note': 'Specify a reason or other info regarding this account request (Optional).',
-    'user_note': 'Enter an initial message to relay to the new user (student) when they are notified of their account status. (Optional).'
+    'user_note': 'Enter an initial message to relay to the new user (student) when they are notified of their account status. (Optional).',
+    'notify_users': 'Require users to view this message on next login?',
     }
 
 
@@ -313,4 +314,15 @@ class SitePageCreateForm(ModelForm):
         fields = ['title', 'content']
         widgets = {
             'content': forms.Textarea(attrs={'rows': 10, 'cols': 70, 'class': 'editor'})
+        }
+
+
+class SiteMessageForm(ModelForm):
+    notify_users = forms.BooleanField(label=LABELS['notify_users'], required=False)
+
+    class Meta:
+        model = SiteMessage
+        fields = ['message', 'url_context', 'show', 'notify_users']
+        widgets = {
+            'url_context': forms.HiddenInput(),
         }

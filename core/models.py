@@ -71,6 +71,7 @@ class GGVUser(models.Model):
     deactivation_pending = models.BooleanField(default=False)
     activation_pending = models.BooleanField(default=False)
     survey_viewed = models.BooleanField(default=False, blank=True)
+    message_viewed = models.BooleanField(default=True, blank=True)
 
     def getGgvOrganizationMap(self):
         courses = get_objects_for_user(self.user, ['courses.access', 'courses.instructor', 'courses.manage'])
@@ -356,10 +357,10 @@ class Notification(models.Model):
         return '%s, %s' % (self.event, self.logdata)
 
 
-class SiteMessage(models.Model):
+class SiteMessage(TimeStampedModel):
     message = models.TextField(default='Message from ggvinteractive.com here.')
     url_context = models.CharField(max_length=512, default='/', unique=True)
-    show = models.BooleanField(default=True)
+    show = models.BooleanField(default=True, help_text='Display message?')
 
     def __unicode__(self):
         return self.message

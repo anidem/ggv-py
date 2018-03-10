@@ -4,12 +4,15 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<div class="col-md-10 col-md-offset-1">
 <form action="" method="post">{% csrf_token %}
     {{ form|crispy }}
     <input type="submit" value="Add message" />
 </form>
+</div>
 
 {% endblock content %}
+
 {% block local_js %}
     <!--<script src="//tinymce.cachefly.net/4.1/tinymce.min.js"></script>-->
     <script>

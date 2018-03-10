@@ -60,6 +60,21 @@
      
     </div>
     {% endif %}
+
+    {% if message_notify %}
+    <div id="message_notify" class="modal fade" style="width: 100%" tabindex="-1" role="dialog" aria-labelledby="myLargeModalLabel" data-backdrop="static" data-keyboard="false" data-show="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-body">                    
+                    <div class="col-md-10 col-md-offset-1">{{ site_message.message|safe }}</div>
+                </div>
+                <div class="modal-footer">
+                    <div class="col-md-12"><button type="button" class="btn btn-lg btn-primary close" data-dismiss="modal" aria-label="Close"><i class="fa fa-close"></i></button></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
     
     <div class="row" style="padding: 10px"><h1></h1></div>
 
@@ -382,17 +397,17 @@
                     sortAscending: order
                 });
             });
+
             $('[data-toggle="tooltip"]').tooltip();
 
             $(document).ready(function() { 
                 if ($("#user_prefs").data('last_act')) {
                     $("#user_prefs").tooltip('show')
-                    // $("#prev_act").hide();   
                 }
                 $("#act_cancel").on("click", function() {
                     $("#user_prefs").tooltip('hide')
                 });
-                
+                $('#message_notify').modal('show');                
             });
         });
     </script>

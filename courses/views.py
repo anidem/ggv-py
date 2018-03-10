@@ -13,6 +13,7 @@ from django.http import HttpResponse, Http404, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.core.exceptions import PermissionDenied
 from django.contrib.auth.models import User
+from django.contrib import messages
 from django.conf import settings
 from django.utils import html, text
 from django.shortcuts import redirect, get_object_or_404
@@ -26,6 +27,7 @@ from braces.views import LoginRequiredMixin, JSONResponseMixin, AjaxResponseMixi
 from core.models import Notification, SiteMessage, BOOKMARK_TYPES, DEACTIVATION_TYPES, SitePage
 from core.mixins import AccessRequiredMixin, PrivelegedAccessMixin, RestrictedAccessZoneMixin, CourseContextMixin, GGVUserViewRestrictedAccessMixin
 from core.utils import UnicodeWriter, GGVExcelWriter, get_daily_log_times, get_daily_log_times_v2, elapsed_time_per_event
+from core.forms import SiteMessageForm
 from questions.models import QuestionSet, UserWorksheetStatus
 from slidestacks.models import SlideStack
 from pretests.models import PretestAccount
@@ -314,6 +316,12 @@ class CourseView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, Pr
 
         try:
             context['site_message'] = SiteMessage.objects.get(url_context=reverse('course', kwargs={'crs_slug': course.slug}))
+            user = self.request.user.ggvuser
+            if not user.message_viewed:
+                context['message_notify'] = True
+                user.message_viewed = True
+                user.save()
+
         except:
             context['site_message'] = None
 
@@ -841,8 +849,8 @@ class UserProgressViewDateSelector(UserProgressView):
 class CourseMessageAddView(LoginRequiredMixin, CourseContextMixin, RestrictedAccessZoneMixin, CreateView):
     model = SiteMessage
     template_name = 'ggv_create_page_msg.html'
+    form_class = SiteMessageForm
     course = None
-    fields = ['message', 'url_context', 'show']
 
     def dispatch(self, request, *args, **kwargs):
         try:
@@ -859,12 +867,19 @@ class CourseMessageAddView(LoginRequiredMixin, CourseContextMixin, RestrictedAcc
         self.initial = {'url_context':  reverse('course', kwargs={'crs_slug': self.course.slug})}
         return self.initial
 
+    def form_valid(self, form):
+        if form.cleaned_data['notify_users']:
+            for i in self.course.student_list():
+                i.message_viewed = False
+                i.save()
+        return super(CourseMessageAddView, self).form_valid(form)
+
 
 class CourseMessageUpdateView(LoginRequiredMixin, CourseContextMixin, RestrictedAccessZoneMixin, UpdateView):
     model = SiteMessage
     template_name = 'ggv_update_page_msg.html'
+    form_class = SiteMessageForm
     course = None
-    fields = ['message', 'show']
 
     def dispatch(self, request, *args, **kwargs):
         try:
@@ -876,6 +891,14 @@ class CourseMessageUpdateView(LoginRequiredMixin, CourseContextMixin, Restricted
 
     def get_success_url(self):
         return reverse('course', kwargs={'crs_slug': self.course.slug})
+
+    def form_valid(self, form):
+        if form.cleaned_data['notify_users']:
+            for i in self.course.student_list():
+                i.message_viewed = False
+                i.save()
+
+        return super(CourseMessageUpdateView, self).form_valid(form)
 
 
 class CourseMessageDeleteView(LoginRequiredMixin, CourseContextMixin, RestrictedAccessZoneMixin, DeleteView):

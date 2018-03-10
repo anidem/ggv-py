@@ -4,11 +4,12 @@
 {% load crispy_forms_tags %}
 
 {% block content %}
+<div class="col-md-10 col-md-offset-1">
 <form action="" method="post">{% csrf_token %}
     {{ form|crispy }}
     <input type="submit" value="Update" />
 </form>
-
+</div>
 {% endblock content %}
 
 {% block local_js %}
@@ -19,8 +20,7 @@
         plugins: "code",
         selector:"textarea",
         toolbar: ["formatselect undo redo bold italic underline strikethrough alignleft aligncenter alignright alignjustify", "fontsizeselect bullist numlist outdent indent subscript superscript code"],
-        // valid_elements : "p,a[href|target=_blank],strong/b,div[align],br,span",
-        extended_valid_elements : "*[*]",//"math,msqrt,mroot,mfrac[bevelled],mn,mi,span[class],sup,sub,u",
+        extended_valid_elements : "*[*]",
     });
     </script>
 {% endblock local_js %}

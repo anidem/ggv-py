@@ -27,7 +27,7 @@ from core.views import (
     AccessForbiddenView,
     CreateGgvUserView, UpdateGgvUserAccountView,  GgvUserView, UpdateGgvUserView, CreateGgvUserAccountRequestView, UpdateGgvUserAccountRequestView, DeleteGgvUserAccountRequestView, GgvUserActivationView, GgvUserArchiveThenDeleteView, GgvUserDeleteUnusedAccount,
     PolicyView, FaqView, GgvUsersDeactivationView, GgvUsersActivationView, AttendanceAjaxCodeUpdateView, AttendanceAjaxCodeCreateView, AttendanceAjaxCodeDeleteView, AttendanceUpdateAllView,
-    HelpView, HelpCreateView, HelpUpdateView, HelpListView,
+    HelpView, HelpCreateView, HelpUpdateView, HelpListView, HelpPagePrintView
     )
 from notes.views import NoteCreateView, NoteView, NoteDeleteView
 from courses.views import (
@@ -220,6 +220,7 @@ urlpatterns = [
     url(r'^help/edit/(?P<slug>[-\w]+)/$', HelpUpdateView.as_view(), name='help_page_edit'),
     url(r'^help/list/$', HelpListView.as_view(), name='help_page_list'),
     url(r'^help/(?P<slug>[-\w]+)/$', HelpView.as_view(), name='help_page'),
+    url(r'^help/print/(?P<slug>[-\w]+)/$', HelpPagePrintView.as_view(), name='help_page_print'),
 
 
 

@@ -814,6 +814,11 @@ class HelpListView(LoginRequiredMixin, StaffuserRequiredMixin, ListView):
     raise_exception = True
 
 
+class HelpPagePrintView(LoginRequiredMixin, DetailView):
+    model = SitePage
+    template_name = 'help_page_print.html'
+
+
 class PolicyView(TemplateView):
     template_name = 'policy.html'
 

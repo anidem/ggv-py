@@ -870,8 +870,8 @@ class CourseMessageAddView(LoginRequiredMixin, CourseContextMixin, RestrictedAcc
     def form_valid(self, form):
         if form.cleaned_data['notify_users']:
             for i in self.course.student_list():
-                i.message_viewed = False
-                i.save()
+                i.ggvuser.message_viewed = False
+                i.ggvuser.save()
         return super(CourseMessageAddView, self).form_valid(form)
 
 
@@ -895,8 +895,8 @@ class CourseMessageUpdateView(LoginRequiredMixin, CourseContextMixin, Restricted
     def form_valid(self, form):
         if form.cleaned_data['notify_users']:
             for i in self.course.student_list():
-                i.message_viewed = False
-                i.save()
+                i.ggvuser.message_viewed = False
+                i.ggvuser.save()
 
         return super(CourseMessageUpdateView, self).form_valid(form)
 

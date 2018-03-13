@@ -333,6 +333,9 @@ class Bookmark(models.Model):
         text = '%s %s bookmarked (%s) %s' % (self.creator.first_name, self.creator.last_name, self.mark_type, target_url)
         return text
 
+    def get_display_opts(self):
+        return self.get_mark_type_display().split(',')
+
     def __unicode__(self):
         return self.mark_type
 

@@ -798,6 +798,7 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         course = self.get_object()
         context['student_user'] = user
         context['activity_log'] = get_daily_log_times_v2(user, course) # 'login', 'logout', 'access-worksheet'
+        context['lang'] = user.ggvuser.language_pref
 
         start = self.request.GET.get('start', '')
         end = self.request.GET.get('end', '')
@@ -819,14 +820,14 @@ class UserProgressView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
             context['filter'] = 'completed'
 
         opts = dict(BOOKMARK_TYPES)
+
         for i, j in opts.items():
-            if user.ggvuser.language_pref == 'spanish':
+            if context['lang'] == 'spanish':
                 opts[i] = j.split(',')[1]
             else:
                 opts[i] = j.split(',')[0]
 
         context['bookmark_type_opts'] = opts  
-        
 
         return context
 

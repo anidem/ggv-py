@@ -148,7 +148,7 @@
                             <div class="form-group">
                                 <div class="controls ">
                                     <label class="radio"><input type="radio" {% if i.bookmark_type == "started" %}checked{% endif %} name="mark_type" id="id_mark_type_3" value="started" data-label="{{i.bookmark_label}}"> {{ bookmark_type_opts.started }}</label>
-                                    <label class="radio"><input type="radio" {% if i.bookmark_type == "review" %}checked{% endif %} name="mark_type" id="id_mark_type_1" value="remember" data-label="{{i.bookmark_label}}">{{ bookmark_type_opts.remember }}</label>
+                                    <label class="radio"><input type="radio" {% if i.bookmark_type == "remember" %}checked{% endif %} name="mark_type" id="id_mark_type_1" value="remember" data-label="{{i.bookmark_label}}">{{ bookmark_type_opts.remember }}</label>
                                     <label class="radio"><input type="radio" {% if i.bookmark_type == "todo" %}checked{% endif %} name="mark_type" id="id_mark_type_2" value="todo" data-label="{{i.bookmark_label}}">{{ bookmark_type_opts.todo }}</label>
                                     <label class="radio"><input type="radio" {% if i.bookmark_type == "completed" %}checked{% endif %} name="mark_type" id="id_mark_type_4" value="completed" data-label="{{i.bookmark_label}}">{{ bookmark_type_opts.completed }}</label>
                                     <label class="radio"><input type="radio" {% if i.bookmark_type == "question" %}checked{% endif %} name="mark_type" id="id_mark_type_5" value="question" data-label="{{i.bookmark_label}}">{{ bookmark_type_opts.question }}</label>

@@ -33,7 +33,7 @@ ACTIONS = (
 )
 
 BOOKMARK_TYPES = (
-    ('remember', 'Review,Revisa'),
+    ('remember', 'Review,Repaso'),
     ('todo', 'Need to Finish,Acabar'),
     ('started', 'Start,Comienza'),
     ('completed', 'Completed,Completado'),
@@ -83,7 +83,6 @@ class GGVUser(models.Model):
             except KeyError:
                 orgs[c.ggv_organization] = [crs_object]
             
-            # print c.ggv_organization, c.ggv_organization.licenses_in_use()      
         return orgs
 
     def attendance_by_month(self, year=None, month=None):
@@ -97,7 +96,6 @@ class GGVUser(models.Model):
             days = calendar.monthrange(curr.year, curr.month)
             attendance_list = [None] * days[1]    
 
-            # users_attendance = self.user.attendance.all().filter(datestr__startswith=key)
             users_attendance = self.user.attendance.all().filter(datestr__startswith=key)
             
             for i in users_attendance:

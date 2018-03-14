@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from backports import csv
-import io
+import csv
 
 from questions.models import *
 from lessons.models import *
@@ -34,8 +33,8 @@ def do_mapping(item=None):
 def get_map(f=None):
     file = './ggvutils/module_question_mapper/'+f
     mod_questions = []
-    with io.open(file, newline='', encoding='utf-8') as csvfile:
-        for row in csv.reader(csvfile):
+    with open(file, 'r') as csvfile:
+        for row in csv.reader(csvfile, delimiter=',', quotechar='"'):
             mod_questions.append((int(row[0]), int(row[4])))
     return mod_questions
 

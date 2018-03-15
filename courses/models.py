@@ -126,6 +126,16 @@ class GGVOrganization(models.Model):
             managers += i.manager_list()
         return managers
 
+    def activated_list(self):
+        """Returns a list of active students, instructors, and managers of entire org.
+        Excludes deactivated and unvalidated user accounts as well as staff accounts.
+        """
+        courses = self.organization_courses.all()
+        activated_users = []
+        for i in courses:
+            activated_users.extend(i.activated_list())
+        return list(set(activated_users))
+
     def __unicode__(self):
         return self.title
 
@@ -192,7 +202,10 @@ class Course(models.Model):
         return [user for user, perms in self.member_list().items() if 'manage' in perms and not user.is_staff]
 
     def activated_list(self):
-        [user for user, perms in self.member_list().items() if user.is_active]
+        """Returns a list of all active students, instructors, and managers for the course.
+        This will exclude unvalidated and deactivated and staff accounts (may be problematic for staff test courses).
+        """
+        return [user for user, perms in self.member_list().items() if user.is_active and not user.is_staff]
 
     def deactivated_list(self):
         return [user for user, perms in self.member_list().items() if not perms and user.social_auth.all()]

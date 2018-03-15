@@ -164,7 +164,7 @@ class SendEmailWorksheetQuestionToInstructorsView(LoginRequiredMixin, CourseCont
 class SendEmailWorksheetErrorToStaffView(LoginRequiredMixin, CourseContextMixin, FormView):
     """
     A view that allows students/instructors to email an error report regarding a worksheet question.
-    This may be an correct answer that is incorrectly assigned to the question or other technical problems viewing
+    This may be a correct answer that is incorrectly assigned to the question or other technical problems viewing
     or responding to the question.
 
     recipients: ggv staff.
@@ -274,6 +274,8 @@ class SendEmailToStaff(LoginRequiredMixin, FormView):
 
 
 class SendEmailToManagerDeactivationRequest(CsrfExemptMixin, LoginRequiredMixin, CourseContextMixin, JSONResponseMixin, View):
+    """A view to allow instructor to email a request to the manager to deactivate an account(s)."""
+
     course = None
 
     def dispatch(self, request, *args, **kwargs):
@@ -299,7 +301,6 @@ class SendEmailToManagerDeactivationRequest(CsrfExemptMixin, LoginRequiredMixin,
                         u.ggvuser.deactivation_type = d[1]
                         u.ggvuser.save()
                     
-                    # users = users + u.ggvuser.program_id + ' ' + u.first_name + ' ' + u.last_name + ' (' + u.email + ') REASON: ' + d[1] + ' ,  '
                     users = users + u.first_name + u' ' + u.last_name + u' ,  '
 
             user_sender = self.request.user
@@ -347,6 +348,7 @@ class SendEmailToManagerDeactivationRequest(CsrfExemptMixin, LoginRequiredMixin,
 
 
 class SendEmailToManagerActivationRequest(CsrfExemptMixin, LoginRequiredMixin, CourseContextMixin, JSONResponseMixin, View):
+    """ A view that allows an instructor to email a request to a manager to activate a user."""
     course = None
 
     def dispatch(self, request, *args, **kwargs):
@@ -415,7 +417,7 @@ class SendEmailToGgvOrgUsers(LoginRequiredMixin, CourseContextMixin, FormView):
     """
     A view to allow managers to send a message to all active users of an organization.
 
-    recipients: members of a ggv organization (instructors, students)
+    recipients: active members of a ggv organization (instructors, students, managers)
     sender: manager or staff 
     scope: managers
     """
@@ -427,7 +429,6 @@ class SendEmailToGgvOrgUsers(LoginRequiredMixin, CourseContextMixin, FormView):
     def dispatch(self, request, *args, **kwargs):
         self.ggvorg = GGVOrganization.objects.get(pk=kwargs['pk'])
         users = self.ggvorg.manager_list()
-        # print request.user in users, request.user.is_staff
         if request.user not in users and not request.user.is_staff:
             raise PermissionDenied
 
@@ -438,8 +439,7 @@ class SendEmailToGgvOrgUsers(LoginRequiredMixin, CourseContextMixin, FormView):
 
     def form_valid(self, form):
         user_sender = self.request.user
-        recipients = self.ggvorg.licensed_user_list()
-        # recipients = [i.email for i in User.objects.filter(is_active=True)]
+        recipients = self.ggvorg.activated_list()
 
         message_text = form.cleaned_data.get('message').encode('utf-8')
         html_message = "<p>{0}</p>".format(message_text)
@@ -488,9 +488,7 @@ class SendEmailToCourseUsers(LoginRequiredMixin, CourseContextMixin, FormView):
 
     def form_valid(self, form):
         user_sender = self.request.user
-        recipients = self.course.student_list()
-        recipients.extend(self.course.instructor_list())
-        # recipients = [i.email for i in User.objects.filter(is_active=True)]
+        recipients = self.course.activated_list()
 
         message_text = form.cleaned_data.get('message').encode('utf-8')
         html_message = "<p>{0}</p>".format(message_text)
@@ -552,6 +550,7 @@ class SendEmailToAllActiveUsers(LoginRequiredMixin, StaffuserRequiredMixin, Form
         email.send(fail_silently=True)
         messages.info(self.request, 'Email message has been sent.')
         return super(SendEmailToAllActiveUsers, self).form_valid(form)
+
 
 """ BACKEND EMAIL PROCEDURES. FUNCTIONS THAT ARE INITIATED AUTOMATICALLY BY THE SYSTEM (no forms). """
 
@@ -762,6 +761,7 @@ def send_activation_notification(request, user_obj=None, user_note=None):
     return
 
 def send_account_request(request, account_request_obj=None):
+    """Instructor sends email to managers to create a new user account."""
     if not account_request_obj:
         return
     user_sender = request.user

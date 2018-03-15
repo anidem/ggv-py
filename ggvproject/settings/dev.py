@@ -26,6 +26,10 @@ ALLOWED_HOSTS = ['*']
 # 'debug_toolbar', # This breaks the pres player -- conflicts with prototype.
 # )
 
+# USE CONSOLE EMAIL BACKEND TO PREVENT EMAILS FROM BEING SENT.
+# COMMENT LINE TO ALLOW DEVS TO SEND REAL EMAILS.
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
 EMAIL_USE_TLS = True
 EMAIL_HOST = os.environ['EMAIL_HOST']
 EMAIL_HOST_USER = os.environ['EMAIL_HOST_USER']

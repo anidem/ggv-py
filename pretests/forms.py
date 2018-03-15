@@ -91,21 +91,20 @@ class MultipleSelectWithDisabledCheckbox(forms.CheckboxSelectMultiple):
 
 
 class PretestSelectionForm(forms.Form):
-    pass
-    # eng_pretest_choices = [(i.pk, i.title ) for i in Lesson.objects.get(pk=ENG_PRETESTS_LESSON_ID).activities()]
-    # spn_pretest_choices = [(i.pk, i.title ) for i in Lesson.objects.get(pk=SPN_PRETESTS_LESSON_ID).activities()]
+    eng_pretest_choices = [(i.pk, i.title ) for i in Lesson.objects.get(pk=ENG_PRETESTS_LESSON_ID).activities()]
+    spn_pretest_choices = [(i.pk, i.title ) for i in Lesson.objects.get(pk=SPN_PRETESTS_LESSON_ID).activities()]
 
-    # eng_select_all = forms.BooleanField(label='Select all four English pretests', required=False)
-    # eng_pretests = forms.MultipleChoiceField(required=False, label='', widget=forms.CheckboxSelectMultiple, choices=eng_pretest_choices,)
+    eng_select_all = forms.BooleanField(label='Select all four English pretests', required=False)
+    eng_pretests = forms.MultipleChoiceField(required=False, label='', widget=forms.CheckboxSelectMultiple, choices=eng_pretest_choices,)
     
-    # spn_select_all = forms.BooleanField(label='Select all four Spanish pretests', required=False)  
-    # spn_pretests = forms.MultipleChoiceField(required=False, label='', widget=forms.CheckboxSelectMultiple, choices=spn_pretest_choices,)    
+    spn_select_all = forms.BooleanField(label='Select all four Spanish pretests', required=False)  
+    spn_pretests = forms.MultipleChoiceField(required=False, label='', widget=forms.CheckboxSelectMultiple, choices=spn_pretest_choices,)    
     
-    # def __init__(self, *args, **kwargs):
-    #     super(PretestSelectionForm, self).__init__(*args, **kwargs)        
+    def __init__(self, *args, **kwargs):
+        super(PretestSelectionForm, self).__init__(*args, **kwargs)        
 
-    # class Meta:
-    #     fields = ['eng_select_all', 'eng_pretests', 'spn_pretests', 'spn_select_all']
+    class Meta:
+        fields = ['eng_select_all', 'eng_pretests', 'spn_pretests', 'spn_select_all']
 
 
 class PretestUserCreateForm(ModelForm):

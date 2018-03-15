@@ -317,11 +317,18 @@ class TextQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateView)
         context['form'].fields['question_set'] = lesson_filter
 
         # Filter content area selector by current lesson (or related lesson if pretest question)
-        subj_key = lesson.subject + '_' + lesson.language
-        modules = {'math_eng': 1,'math_span': 5,'science_eng': 2,'science_span': 6,'social_eng': 3,'social_span': 7,'writing_eng': 4,'writing_span': 8}
-        content_filter = context['form'].fields['content_area'].queryset
-        content_area_filter = forms.ModelChoiceField(queryset=content_filter.filter(lesson__pk=modules[subj_key]))
-        context['form'].fields['content_area'] = content_area_filter
+        if self.get_object().question_set.pretest_subject:
+            subj_key = self.get_object().question_set.pretest_subject + '_' + lesson.language
+        else:
+            subj_key = lesson.subject + '_' + lesson.language
+
+        modules = {'math_eng': 1,'math_span': 5,'science_eng': 2,'science_span': 6,'socialstudies_eng': 3,'socialstudies_span': 7,'writing_eng': 4,'writing_span': 8}
+        try:
+            content_filter = context['form'].fields['content_area'].queryset
+            content_area_filter = forms.ModelChoiceField(queryset=content_filter.filter(lesson__pk=modules[subj_key]))
+            context['form'].fields['content_area'] = content_area_filter
+        except:
+            pass
         
         # Filter file listing selector
         context['filelisting'] = FileListing(

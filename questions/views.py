@@ -309,11 +309,21 @@ class TextQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateView)
         return reverse_lazy('text_question', args=[course, self.get_object().id])
 
     def get_context_data(self, **kwargs):
-        context = super(
-            TextQuestionUpdateView, self).get_context_data(**kwargs)
-        lesson_filter = forms.ModelChoiceField(
-            queryset=QuestionSet.objects.filter(lesson=self.get_object().question_set.lesson))
+        context = super(TextQuestionUpdateView, self).get_context_data(**kwargs)
+        
+        # Filter worksheet selector by current lesson
+        lesson = self.get_object().question_set.lesson
+        lesson_filter = forms.ModelChoiceField(queryset=QuestionSet.objects.filter(lesson=lesson))
         context['form'].fields['question_set'] = lesson_filter
+
+        # Filter content area selector by current lesson (or related lesson if pretest question)
+        subj_key = lesson.subject + '_' + lesson.language
+        modules = {'math_eng': 1,'math_span': 5,'science_eng': 2,'science_span': 6,'social_eng': 3,'social_span': 7,'writing_eng': 4,'writing_span': 8}
+        content_filter = context['form'].fields['content_area'].queryset
+        content_area_filter = forms.ModelChoiceField(queryset=content_filter.filter(lesson__pk=modules[subj_key]))
+        context['form'].fields['content_area'] = content_area_filter
+        
+        # Filter file listing selector
         context['filelisting'] = FileListing(
             'img', filter_func=filter_filelisting_images, sorting_by='date', sorting_order='desc').files_listing_filtered()
 
@@ -346,13 +356,6 @@ class OptionQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateVie
         course = self.kwargs['crs_slug']
         return reverse_lazy('option_question', args=[course, self.get_object().id])
 
-    def get_initial(self):
-        initial = self.initial.copy()
-        # TODO get the form object and set queryset to filter below.
-        # initial['content_area'].queryset = self.get_object().question_set.lesson.sections.all()
-        # for i in initial['content_area']: print i
-        return initial
-
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
         form = self.get_form(self.get_form_class())
@@ -375,9 +378,27 @@ class OptionQuestionUpdateView(LoginRequiredMixin, CourseContextMixin, UpdateVie
         context = super(
             OptionQuestionUpdateView, self).get_context_data(**kwargs)
         context['optionsform'] = OptionFormset(instance=self.get_object())
-        lesson_filter = forms.ModelChoiceField(
-            queryset=QuestionSet.objects.filter(lesson=self.get_object().question_set.lesson))
+        
+        # Filter worksheet selector by current lesson
+        lesson = self.get_object().question_set.lesson
+        lesson_filter = forms.ModelChoiceField(queryset=QuestionSet.objects.filter(lesson=lesson))
         context['form'].fields['question_set'] = lesson_filter
+
+        # Filter content area selector by current lesson (or related lesson if pretest question)
+        if self.get_object().question_set.pretest_subject:
+            subj_key = self.get_object().question_set.pretest_subject + '_' + lesson.language
+        else:
+            subj_key = lesson.subject + '_' + lesson.language
+
+        modules = {'math_eng': 1,'math_span': 5,'science_eng': 2,'science_span': 6,'socialstudies_eng': 3,'socialstudies_span': 7,'writing_eng': 4,'writing_span': 8}
+        try:
+            content_filter = context['form'].fields['content_area'].queryset
+            content_area_filter = forms.ModelChoiceField(queryset=content_filter.filter(lesson__pk=modules[subj_key]))
+            context['form'].fields['content_area'] = content_area_filter
+        except:
+            pass
+
+        # Filter file listing selector
         context['filelisting'] = FileListing(
             'img', filter_func=filter_filelisting_images, sorting_by='date', sorting_order='desc').files_listing_filtered()
 

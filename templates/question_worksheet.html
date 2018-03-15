@@ -6,7 +6,7 @@
 {% block content %}
 	<h1>{{ object.lesson }} <small>{{ object }}</small></h1>
     <div>
-        <p>Instructions: {{ object.instructions }}</p>
+        <p>Instructions: {{ object.instructions|safe }}</p>
         <p>Lesson: {{ object.lesson }}</p>
         <p>Section: {{ object.section }}</p>
         {% if object.get_ordered_question_list %}

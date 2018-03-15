@@ -284,7 +284,7 @@ class SendEmailToManagerDeactivationRequest(CsrfExemptMixin, LoginRequiredMixin,
         try:   
             deactivate_list = request.POST.getlist('deactivations')   
             urlstr = request.GET['q']
-            users = ''
+            users = u''
             for i in deactivate_list:
                 if i:
                     d = i.split('_')
@@ -300,7 +300,7 @@ class SendEmailToManagerDeactivationRequest(CsrfExemptMixin, LoginRequiredMixin,
                         u.ggvuser.save()
                     
                     # users = users + u.ggvuser.program_id + ' ' + u.first_name + ' ' + u.last_name + ' (' + u.email + ') REASON: ' + d[1] + ' ,  '
-                    users = users + u.first_name + ' ' + u.last_name + ' ,  '
+                    users = users + u.first_name + u' ' + u.last_name + u' ,  '
 
             user_sender = self.request.user
 

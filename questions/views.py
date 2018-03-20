@@ -24,7 +24,7 @@ from sendfile import sendfile
 from core.models import ActivityLog, Notification
 from core.mixins import CourseContextMixin, AccessRequiredMixin
 from core.forms import PresetBookmarkForm
-from core.emails import SendWorksheetNotificationEmailToInstructors, send_request_to_grade, send_score_notification, send_clear_worksheet_request
+from core.emails import SendWorksheetNotificationEmailToInstructors, send_request_to_grade, send_score_notification, send_clear_worksheet_request, send_clear_worksheet_confirm
 from notes.forms import UserNoteForm
 from lessons.models import Lesson, Section
 from courses.models import Course
@@ -571,30 +571,29 @@ class UserResponsesResetView(LoginRequiredMixin, CourseContextMixin, DetailView)
     template_name = ''
 
     def get(self, request, *args, **kwargs):
-            course = Course.objects.get(slug=self.kwargs['crs_slug'])
-            is_instructor = 'instructor' in get_perms(self.request.user, course)
-            is_manager = 'manage' in get_perms(self.request.user, course)
-            user = User.objects.get(pk=self.kwargs['user'])
+        course = Course.objects.get(slug=self.kwargs['crs_slug'])
+        is_instructor = 'instructor' in get_perms(request.user, course)
+        is_manager = 'manage' in get_perms(request.user, course)
+        user = User.objects.get(pk=self.kwargs['user'])
+        report_url = reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.get_object().id, user.id))
+        worksheet_url = reverse('worksheet_launch', args=(self.kwargs['crs_slug'], self.get_object().id))
+        if request.user.is_staff or is_instructor or is_manager:
+            try:
+                ws = self.get_object()
+                responses = ws.get_user_response_objects(user)
+                for i in responses:
+                    i.delete()
+                    
+                status = UserWorksheetStatus.objects.filter(completed_worksheet=ws).get(user=user)
+                status.delete()
+                send_clear_worksheet_confirm(request=request, worksheet_user=user, worksheet_obj=self.get_object(), worksheet_url=worksheet_url)
+            except Exception as e:
+                print e
 
-            if self.request.user.is_staff or is_instructor or is_manager:
-                try:
-                    ws = self.get_object()
-                    responses = ws.get_user_response_objects(user)
-                    for i in responses:
-                        i.delete()
-                        
-                    status = UserWorksheetStatus.objects.filter(completed_worksheet=ws).get(user=user)
-                    status.delete()
-                except Exception as e:
-                    print e
-
-                return HttpResponseRedirect(reverse('worksheet_user_report', args=(self.kwargs['crs_slug'], self.get_object().id, user.id)))
-            
-            else:
-                raise PermissionDenied  # return a forbidden response
-            
-            # return super(UserResponsesResetView, self).get(request, *args, **kwargs)    
-
+            return HttpResponseRedirect(report_url)
+        
+        else:
+            raise PermissionDenied  # return a forbidden response
 
 class UserResponsesResetRequestView(LoginRequiredMixin, CourseContextMixin, DetailView):
     model = QuestionSet

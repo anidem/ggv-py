@@ -833,3 +833,30 @@ def send_clear_worksheet_request(request=None, course=None, worksheet=None):
     email.send(fail_silently=False)
     messages.info(request, 'Instructors have been emailed with your request.')
 
+def send_clear_worksheet_confirm(request=None, worksheet_user=None, worksheet_obj=None, worksheet_url=None):
+    """Sends email to a student of a course. 
+    Message indicates that instructor has cleared a worksheet as requested by student.
+    """ 
+    cleared_by = u''
+    recipients = [worksheet_user.email,]
+    worksheet_url = 'http://' + request.get_host() + worksheet_url
+    try:
+        cleared_by = request.user.first_name + u' ' + request.user.last_name
+    except Exception as e:
+        return
+
+    html_message = u'<p>Hi {0},</p><p>Your instructor, {1}, has cleared your responses to the following worksheet.</p>'.format(worksheet_user.first_name, cleared_by)
+    html_message += u'<p>You can retry the {0} worksheet here:'.format(worksheet_obj.title)
+    html_message += u"<p><a href='{0}'>{0}</a></p>".format(worksheet_url)
+   
+    email = EmailMultiAlternatives(
+        subject='Your Worksheet Responses Have Been Cleared',
+        body=html_message,
+        from_email=settings.EMAIL_HOST_USER,
+        to=recipients,
+        )
+
+    email.attach_alternative(html_message, "text/html")
+    email.send(fail_silently=False)
+    messages.info(request, 'The student has been notified by email that you have cleared their responses to this worksheet.')
+

@@ -586,7 +586,7 @@ class UserResponsesResetView(LoginRequiredMixin, CourseContextMixin, DetailView)
                     
                 status = UserWorksheetStatus.objects.filter(completed_worksheet=ws).get(user=user)
                 status.delete()
-                # send_clear_worksheet_confirm(request=request, worksheet_user=user, worksheet_obj=self.get_object(), worksheet_url=worksheet_url)
+                send_clear_worksheet_confirm(request=request, worksheet_user=user, worksheet_obj=self.get_object(), worksheet_url=worksheet_url)
             except Exception as e:
                 print e
 

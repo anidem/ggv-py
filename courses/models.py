@@ -155,7 +155,7 @@ class Course(models.Model):
     access_code = models.CharField(max_length=8, null=True, blank=True)
     ggv_organization = models.ForeignKey(GGVOrganization, models.PROTECT, null=True, related_name='organization_courses')
     is_active = models.BooleanField(default=True)
-    chat_room_name = models.CharField(max_length=255, null=True, blank=True, help_text='name of chat room to associated with the course. Relates to a Rocket Chat department name.')
+    chat_room_name = models.CharField(max_length=255, null=True, blank=True, help_text='name of chat room to associate with the course. Relates to a Rocket Chat department name.')
     # tag = models.ForeignKey(CourseTag, models.SET_NULL, null=True, related_name='tagged_courses')
 
     class Meta:

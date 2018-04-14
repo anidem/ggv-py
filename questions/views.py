@@ -96,7 +96,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
     worksheet = None
     lesson = None
     next_question = None
-    completion_status = None
+    completion_status = False
     access_object = 'activity'
 
     def dispatch(self, *args, **kwargs):

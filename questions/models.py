@@ -189,6 +189,7 @@ class QuestionSet(AbstractActivity):
             if respobj:
                 question_type = respobj.content_object.get_question_type()
                 resp = respobj.response
+
                 if question_type == 'option':
                     if i.input_select == 'checkbox':
                         resplist = json.loads(resp)
@@ -224,7 +225,7 @@ class QuestionSet(AbstractActivity):
 
         try:
             grade = UserWorksheetStatus.objects.filter(completed_worksheet=self).filter(user=user)[0].score
-        except:
+        except Exception as e:
             grade = None
 
         return {'report': report, 'correct': numcorrect, 'numquestions': self.get_num_questions(required_questions=True), 'grade': grade}

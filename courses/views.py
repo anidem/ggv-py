@@ -36,7 +36,7 @@ from .forms import CourseUpdateForm, CourseUpdateGraderForm
 
 tz = timezone(settings.TIME_ZONE)
 
-""" Organization Management """
+# Organization Management 
 
 class GgvOrgAdminView(LoginRequiredMixin, DetailView):
     """
@@ -184,7 +184,7 @@ class GgvOrgUserActivityReportView(LoginRequiredMixin, DetailView):
         return context
 
 
-""" Course Management """
+# Course Management
 
 class CourseUpdateView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, UpdateView):
     model = Course
@@ -664,7 +664,7 @@ class CourseUserActivityFullReportView(LoginRequiredMixin, CourseContextMixin, A
         return context
 
 
-""" User Activity Management """
+# User Activity Management 
 
 class UserManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
     """
@@ -845,7 +845,7 @@ class UserProgressViewDateSelector(UserProgressView):
         return context
 
 
-""" Course Message Management """
+# Course Message Management 
 
 class CourseMessageAddView(LoginRequiredMixin, CourseContextMixin, RestrictedAccessZoneMixin, CreateView):
     model = SiteMessage
@@ -920,7 +920,7 @@ class CourseMessageDeleteView(LoginRequiredMixin, CourseContextMixin, Restricted
         return reverse('course', kwargs={'crs_slug': self.course.slug})
 
 
-""" Course Attendance Pages """
+# Course Attendance Pages 
 
 class CourseAttendanceMonthView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMixin, RestrictedAccessZoneMixin, PrivelegedAccessMixin, DetailView):
     model = Course

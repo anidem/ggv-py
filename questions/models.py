@@ -289,12 +289,8 @@ class AbstractQuestion(models.Model):
     response_required = models.BooleanField(default=True)
     max_points = models.PositiveIntegerField(default=0)
     min_correct = models.PositiveIntegerField(default=1, help_text='Indicate minimum points to consider as correct.')
-    content_area = models.ForeignKey(Section, models.SET_NULL, 
-        null=True, blank=True, 
-        help_text='(optional) Choose a related module (section) for this question.')
-    extra_info = models.ForeignKey('ExtraInfo', models.SET_NULL, 
-        null=True, blank=True, 
-        help_text='(optional) Choose to add rubric and/or additional instructions')
+    content_area = models.ForeignKey(Section, models.SET_NULL, null=True, blank=True, help_text='(optional) Choose a related module (section) for this question.')
+    extra_info = models.ForeignKey('ExtraInfo', models.SET_NULL, null=True, blank=True, help_text='(optional) Choose to add rubric and/or additional instructions')
 
     def get_sequence_url(self, course):
         try:

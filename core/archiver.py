@@ -33,6 +33,7 @@ from guardian.models import UserObjectPermission
 from courses.models import GGVOrganization, Course, CourseLesson, CoursePermission
 from lessons.models import Lesson, Section
 from questions.models import QuestionSet, OptionQuestion, TextQuestion, QuestionResponse, UserWorksheetStatus
+from slidestacks.models import SlideStack
 from core.models import GGVUser, Bookmark, Notification, SiteMessage, SitePage
 from notes.models import UserNote 
 
@@ -48,6 +49,22 @@ def queryset_contenttypes():
 def queryset_auth_permissions():
     try:
         query_set_obj = Permission.objects.all()
+        return query_set_obj
+    
+    except Exception as e:
+        print e
+
+def queryset_sitepages():
+    try:
+        query_set_obj = SitePage.objects.all()
+        return query_set_obj
+    
+    except Exception as e:
+        print e
+
+def queryset_sitemessages():
+    try:
+        query_set_obj = SiteMessage.objects.all()
         return query_set_obj
     
     except Exception as e:
@@ -112,6 +129,14 @@ def queryset_option_questions():
 def queryset_text_questions():
     try:
         query_set_obj = TextQuestion.objects.all()
+        return query_set_obj
+    
+    except Exception as e:
+        print e
+
+def queryset_slidestacks():
+    try:
+        query_set_obj = SlideStack.objects.all()
         return query_set_obj
     
     except Exception as e:

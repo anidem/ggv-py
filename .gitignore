@@ -45,6 +45,7 @@ prod.py
 temp-scripts
 local-setup-private.txt
 local-setup-private-pretest-loader.py
+core/fixtures
 
 
 

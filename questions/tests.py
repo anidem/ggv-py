@@ -7,7 +7,6 @@ from questions.models import QuestionResponse, QuestionSet, OptionQuestion, Text
 
 class WorksheetTestCase(TestCase):
     fixtures = [
-        'fixture_users.json',
         'fixture_worksheet_basic.json'        
         ]
 

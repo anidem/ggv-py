@@ -1,4 +1,4 @@
-# slidestacks/management/commands/test-slidestack-access.py
+# slidestacks/management/commands/testslideaccess.py
 from django.conf import settings
 from django.core.management.base import BaseCommand, CommandError
 
@@ -8,12 +8,9 @@ from slidestacks.models import SlideStack
 
 class Command(BaseCommand):
     """If running from crontab, then:
-            VIRTUALENVPATH/python PROJECTPATH/manage.py test-slidestack-access
+            VIRTUALENVPATH/python PROJECTPATH/manage.py testslideaccess
     """
-    help = 'Verifies http access to all slidestack resources. Usage: test-slidestack-access'
-
-    def add_arguments(self, parser):
-        parser.add_argument('base_url_slides')
+    help = 'Verifies http access to all slidestack resources. Usage: testslideaccess'
 
     def handle(self, *args, **options):        
         try:

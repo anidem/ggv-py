@@ -568,23 +568,29 @@ def SendWorksheetNotificationEmailToInstructors(request=None, course=None, works
     use case: System emails instructor when a student completes a quiz.
     """
     user_sender = request.user.first_name + u' ' + request.user.last_name + u' (' + request.user.email + u')'
-    # print user_sender
-    # user_sender = user_sender.decode('utf-8')
-
+    
     gedid = ''
     if request.user.ggvuser.program_id:
         gedid = request.user.ggvuser.program_id
+
+    lang_pref = request.user.ggvuser.language_pref
 
     instructor_list = []
     for i in course.instructor_list():
         if i.ggvuser.receive_notify_email:
             instructor_list.append(i.email)
-
+    
     if not instructor_list:  # Nobody to send to. Recipient list is empty!
-        messages.info(request, 'Your instructor(s) did not receive your email but other administrative staff will be contacted.')
-
+        # Email managers if instructors cannot be emailed (due to preferences or non existent instructor)
         for i in course.manager_list():
             instructor_list.append(i.email)
+
+    if lang_pref == 'english':
+        messages.info(request, 'Program staff have been contacted about your completed worksheet.')
+    else:
+        messages.info(request, 'El personal del programa ha sido contactado acerca de su hoja de trabajo completa.')
+
+    instructor_list = list(set(instructor_list)) 
 
     worksheet_results_url = 'http://' + request.get_host() + reverse('worksheet_user_report', args=[course.slug, worksheet.id, request.user.id])
 
@@ -806,12 +812,19 @@ def send_clear_worksheet_request(request=None, course=None, worksheet=None):
         for i in course.instructor_list():
             if i.ggvuser.receive_notify_email:
                 recipients.append(i.email)
+        
+        lang_pref = request.user.ggvuser.language_pref
 
         if not recipients:  # Nobody to send to. Recipient list is empty!
-            messages.info(request, 'Your instructor(s) did not receive your email to clear your worksheet results but other administrative staff will be contacted.')
-
             for i in course.manager_list():
                 recipients.append(i.email)
+            
+        if lang_pref == 'english':
+            messages.info(request, u'Program staff have been contacted by email to clear your worksheet results.')
+        else:
+            messages.info(request, u'El personal del programa ha sido contactado por correo electrónico para borrar los resultados de su hoja de trabajo.') 
+
+        recipients = list(set(recipients))
 
         worksheet_results_url = 'http://' + request.get_host() + reverse('worksheet_user_report', args=[course.slug, worksheet.id, request.user.id])
 
@@ -831,7 +844,7 @@ def send_clear_worksheet_request(request=None, course=None, worksheet=None):
 
     email.attach_alternative(html_message, "text/html")
     email.send(fail_silently=False)
-    messages.info(request, 'Instructors have been emailed with your request.')
+    # messages.info(request, 'Instructors have been emailed with your request.')
 
 def send_clear_worksheet_confirm(request=None, worksheet_user=None, worksheet_obj=None, worksheet_url=None):
     """Sends email to a student of a course. 

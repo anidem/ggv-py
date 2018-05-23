@@ -84,11 +84,11 @@
         {% if english_lessons and spanish_lessons %}
             <a class="nav-btn btn-group btn-toggle">
                 {% if user.ggvuser.language_pref == 'spanish' %}
-                    <button class="btn btn-xs btn-default">English</button>
-                    <button class="btn btn-xs btn-success active">Español</button>
+                    <button class="btn btn-link btn-xs">Ver lecciones en Inglés</button>
+                    <button class="btn btn-link btn-xs hidden">Ver lecciones en Español</button>
                 {% else %}
-                    <button class="btn btn-xs btn-success active">English</button>
-                    <button class="btn btn-xs btn-default">Español</button>
+                    <button class="btn btn-link btn-xs hidden">View lessons in English</button>
+                    <button class="btn btn-link btn-xs">View lessons in Spanish</button>
                 {% endif %}
             </a>
         {% endif %}
@@ -359,9 +359,9 @@
         jQuery(function($) {
 
             $('.btn-toggle').click(function() {
-                $(this).find('.btn').toggleClass('active');
-                $(this).find('.btn').toggleClass('btn-success');
-                $(this).find('.btn').toggleClass('btn-default');
+                $(this).find('.btn').toggleClass('hidden');
+                // $(this).find('.btn').toggleClass('btn-success');
+                // $(this).find('.btn').toggleClass('btn-default');
                 $('.eng').toggleClass('collapse')
                 $('.span').toggleClass('collapse')
             });

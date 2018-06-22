@@ -4,6 +4,7 @@ import json, ast
 
 from django.db import models
 from django.core.urlresolvers import reverse
+from django.contrib import messages
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
@@ -194,9 +195,18 @@ class QuestionSet(AbstractActivity):
                     if i.input_select == 'checkbox':
                         resplist = json.loads(resp)
                         for j in resplist:
-                            respstr = respstr + ' (' + Option.objects.get(pk=j).display_text + ') '
+                            try:
+                                option_text = Option.objects.get(pk=j).display_text
+                            except:
+                                option_text = '--'
+                            
+                            respstr = respstr + ' (' + option_text + ') '
                     else:
-                        respstr = Option.objects.get(pk=resp).display_text
+                        try:
+                            option_text = Option.objects.get(pk=resp).display_text
+                        except:
+                            option_text = '--'
+                        respstr = option_text
 
                 elif question_type == 'text':
                     respstr = resp

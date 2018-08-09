@@ -31,7 +31,7 @@
                 </span>
             {% else %}
                 <span>
-                {% if request.user.ggvuser.language_pref == 'spanish' %}  spanish    
+                {% if request.user.ggvuser.language_pref == 'spanish' %}     
                     <a href="{% url 'reset_worksheet_responses_request' course.slug worksheet.id %}" class="btn btn-xs btn-danger" name="reset_responses" data-toggle="tooltip" data-placement="left" title="Solicite al instructor que borre todas las respuestas y vuelva a intentar esta hoja de trabajo"><i class="fa fa-exclamation-triangle"></i> ¿Solicite borrar todas sus respuestas?</a>
                 {% else %}
                     <a href="{% url 'reset_worksheet_responses_request' course.slug worksheet.id %}" class="btn btn-xs btn-danger" name="reset_responses" data-toggle="tooltip" data-placement="left" title="Make request to instructor to erase all responses and retry this worksheet."><i class="fa fa-exclamation-triangle"></i> Request to clear your responses?</a>

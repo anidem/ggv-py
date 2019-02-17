@@ -14,7 +14,7 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.utils.text import slugify
 
-from guardian.shortcuts import get_objects_for_user
+from guardian.shortcuts import get_objects_for_user, get_user_perms
 from model_utils.models import TimeStampedModel
 
 from courses.models import Course, GGVOrganization
@@ -122,6 +122,14 @@ class GGVUser(models.Model):
                 attendance_list[key] = (day_list, self.attendance_by_month(i.year_tz(), i.month_tz()))
 
         return attendance_list
+
+    def get_user_icon(self, course_obj):
+        icon = 'fa fa-lock'
+        icon_map = {'manage': 'fa fa-user-secret', 'instructor': 'fa fa-graduation-cap', 'access': 'fa fa-user'}
+        perms = get_user_perms(self.user, course_obj)
+        if perms:
+            icon = icon_map[perms[0]]
+        return icon
 
     def __unicode__(self):
         return self.user.username

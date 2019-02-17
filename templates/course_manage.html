@@ -168,7 +168,7 @@
         {% for i in deactivated %}
         <div class="item hoverpad col-md-12 small" data-created="{{ i.0.date_joined|date:'U' }}"  data-login="{{ i.0.last_login|date:'U' }}">
             <a href="{% url 'user_progress' course.slug i.0.id %}" class="static">
-            <div class="col-md-1 siteid">{{ i.0.ggvuser.program_id }}</div>
+            <div class="col-md-1 siteid">{{ i.0.ggvuser.program_id }} <i class="{{i.3}}"></i></div>
             <div class="col-md-1 firstname">{{ i.0.first_name }}</div>
             <div class="col-md-1 lastname">{{ i.0.last_name }}</div>
             <div class="col-md-2 username">{{ i.0.username }}</div>
@@ -217,15 +217,15 @@
 
     <div id="container_1" class="row">
         {% for i in unvalidated %}
-        <div class="item hoverpad col-md-12 small" data-created="{{ i.date_joined|date:'U' }}">
-            <a href="{% url 'view_user' course.slug i.id %}" class="static">
-            <div class="col-md-1 site_id">{{ i.ggvuser.program_id }}</div>
-            <div class="col-md-2 firstname">{{ i.first_name }}</div>
-            <div class="col-md-2 lastname">{{ i.last_name }}</div>
-            <div class="col-md-3 username">{{ i.username }} </div>
-            <div class="col-md-2 date_created">{{ i.date_joined|date:"Y - M d" }}</div>
+        <div class="item hoverpad col-md-12 small" data-created="{{ i.0.date_joined|date:'U' }}">
+            <a href="{% url 'view_user' course.slug i.0.id %}" class="static">
+            <div class="col-md-1 site_id"> {{ i.0.ggvuser.program_id }} <i class="{{i.1}}"></i></div>
+            <div class="col-md-2 firstname">{{ i.0.first_name }}</div>
+            <div class="col-md-2 lastname">{{ i.0.last_name }}</div>
+            <div class="col-md-3 username">{{ i.0.username }} </div>
+            <div class="col-md-2 date_created">{{ i.0.date_joined|date:"Y - M d" }}</div>
             </a>
-            <div class="col-md-2">{% if is_manager %}<input type="checkbox" name="unaccessed_list" value="{{ i.id }}">{% endif %}</div>            
+            <div class="col-md-2">{% if is_manager %}<input type="checkbox" name="unaccessed_list" value="{{ i.0.id }}">{% endif %}</div>            
         </div>
         {% empty %}
             <div class="panel-body">All accounts haved been validated.</div>
@@ -291,27 +291,79 @@
 <!-- Graders -->
 <div class="col-md-12">
     <span class="lead">{{ graders|length }} Grader{{ graders|length|pluralize}}</span> 
-    <a href="{% url 'add_course_grader' object.slug %}">add</a>
+    {% if request.user.is_staff %}<a href="{% url 'add_course_grader' object.slug %}">add</a>{% endif %}
 </div>
 <div class="col-md-12">
-    {% for i in graders %} 
-        <p>{{ i.grader.first_name }} {{ i.grader.last_name }} <span class="small">({{ i.grader.email }})</span> {% if not forloop.last %}, {% endif %} <a href="{% url 'edit_course_grader' object.slug i.id %}">edit</a> <a href="{% url 'delete_course_grader' object.slug i.id %}">remove</a></p>
-    {% empty %}
-        <div class="panel-body">There are no graders assigned to this course.</div>
-    {% endfor %}
-</div>
+    <div id="" class="row">
+        <div class="col-md-12">
+            <div class="col-md-1"><button class="btn btn-block btn-sm"> id</button></div>
+            <div class="col-md-1"><button class="btn btn-block btn-sm"> first</button></div>
+            <div class="col-md-1"><button class="btn btn-block btn-sm"> last</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm"> username</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm"> created</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm"> last login</button></div>
+            <div class="col-md-3"></div>
+        </div>
+    </div>
 
+    <div id="" class="row">               
+        {% for i in graders %}
+            <div class="item hoverpad col-md-12 small">            
+                <div class="col-md-1 siteid">{{ i.grader.ggvuser.program_id }}</div>
+                <div class="col-md-1 firstname">{{ i.grader.first_name }}</div>
+                <div class="col-md-1 lastname">{{ i.grader.last_name }}</div>
+                <div class="col-md-2 username">{{ i.grader.username }}</div>
+                <div class="col-md-2 created">{{ i.grader.date_joined|date:"Y - M d" }}</div>
+                <div class="col-md-2 login">{{ i.grader.last_login|date:"Y - M d, g:i A" }}</div>
+                <div class="col-md-3">
+                {% if request.user.is_staff %}
+                    <a href="{% url 'edit_course_grader' object.slug i.id %}" class="btn btn-sm">edit</a>              
+                    <a href="{% url 'delete_course_grader' object.slug i.id %}" class="btn btn-sm">remove</a>
+                {% endif %}
+                </div>               
+            </div>
+        {% empty %}
+            <div class="panel-body">There are no graders assigned to this course.</div>
+        {% endfor %} 
+    </div>
+</div>
 
 <div class="col-md-12"><h1></h1></div>
 
 <!-- Managers -->
 <div class="col-md-12"><span class="lead">{{ managers|length }} Manager{{ managers|length|pluralize}}</span></div>
 <div class="col-md-12">
-    {% for i in managers %} 
-        {{ i.first_name }} {{ i.last_name }} <span class="small">({{ i.email }})</span> {% if not forloop.last %}, {% endif %}
-    {% empty %}
-        <div class="panel-body">There are no managers assigned to this course.</div>
-    {% endfor %}
+    <div id="" class="row">
+        <div class="col-md-12">
+            <div class="col-md-1"><button class="btn btn-block btn-sm"> id</button></div>
+            <div class="col-md-1"><button class="btn btn-block btn-sm"> first</button></div>
+            <div class="col-md-1"><button class="btn btn-block btn-sm"> last</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm"> username</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm"> created</button></div>
+            <div class="col-md-2"><button class="btn btn-block btn-sm"> last login</button></div>
+            <div class="col-md-3"></div>
+        </div>
+    </div>
+
+    <div id="" class="row">               
+        {% for i in managers %}
+            <div class="item hoverpad col-md-12 small">            
+                <div class="col-md-1 siteid">{{ i.ggvuser.program_id }}</div>
+                <div class="col-md-1 firstname">{{ i.first_name }}</div>
+                <div class="col-md-1 lastname">{{ i.last_name }}</div>
+                <div class="col-md-2 username">{{ i.username }}</div>
+                <div class="col-md-2 created">{{ i.date_joined|date:"Y - M d" }}</div>
+                <div class="col-md-2 login">{{ i.last_login|date:"Y - M d, g:i A" }}</div>
+                <div class="col-md-3">
+                {% if request.user.is_staff %}
+                    <a href="{% url 'view_user' object.slug i.id %}" class="btn btn-sm">view</a>              
+                {% endif %}
+                </div>               
+            </div>
+        {% empty %}
+            <div class="panel-body">There are no managers assigned to this course.</div>
+        {% endfor %} 
+    </div>
 </div>
 
 <div class="col-xs-12"><h1>&nbsp;</h1></div>

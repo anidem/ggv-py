@@ -385,7 +385,7 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         for i in course.deactivated_list():
             try:
                 activity = i.activitylog.all()[0]
-                deactivated_students.append((i, {'recent_act': activity.action, 'recent_time': activity.timestamp}, i.ggvuser))
+                deactivated_students.append((i, {'recent_act': activity.action, 'recent_time': activity.timestamp}, i.ggvuser, i.ggvuser.get_user_icon(course)))
             except:
                 pass  # deactivated_students[i] has no activity on record. Move on, nothing to see here.
 
@@ -404,7 +404,7 @@ class CourseManageView(LoginRequiredMixin, CourseContextMixin, AccessRequiredMix
         context['instructors'] = instructors
         context['students'] = students
         context['deactivated'] = deactivated_students
-        context['unvalidated'] = course.unvalidated_list()
+        context['unvalidated'] = [(i, i.ggvuser.get_user_icon(course)) for i in course.unvalidated_list()]
         context['account_requests'] = course.account_requests.all()
         context['graders'] = course.assigned_graders.all()
         context['deactivation_types'] = DEACTIVATION_TYPES

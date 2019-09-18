@@ -9,6 +9,7 @@
 <div class="col-md-12">
     <i class="fa fa-caret-left"></i><i class="fa fa-caret-left"></i>
     <a href="{% url 'lesson' course.slug worksheet.lesson.id %}">{{ worksheet.lesson }}</a>
+    <a href="{% url 'lesson' course.slug worksheet.lesson.id %}#{{ worksheet.section|title }}"> {{ worksheet.section|title }}</a>
 </div>
 
 <div class="col-md-12 text-center">

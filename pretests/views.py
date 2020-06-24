@@ -318,7 +318,6 @@ class PretestQuestionResponseView(TokenAccessRequiredMixin, PretestQuestionMixin
             context['flag'] = flags[str(self.question['question'].id)]  
         except:
             pass
-      
         # datetime.strftime(time_started, '%Y-%m-%d %H:%M:%S') maybe useful later.
 
         return context

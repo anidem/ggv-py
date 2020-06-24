@@ -284,6 +284,7 @@ class QuestionResponseView(LoginRequiredMixin, AccessRequiredMixin, CourseContex
             context['formula'] = settings.MEDIA_URL + 'pdf/0_A-GGV_Formula_Sheet_Spn.pdf'
             context['graph_paper'] = settings.MEDIA_URL + 'img/graph-sheet-for-slope.png'
             
+        
         return context
 
 

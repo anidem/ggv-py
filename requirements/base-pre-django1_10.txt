@@ -17,7 +17,7 @@ jdcal==1.0
 oauthlib==0.7.2
 openpyxl==2.2.0
 paramiko==1.15.2
-Pillow==2.7.0
+Pillow==9.0.1
 psycopg2==2.6
 pycrypto==2.6.1
 PyJWT==0.4.1

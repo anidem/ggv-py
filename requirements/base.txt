@@ -19,7 +19,7 @@ et-xmlfile==1.0.1
 Fabric==1.12.0
 jdcal==1.3
 oauthlib==2.0.0
-openpyxl==2.4.0
+openpyxl==2.4.2
 paramiko==1.17.2
 Pillow==3.3.1
 psycopg2==2.6.2

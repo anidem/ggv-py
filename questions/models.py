@@ -26,6 +26,8 @@ class QuestionSet(AbstractActivity):
     display_pdf = models.FileField(null=True, blank=True, upload_to='pdf')
     time_limit = models.PositiveIntegerField(default=0, blank=True, help_text="(Optional) # of minutes allowed to complete worksheet")
     pretest_subject = models.CharField(max_length=24, null=True, blank=True, help_text='Associate this worksheet to: math, science, socialstudies, writing. Only set this for worksheets that are used as pretests.')
+    display_extra_content = models.TextField(default='', blank=True)
+
 
     def check_membership(self, user_session):
         """

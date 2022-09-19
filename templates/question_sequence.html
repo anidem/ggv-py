@@ -249,15 +249,22 @@
             </div>
 
         <!-- RIGHT panel: Question media (images, pdfs) -->
+        <div class="col-md-8">  
+            {% if worksheet.display_extra_content %}
+                <div class="">
+                    {{ worksheet.display_extra_content | safe }}
+                </div>
+            {% endif %}
+
             {% if question.display_image %}
-                <div class="col-md-8">
+                <div class="">
                     <a href="{{ question.display_image.url }}" target="_blank">{% if language_pref == 'spanish' %}imprimir{% else %}print{% endif %}</a>
                     <div><img class="fit" src="{{ question.display_image.url }}"></div>
                 </div>
             {% endif %}
 
             {% if question.display_pdf %}
-                <div class="col-md-8">
+                <div class="">
                         <a href="{{ question.display_pdf.url }}" target="_blank">{% if language_pref == 'spanish' %}imprimir{% else %}print{% endif %}</a>
                     <!-- <div class="pdfframe"> -->
                         <iframe id="pdf_display"  class="pdfframe" style="background-color: white"></iframe>
@@ -266,14 +273,14 @@
             {% endif %}
 
             {% if worksheet.display_pdf %}
-                <div class="col-md-8">
+                <div class="">
                     <a href="{{ worksheet.display_pdf.url }}" target="_blank">{% if language_pref == 'spanish' %}imprimir{% else %}print{% endif %}</a>
                     <!-- <div class="pdfframe"> -->
                         <iframe id="ws_pdf_display" class="pdfframe"></iframe>
                     <!-- </div> -->
                 </div>
             {% endif %}
-
+        </div>
         </div>
     <!-- END TWO PANEL CONTENT -->
 
